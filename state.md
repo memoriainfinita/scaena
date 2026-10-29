@@ -15,7 +15,8 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 
 ## Status
 
-- 2026-10-29: draft creado. Sin código; repositorio git local iniciado en `main`, sin commits. Investigación en `docs/investigacion.md`, alcance cerrado, stack aceptado, modelo de datos en `docs/design/modelo-2026-10-29.md`, biblioteca en `docs/design/biblioteca-2026-10-29.md` y siete decisiones de interfaz y sus valores por defecto, todo confirmado, en la sección Preferences. Siguiente: lienzo de diseño en artifact, después el plan por pasos- Nombre `scaena` (escena, escenario): propuesto y aceptado el 2026-10-29
+- 2026-10-29: draft creado. Sin código; repositorio git local en `main`. Investigación en `docs/investigacion.md` y `docs/research/` (cinco informes con mediciones limpias, ya sin bloqueos para la fase 3), alcance cerrado, stack aceptado, modelo de datos en `docs/design/modelo-2026-10-29.md`, biblioteca en `docs/design/biblioteca-2026-10-29.md` y siete decisiones de interfaz y sus valores por defecto, todo confirmado, en la sección Preferences. Siguiente: lienzo de diseño en artifact (el usuario ya lo espera), después el plan por pasos. En paralelo, contenido por escribir: catálogo de luminarias de teatro con fuentes, lista de modelos de audio, lista de paquetes, y leer la guía USITT de 2025 antes de dibujar los símbolos. Idea de diseño: descargar el `.wasm` de Typst en segundo plano al abrir la app
+- Nombre `scaena` (escena, escenario): propuesto y aceptado el 2026-10-29
 
 ## Patterns
 
