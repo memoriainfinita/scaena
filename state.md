@@ -80,7 +80,8 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
   - Símbolos (`simbolos-rp2-audio.md`): RP-2 es de USITT, no de ESTA, con © 2006; en febrero de 2025 USITT publicó una guía nueva que dice sustituirla. Sin licencia de reproducción: se dibuja de cero siguiendo la convención. Audio: ningún estándar ni conjunto abierto; símbolos propios
 - Decidido 2026-10-29: luminarias de teatro con catálogo propio de unas 20 a 40 fichas, cada cifra con la URL de la ficha del fabricante, y valores típicos genéricos marcados como estimación para lo que no tenga ficha. Los símbolos los dibuja Claude en SVG desde la lista de formas del informe, sin calcar las láminas de USITT; el correo a USITT queda opcional, a gusto del usuario
 - [x] Ids secuenciales con `tipo@versión` y reciclado del worker de Typst cada 50 compilaciones: confirmados el 2026-11-02
-- [ ] Leer la sección 4 de la guía USITT 2025 (diagramas de sistema: red, DMX, nodos) antes del paso de símbolos; el resto de la guía ya está leída (`docs/research/simbolos-rp2-audio.md`)
+- [x] Sección 4 de la guía USITT 2025 leída el 2026-11-02 (`docs/research/usitt-2025-seccion4.md`); quedan sin leer sus subsecciones 4.5 a 4.7 y las propuestas para Conexión de señal, pendientes de aceptar
+- Conectores de teatro (`docs/research/conectores-teatro.md`) y cifras de inalámbricos Shure y Sennheiser y del DL32 (`docs/research/audio-modelos.md`) hechos el 2026-11-02; faltan medidas de X32, M32 y DL16
 - [ ] Sin medir todavía: `main` de typst.ts (reevaluar cuando salga versión con `evictCache`), la caché del `.wasm` en Pages con https real, pdf.js y el parser DXF de verdad, memoria y Chrome en el SVG
 - [ ] Pasar un validador PDF/UA: veraPDF en CI sobre ubuntu-24.04 (el PDF de prueba falla por `DisplayDocTitle` y `/Tabs`)
 - [x] Modelo de datos y formato `.scaena`: `docs/design/modelo-2026-10-29.md`

@@ -41,7 +41,7 @@ Fecha: 2026-11-02. Datos de hojas y páginas de fabricante leídas en esta sesi�
 | Behringer X32 | 32 preamplis, 25 faders motorizados, 120 W; [PENDIENTE: peso y medidas] | https://www.behringer.com/en/products/0603-ACE |
 | Midas M32 | 40 canales de entrada, 32 preamplis, 25 buses; [PENDIENTE: peso y medidas] | https://www.midasconsoles.com/en/products/0603-ADX |
 | Midas DL16 | 16 entradas, 8 salidas, 2U, AES50; [PENDIENTE: peso y medidas] | https://www.midasconsoles.com/en/products/0606-ACJ |
-| Midas DL32 | 32 entradas, 16 salidas, 3U, AES50; [PENDIENTE: peso y medidas] | https://www.midasconsoles.com/en/products/0606-ACR |
+| Midas DL32 | 32 entradas, 16 salidas, 3U, AES50; 483 × 242 × 138 mm, 5,7 kg (guía rápida en japonés) | https://cdn.mediavalet.com/aunsw/musictribe/I2S29IMZHUa0yyJi8oqqEQ/oeq7RxOvc0uXAz8JkXayZA/Original/QSG_MI_0606-ACR_DL32_JP.pdf |
 | Yamaha DM3 | 16 entradas mic/línea, 8 salidas XLR, 320 × 140 × 455 mm, 6,5 kg | https://usa.yamaha.com/products/proaudio/mixers/dm3/specs.html |
 | Yamaha QL1 | 468 × 272 × 562 mm, 14,7 kg; descatalogada | https://usa.yamaha.com/products/proaudio/mixers/ql_series/specs.html |
 | Yamaha CL5 | 1053 × 299 × 667 mm, 36 kg; descatalogada | https://usa.yamaha.com/products/proaudio/mixers/cl_series/specs.html |
@@ -58,12 +58,20 @@ Origen: `software-apoyo-tecnicos-teatro.md`. [PENDIENTE: entradas, medidas y pes
 - Soundcraft: Vi, Si, Ui
 - PreSonus: StudioLive III
 
-## Inalámbricos (nombres sin cifras)
+## Inalámbricos
 
-Origen: `software-apoyo-tecnicos-teatro.md`. [PENDIENTE: medidas, peso y banda de cada uno]
+Origen de los nombres: `software-apoyo-tecnicos-teatro.md`. Cifras leídas el 2026-11-02; las bandas dependen de la región.
 
-- Shure: ULX-D, Axient, SLX-D, QLX-D
-- Sennheiser: EW-DX, Digital 6000
+| Modelo | Datos | Fuente |
+|---|---|---|
+| Shure ULX-D, receptor cuádruple | 42 × 197 × 171 mm, 913 g sin antenas; petaca 86 × 66 × 23 mm, 142 g sin pilas; banda 470 a 932 MHz, sintonía hasta 64 MHz | https://pubs.shure.com/view/guide/ULXD/en-US.pdf |
+| Shure QLX-D, receptor QLXD4 | 41 × 197 × 151 mm, 777 g sin antenas; petaca 86 × 65 × 23 mm, 138 g sin pilas; sintonía 64 MHz | https://pubs.shure.com/view/guide/QLXD/en-US.pdf |
+| Shure SLX-D, receptor SLXD4 | 42 × 197 × 152 mm, 816 g sin antenas; banda 470 a 937,5 MHz, sintonía 44 MHz | https://content-files.shure.com/publications/specSheet/en/slx-d-spec-sheet.pdf |
+| Shure Axient Digital | sintonía hasta 184 MHz; [PENDIENTE: medidas y peso] | https://www.shure.com/en-US/products/wireless-systems/axient_digital |
+| Sennheiser EW-DX EM 2 (receptor) | 212 × 44 × 206 mm según la especificación y 212 × 44 × 189 mm según las páginas de producto de EE. UU.; unos 1000 g sin antenas ni fuente; bandas por variante (Q1-9: 470,2 a 550 MHz; S1-10: 606,2 a 693,8 MHz, entre otras) | https://docs.cloud.sennheiser.com/en-us/ew-d/ew-d/specifications-ew-dx-em2.html |
+| Sennheiser EW-DX EM 4 (receptor) | 483 × 44 × 373 mm, unos 4560 g sin antenas ni fuente | https://www.sennheiser.com/globalassets/digizuite/40839-en-ew-dx_specifications_manufacturerdeclarations_08_2025.pdf |
+| Sennheiser EW-DX SKM (mano) | ø 50 × 268 mm con cápsula MMD 835; ø 40 × 200 mm sin cápsula; [PENDIENTE: peso] | mismo |
+| Sennheiser Digital 6000 | [PENDIENTE: no buscado] | |
 
 ## Red de audio
 
@@ -74,4 +82,5 @@ Origen: `software-apoyo-tecnicos-teatro.md`. [PENDIENTE: medidas, peso y banda d
 - [PENDIENTE: fantasma de los micros dinámicos]
 - [PENDIENTE: AKG C451 y Sennheiser MD421 no aparecieron en la búsqueda]
 - [PENDIENTE: cuñas, PA, amplis de guitarra y bajo, baterías]
-- Discrepancias a resolver: SM81 (rango de fantasma) y e 835 (peso)
+- Discrepancias a resolver: SM81 (rango de fantasma), e 835 (peso) y EM 2 (fondo 189 o 206 mm)
+- [PENDIENTE: peso y medidas de X32, M32 y DL16; las páginas de producto no los dan y la guía rápida del DL16 y del M32 no apareció. Un artículo de la base de conocimiento de Music Tribe da 215 × 625 × 510 mm y 15,4 kg para el X32 completo, de hace unos diez años, no se pudo abrir y no se usa]
