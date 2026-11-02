@@ -25,4 +25,16 @@ Estado: lista propuesta el 2026-11-02 y aceptada ("me gustan tus recomendaciones
 
 ## Por plantilla
 
-[PENDIENTE: qué secciones activa cada uno de los 7 paquetes; se define al diseñar la vista Documento]
+Aceptado el 2026-11-02. Todas llevan portada y cajetín, plano, lista de canales, contactos y horarios, y notas.
+
+| Paquete | Además activa |
+|---|---|
+| Banda de rock | Salidas y monitores, hospitalidad, contrato, setlist |
+| Jazz | Salidas y monitores, hospitalidad, contrato, setlist |
+| Cantautor o dúo acústico | Salidas y monitores, hospitalidad, setlist |
+| DJ | Ordenadores y software, hospitalidad, contrato |
+| Conferencia | Ordenadores y software |
+| Teatro con micros de diadema | Salidas y monitores, ordenadores y software |
+| Audiovisual y proyección | Ordenadores y software |
+
+Reglas añadidas: «Ordenadores y software» aparece sola en cualquier plantilla si el montaje tiene un ordenador; los informes de luces entran solos con el módulo de Luces activo.

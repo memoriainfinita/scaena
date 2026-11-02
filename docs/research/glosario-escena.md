@@ -41,17 +41,17 @@ Sin fuente hallada. Lectura mía; el usuario corrige.
 | Ellipsoidal (ERS) | proyector de recorte | a verificar |
 | Fresnel | fresnel | a verificar |
 | PAR | PAR | a verificar |
-| Followspot | seguidor | a verificar |
+| Followspot | seguidor (alias: cañón de seguimiento) | confirmado por el usuario 2026-11-02 |
 | Cyc / cyclorama | ciclorama | el término aparece en el glosario INCUAL |
 | Scoop | scoop | a verificar |
-| Boom | torreta | a verificar |
+| Boom (de luces, no de micro) | torre lateral (alias: torre de calle) | el usuario dice «torre lateral», no universal; «torres de calle» aparece en un rider de Donostia y la iluminación «de calle» se describe en apuntes argentinos (UNAD 2020) |
 | FOH | FOH (posición frontal de sala) | a verificar |
-| Plaster line | plaster line (línea del telón de boca) | a verificar |
+| Plaster line | línea de proscenio (alias: línea de boca, plaster line) | el usuario: «línea de proscenio o boca»; definición en español: línea que cruza el escenario sobre la cara anterior de la pared del proscenio, perpendicular a la línea central; de ella se miden las distancias de profundidad (Control Booth, https://www.controlbooth.com/wiki/Plaster-line) |
 | Dimmer | dimmer (regulador) | a verificar |
 | Wedge / cuña | cuña | a verificar |
 | In-ear | in-ear (monitorización personal) | a verificar |
 | Truss | truss | a verificar |
-| Channel hookup | relación de canales | a verificar |
+| Channel hookup | relación de canales | confirmado por el usuario 2026-11-02 |
 
 ## Etiquetas de posición
 
@@ -61,4 +61,4 @@ Sin fuente hallada. Lectura mía; el usuario corrige.
 ## Pendientes
 
 - [PENDIENTE: contraste con un diccionario técnico de teatro o un manual de tramoya]
-- [PENDIENTE: confirmar o corregir la tabla de iluminación y sonido]
+- Tabla de iluminación y sonido: el usuario confirmó el resto de filas el 2026-11-02 («el resto ok»)

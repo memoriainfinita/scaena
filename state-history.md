@@ -2,6 +2,12 @@
 
 Lo que salió de `state.md` y por qué.
 
+### 2026-11-02 — Dos validadores retirados
+«Plano no visto desde el público» no podía fallar: el plano se dibuja siempre desde el público. «Plano ilegible en escala de grises» exigiría medir legibilidad con una función pura, difícil de hacer bien; queda como vista previa en grises que el usuario mira a mano.
+
+### 2026-11-02 — El ordenador deja de ser un elemento de audio
+Se había propuesto en la capa de audio. El usuario aclaró que también sirve para vídeo y a veces para controlar luces. Pasa a tener una o varias funciones (sonido, vídeo, luces, red), capa propia «Control y vídeo» y salidas por tipo de señal; el flujo de señal deja de ser solo de audio.
+
 ### 2026-10-29 — Imprimir desde el navegador descartado como método de PDF
 Se había usado en lumina (diálogo de impresión, sin librería) por rápido y sencillo. El usuario lo descartó para scaena. Además, en la prueba Firefox no escribía el idioma del documento y ni Chrome ni Firefox escribían THead, TBody ni Scope en las tablas. Sustituido por Typst en el navegador (`docs/investigacion.md`).
 
