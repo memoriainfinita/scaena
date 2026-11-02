@@ -22,8 +22,10 @@ Gravedades: error (el documento sería incorrecto), aviso (probable fallo), cons
 | Regla | Origen | Gravedad |
 |---|---|---|
 | Toma de corriente sin marcar | Ridermaker, consejo 3 | aviso |
-| Plano no visto desde el público | Ridermaker, consejo 4 | error |
-| Plano ilegible en escala de grises | Ridermaker, consejo 1 | consejo |
+
+Retiradas el 2026-11-02 (aceptado por el usuario):
+- «Plano no visto desde el público»: el plano se dibuja siempre desde el público, la regla no puede fallar
+- «Plano ilegible en escala de grises»: pasa a ser la vista previa en grises, que el usuario mira a mano (ya aceptada)
 
 ## Luces y eléctrica
 
@@ -46,6 +48,6 @@ Gravedades: error (el documento sería incorrecto), aviso (probable fallo), cons
 
 ## Pendientes
 
-- [PENDIENTE: confirmar gravedades]
+- Gravedades aceptadas por el usuario el 2026-11-02 ("ok" a la propuesta, con las dos retiradas arriba)
 - [PENDIENTE: reglas del flujo de señal (conexión sin destino, tipos de señal incompatibles)]
 - [PENDIENTE: cómo se silencia un aviso concreto en un montaje]
