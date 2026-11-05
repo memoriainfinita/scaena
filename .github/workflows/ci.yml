@@ -32,6 +32,12 @@ jobs:
       - run: pnpm exec playwright install firefox
         timeout-minutes: 5
       - run: pnpm e2e
+      # The rider the e2e tests download must keep its structure: tags, language, title, fonts, tab order.
+      # This is a minimal check, not PDF/UA validation (see docs/research/typst-medidas.md, section 4).
+      - run: |
+          python3 -m venv .venv
+          .venv/bin/pip install pypdf==6.12.2
+          .venv/bin/python -I scripts/check_pdf.py test-results/rider-teatro.pdf
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

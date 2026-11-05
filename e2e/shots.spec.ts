@@ -106,3 +106,15 @@ test('background', async ({ page }) => {
   await page.getByRole('button', { name: 'Fondo PDF o DXF' }).click();
   await page.screenshot({ path: 'docs/design/img/paso-10-fondo.png' });
 });
+
+test('document view', async ({ page }) => {
+  test.skip(step !== '11');
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Teatro con micros/ }).click();
+  await page.getByRole('button', { name: 'Documento', exact: true }).click();
+  await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+  await page.getByRole('img', { name: 'Página 3' }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'docs/design/img/paso-11-documento.png' });
+});
