@@ -51,7 +51,7 @@ test('the library is a sheet: open it, add an element, and it closes on its own 
   await page.getByRole('button', { name: 'Biblioteca', exact: true }).click();
   await expect(page.getByRole('searchbox', { name: 'Buscar en la biblioteca' })).toBeVisible();
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Cerrar el panel' }).first().click();
   await expect(page.getByRole('searchbox', { name: 'Buscar en la biblioteca' })).toBeHidden();
 });

@@ -1,6 +1,6 @@
 # Ordenadores, vídeo y red
 
-![Un ordenador seleccionado y su panel](img/ordenador.png)
+![Un ordenador seleccionado y su panel](../img/ordenador.png)
 
 Un **ordenador portátil** de la biblioteca es un elemento con contenido. En el inspector indicas:
 

@@ -6,7 +6,7 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 async function rock(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
 }
 
 const openSettings = async (page: Page) => {
@@ -21,12 +21,12 @@ test('a measured distance is kept as a dimension that reads its length and can b
   await page.mouse.click(area.x + 200, area.y + 200);
   await page.mouse.click(area.x + 400, area.y + 200);
   await page.getByRole('button', { name: 'Fijar como cota' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   const dim = page.locator('g.el[aria-label="Cota"]');
   await expect(dim).toHaveCount(1);
   await expect(dim.locator('text')).toHaveText(/^[\d,]+ m$/);
   await page.keyboard.press('Control+z');
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
 });
 
 test('the stage takes a proscenium opening and the reference lines can be hidden', async ({ page }) => {

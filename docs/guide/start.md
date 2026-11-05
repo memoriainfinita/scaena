@@ -1,10 +1,10 @@
 # Getting started
 
-![Start screen](../img/inicio.png)
+![Start screen](img/inicio.png)
 
 Pick the package closest to your show (rock band, jazz, singer-songwriter, DJ, conference, theatre with headset mics, AV) or an empty show. Each comes with the plot laid out and a suggested channel list; the theatre one also has a basic light plot. Everything can be changed.
 
-![The editor](../img/editor.png)
+![The editor](img/editor.png)
 
 Left: the element **library**. Centre: the **plot**, with the **views** above it (Plot, Inputs, Outputs, Lights, Production, Reports, Document; only what your modules need). Right: the **inspector** and the **layers**.
 

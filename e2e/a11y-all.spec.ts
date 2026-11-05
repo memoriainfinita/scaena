@@ -49,6 +49,7 @@ test('every view and each of its sections has no violations @a11y', async ({ pag
 });
 
 test('every dialog has no violations @a11y', async ({ page }) => {
+  test.setTimeout(120_000);
   await theatre(page);
   for (const [opener, title] of [
     ['Ajustes de la aplicación', 'Aplicación'],

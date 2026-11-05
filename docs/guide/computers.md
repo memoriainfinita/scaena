@@ -1,6 +1,6 @@
 # Computers, video and network
 
-![A computer selected](../img/ordenador.png)
+![A computer selected](img/ordenador.png)
 
 A **laptop** from the library is an element with content. In the inspector: **functions** (sound, video, lights, network; at least one), **operating system**, **programs** (the field suggests a catalogue, QLab, Resolume, grandMA, Dante Controller…, and accepts anything; each has a “used for”), **license**, whether it needs a **physical key**, and its **outputs** (signal, connector, note). If a catalogue program does not exist for the system you chose, a note says so (“QLab only exists for macOS”).
 

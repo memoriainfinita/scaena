@@ -1,11 +1,11 @@
-# Documentación
+# Documentation
 
-| Dónde | Qué hay |
+| Where | What is there |
 |---|---|
-| [`guide/`](guide/README.md) · [`guide/en/`](guide/en/README.md) | La guía de uso, por objetivos, con capturas |
-| [`design/`](design/) | Cómo y por qué se hizo cada cosa: el [plan](design/plan-2026-11-05.md), un documento por paso (`paso-N-diseno-*.md`) y los de contenido (modelo, biblioteca, paquetes, rider, validadores) con su nota de lo que cambió al construir |
-| [`research/`](research/) | Investigación y mediciones con su método: símbolos, luminarias, audio, regiones eléctricas, PDF con Typst, importación de PDF y DXF, rendimiento del plano |
-| [`investigacion.md`](investigacion.md) | El estudio previo de Ridermaker y de las alternativas |
-| [`publicar.md`](publicar.md) | Cómo publicar en GitHub Pages y qué comprobar después |
+| [`guide/`](guide/README.md) · [`guide/es/`](guide/es/README.md) | The user guide, by goal, with screenshots (English first, Spanish alongside) |
+| [`publishing.md`](publishing.md) | How to publish on GitHub Pages and what to check afterwards |
+| [`design/`](design/) | How and why each part was built: the [plan](design/plan-2026-11-05.md), one document per step (`paso-N-diseno-*.md`) and the content ones (model, library, packages, rider, validators), each with a note of what changed while building. Written in Spanish |
+| [`research/`](research/) | Research and measurements with their method: symbols, luminaires, audio, electrical regions, PDF with Typst, PDF and DXF import, plot performance. Written in Spanish |
+| [`investigacion.md`](investigacion.md) | The early study of Ridermaker and the alternatives. Written in Spanish |
 
-En la raíz: `state.md` (estado actual y lo que está abierto), `state-history.md` (lo que salió de ahí y por qué), `CHANGELOG.md`, `CONTRIBUTING.md` y `THIRD-PARTY-NOTICES.md`.
+At the root: `state.md` (current state and what is open, in Spanish), `state-history.md` (what left it and why), `CHANGELOG.md`, `CONTRIBUTING.md` and `THIRD-PARTY-NOTICES.md`.

@@ -3,17 +3,8 @@
 // shapes, 1.5 px strokes that do not scale with zoom, white fill so overlaps read, legible in black and white.
 // No brand shapes and no copied standard sheets.
 
-const S = 'stroke="#000" vector-effect="non-scaling-stroke"';
-const sw = (n: number) => `stroke-width="${n}"`;
-const n = (v: number) => Math.round(v * 10) / 10;
-
-const rect = (x: number, y: number, w: number, h: number, fill = '#fff') => `<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" fill="${fill}" ${S} ${sw(1.5)}/>`;
-const circle = (cx: number, cy: number, r: number, fill = '#fff') => `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="${fill}" ${S} ${sw(1.5)}/>`;
-const ellipse = (cx: number, cy: number, rx: number, ry: number, fill = '#fff') => `<ellipse cx="${n(cx)}" cy="${n(cy)}" rx="${n(rx)}" ry="${n(ry)}" fill="${fill}" ${S} ${sw(1.5)}/>`;
-const line = (x1: number, y1: number, x2: number, y2: number, width = 1.5, dash = '') => `<line x1="${n(x1)}" y1="${n(y1)}" x2="${n(x2)}" y2="${n(y2)}" ${S} ${sw(width)}${dash ? ` stroke-dasharray="${dash}"` : ''}/>`;
-const path = (d: string, fill = 'none', width = 1.5, dash = '') => `<path d="${d}" fill="${fill}" ${S} ${sw(width)}${dash ? ` stroke-dasharray="${dash}"` : ''}/>`;
-/** The thick front line, towards the audience. */
-const front = (w: number, d: number) => line(0, d, w, d, 4);
+import { circle, ellipse, front, line, n, path, rect } from './symbol-kit.ts';
+import { MORE_SYMBOLS } from './symbols-more.ts';
 
 type Draw = (w: number, d: number) => string;
 
@@ -86,6 +77,7 @@ const SYMBOLS: Record<string, Draw> = {
   dimension: (w, d) => line(0, d / 2, w, d / 2, 1.5) + line(0, 0, 0, d, 1.5) + line(w, 0, w, d, 1.5),
   // A power outlet: a square with the two pins, to be labelled with its circuit or voltage.
   outlet: (w, d) => rect(0, 0, w, d) + line(w * 0.35, d * 0.3, w * 0.35, d * 0.7, 3) + line(w * 0.65, d * 0.3, w * 0.65, d * 0.7, 3),
+  ...MORE_SYMBOLS,
   generic: (w, d) => rect(0, 0, w, d) + line(0, 0, w, d, 1) + line(w, 0, 0, d, 1),
 };
 

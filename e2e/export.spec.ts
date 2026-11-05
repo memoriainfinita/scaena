@@ -71,7 +71,7 @@ test('revisions: save two, read what changed, compare, restore and undo, and mak
   await page.keyboard.press('Escape');
 
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Revisiones' }).click();
   await dlg.getByLabel('Nota de la revisión').fill('Con una persona más');
   await dlg.getByRole('button', { name: 'Guardar revisión' }).click();
@@ -85,9 +85,9 @@ test('revisions: save two, read what changed, compare, restore and undo, and mak
   await dlg.getByRole('listitem').filter({ hasText: 'Revisión 1' }).getByRole('button', { name: 'Restaurar' }).click();
   await expect(dlg.getByText(/Revisión 1 restaurada/)).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
 
   await page.getByRole('button', { name: 'Revisiones' }).click();
   const sheet = await downloaded(page, () => dlg.getByRole('listitem').filter({ hasText: 'Revisión 2' }).getByRole('button', { name: 'Hoja de actualización' }).click());
