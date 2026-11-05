@@ -23,7 +23,7 @@ export interface Built {
   sections: SectionId[];
 }
 
-const PAPERS: Record<Show['paper'], { typst: string; w: number; h: number }> = {
+export const PAPERS: Record<Show['paper'], { typst: string; w: number; h: number }> = {
   A4: { typst: 'a4', w: 210, h: 297 },
   A3: { typst: 'a3', w: 297, h: 420 },
   Letter: { typst: 'us-letter', w: 215.9, h: 279.4 },

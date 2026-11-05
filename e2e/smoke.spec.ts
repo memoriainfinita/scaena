@@ -108,9 +108,10 @@ test('autosave: a renamed show is there after a reload, and the .scaena download
   const bytes = readFileSync((await download.path())!);
   expect(bytes.subarray(0, 2).toString()).toBe('PK');
 
+  await page.keyboard.press('Escape');
   // Home goes back to the start screen, where the show is listed as recent.
   await page.getByRole('button', { name: 'Inicio' }).click();
-  await expect(page.getByRole('button', { name: /Mi concierto/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Mi concierto/ })).toBeVisible();
 });
 
 test('a file that is not a show shows an error and stays on the start screen', async ({ page }) => {

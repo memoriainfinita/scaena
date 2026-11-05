@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'preact/hooks';
-import { openFileBytes, openStored, recents, refreshRecents, startEmpty, startError, startFromPackage, dialog } from '../app/state.ts';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { deleteStored, duplicateStored, refreshLibrary, shows, startFromTemplate, templates } from '../app/library-actions.ts';
+import { openFileBytes, openStored, refreshRecents, startEmpty, startError, startFromPackage, dialog } from '../app/state.ts';
 import { lang, t } from '../i18n/index.ts';
 import { PACKAGES } from '../library/packages.ts';
 import type { Key } from '../i18n/index.ts';
@@ -9,7 +10,10 @@ export function Start() {
   const fileInput = useRef<HTMLInputElement>(null);
   useEffect(() => {
     void refreshRecents();
+    void refreshLibrary();
   }, []);
+  const [armed, setArmed] = useState<string | null>(null);
+  const [all, setAll] = useState(false);
 
   const onFile = async (e: Event) => {
     const input = e.currentTarget as HTMLInputElement;
@@ -56,17 +60,46 @@ export function Start() {
         <aside>
           <div class="side-card">
             <h2>{t('start.recent')}</h2>
-            {recents.value.length === 0 ? (
+            {shows.value.length === 0 ? (
               <span class="muted">{t('start.recent.none')}</span>
             ) : (
-              recents.value.map((r) => (
-                <button key={r.id} type="button" class="recent" onClick={() => void openStored(r.id)}>
-                  <strong>{r.name}</strong>
-                  <span class="muted">{new Date(r.updated).toLocaleString(document.documentElement.lang)}</span>
-                </button>
+              (all ? shows.value : shows.value.slice(0, 8)).map((x) => (
+                <div class="libraryrow" key={x.id}>
+                  <button type="button" class="recent" onClick={() => void openStored(x.id)}>
+                    <strong>{x.name}</strong>
+                    <span class="muted">{new Date(x.updated).toLocaleString(document.documentElement.lang)}</span>
+                  </button>
+                  <button type="button" class="pbtn" aria-label={t('library.duplicate', { name: x.name })} title={t('library.duplicate', { name: x.name })} onClick={() => void duplicateStored(x.id, t('library.copySuffix'))}>
+                    ⧉
+                  </button>
+                  <button type="button" class="pbtn" aria-label={armed === x.id ? t('library.confirmDelete', { name: x.name }) : t('library.delete', { name: x.name })} title={armed === x.id ? t('library.confirmDelete', { name: x.name }) : t('library.delete', { name: x.name })} onClick={() => (armed === x.id ? (setArmed(null), void deleteStored(x.id)) : setArmed(x.id))}>
+                    {armed === x.id ? '!' : '✕'}
+                  </button>
+                </div>
               ))
             )}
+            {shows.value.length > 8 && (
+              <button type="button" class="btn" onClick={() => setAll(!all)}>
+                {all ? t('library.fewer') : t('library.all', { n: shows.value.length })}
+              </button>
+            )}
           </div>
+          {templates.value.length > 0 && (
+            <div class="side-card">
+              <h2>{t('start.templates')}</h2>
+              {templates.value.map((x) => (
+                <div class="libraryrow" key={x.id}>
+                  <button type="button" class="recent" onClick={() => void startFromTemplate(x.id)}>
+                    <strong>{x.name}</strong>
+                    <span class="muted">{t('start.template.use')}</span>
+                  </button>
+                  <button type="button" class="pbtn" aria-label={armed === x.id ? t('library.confirmDelete', { name: x.name }) : t('library.delete', { name: x.name })} title={armed === x.id ? t('library.confirmDelete', { name: x.name }) : t('library.delete', { name: x.name })} onClick={() => (armed === x.id ? (setArmed(null), void deleteStored(x.id)) : setArmed(x.id))}>
+                    {armed === x.id ? '!' : '✕'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div class="side-card">
             <h2>{t('start.openOrImport')}</h2>
             <input ref={fileInput} type="file" accept=".scaena" class="sr-only" tabIndex={-1} aria-hidden="true" onChange={onFile} />

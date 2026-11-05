@@ -118,3 +118,18 @@ test('document view', async ({ page }) => {
   await page.getByRole('img', { name: 'Página 3' }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'docs/design/img/paso-11-documento.png' });
 });
+
+test('reports and revisions', async ({ page }) => {
+  test.skip(step !== '12');
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Teatro con micros/ }).click();
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Lista de instrumentos' }).click();
+  await page.screenshot({ path: 'docs/design/img/paso-12-informes.png' });
+  await page.getByRole('button', { name: 'Revisiones' }).click();
+  await page.getByLabel('Nota de la revisión').fill('Primera entrega');
+  await page.getByRole('button', { name: 'Guardar revisión' }).click();
+  await expect(page.getByText('Revisión 1 guardada.')).toBeVisible();
+  await page.screenshot({ path: 'docs/design/img/paso-12-revisiones.png' });
+});

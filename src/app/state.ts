@@ -12,11 +12,11 @@ import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops
 import type { Module, PlanElement, Show } from '../model/schema.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
 import { itemById } from '../library/items.ts';
-import { autosave, getLastShow, listShows, openLibrary, readShow, saveShow, setLastShow } from './storage.ts';
+import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
 
 export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'reports', 'document'];
-export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | null;
+export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
 export interface Settings {
@@ -118,6 +118,18 @@ export class Session {
     const show = this.show.value;
     const used = new Set([show.stage.background?.file, show.titleBlock.logo].filter((f): f is string => !!f));
     return packShow(show, Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name))));
+  }
+
+  /** True when this browser keeps a local library, which revisions need. */
+  get canKeepRevisions(): boolean {
+    return this.db !== null;
+  }
+  async storeRevision(n: number, data: Uint8Array): Promise<void> {
+    if (!this.db) throw new Error('no local library');
+    await saveRevisionData(await this.db, this.id, n, data);
+  }
+  async loadRevision(n: number): Promise<Uint8Array | undefined> {
+    return this.db ? readRevisionData(await this.db, this.id, n) : undefined;
   }
 
   private readonly urls = new Map<string, string>();
