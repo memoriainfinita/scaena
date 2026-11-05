@@ -91,6 +91,27 @@ export function addTextAt(x: number, y: number, text: string): string | null {
   return id;
 }
 
+/** Fixes a measured distance on the plan as a dimension: an element on the notes layer, selectable and movable like any other. */
+export function addDimension(a: { x: number; y: number }, b: { x: number; y: number }): string | null {
+  const s = session.value;
+  const length = Math.hypot(b.x - a.x, b.y - a.y);
+  if (!s || length < 1) return null;
+  let id: string | null = null;
+  s.commit((show) => {
+    const layer = show.layers.find((l) => l.subject === 'notes');
+    if (!layer) return show;
+    let deg = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+    if (deg > 90) deg -= 180; // keep the text readable, never upside down
+    if (deg <= -90) deg += 180;
+    const rotation = Math.round(deg * 100) / 100;
+    const [next, el] = addElement(show, { type: { id: 'note.dimension', version: 1 }, x: Math.round((a.x + b.x) / 2), y: Math.round((a.y + b.y) / 2), rotation, width: Math.round(length), layerId: layer.id });
+    id = el.id;
+    return next;
+  });
+  if (id) selection.value = [id];
+  return id;
+}
+
 export function setLayerDim(layerId: string, dim: number): void {
   session.value?.commit((show) => ({ ...show, layers: show.layers.map((l) => (l.id === layerId ? { ...l, dim } : l)) }));
 }

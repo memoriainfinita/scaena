@@ -80,6 +80,8 @@ const SYMBOLS: Record<string, Draw> = {
   strobe: (w, d) => rect(0, 0, w, d) + path(`M${w * 0.55} ${d * 0.1}L${w * 0.35} ${d * 0.55}L${w * 0.5} ${d * 0.55}L${w * 0.4} ${d * 0.92}L${w * 0.7} ${d * 0.4}L${w * 0.52} ${d * 0.4}Z`, '#000', 1) + front(w, d),
   // A text note: the label is drawn inside by the plan; the symbol is only a light frame.
   textbox: (w, d) => path(`M0 0H${w}V${d}H0Z`, 'none', 1, '6 5'),
+  // A permanent dimension: a line along the width with a tick at each end; the plan writes the length above it.
+  dimension: (w, d) => line(0, d / 2, w, d / 2, 1.5) + line(0, 0, 0, d, 1.5) + line(w, 0, w, d, 1.5),
   // A power outlet: a square with the two pins, to be labelled with its circuit or voltage.
   outlet: (w, d) => rect(0, 0, w, d) + line(w * 0.35, d * 0.3, w * 0.35, d * 0.7, 3) + line(w * 0.65, d * 0.3, w * 0.65, d * 0.7, 3),
   generic: (w, d) => rect(0, 0, w, d) + line(0, 0, w, d, 1) + line(w, 0, 0, d, 1),

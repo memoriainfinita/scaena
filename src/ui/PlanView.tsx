@@ -3,7 +3,7 @@
 import { batch, effect, signal, useComputed, useSignal, type Signal } from '@preact/signals';
 import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -16,7 +16,7 @@ import { symbolBody } from '../library/symbols.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
-import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
+import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -53,6 +53,8 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   if (!it) return null;
   const { w, d } = elementSize(el);
   const isText = it.symbol === 'textbox';
+  const isDim = it.symbol === 'dimension';
+  const units = isDim ? session.value!.show.value.units : 'metric';
   const name = el.label || it.name[lang.value];
   const box = elementBox(el, { w, d });
   const frame = selected ? { stroke: '#0b6e78', 'stroke-width': 3, 'stroke-dasharray': '8 5' } : { stroke: 'none' };
@@ -89,6 +91,13 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
           </text>
         </g>
       )}
+      {isDim && (
+        <g class="detail" transform={`rotate(${el.rotation})`}>
+          <text x={0} y={-d / 2 - 60} text-anchor="middle" font-size="170" font-weight="600" fill="#000" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+            {el.label || formatLength(w, units, lang.value)}
+          </text>
+        </g>
+      )}
       {sev && (
         <g class="detail" transform={`translate(${box.x1 - el.x} ${box.y0 - el.y})`} aria-hidden="true">
           {sev === 'error' ? <circle r="150" fill={BADGE[sev]} /> : sev === 'warning' ? <path d="M0 -170L165 130H-165Z" fill={BADGE[sev]} /> : <rect x="-130" y="-130" width="260" height="260" rx="40" fill={BADGE[sev]} />}
@@ -97,7 +106,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
           </text>
         </g>
       )}
-      {!isText && el.label && (
+      {!isText && !isDim && el.label && (
         <text class="detail" x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
         </text>
@@ -127,7 +136,8 @@ function Stage({ show }: { show: Show }) {
       {sh.kind === 'rect' ? <rect x={0} y={0} width={sh.width} height={sh.depth} {...common} /> : <polygon points={sh.points.map((p) => `${p.x},${p.y}`).join(' ')} {...common} />}
       {sh.kind === 'rect' && (
         <>
-          {ref.proscenium && <line x1={-300} y1={sh.depth} x2={sh.width + 300} y2={sh.depth} stroke="#000" stroke-width="4" vector-effect="non-scaling-stroke" />}
+          {ref.plaster && <line x1={-300} y1={sh.depth} x2={sh.width + 300} y2={sh.depth} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
+          {ref.proscenium && prosceniumWalls(sh.width, sh.prosceniumWidth).map(([a, b]) => <line key={a} x1={a} y1={sh.depth} x2={b} y2={sh.depth} stroke="#000" stroke-width="4" vector-effect="non-scaling-stroke" />)}
           {ref.center && <line x1={sh.width / 2} y1={0} x2={sh.width / 2} y2={sh.depth + 300} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
         </>
       )}
@@ -745,6 +755,22 @@ export function PlanView({ show }: { show: Show }) {
               {t('plan.connecting', { name: linkEl.label || itemById(linkEl.type.id)?.name[lang.value] || '' })}
             </span>
           )}
+        </div>
+      )}
+      {mode === 'measure' && measure.value?.done && measure.value.b && (
+        <div class="planbar left" role="group" aria-label={t('plan.measureBar')}>
+          <button
+            type="button"
+            class="btn primary"
+            onClick={() => {
+              const m = measure.peek();
+              if (m?.b) addDimension(m.a, m.b);
+              measure.value = null;
+              tool.value = 'select';
+            }}
+          >
+            {t('plan.dimension.fix')}
+          </button>
         </div>
       )}
       {mode === 'background' && (

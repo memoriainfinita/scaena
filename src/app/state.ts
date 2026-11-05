@@ -307,6 +307,20 @@ export interface ShowSettings {
   lang: Show['lang'];
   stageWidthM: number;
   stageDepthM: number;
+  /** Free-form floor plan in metres; when it has three or more points the stage becomes a polygon, else a rectangle. */
+  stagePolygonM?: { x: number; y: number }[] | null;
+  /** Width of the proscenium opening in metres, or null for none (rectangular stage only). */
+  prosceniumM?: number | null;
+  referenceLines?: Show['stage']['referenceLines'];
+}
+
+function stageShape(shape: Show['stage']['shape'], p: ShowSettings): Show['stage']['shape'] {
+  const poly = p.stagePolygonM;
+  if (poly && poly.length >= 3) return { kind: 'polygon', points: poly.map((q) => ({ x: Math.round(q.x * 1000), y: Math.round(q.y * 1000) })) };
+  const width = Math.round(p.stageWidthM * 1000);
+  const depth = Math.round(p.stageDepthM * 1000);
+  const proscenium = p.prosceniumM === undefined ? (shape.kind === 'rect' ? shape.prosceniumWidth : null) : p.prosceniumM === null ? null : Math.min(width, Math.round(p.prosceniumM * 1000));
+  return { kind: 'rect', width, depth, prosceniumWidth: proscenium };
 }
 
 export function applyShowSettings(p: ShowSettings): void {
@@ -320,7 +334,11 @@ export function applyShowSettings(p: ShowSettings): void {
       units: p.units,
       lang: p.lang,
       region: { code: p.regionCode, voltage: p.voltage, plug: show.region.code === p.regionCode ? show.region.plug : (region?.plugs.join(', ') ?? '') },
-      stage: shape.kind === 'rect' ? { ...show.stage, shape: { ...shape, width: Math.round(p.stageWidthM * 1000), depth: Math.round(p.stageDepthM * 1000) } } : show.stage,
+      stage: {
+        ...show.stage,
+        shape: stageShape(shape, p),
+        referenceLines: p.referenceLines ?? show.stage.referenceLines,
+      },
     };
   });
 }

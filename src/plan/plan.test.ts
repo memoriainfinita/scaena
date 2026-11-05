@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { newShow } from '../model/new.ts';
 import { addElement, alignElements, freeSpot, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, rotateElements, ungroupElements } from '../model/ops.ts';
 import type { Show } from '../model/schema.ts';
-import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, snap, toWorld, unionBox, zoomAt } from './geometry.ts';
+import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, parsePolygon, prosceniumWalls, snap, toWorld, unionBox, zoomAt } from './geometry.ts';
 
 function withElements(...pos: [number, number][]): [Show, string[]] {
   let show = newShow('t');
@@ -139,5 +139,21 @@ describe('placing new elements', () => {
     expect(freeSpot(show, 4000, 2500)).toEqual({ x: 4500, y: 2500 });
     const [two] = withElements([4000, 2500], [4500, 2500]);
     expect(freeSpot(two, 4000, 2500)).toEqual({ x: 5000, y: 2500 });
+  });
+});
+
+describe('stage shape helpers', () => {
+  test('the proscenium line is whole without an opening and two walls with one', () => {
+    expect(prosceniumWalls(8000, null)).toEqual([[-300, 8300]]);
+    expect(prosceniumWalls(8000, 6000)).toEqual([[-300, 1000], [7000, 8300]]);
+    expect(prosceniumWalls(8000, 9000)).toEqual([[-300, 8300]]);
+  });
+  test('a free-form stage reads one point per line in metres, with comma or point decimals', () => {
+    expect(parsePolygon(['0; 0', '6,5; 0', '6.5 4', ''].join('\n'))).toEqual([{ x: 0, y: 0 }, { x: 6.5, y: 0 }, { x: 6.5, y: 4 }]);
+  });
+  test('fewer than three points or a bad line is refused', () => {
+    expect(parsePolygon(['0;0', '1;1'].join('\n'))).toBeNull();
+    expect(parsePolygon(['0;0', '1;1', 'x;2'].join('\n'))).toBeNull();
+    expect(parsePolygon(['0;0', '1;1', '2;2;3'].join('\n'))).toBeNull();
   });
 });
