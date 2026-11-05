@@ -19,7 +19,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - 2026-11-05: **construidos los pasos 0 a 15 del plan** (`docs/design/plan-2026-11-05.md`), cada uno con su documento de diseño en `docs/design/`, sus pruebas y su commit local. La aplicación es completa: plano 2D interactivo, sonido, luces, ordenadores y conexiones, producción de un evento, 18 validadores, fondo PDF y DXF, PDF del rider con Typst en el navegador, informes, exportaciones, revisiones, biblioteca local con plantillas, móvil, sin conexión, es/en, claro y oscuro, guía en `docs/guide/` (es y en), avisos de licencias y auditorías de accesibilidad y rendimiento (`docs/research/rendimiento-app-2026-11-05.md`).
 - Pruebas: 184 unitarias, 55 de navegador en Firefox de escritorio, 26 de ellas repetidas con tema claro, 7 con ventana de teléfono y táctil, y 62 en Chrome con `pnpm e2e:chrome`. axe sin violaciones en todas las vistas y diálogos, en los dos temas.
 - **Publicado el 2026-11-05** en https://memoriainfinita.github.io/scaena/ (https://github.com/memoriainfinita/scaena, público, con `state.md` y el historial incluidos: decisión del usuario, «somos transparentes»). La CI pasa en GitHub (88 pruebas y la comprobación del PDF) y el primer PDF con https real y sin conexión está comprobado (`scripts/live-check.mjs`). Detalle en `docs/publishing.md`.
-- **Siguiente: la revisión del usuario**, que dijo «revisaré cuando termines todo».
+- 2026-11-05, tras la primera revisión del usuario (revisión de los pasos 0 a 15 contra la spec): faltaban funciones aceptadas y se están construyendo por grupos. Hechos y con commit: A (escenario libre, proscenio, líneas de referencia, cotas permanentes), B (punto de mira arrastrable con cuña del haz, notas de trabajo, recuento de equipo, hoja resumen, plan de varas, magic sheet, constructor de racks), arrastrar desde la biblioteca, canales automáticos al colocar, cables y PA en los paquetes, ajustes de la app (valores por defecto) y de cuadrícula, herramientas y biblioteca solo en el plano, guía en inglés como principal y capturas del README, 56 elementos nuevos de biblioteca (111 en total)
 
 ## Patterns
 
@@ -67,6 +67,15 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - Licencia: GPL-3.0
 
 ## TODO
+
+- [ ] **Grupo C (audio y red), a medias**: ya en el código y sin interfaz ni pruebas: campo `patch` del canal, `ip` del elemento, `muted` del montaje (`src/model/schema.ts`), `src/model/position.ts` (códigos US/DS/SL/SR) y `src/model/compat.ts` (qué señal maneja cada elemento y longitud máxima de cable). Falta: columna de patch en Entradas, CSV y PDF; etiqueta de posición en inspector, entradas y PDF con leyenda; reglas `duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate` con sus textos; botón «Numerar cuñas»; voltaje y enchufe por defecto en las tomas del plano; silenciar un aviso (`muted`) con «mostrar silenciados»
+- [ ] **Grupo D (documento)**: PDF de la lista de canales en horizontal, bloques de canales (1 a 4 o automático), logo del cajetín, plantillas de documento propias con nombre, comparar dos revisiones entre sí
+- [ ] **Grupo E (biblioteca)**: capas propias del usuario, elementos propios con SVG saneado (CSP), importar luminarias de la Open Fixture Library al construir
+- [ ] **Grupo F (otros)**: exportar el plano a DXF, importar CSV, arrastrar el fondo con el ratón, calendario hacia atrás desde el toque de queda, móvil en horizontal
+- [ ] **Símbolos**: el usuario revisa los 111 en `test-results/symbols-review.html` (se regenera con el script del scratchpad `make-review.mjs`; conviene moverlo a `scripts/`) y marca Bien, Mejorar o Rehacer; después se rehacen los marcados en SVG. Alternativa que mencionó: imágenes de GPT
+- [ ] Textos de documentación: `docs/design/`, `docs/research/` e `investigacion.md` siguen en español (solo guía, README, CONTRIBUTING, CHANGELOG y `docs/publishing.md` están en inglés); decidir si se traducen
+- [ ] Capturas de la guía (`docs/guide/img`) están en la interfaz en español; las del README salen con `node scripts/readme-shots.mjs` (aún sin ejecutar ni commitear las imágenes de `docs/img`)
+- [ ] Cuando termine la revisión: ejecutar `pnpm e2e` completo (última pasada: 96 pasan; los fallos fueron el recuento de elementos y un tiempo de prueba, ya corregidos) y `pnpm e2e:chrome`
 
 - [x] Investigar apps y recursos similares: `docs/investigacion.md`
 - [x] Recorrer ridermaker.com por dentro: en `docs/investigacion.md`

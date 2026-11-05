@@ -13,7 +13,7 @@ export const outputList = (show: Show): Output[] => byNumber(show.outputs);
 
 export function addChannel(show: Show, init: Partial<Omit<InputChannel, 'id' | 'number'>> = {}): [Show, InputChannel] {
   const [id, s] = nextId(show, 'ch');
-  const ch: InputChannel = { shortName: '', mic: '', stand: '', phantom: false, insert: '', stereoPairWith: null, sourceElementId: null, notes: '', ...init, id, number: Object.keys(show.channels).length + 1 };
+  const ch: InputChannel = { shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: null, notes: '', ...init, id, number: Object.keys(show.channels).length + 1 };
   return [{ ...s, channels: { ...s.channels, [id]: ch } }, ch];
 }
 

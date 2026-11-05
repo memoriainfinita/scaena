@@ -81,6 +81,8 @@ export const PlanElement = v.object({
   computer: v.optional(v.nullable(Computer), null),
   luminaire: v.optional(v.nullable(Luminaire), null),
   rack: v.optional(v.nullable(Rack), null),
+  /** Network address of a computer, switch or desk. */
+  ip: v.optional(v.pipe(v.string(), v.maxLength(45)), ''),
 });
 
 export const InputChannel = v.object({
@@ -91,6 +93,8 @@ export const InputChannel = v.object({
   stand: text(80),
   phantom: v.optional(v.boolean(), false),
   insert: text(80),
+  /** Where it plugs in: stagebox and port, for example "SB A 12". */
+  patch: v.optional(v.pipe(v.string(), v.maxLength(24)), ''),
   stereoPairWith: v.optional(v.nullable(id), null),
   sourceElementId: v.optional(v.nullable(id), null),
   notes: text(),
@@ -232,6 +236,8 @@ export const Show = v.object({
   schedule: v.optional(v.array(ScheduleItem), []),
   titleBlock: v.optional(TitleBlock, {}),
   workNotes: v.optional(v.array(WorkNote), []),
+  /** Warnings the user chose to silence, by key (rule and thing). */
+  muted: v.optional(v.array(v.pipe(v.string(), v.maxLength(120))), []),
   reports: v.optional(v.array(ReportConfig), []),
   revisions: v.optional(v.array(RevisionMeta), []),
   view: v.optional(ViewSettings, {}),
