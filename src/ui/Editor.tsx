@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'preact/hooks';
+import { issues } from '../app/issues.ts';
 import { setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { addFromLibrary, dialog, goHome, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
@@ -8,6 +9,7 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
+import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', document: 'document' };
@@ -52,6 +54,10 @@ function TopBar() {
       </button>
       <button type="button" class="btn" disabled title={t('export.soon')}>
         {t('top.revisions')}
+      </button>
+      <button type="button" class="btn" onClick={() => (dialog.value = 'issues')} aria-label={`${t('top.issues')} · ${t('issues.count', { n: issues.value.length })}`}>
+        {t('top.issues')}
+        <span class="count">{issues.value.length}</span>
       </button>
       <button type="button" class="btn" onClick={() => (dialog.value = 'settings')}>
         {t('top.settings')}
@@ -137,6 +143,7 @@ function MainView({ show }: { show: Show }) {
   if (v === 'plan') return <PlanView key={session.value!.id} show={show} />;
   if (v === 'inputs') return <InputsView show={show} />;
   if (v === 'outputs') return <OutputsView show={show} />;
+  if (v === 'lights') return <LightsView show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>
@@ -186,6 +193,7 @@ function Inspector({ show }: { show: Show }) {
             </div>
           </div>
           {el.computer && <ComputerPanel el={el} c={el.computer} />}
+          {el.luminaire && <LuminairePanel el={el} show={show} />}
           <ConnectionsPanel show={show} el={el} />
         </>
       ) : (

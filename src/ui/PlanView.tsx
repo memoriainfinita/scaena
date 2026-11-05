@@ -5,6 +5,8 @@ import { memo } from 'preact/compat';
 import { useEffect, useRef } from 'preact/hooks';
 import { addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
+import { issues } from '../app/issues.ts';
+import type { Severity } from '../validate/rules.ts';
 import { dialog, selection, session } from '../app/state.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
@@ -33,12 +35,15 @@ const focusLabel = () => requestAnimationFrame(() => document.querySelector<HTML
 
 interface ElProps {
   el: PlanElement;
+  sev: Severity | null;
   selected: boolean;
   locked: boolean;
   dim: number;
 }
 
-const PlanEl = memo(function PlanEl({ el, selected, locked, dim }: ElProps) {
+const BADGE: Record<Severity, string> = { error: '#b3261e', warning: '#9a5b00', tip: '#1a5fb4' };
+
+const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps) {
   const simple = gesture.value;
   const it = itemById(el.type.id);
   if (!it) return null;
@@ -79,6 +84,14 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim }: ElProps) {
           </text>
         </g>
       )}
+      {sev && !simple && (
+        <g transform={`translate(${box.x1 - el.x} ${box.y0 - el.y})`} aria-hidden="true">
+          {sev === 'error' ? <circle r="150" fill={BADGE[sev]} /> : sev === 'warning' ? <path d="M0 -170L165 130H-165Z" fill={BADGE[sev]} /> : <rect x="-130" y="-130" width="260" height="260" rx="40" fill={BADGE[sev]} />}
+          <text y="75" text-anchor="middle" font-size="210" font-weight="700" fill="#fff" font-family="Inter Variable, sans-serif">
+            {sev === 'tip' ? 'i' : '!'}
+          </text>
+        </g>
+      )}
       {!isText && el.label && !simple && (
         <text x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
@@ -101,6 +114,31 @@ function Stage({ show }: { show: Show }) {
           {ref.center && <line x1={sh.width / 2} y1={0} x2={sh.width / 2} y2={sh.depth + 300} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
         </>
       )}
+    </g>
+  );
+}
+
+/** Mounting positions: bars and pipes as thick lines with their name, floor positions dotted. */
+function Mounts({ show }: { show: Show }) {
+  const simple = gesture.value;
+  const visible = show.layers.find((l) => l.subject === 'lights')?.visible ?? true;
+  const list = Object.values(show.mounts);
+  if (!visible || list.length === 0) return null;
+  return (
+    <g aria-hidden="true" pointer-events="none">
+      {list.map((m) => {
+        const floor = m.kind === 'floor';
+        return (
+          <g key={m.id}>
+            <line x1={m.from.x} y1={m.from.y} x2={m.to.x} y2={m.to.y} stroke="#555" stroke-width={floor ? 2 : 4} stroke-dasharray={floor ? '2 6' : m.kind === 'truss' ? '12 4' : undefined} vector-effect="non-scaling-stroke" />
+            {!simple && (
+              <text x={Math.min(m.from.x, m.to.x) - 60} y={(m.from.y + m.to.y) / 2 + 55} text-anchor="end" font-size="170" fill="#444" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+                {m.name}
+              </text>
+            )}
+          </g>
+        );
+      })}
     </g>
   );
 }
@@ -519,13 +557,16 @@ export function PlanView({ show }: { show: Show }) {
   const layers = new Map(show.layers.map((l) => [l.id, l]));
   const layerIndex = new Map(show.layers.map((l, i) => [l.id, i]));
   const sel = new Set(selection.value);
+  // The list is sorted errors first, so the first finding per element is its worst.
+  const elementSev = new Map<string, Severity>();
+  for (const i of issues.value) if (i.ref.kind === 'element' && !elementSev.has(i.ref.id)) elementSev.set(i.ref.id, i.severity);
   const dragSet = dragIds.value ? new Set(dragIds.value) : null;
   const rows = Object.values(show.elements)
     .filter((e) => layers.get(e.layerId)?.visible)
     .sort((a, b) => (layerIndex.get(a.layerId) ?? 0) - (layerIndex.get(b.layerId) ?? 0));
   const mk = (e: PlanElement) => {
     const l = layers.get(e.layerId)!;
-    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} />;
+    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} />;
   };
   const resting = (dragSet ? rows.filter((e) => !dragSet.has(e.id)) : rows).map(mk);
   const moving = dragSet ? rows.filter((e) => dragSet.has(e.id)).map(mk) : [];
@@ -554,6 +595,7 @@ export function PlanView({ show }: { show: Show }) {
         {show.view.grid && <Grid cam={cam} size={size} stepMm={show.view.gridMm} />}
         <g transform={camT}>
           <Stage show={show} />
+          <Mounts show={show} />
           <Connections show={show} hidden={dragSet ?? new Set()} />
           <g>{resting}</g>
           <g transform={dragT}>{moving}</g>

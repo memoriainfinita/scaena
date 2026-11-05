@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { applySettings, applyShowSettings, dialog, session, settings, type Settings } from '../app/state.ts';
+import { goToIssue, issues, issueText } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
+import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { REGIONS, regionByCode } from '../library/regions.ts';
 import { Paper, type Module } from '../model/schema.ts';
 
@@ -57,6 +59,7 @@ export function Dialogs() {
   if (d === 'export' && session.value) return <ExportDialog onClose={close} />;
   if (d === 'app') return <AppDialog onClose={close} />;
   if (d === 'help') return <HelpDialog onClose={close} />;
+  if (d === 'issues' && session.value) return <IssuesDialog onClose={close} />;
   return null;
 }
 
@@ -267,6 +270,51 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
           ))}
         </tbody>
       </table>
+    </Modal>
+  );
+}
+
+function IssuesDialog({ onClose }: { onClose: () => void }) {
+  const [shown, setShown] = useState<Set<Severity>>(new Set(SEVERITIES));
+  const all = issues.value;
+  const list = all.filter((i) => shown.has(i.severity));
+  const toggle = (s: Severity) =>
+    setShown((cur) => {
+      const next = new Set(cur);
+      if (next.has(s)) next.delete(s);
+      else next.add(s);
+      return next;
+    });
+  return (
+    <Modal title={t('issues.title')} onClose={onClose} footer={<span class="muted">{t('issues.note')}</span>}>
+      <fieldset class="issues-filter">
+        <legend>{t('issues.filter')}</legend>
+        {SEVERITIES.map((s) => (
+          <label key={s}>
+            <input type="checkbox" checked={shown.has(s)} onChange={() => toggle(s)} />
+            {t(`severity.${s}` as Key)} ({all.filter((i) => i.severity === s).length})
+          </label>
+        ))}
+      </fieldset>
+      {all.length === 0 ? (
+        <p>{t('issues.none')}</p>
+      ) : (
+        <ul class="issues-list">
+          {list.map((i) => (
+            <li key={i.key}>
+              <span class={`imark ${i.severity}`} aria-hidden="true">
+                {i.severity === 'tip' ? 'i' : '!'}
+              </span>
+              <p>
+                <strong>{t(`severity.${i.severity}` as Key)}.</strong> {issueText(i)}
+              </p>
+              <button type="button" class="btn" onClick={() => goToIssue(i)}>
+                {t('issues.go')}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </Modal>
   );
 }

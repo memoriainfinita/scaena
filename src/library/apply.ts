@@ -1,11 +1,11 @@
 import { nextId } from '../model/ids.ts';
 import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
-import type { Computer, InputChannel, Luminaire, Output, PlanElement, Show } from '../model/schema.ts';
+import { addMount, emptyLuminaire, updateLuminaire } from '../model/lights.ts';
+import type { Computer, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
 import { itemById } from './items.ts';
 import type { ShowPackage } from './types.ts';
 
-const emptyLuminaire = (): Luminaire => ({ mountId: null, unit: null, channel: null, dimmer: null, circuit: null, universe: null, address: null, color: '', accessories: [], focus: null, notes: '' });
 
 /** Builds a show from a package: elements on their layers, channels in the package order, outputs on their wedges. */
 export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en' = 'es'): Show {
@@ -45,5 +45,14 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     [id, show] = nextId(show, 'out');
     outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, notes: '' };
   });
+  // Lights in a package hang from one bar across them, so the plot starts with a mounting position to edit.
+  const lit = placed.filter((e) => e.luminaire);
+  if (lit.length > 0) {
+    const xs = lit.map((e) => e.x);
+    const y = Math.round(lit.reduce((acc, e) => acc + e.y, 0) / lit.length);
+    let mount: Mount;
+    [show, mount] = addMount(show, { kind: 'bar', name: lang === 'en' ? 'Bar 1' : 'Vara 1', from: { x: Math.min(...xs) - 500, y }, to: { x: Math.max(...xs) + 500, y } });
+    for (const e of lit) show = updateLuminaire(show, e.id, { mountId: mount.id });
+  }
   return { ...show, channels, outputs };
 }

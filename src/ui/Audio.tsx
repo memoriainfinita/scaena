@@ -1,6 +1,7 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
 import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
+import { IssueMark } from './IssueMark.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
@@ -89,7 +90,10 @@ function ChannelRow({ c, i, count, rows, sources, selected }: { c: InputChannel;
   const tag = (k: Key) => `${t(k)} · ${row}`;
   return (
     <tr class={selected ? 'sel' : undefined} onFocusIn={() => selectSource(c.sourceElementId)}>
-      <td class="mono num">{c.number}</td>
+      <td class="mono num">
+        <IssueMark refKey={`channel:${c.id}`} />
+        {c.number}
+      </td>
       <td>
         <Cell value={c.shortName} label={tag('table.name')} max={16} onCommit={(v) => setChannel(c.id, { shortName: v })} />
       </td>
@@ -166,7 +170,10 @@ export function OutputsView({ show }: { show: Show }) {
               const tag = (k: Key) => `${t(k)} · ${row}`;
               return (
                 <tr key={o.id} class={o.sourceElementId && sel.has(o.sourceElementId) ? 'sel' : undefined} onFocusIn={() => selectSource(o.sourceElementId)}>
-                  <td class="mono num">{o.number}</td>
+                  <td class="mono num">
+                    <IssueMark refKey={`output:${o.id}`} />
+                    {o.number}
+                  </td>
                   <td>
                     <select class="input cell" aria-label={tag('table.kind')} value={o.kind} onChange={(e) => setOutput(o.id, { kind: (e.currentTarget as HTMLSelectElement).value as Output['kind'] })}>
                       {KINDS.map((k) => (
