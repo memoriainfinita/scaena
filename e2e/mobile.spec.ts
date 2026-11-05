@@ -67,7 +67,13 @@ test('tapping an element selects it, the inspector sheet shows it, and tapping t
   expect((await axe(page)).violations).toEqual([]);
   await page.getByRole('button', { name: 'Cerrar el panel' }).last().click();
   const area = (await page.locator('svg.plansvg').boundingBox())!;
-  await page.touchscreen.tap(area.x + 8, area.y + area.height * 0.5);
+  // A finger tap as pointer events, so the test means the same thing on every platform's Firefox.
+  await page.evaluate(([x, y]) => {
+    const svg = document.querySelector('svg.plansvg')!;
+    const fire = (type: string) => svg.dispatchEvent(new PointerEvent(type, { pointerId: 9, pointerType: 'touch', isPrimary: true, clientX: x, clientY: y, button: 0, bubbles: true }));
+    fire('pointerdown');
+    fire('pointerup');
+  }, [area.x + 8, area.y + area.height * 0.5] as const);
   await expect(page.getByText('1 seleccionado', { exact: true })).toHaveCount(0);
 });
 
