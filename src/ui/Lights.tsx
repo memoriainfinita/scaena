@@ -1,0 +1,489 @@
+// The light plot lists: instruments, mounts, electrical load and the side section.
+import { lightsTab, numberUnits, selectElement, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { selection } from '../app/state.ts';
+import { IssueMark } from './IssueMark.tsx';
+import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
+import { itemById } from '../library/items.ts';
+import { FIXTURES, fixtureById } from '../library/models.ts';
+import { circuitLoads, dimmerLoads, luminaires, mountList, mountStats, phaseLoads } from '../model/lights.ts';
+import type { Mount, PlanElement, Show } from '../model/schema.ts';
+
+const name = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
+const MOUNT_KINDS: Mount['kind'][] = ['bar', 'pipe', 'truss', 'boom', 'floor'];
+const kg = (v: number) => `${formatNumber(Math.round(v * 10) / 10, lang.value, 1)} kg`;
+const kw = (w: number) => `${formatNumber(w / 1000, lang.value, 2)} kW`;
+const mountName = (show: Show, id: string | null): string => (id && show.mounts[id]?.name) || t('lights.unmounted');
+
+export function NumCell({ value, label, onCommit, step = 1, scale = 1, min = 0 }: { value: number | null; label: string; onCommit: (v: number | null) => void; step?: number; scale?: number; min?: number }) {
+  return (
+    <input
+      class="input cell mono"
+      type="number"
+      min={min}
+      step={step}
+      aria-label={label}
+      value={value === null ? '' : Math.round((value / scale) * 1000) / 1000}
+      onChange={(e) => {
+        const raw = (e.currentTarget as HTMLInputElement).value;
+        const v = Number(raw);
+        onCommit(raw === '' || !Number.isFinite(v) || v < min ? null : v * scale);
+      }}
+    />
+  );
+}
+
+function ModelSelect({ el, label, cls = 'input cell' }: { el: PlanElement; label: string; cls?: string }) {
+  const sorted = [...FIXTURES].sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`, lang.value));
+  const cur = el.luminaire?.modelId ?? '';
+  return (
+    <select class={cls} aria-label={label} value={cur} onChange={(e) => setLuminaireModel(el.id, (e.currentTarget as HTMLSelectElement).value)}>
+      <option value="">{t('lights.none')}</option>
+      {sorted.map((f) => (
+        <option key={f.id} value={f.id}>
+          {f.brand} {f.model}
+          {f.estimate ? ' ≈' : ''}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function MountSelect({ show, el, label, cls = 'input cell' }: { show: Show; el: PlanElement; label: string; cls?: string }) {
+  return (
+    <select class={cls} aria-label={label} value={el.luminaire?.mountId ?? ''} onChange={(e) => setLuminaire(el.id, { mountId: (e.currentTarget as HTMLSelectElement).value || null })}>
+      <option value="">{t('lights.unmounted')}</option>
+      {mountList(show).map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+export function LightsView({ show }: { show: Show }) {
+  const tab = lightsTab.value;
+  const tabs: LightsTab[] = ['instruments', 'mounts', 'electrical', 'section'];
+  return (
+    <div class="scroll">
+      <nav class="subtabs" aria-label={t('lights.tabs')}>
+        {tabs.map((x) => (
+          <button key={x} type="button" class="chipbtn" aria-current={tab === x ? 'page' : undefined} aria-pressed={tab === x} onClick={() => (lightsTab.value = x)}>
+            {t(`lights.tab.${x}` as Key)}
+          </button>
+        ))}
+      </nav>
+      {tab === 'instruments' && <Instruments show={show} />}
+      {tab === 'mounts' && <Mounts show={show} />}
+      {tab === 'electrical' && <Electrical show={show} />}
+      {tab === 'section' && <Section show={show} />}
+    </div>
+  );
+}
+
+function Instruments({ show }: { show: Show }) {
+  const rows = luminaires(show).sort((a, b) => (a.luminaire!.unit ?? Infinity) - (b.luminaire!.unit ?? Infinity) || a.id.localeCompare(b.id, 'en', { numeric: true }));
+  const sel = new Set(selection.value);
+  return (
+    <>
+      <div class="listbar">
+        <button type="button" class="btn" disabled={rows.length === 0} onClick={() => numberUnits()}>
+          {t('lights.number')}
+        </button>
+      </div>
+      {rows.length === 0 ? (
+        <p class="muted pad">{t('lights.empty')}</p>
+      ) : (
+        <table class="list editable wide">
+          <thead>
+            <tr>
+              <th>{t('table.unit')}</th>
+              <th>{t('table.element')}</th>
+              <th>{t('table.model')}</th>
+              <th>{t('table.mount')}</th>
+              <th>{t('table.ch')}</th>
+              <th>{t('table.dimmer')}</th>
+              <th>{t('table.circuit')}</th>
+              <th>{t('table.universe')}</th>
+              <th>{t('table.address')}</th>
+              <th>{t('table.color')}</th>
+              <th>{t('table.power')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((el) => {
+              const l = el.luminaire!;
+              const n = name(el);
+              const tag = (k: Key) => `${t(k)} · ${n}`;
+              return (
+                <tr key={el.id} class={sel.has(el.id) ? 'sel' : undefined} onFocusIn={() => selectElement(el.id)}>
+                  <td>
+                    <NumCell value={l.unit} label={tag('table.unit')} onCommit={(v) => setLuminaire(el.id, { unit: v })} />
+                  </td>
+                  <td class="elname">
+                    <IssueMark refKey={`element:${el.id}`} />
+                    {n}
+                  </td>
+                  <td>
+                    <ModelSelect el={el} label={tag('table.model')} />
+                  </td>
+                  <td>
+                    <MountSelect show={show} el={el} label={tag('table.mount')} />
+                  </td>
+                  <td>
+                    <NumCell value={l.channel} label={tag('table.ch')} onCommit={(v) => setLuminaire(el.id, { channel: v })} />
+                  </td>
+                  <td>
+                    <NumCell value={l.dimmer} label={tag('table.dimmer')} onCommit={(v) => setLuminaire(el.id, { dimmer: v })} />
+                  </td>
+                  <td>
+                    <NumCell value={l.circuit} label={tag('table.circuit')} onCommit={(v) => setLuminaire(el.id, { circuit: v })} />
+                  </td>
+                  <td>
+                    <NumCell value={l.universe} label={tag('table.universe')} onCommit={(v) => setLuminaire(el.id, { universe: v })} />
+                  </td>
+                  <td>
+                    <NumCell value={l.address} label={tag('table.address')} onCommit={(v) => setLuminaire(el.id, { address: v })} />
+                  </td>
+                  <td>
+                    <input class="input cell" aria-label={tag('table.color')} value={l.color} maxLength={40} onChange={(e) => setLuminaire(el.id, { color: (e.currentTarget as HTMLInputElement).value })} />
+                  </td>
+                  <td>
+                    <NumCell value={el.powerW} label={tag('table.power')} onCommit={(v) => setElementNumber(el.id, 'powerW', v)} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+      <MountCount show={show} />
+    </>
+  );
+}
+
+/** Count, weight and power per mount: what a rigger reads before hanging. */
+function MountCount({ show }: { show: Show }) {
+  const stats = mountStats(show);
+  if (stats.length === 0) return null;
+  return (
+    <section class="counts" aria-labelledby="count-title">
+      <h2 id="count-title">{t('lights.count')}</h2>
+      <ul>
+        {stats.map((s) => (
+          <li key={s.mountId ?? 'none'}>
+            <strong>{mountName(show, s.mountId)}</strong> · {t('lights.instruments', { n: s.count })} · {kg(s.weightKg)} · {kw(s.powerW)}
+            {s.overloaded && (
+              <span class="warn" role="note">
+                {' '}
+                <span aria-hidden="true">⚠ </span>
+                {t('lights.overload')} ({kg(s.maxLoadKg ?? 0)})
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function Mounts({ show }: { show: Show }) {
+  const rows = mountList(show);
+  const stats = new Map(mountStats(show).map((s) => [s.mountId, s]));
+  return (
+    <>
+      <div class="listbar">
+        <button type="button" class="btn" onClick={() => addMountRow(t('mount.default', { n: rows.length + 1 }))}>
+          {t('mount.add')}
+        </button>
+      </div>
+      {rows.length === 0 ? (
+        <p class="muted pad">{t('mount.none')}</p>
+      ) : (
+        <table class="list editable wide">
+          <thead>
+            <tr>
+              <th>{t('mount.name')}</th>
+              <th>{t('table.kind')}</th>
+              <th>{t('mount.x1')}</th>
+              <th>{t('mount.y1')}</th>
+              <th>{t('mount.x2')}</th>
+              <th>{t('mount.y2')}</th>
+              <th>{t('mount.height')}</th>
+              <th>{t('mount.maxLoad')}</th>
+              <th>{t('lights.count')}</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((m) => {
+              const tag = (k: Key) => `${t(k)} · ${m.name}`;
+              const st = stats.get(m.id);
+              return (
+                <tr key={m.id}>
+                  <td>
+                    <input class="input cell" aria-label={`${t('mount.name')} · ${m.name}`} value={m.name} maxLength={80} onChange={(e) => setMount(m.id, { name: (e.currentTarget as HTMLInputElement).value })} />
+                  </td>
+                  <td>
+                    <select class="input cell" aria-label={tag('table.kind')} value={m.kind} onChange={(e) => setMount(m.id, { kind: (e.currentTarget as HTMLSelectElement).value as Mount['kind'] })}>
+                      {MOUNT_KINDS.map((k) => (
+                        <option key={k} value={k}>
+                          {t(`mount.kind.${k}` as Key)}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <NumCell value={m.from.x} scale={1000} step={0.1} min={-1000} label={tag('mount.x1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, x: v } })} />
+                  </td>
+                  <td>
+                    <NumCell value={m.from.y} scale={1000} step={0.1} min={-1000} label={tag('mount.y1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, y: v } })} />
+                  </td>
+                  <td>
+                    <NumCell value={m.to.x} scale={1000} step={0.1} min={-1000} label={tag('mount.x2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, x: v } })} />
+                  </td>
+                  <td>
+                    <NumCell value={m.to.y} scale={1000} step={0.1} min={-1000} label={tag('mount.y2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, y: v } })} />
+                  </td>
+                  <td>
+                    <NumCell value={m.heightMm} scale={1000} step={0.1} label={tag('mount.height')} onCommit={(v) => setMount(m.id, { heightMm: v ?? 0 })} />
+                  </td>
+                  <td>
+                    <NumCell value={m.maxLoadKg} step={5} label={tag('mount.maxLoad')} onCommit={(v) => setMount(m.id, { maxLoadKg: v })} />
+                  </td>
+                  <td>
+                    {st ? `${t('lights.instruments', { n: st.count })} · ${kg(st.weightKg)}` : ''}
+                    {st?.overloaded && (
+                      <span class="warn" role="note">
+                        {' '}
+                        <span aria-hidden="true">⚠ </span>
+                        {t('lights.overload')}
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <button type="button" class="pbtn" aria-label={t('mount.remove', { name: m.name })} title={t('mount.remove', { name: m.name })} onClick={() => removeMountRow(m.id)}>
+                      ✕
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+}
+
+function Electrical({ show }: { show: Show }) {
+  const circuits = circuitLoads(show);
+  const dimmers = dimmerLoads(show);
+  const phases = phaseLoads(show);
+  const total = circuits.reduce((a, c) => a + c.powerW, 0);
+  return (
+    <div class="electrical">
+      <p class="muted pad">{t('elec.region', { voltage: formatNumber(show.region.voltage, lang.value) })}</p>
+      {circuits.length === 0 && dimmers.length === 0 && <p class="muted pad">{t('elec.empty')}</p>}
+      {circuits.length > 0 && (
+        <table class="list editable narrow">
+          <caption>{t('elec.circuits')}</caption>
+          <thead>
+            <tr>
+              <th>{t('table.circuit')}</th>
+              <th>{t('lights.instruments', { n: 2 }).replace(/^\S+\s*/, '')}</th>
+              <th>{t('table.power')}</th>
+              <th>{t('elec.amps')}</th>
+              <th>{t('elec.phase')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {circuits.map((c) => (
+              <tr key={c.circuit}>
+                <td class="mono num">{c.circuit}</td>
+                <td class="mono num">{c.count}</td>
+                <td class="mono num">{formatNumber(c.powerW, lang.value)}</td>
+                <td class="mono num">{formatNumber(c.amps, lang.value, 2)}</td>
+                <td>
+                  <select class="input cell" aria-label={`${t('elec.phase')} · ${t('table.circuit')} ${c.circuit}`} value={c.phase === null ? '' : String(c.phase)} onChange={(e) => setPhase(c.circuit, (e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null)}>
+                    <option value="">{t('elec.nophase')}</option>
+                    {[1, 2, 3].map((p) => (
+                      <option key={p} value={p}>
+                        L{p}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {dimmers.length > 0 && (
+        <table class="list editable narrow">
+          <caption>{t('elec.dimmers')}</caption>
+          <thead>
+            <tr>
+              <th>{t('table.dimmer')}</th>
+              <th>{t('lights.instruments', { n: 2 }).replace(/^\S+\s*/, '')}</th>
+              <th>{t('table.power')}</th>
+              <th>{t('elec.maxW')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dimmers.map((d) => (
+              <tr key={d.dimmer}>
+                <td class="mono num">{d.dimmer}</td>
+                <td class="mono num">{d.count}</td>
+                <td class="mono num">{formatNumber(d.powerW, lang.value)}</td>
+                <td>
+                  <NumCell value={d.maxW} step={100} label={`${t('elec.maxW')} · ${t('table.dimmer')} ${d.dimmer}`} onCommit={(v) => setDimmerMaxW(d.dimmer, v)} />
+                  {d.overloaded && (
+                    <span class="warn" role="note">
+                      <span aria-hidden="true">⚠ </span>
+                      {t('lights.overloadDimmer')}
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {phases.length > 0 && (
+        <table class="list narrow">
+          <caption>{t('elec.phases')}</caption>
+          <thead>
+            <tr>
+              <th>{t('elec.phase')}</th>
+              <th>{t('table.power')}</th>
+              <th>{t('elec.amps')}</th>
+              <th>{t('elec.breaker')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {phases.map((p) => (
+              <tr key={p.phase ?? 'none'}>
+                <td>{p.phase === null ? t('elec.nophase') : `L${p.phase}`}</td>
+                <td class="mono num">{formatNumber(p.powerW, lang.value)}</td>
+                <td class="mono num">{formatNumber(p.amps, lang.value, 2)}</td>
+                <td>
+                  {p.phase !== null && (
+                    <NumCell value={show.electrical.phases.find((x) => x.name === `L${p.phase}`)?.breakerA ?? null} step={1} label={`${t('elec.breaker')} · L${p.phase}`} onCommit={(v) => setBreaker(p.phase!, v)} />
+                  )}
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <th>{t('elec.total')}</th>
+              <th class="mono num">{formatNumber(total, lang.value)}</th>
+              <th class="mono num">{formatNumber(Math.round((total / Math.max(1, show.region.voltage)) * 100) / 100, lang.value, 2)}</th>
+              <th />
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+/** Side view: depth along the horizontal axis (back to audience), height up. Heights of 0 are drawn on the floor. */
+function Section({ show }: { show: Show }) {
+  const sh = show.stage.shape;
+  const depth = sh.kind === 'rect' ? sh.depth : Math.max(...sh.points.map((p) => p.y));
+  const mounts = mountList(show);
+  const lum = luminaires(show);
+  const top = Math.max(4000, ...mounts.map((m) => m.heightMm)) + 800;
+  const W = 900;
+  const H = 360;
+  const pad = 50;
+  const sx = (W - 2 * pad) / depth;
+  const sz = (H - 2 * pad) / top;
+  const X = (y: number) => pad + y * sx;
+  const Z = (z: number) => H - pad - z * sz;
+  const mountY = (m: Mount) => (m.from.y + m.to.y) / 2;
+  return (
+    <figure class="sect">
+      <h2 class="sect-h">{t('section.title')}</h2>
+      <svg viewBox={`0 0 ${W} ${H}`} class="flowsvg" role="img" aria-label={t('section.alt', { n: mounts.length })}>
+        <line x1={pad - 20} y1={Z(0)} x2={W - pad + 20} y2={Z(0)} class="fl main" />
+        <text x={pad - 20} y={Z(0) + 18} class="fltext">
+          {t('section.floor')}
+        </text>
+        <text x={pad} y={20} class="flowhead">
+          {t('section.back')}
+        </text>
+        <text x={W - pad} y={20} text-anchor="end" class="flowhead">
+          {t('section.front')}
+        </text>
+        {mounts.map((m) => {
+          const x = X(mountY(m));
+          const z = Z(m.heightMm);
+          const here = lum.filter((e) => e.luminaire!.mountId === m.id);
+          return (
+            <g key={m.id}>
+              <line x1={x} y1={z} x2={x} y2={Z(0)} class="fl ret" />
+              <rect x={x - 22} y={z - 3} width="44" height="6" class="flbox desk" />
+              {here.map((e, i) => (
+                <circle key={e.id} cx={x - 18 + (i % 4) * 12} cy={z + 14 + Math.floor(i / 4) * 12} r="4.5" class="dot" />
+              ))}
+              <text x={x} y={z - 12} text-anchor="middle" class="flbox-t">
+                {m.name} · {m.heightMm > 0 ? `${formatNumber(m.heightMm / 1000, lang.value, 1)} m` : t('section.noHeight')}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </figure>
+  );
+}
+
+/** Inspector section for a luminaire. */
+export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
+  const l = el.luminaire!;
+  const f = l.modelId ? fixtureById(l.modelId) : undefined;
+  return (
+    <div class="panel">
+      <h2>{t('lights.title')}</h2>
+      <label class="field">
+        {t('table.model')}
+        <ModelSelect el={el} label={t('table.model')} cls="input" />
+      </label>
+      {f?.estimate && <span class="muted">{t('lights.estimate')}</span>}
+      <label class="field">
+        {t('table.mount')}
+        <MountSelect show={show} el={el} label={t('table.mount')} cls="input" />
+      </label>
+      <div class="grid2">
+        <label class="field">
+          {t('table.unit')}
+          <NumCell value={l.unit} label={t('table.unit')} onCommit={(v) => setLuminaire(el.id, { unit: v })} />
+        </label>
+        <label class="field">
+          {t('table.ch')}
+          <NumCell value={l.channel} label={t('table.ch')} onCommit={(v) => setLuminaire(el.id, { channel: v })} />
+        </label>
+        <label class="field">
+          {t('table.dimmer')}
+          <NumCell value={l.dimmer} label={t('table.dimmer')} onCommit={(v) => setLuminaire(el.id, { dimmer: v })} />
+        </label>
+        <label class="field">
+          {t('table.circuit')}
+          <NumCell value={l.circuit} label={t('table.circuit')} onCommit={(v) => setLuminaire(el.id, { circuit: v })} />
+        </label>
+        <label class="field">
+          {t('table.weight')}
+          <NumCell value={el.weightKg} step={0.1} label={t('table.weight')} onCommit={(v) => setElementNumber(el.id, 'weightKg', v)} />
+        </label>
+        <label class="field">
+          {t('table.power')}
+          <NumCell value={el.powerW} label={t('table.power')} onCommit={(v) => setElementNumber(el.id, 'powerW', v)} />
+        </label>
+      </div>
+      <label class="field">
+        {t('table.color')}
+        <input class="input" value={l.color} maxLength={40} onChange={(e) => setLuminaire(el.id, { color: (e.currentTarget as HTMLInputElement).value })} />
+      </label>
+    </div>
+  );
+}

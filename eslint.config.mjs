@@ -18,6 +18,11 @@ export default defineConfig([
     languageOptions: { globals: { ...globals.node } },
   },
   {
+    // Tests build shows step by step with `let [show, id] = ...`; the destructuring reads better than splitting it.
+    files: ['**/*.test.ts'],
+    rules: { 'prefer-const': ['error', { destructuring: 'all' }] },
+  },
+  {
     files: ['src/sw/sw.ts'],
     languageOptions: { globals: { ...globals.serviceworker } },
   },

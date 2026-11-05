@@ -1,6 +1,6 @@
 // Library: what can be placed on the plan. Data lives in the repository, under the same license as the code.
 
-export type Category = 'drums' | 'guitar' | 'amp' | 'keys' | 'strings' | 'winds' | 'vocals' | 'pa' | 'monitor' | 'desk' | 'rack' | 'dj' | 'person' | 'furniture' | 'room' | 'control' | 'video' | 'light' | 'effect' | 'scenery';
+export type Category = 'drums' | 'guitar' | 'amp' | 'keys' | 'strings' | 'winds' | 'vocals' | 'pa' | 'monitor' | 'desk' | 'rack' | 'dj' | 'person' | 'furniture' | 'room' | 'control' | 'video' | 'light' | 'effect' | 'scenery' | 'power';
 
 /** The layer subject an element of this item belongs to by default. */
 export type LayerSubject = 'stage' | 'audio' | 'lights' | 'electrical' | 'control' | 'notes' | 'background' | 'custom';

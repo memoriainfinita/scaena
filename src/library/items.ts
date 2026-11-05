@@ -52,6 +52,7 @@ const DEFS: Def[] = [
   { id: 'furniture.flightcase', category: 'furniture', layer: 'stage', name: b('Flightcase', 'Flight case'), tags: ['flightcase', 'baúl'], w: 800, d: 600, h: 600, symbol: 'flightcase' },
   { id: 'furniture.lectern', category: 'furniture', layer: 'stage', name: b('Atril de conferencia', 'Lectern'), tags: ['atril', 'conferencia'], w: 700, d: 500, h: 1100, symbol: 'lectern', channels: [ch('Atril', 'sennheiser.e835', 'Cuello de cisne')] },
   { id: 'note.text', category: 'furniture', layer: 'notes', name: b('Nota de texto', 'Text note'), tags: ['texto', 'nota', 'text', 'note'], w: 2000, d: 400, h: 0, symbol: 'textbox' },
+  { id: 'power.outlet', category: 'power', layer: 'electrical', name: b('Toma de corriente', 'Power outlet'), tags: ['toma', 'enchufe', 'corriente', 'power', 'outlet'], w: 300, d: 300, h: 0, symbol: 'outlet' },
   { id: 'room.audience', category: 'room', layer: 'stage', name: b('Zona de público', 'Audience area'), tags: ['público', 'sala'], w: 8000, d: 6000, h: 0, symbol: 'audience' },
   { id: 'room.foh', category: 'room', layer: 'audio', name: b('Mesa de FOH', 'FOH position'), tags: ['foh', 'control'], w: 1500, d: 800, h: 1000, symbol: 'foh' },
   { id: 'room.access', category: 'room', layer: 'stage', name: b('Acceso', 'Access'), tags: ['acceso', 'puerta'], w: 1200, d: 300, h: 0, symbol: 'access' },

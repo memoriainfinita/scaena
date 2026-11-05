@@ -5,6 +5,7 @@ import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { regionByCode } from '../library/regions.ts';
 import { History } from '../model/history.ts';
+import { emptyLuminaire } from '../model/lights.ts';
 import { UnsupportedFormat } from '../model/migrate.ts';
 import { newShow } from '../model/new.ts';
 import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops.ts';
@@ -15,7 +16,7 @@ import { autosave, getLastShow, listShows, openLibrary, readShow, saveShow, setL
 
 export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'reports', 'document'];
-export type Dialog = 'settings' | 'export' | 'app' | 'help' | null;
+export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
 export interface Settings {
@@ -236,6 +237,7 @@ export function addFromLibrary(itemId: string): string | null {
       ...freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0),
       layerId: layer.id,
       computer: item.symbol === 'laptop' ? emptyComputer() : null,
+      luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
     });
     created = el;
     return next;

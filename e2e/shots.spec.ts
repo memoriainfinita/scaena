@@ -57,3 +57,40 @@ test('computer and connection', async ({ page }) => {
   await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
   await page.screenshot({ path: 'docs/design/img/paso-7-ordenador.png' });
 });
+
+for (const [name, tab] of [['instrumentos', 'Instrumentos'], ['electrica', 'Eléctrica'], ['seccion', 'Sección']] as const) {
+  test(`lights ${name}`, async ({ page }) => {
+    test.skip(step !== '8');
+    await page.setViewportSize({ width: 1440, height: 860 });
+    await page.goto('/');
+    await page.getByRole('button', { name: /Teatro con micros/ }).click();
+    await page.getByRole('button', { name: 'Luces', exact: true }).click();
+    for (const n of [1, 2, 3]) {
+      await page.getByLabel(`Modelo · Recorte ${n}`, { exact: true }).selectOption({ label: 'ETC Source Four 19°' });
+      await page.getByLabel(`Circuito · Recorte ${n}`, { exact: true }).fill(String(n === 3 ? 2 : 1));
+      await page.getByLabel(`Circuito · Recorte ${n}`, { exact: true }).press('Tab');
+    }
+    await page.getByRole('button', { name: 'Numerar instrumentos' }).click();
+    await page.getByRole('button', { name: tab, exact: true }).click();
+    await page.mouse.move(700, 800);
+    await page.screenshot({ path: `docs/design/img/paso-8-${name}.png` });
+  });
+}
+
+test('lights plan', async ({ page }) => {
+  test.skip(step !== '8');
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Teatro con micros/ }).click();
+  await page.mouse.move(700, 800);
+  await page.screenshot({ path: 'docs/design/img/paso-8-plano.png' });
+});
+
+test('issues dialog', async ({ page }) => {
+  test.skip(step !== '9');
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Teatro con micros/ }).click();
+  await page.getByRole('button', { name: /^Avisos/ }).click();
+  await page.screenshot({ path: 'docs/design/img/paso-9-avisos.png' });
+});

@@ -49,6 +49,8 @@ export const Luminaire = v.object({
   universe: v.optional(v.nullable(v.number()), null),
   address: v.optional(v.nullable(v.number()), null),
   color: text(40),
+  /** A library fixture model id when the user picked one; weight and power then start from it. */
+  modelId: v.optional(v.nullable(v.pipe(v.string(), v.maxLength(80))), null),
   accessories: v.optional(v.array(v.pipe(v.string(), v.maxLength(80))), []),
   focus: v.optional(v.nullable(Point), null),
   notes: text(),
