@@ -24,7 +24,7 @@ Potencia y amperios por circuito a la tensión de la región, el máximo de cada
 
 ![Sección lateral](../img/luces-seccion.png)
 
-Una vista lateral del escenario: de fondo a público en horizontal y la altura en vertical. Cada montaje está a su altura con sus instrumentos. Un montaje sin altura se dibuja en el suelo y se dice.
+Una vista lateral del escenario: de fondo a público en horizontal y la altura en vertical. Cada montaje está a su altura con sus instrumentos. Un montaje sin altura se dibuja en el suelo y se dice. La sección dibuja la tarima del escenario (su altura se fija en **Ajustes del montaje → Escenario**) y cada tarima o plataforma del plano con su propia altura; la altura de un montaje se mide desde la tarima. Selecciona una tarima o plataforma para poner su **altura sobre la tarima** en el inspector.
 
 ## Magic sheet
 

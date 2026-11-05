@@ -13,6 +13,7 @@ import { DocumentView } from './Document.tsx';
 import { ProductionView } from './Production.tsx';
 import { ReportsView } from './Reports.tsx';
 import { RackPanel } from './Rack.tsx';
+import { isLevel, levelHeight } from '../model/levels.ts';
 import { RACK_ITEM } from '../model/racks.ts';
 import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, LIBRARY_DRAG, PlanView } from './PlanView.tsx';
@@ -231,6 +232,7 @@ function Inspector({ show }: { show: Show }) {
               <NumberField label="X (m)" value={el.x / 1000} onCommit={(v) => setElementField(el.id, { x: Math.round(v * 1000) })} />
               <NumberField label="Y (m)" value={el.y / 1000} onCommit={(v) => setElementField(el.id, { y: Math.round(v * 1000) })} />
               <NumberField label={t('inspector.rotation')} value={el.rotation} step={5} onCommit={(v) => setElementField(el.id, { rotation: v })} />
+              {isLevel(el) && <NumberField label={t('inspector.height')} value={levelHeight(el) / 1000} step={0.1} onCommit={(v) => setElementField(el.id, { height: Math.max(0, Math.round(v * 1000)) })} />}
             </div>
           </div>
           {el.type.id === RACK_ITEM && <RackPanel el={el} />}

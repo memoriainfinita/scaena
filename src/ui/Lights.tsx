@@ -7,6 +7,7 @@ import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { FIXTURES, fixtureById } from '../library/models.ts';
+import { levels } from '../model/levels.ts';
 import { circuitLoads, defaultFocus, dimmerLoads, luminaires, magicPosition, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
 
@@ -522,7 +523,9 @@ function Section({ show }: { show: Show }) {
   const depth = sh.kind === 'rect' ? sh.depth : Math.max(...sh.points.map((p) => p.y));
   const mounts = mountList(show);
   const lum = luminaires(show);
-  const top = Math.max(4000, ...mounts.map((m) => m.heightMm)) + 800;
+  const deck = show.stage.height; // mount heights are measured from the stage deck
+  const raised = levels(show);
+  const top = deck + Math.max(4000, ...mounts.map((m) => m.heightMm), ...raised.map((l) => l.heightMm)) + 800;
   const W = 900;
   const H = 360;
   const pad = 50;
@@ -536,6 +539,20 @@ function Section({ show }: { show: Show }) {
       <h2 class="sect-h">{t('section.title')}</h2>
       <svg viewBox={`0 0 ${W} ${H}`} class="flowsvg" role="img" aria-label={t('section.alt', { n: mounts.length })}>
         <line x1={pad - 20} y1={Z(0)} x2={W - pad + 20} y2={Z(0)} class="fl main" />
+        {deck > 0 && <rect x={X(0)} y={Z(deck)} width={X(depth) - X(0)} height={Z(0) - Z(deck)} class="flbox desk" />}
+        {deck > 0 && (
+          <text x={X(depth / 2)} y={(Z(0) + Z(deck)) / 2 + 4} text-anchor="middle" class="fltext">
+            {t('section.deck')} · {formatNumber(deck / 1000, lang.value, 1)} m
+          </text>
+        )}
+        {raised.map((l) => (
+          <g key={l.element.id}>
+            <rect x={X(l.from)} y={Z(deck + l.heightMm)} width={Math.max(2, X(l.to) - X(l.from))} height={Math.max(1, Z(deck) - Z(deck + l.heightMm))} class="flbox desk" />
+            <text x={(X(l.from) + X(l.to)) / 2} y={Z(deck + l.heightMm) - 4} text-anchor="middle" class="fltext">
+              {formatNumber((deck + l.heightMm) / 1000, lang.value, 1)} m
+            </text>
+          </g>
+        ))}
         <text x={pad - 20} y={Z(0) + 18} class="fltext">
           {t('section.floor')}
         </text>
@@ -547,11 +564,11 @@ function Section({ show }: { show: Show }) {
         </text>
         {mounts.map((m) => {
           const x = X(mountY(m));
-          const z = Z(m.heightMm);
+          const z = Z(deck + m.heightMm);
           const here = lum.filter((e) => e.luminaire!.mountId === m.id);
           return (
             <g key={m.id}>
-              <line x1={x} y1={z} x2={x} y2={Z(0)} class="fl ret" />
+              <line x1={x} y1={z} x2={x} y2={Z(deck)} class="fl ret" />
               <rect x={x - 22} y={z - 3} width="44" height="6" class="flbox desk" />
               {here.map((e, i) => (
                 <circle key={e.id} cx={x - 18 + (i % 4) * 12} cy={z + 14 + Math.floor(i / 4) * 12} r="4.5" class="dot" />

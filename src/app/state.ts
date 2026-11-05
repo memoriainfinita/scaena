@@ -343,6 +343,8 @@ export interface ShowSettings {
   lang: Show['lang'];
   stageWidthM: number;
   stageDepthM: number;
+  /** Height of the stage deck above the hall floor, in metres. */
+  stageHeightM?: number;
   /** Free-form floor plan in metres; when it has three or more points the stage becomes a polygon, else a rectangle. */
   stagePolygonM?: { x: number; y: number }[] | null;
   /** Width of the proscenium opening in metres, or null for none (rectangular stage only). */
@@ -374,6 +376,7 @@ export function applyShowSettings(p: ShowSettings): void {
       stage: {
         ...show.stage,
         shape: stageShape(shape, p),
+        height: p.stageHeightM === undefined ? show.stage.height : Math.max(0, Math.round(p.stageHeightM * 1000)),
         referenceLines: p.referenceLines ?? show.stage.referenceLines,
       },
       view: p.gridMm ? { ...show.view, gridMm: Math.max(10, Math.round(p.gridMm)) } : show.view,

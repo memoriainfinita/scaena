@@ -16,7 +16,7 @@ Turn on the **Lights** module (the theatre package already has it). Six sections
 
 ![Side section](img/luces-seccion.png)
 
-**Section:** a side view, back to audience across and height up.
+**Section:** a side view, back to audience across and height up. It draws the stage deck (its height is set in **Show settings → Stage**) and every riser and platform on the plot with its own height; a mount's height is measured from the deck. Select a riser or platform to set its **height above the deck** in the inspector.
 
 **Magic sheet:** every instrument as a circle with its channel (and colour) where it hangs, for the board operator to find a channel by position. It starts from the plan positions, but it has its own arrangement: drag an instrument, or focus it and use the arrow keys (100 mm; **Shift** 500 mm; **Alt** 20 mm) to put it where the operator wants it. Moving instruments here never moves them on the plan. Once the sheet is arranged the hanging positions are no longer drawn; **Reset arrangement** goes back to the plan positions. The PDF uses the same arrangement.
 

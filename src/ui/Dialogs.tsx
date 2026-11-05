@@ -95,6 +95,7 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const [docLang, setDocLang] = useState(show.lang);
   const [w, setW] = useState((shape.kind === 'rect' ? shape.width : (bounds?.x ?? 8000)) / 1000);
   const [dpt, setD] = useState((shape.kind === 'rect' ? shape.depth : (bounds?.y ?? 5000)) / 1000);
+  const [stageH, setStageH] = useState(show.stage.height / 1000);
   const [freeForm, setFreeForm] = useState(shape.kind === 'polygon');
   const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${q.x / 1000}; ${q.y / 1000}`).join('\n'));
   const [proscenium, setProscenium] = useState(shape.kind === 'rect' && shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
@@ -105,7 +106,7 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const toggle = (m: Module) => setModules((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]));
   const apply = () => {
     const prosc = Number(proscenium.replace(',', '.'));
-    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs, gridMm });
+    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stageHeightM: stageH, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs, gridMm });
     onClose();
   };
   return (
@@ -162,6 +163,10 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
             </label>
           </div>
         )}
+        <label class="field">
+          {t('settings.stage.height')}
+          <input class="input mono" type="number" min="0" step="0.1" value={stageH} onChange={(e) => setStageH(Math.max(0, Number((e.currentTarget as HTMLInputElement).value) || 0))} />
+        </label>
         <div class="mods" role="group" aria-label={t('settings.refs')}>
           {(['center', 'plaster', 'proscenium'] as const).map((k) => (
             <label class="mod" key={k}>
