@@ -1,6 +1,6 @@
 # scaena
 
-Technical riders for live shows, in the browser: stage plot, input and output lists, light plot, one event's production sheets, reports and a PDF rider, all views of one model. Free, open source (GPL-3.0), no accounts and no servers: everything stays in your browser and in the files you save. Spanish and English.
+Technical riders for live shows, in the browser: stage plot, input and output lists, light plot, one event's production sheets, reports and a PDF rider, all views of one model. Free, open source (GPL-3.0), no accounts and no servers: everything stays in your browser and in the files you save. Spanish and English. **Live: https://memoriainfinita.github.io/scaena/**
 
 - **Plot:** a 2D plan with a library of 48 symbols drawn for it, alignment, groups, layers, measuring, text, a PDF or DXF venue plan as a calibrated background, and cables between elements.
 - **Sound:** input and output lists edited in place, stereo pairs, phantom power from the microphone's type, signal flow.
@@ -28,6 +28,7 @@ pnpm dev
 | `pnpm e2e:chrome` | The same tests in the installed Chrome, as a second opinion |
 | `node scripts/screenshots.mjs` | Regenerates the guide's screenshots |
 | `node scripts/perf.mjs firefox 300 1000 3000` | Measures the plan with many elements (see `docs/research/rendimiento-app-2026-11-05.md`) |
+| `node scripts/live-check.mjs` | Opens the published site, makes a PDF and makes it again offline |
 | `node scripts/licenses.mjs` | Regenerates `THIRD-PARTY-NOTICES.md` |
 | `node scripts/make-icons.mjs` | Regenerates the app icons |
 
