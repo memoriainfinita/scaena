@@ -5,6 +5,10 @@ import { goToIssue, issues, issueText } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { BackgroundDialog } from './Background.tsx';
+import { RevisionsDialog } from './Revisions.tsx';
+import { csvZipFile, baseName, planPdfFile, planPngFile, planSvgFile, riderPdfFile, saveFile, type OutFile } from '../export/exports.ts';
+import { saveAsTemplate } from '../app/library-actions.ts';
+import { inputsAsText } from '../reports/reports.ts';
 import { REGIONS, regionByCode } from '../library/regions.ts';
 import { Paper, type Module } from '../model/schema.ts';
 
@@ -18,6 +22,14 @@ export function Modal({ title, onClose, children, footer, menu = false }: { titl
     ref.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
     return () => opener?.focus?.();
   }, []);
+  // If the focus was lost (a button that was clicked is gone after an update), Escape must still close the dialog.
+  useEffect(() => {
+    const onDocKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !ref.current?.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener('keydown', onDocKey);
+    return () => document.removeEventListener('keydown', onDocKey);
+  }, [onClose]);
   const onKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.stopPropagation();
@@ -62,6 +74,7 @@ export function Dialogs() {
   if (d === 'help') return <HelpDialog onClose={close} />;
   if (d === 'issues' && session.value) return <IssuesDialog onClose={close} />;
   if (d === 'background' && session.value) return <BackgroundDialog onClose={close} />;
+  if (d === 'revisions' && session.value) return <RevisionsDialog onClose={close} />;
   return null;
 }
 
@@ -181,30 +194,86 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
 
 function ExportDialog({ onClose }: { onClose: () => void }) {
   const s = session.value!;
-  const download = () => {
-    const bytes = s.toFile();
-    const blob = new Blob([bytes.buffer as ArrayBuffer], { type: 'application/zip' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${s.show.value.name.replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '') || 'scaena'}.scaena`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    onClose();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState<string | null>(null);
+  const show = () => s.show.value;
+
+  const run = async (key: string, job: () => Promise<OutFile | null> | OutFile | null) => {
+    setBusy(key);
+    setError(null);
+    setDone(null);
+    try {
+      const f = await job();
+      if (f) {
+        saveFile(f);
+        setDone(f.name);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(null);
+    }
   };
+
+  const items: { key: string; label: Key; tip?: Key; job: () => Promise<OutFile | null> | OutFile | null }[] = [
+    { key: 'scaena', label: 'export.scaena', tip: 'export.scaena.tip', job: () => ({ name: `${baseName(show().name)}.scaena`, bytes: s.toFile(), mime: 'application/zip' }) },
+    { key: 'pdf', label: 'export.pdf', tip: 'export.pdf.tip', job: () => riderPdfFile(show(), s.allImages()) },
+    { key: 'planpdf', label: 'export.planpdf', job: () => planPdfFile(show(), s.allImages()) },
+    { key: 'svg', label: 'export.svg', job: () => planSvgFile(show(), s.allImages()) },
+    { key: 'png', label: 'export.png', job: () => planPngFile(show(), s.allImages()) },
+    { key: 'csv', label: 'export.csv', tip: 'export.csv.tip', job: () => csvZipFile(show()) },
+  ];
+
   return (
     <Modal title={t('export.title')} onClose={onClose} menu>
       <div style="display:flex;flex-direction:column;gap:2px;margin:-8px">
-        <button type="button" class="menu-item" onClick={download}>
-          <strong>{t('export.scaena')}</strong>
-          <span class="muted">{t('export.scaena.tip')}</span>
-        </button>
-        {(['export.pdf', 'export.plan', 'export.csv'] as const).map((k) => (
-          <button key={k} type="button" class="menu-item" disabled>
-            <strong>{t(k)}</strong>
-            <span>{t('export.soon')}</span>
+        {items.map((i) => (
+          <button key={i.key} type="button" class="menu-item" disabled={busy !== null} onClick={() => void run(i.key, i.job)}>
+            <strong>{t(i.label)}</strong>
+            <span class="muted">{busy === i.key ? t('export.working') : i.tip ? t(i.tip) : ''}</span>
           </button>
         ))}
+        <button
+          type="button"
+          class="menu-item"
+          disabled={busy !== null}
+          onClick={() => {
+            const text = inputsAsText(show());
+            void navigator.clipboard.writeText(text).then(
+              () => setDone(t('export.copied')),
+              () => setError(t('export.copyFailed')),
+            );
+          }}
+        >
+          <strong>{t('export.text')}</strong>
+          <span class="muted">{t('export.text.tip')}</span>
+        </button>
+        <button
+          type="button"
+          class="menu-item"
+          disabled={busy !== null || !s.canKeepRevisions}
+          onClick={() => {
+            void saveAsTemplate().then(
+              (ok) => (ok ? setDone(t('export.templateSaved')) : setError(t('export.noLibrary'))),
+              (e: unknown) => setError(e instanceof Error ? e.message : String(e)),
+            );
+          }}
+        >
+          <strong>{t('export.template')}</strong>
+          <span class="muted">{t('export.template.tip')}</span>
+        </button>
+        {done && (
+          <p role="status" style="margin:8px 12px 0">
+            {done}
+          </p>
+        )}
+        {error && (
+          <p class="warn" role="alert" style="margin:8px 12px 0">
+            <span aria-hidden="true">⚠ </span>
+            {error}
+          </p>
+        )}
         <p class="muted" style="margin:8px 12px 4px">
           {t('export.local')}
         </p>

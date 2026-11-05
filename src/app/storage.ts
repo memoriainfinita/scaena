@@ -12,8 +12,11 @@ export interface StoredShow {
   /** The show as saved; read through `loadShow` before use, since it may come from an older format. */
   data: unknown;
   images: Record<string, Uint8Array>;
+  /** A template is a show kept to start others from; a record without the field is a show. */
+  kind?: 'show' | 'template';
 }
 
+export type Kind = 'show' | 'template';
 export type Loaded = { ok: true; show: Show; images: Record<string, Uint8Array> } | { ok: false; error: string };
 
 const wrap = <T>(req: IDBRequest<T>): Promise<T> =>
@@ -36,14 +39,17 @@ export function openLibrary(): Promise<IDBDatabase> {
   });
 }
 
-export async function saveShow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}): Promise<void> {
-  const record: StoredShow = { id, name: show.name, updated: Date.now(), data: show, images };
+export async function saveShow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}, kind: Kind = 'show'): Promise<void> {
+  const record: StoredShow = { id, name: show.name, updated: Date.now(), data: show, images, kind };
   await wrap(db.transaction('shows', 'readwrite').objectStore('shows').put(record));
 }
 
-export async function listShows(db: IDBDatabase): Promise<{ id: string; name: string; updated: number }[]> {
+export async function listShows(db: IDBDatabase, kind: Kind = 'show'): Promise<{ id: string; name: string; updated: number }[]> {
   const all = (await wrap(db.transaction('shows').objectStore('shows').getAll())) as StoredShow[];
-  return all.map(({ id, name, updated }) => ({ id, name, updated })).sort((a, b) => b.updated - a.updated);
+  return all
+    .filter((r) => (r.kind ?? 'show') === kind)
+    .map(({ id, name, updated }) => ({ id, name, updated }))
+    .sort((a, b) => b.updated - a.updated);
 }
 
 /** Reads a show. A show this version cannot read comes back as an error and must never be overwritten. */

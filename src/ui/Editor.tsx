@@ -10,6 +10,7 @@ import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, I
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
 import { DocumentView } from './Document.tsx';
+import { ReportsView } from './Reports.tsx';
 import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
@@ -53,7 +54,7 @@ function TopBar() {
       <button type="button" class="btn icon" aria-label={t('top.redo')} title={`${t('top.redo')} (Ctrl+Mayús+Z)`} disabled={!s.canRedo.value} onClick={() => s.redo()}>
         <IconRedo />
       </button>
-      <button type="button" class="btn" disabled title={t('export.soon')}>
+      <button type="button" class="btn" onClick={() => (dialog.value = 'revisions')}>
         {t('top.revisions')}
       </button>
       <button type="button" class="btn" onClick={() => (dialog.value = 'issues')} aria-label={`${t('top.issues')} · ${t('issues.count', { n: issues.value.length })}`}>
@@ -146,6 +147,7 @@ function MainView({ show }: { show: Show }) {
   if (v === 'outputs') return <OutputsView show={show} />;
   if (v === 'lights') return <LightsView show={show} />;
   if (v === 'document') return <DocumentView show={show} />;
+  if (v === 'reports') return <ReportsView show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>
