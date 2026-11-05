@@ -53,6 +53,19 @@ DXF:
 - Muestras sintéticas, pequeñas y solo con vectores. No se ejercitó ninguna imagen incrustada (JPEG2000 y JBIG2 son los casos que piden `wasm-unsafe-eval`), ni PDF de varias páginas, ni PDF escaneados, ni DXF con bloques, capas, splines, hatching, espacio papel o dimensiones.
 - La CSP probada no incluye `wasm-unsafe-eval`; falta probar con ella cuando haya imágenes.
 - El análisis del DXF se midió en Node; el tiempo en el navegador no se midió.
-- Sin planos reales de salas ni PDF de teatros reales. [PENDIENTE: pedir al usuario uno de cada, o descargar uno público]
+- DXF real: ninguno todavía. [PENDIENTE: pedir uno al usuario]
+
+## Muestra real: plano de iluminación (2026-11-05)
+
+PDF aportado por el usuario («Salto o caída», plano genérico reducido): AutoCAD 2022, A3 apaisado (1191 × 842 pt), 6.114 trazos vectoriales, 4 imágenes, texto seleccionable. Copia en el banco: `samples/teatro.pdf` (el script acepta `PDF=ruta`). Misma CSP estricta, sin errores.
+
+| Medida | Firefox 155 | Chrome 156 |
+|---|---|---|
+| Abrir documento y página | 247 ms | 119 ms |
+| Render a 1600 px | 274 ms | 218 ms |
+| Render a 4000 px (segundo) | 138 ms | 43 ms |
+| Memoria JS | no disponible | 60 MB |
+
+Contenido útil para el diseño: vista cenital con varas, calles y suelo; cada aparato con canal, filtro y ángulo; leyenda con recuento por posición (varas, suelo, calles, sala); alturas de las calles; escala gráfica y cajetín; símbolos propios del autor, no USITT.
 - No se midió la memoria en Firefox ni con documentos grandes.
 - El puerto 4190 está bloqueado por Firefox (la navegación falla con «interrupted by another navigation»); usar otro puerto en los bancos.
