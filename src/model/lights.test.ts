@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { packageById } from '../library/packages.ts';
 import { showFromPackage } from '../library/apply.ts';
-import { addMount, autoNumber, circuitLoads, dimmerLoads, emptyLuminaire, luminaires, mountStats, phaseLoads, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, updateLuminaire, updateMount } from './lights.ts';
+import { addMount, autoNumber, beamDegrees, defaultFocus, circuitLoads, dimmerLoads, emptyLuminaire, luminaires, mountStats, phaseLoads, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, updateLuminaire, updateMount } from './lights.ts';
 import { newShow } from './new.ts';
 import { addElement } from './ops.ts';
 import type { Show } from './schema.ts';
@@ -69,6 +69,22 @@ describe('fixture models', () => {
     const s2 = setFixtureModel(s1, ids[0]!, { id: 'generic.pc-1k', weightKg: null, powerW: 1000 });
     expect(s2.elements[ids[0]!]).toMatchObject({ weightKg: 6.3, powerW: 1000 });
     expect(setFixtureModel(s2, ids[0]!, null).elements[ids[0]!]!.luminaire!.modelId).toBeNull();
+  });
+});
+
+describe('focus', () => {
+  test('the beam is the lens angle of the model, the widest of a range, or unknown', () => {
+    const [show, ids] = plot();
+    expect(beamDegrees(show.elements[ids[0]!]!)).toBeNull();
+    const s1 = setFixtureModel(show, ids[0]!, { id: 'etc.s4-19', weightKg: 6.3, powerW: 575 });
+    expect(beamDegrees(s1.elements[ids[0]!]!)).toBe(19);
+  });
+  test('a focus point is stored in the luminaire and starts in the middle of the stage', () => {
+    const [show, ids] = plot();
+    const p = defaultFocus(show);
+    expect(p).toEqual({ x: 4000, y: 2500 });
+    const s = updateLuminaire(show, ids[0]!, { focus: p });
+    expect(s.elements[ids[0]!]!.luminaire!.focus).toEqual(p);
   });
 });
 

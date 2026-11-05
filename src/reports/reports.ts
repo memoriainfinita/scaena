@@ -7,11 +7,11 @@ import { circuitLoads, dimmerLoads, luminaires } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 
-export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'inputs', 'outputs'] as const;
+export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'worknotes', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
 
 /** The module a report belongs to: it is offered only when that module is on. */
-export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', inputs: 'audio', outputs: 'audio' };
+export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', cheat: 'lights', worknotes: 'lights', inputs: 'audio', outputs: 'audio' };
 
 export interface ReportTable {
   id: ReportId;
@@ -82,6 +82,36 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       return [parts.join(' · '), name(e, lang)];
     });
     return { id, header: [D.note, D.element], rows };
+  }
+  if (id === 'equipment') {
+    // One row per model (or per generic type when no model is chosen), with the totals a rental list needs.
+    const groups = new Map<string, { label: string; els: PlanElement[] }>();
+    for (const e of lum) {
+      const key = e.luminaire!.modelId ?? `type:${e.type.id}`;
+      const label = model(e) || itemById(e.type.id)?.name[lang] || e.type.id;
+      const g = groups.get(key) ?? { label, els: [] };
+      g.els.push(e);
+      groups.set(key, g);
+    }
+    const sum = (els: PlanElement[], f: (e: PlanElement) => number | null) => els.reduce((a, e) => a + (f(e) ?? 0), 0);
+    const rows = [...groups.values()].sort((a, b) => b.els.length - a.els.length || a.label.localeCompare(b.label, lang)).map((g) => [g.label, String(g.els.length), num(sum(g.els, (e) => e.weightKg), 1), num(sum(g.els, (e) => e.powerW))]);
+    if (rows.length > 0) rows.push([D.total, String(lum.length), num(sum(lum, (e) => e.weightKg), 1), num(sum(lum, (e) => e.powerW))]);
+    return { id, header: [D.model, D.count, D.weight, D.power], rows };
+  }
+  if (id === 'cheat') {
+    // The one-page summary at the board: each channel with what it controls, where, and in which colour.
+    const byChannel = new Map<number, PlanElement[]>();
+    for (const e of lum) if (e.luminaire!.channel !== null) byChannel.set(e.luminaire!.channel, [...(byChannel.get(e.luminaire!.channel) ?? []), e]);
+    const rows = [...byChannel.entries()].sort((a, b) => a[0] - b[0]).map(([ch, els]) => {
+      const mounts = [...new Set(els.map(mount).filter(Boolean))].join(', ');
+      const colors = [...new Set(els.map((e) => e.luminaire!.color.trim()).filter(Boolean))].join(', ');
+      return [String(ch), String(els.length), [...new Set(els.map((e) => name(e, lang)))].join(', '), mounts, colors];
+    });
+    return { id, header: [D.channel, D.count, D.element, D.mount, D.color], rows };
+  }
+  if (id === 'worknotes') {
+    const rows = show.workNotes.map((n) => [n.text, n.done ? D.yes : D.no, n.refId && show.elements[n.refId] ? name(show.elements[n.refId], lang) : '']);
+    return { id, header: [D.task, D.done, D.element], rows };
   }
   if (id === 'inputs') {
     const rows = channelList(show).map((c) => {

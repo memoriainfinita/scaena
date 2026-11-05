@@ -1,12 +1,12 @@
 // Edits of the light plot: each one is a single undo step.
 import { signal } from '@preact/signals';
 import { fixtureById } from '../library/models.ts';
-import { addMount, autoNumber, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, setPhaseBreaker, updateLuminaire, updateMount } from '../model/lights.ts';
+import { addMount, addWorkNote, removeWorkNote, updateWorkNote, autoNumber, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, setPhaseBreaker, updateLuminaire, updateMount } from '../model/lights.ts';
 import { updateElement } from '../model/ops.ts';
 import type { Luminaire, Mount, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
-export type LightsTab = 'instruments' | 'mounts' | 'electrical' | 'section';
+export type LightsTab = 'instruments' | 'mounts' | 'electrical' | 'section' | 'worknotes';
 export const lightsTab = signal<LightsTab>('instruments');
 
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
@@ -14,6 +14,8 @@ const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 export const setLuminaire = (id: string, patch: Partial<Luminaire>): void => commit((show) => updateLuminaire(show, id, patch));
 export const setLuminaireModel = (id: string, modelId: string): void => commit((show) => setFixtureModel(show, id, modelId ? (fixtureById(modelId) ?? null) : null));
 export const setElementNumber = (id: string, field: 'weightKg' | 'powerW', value: number | null): void => commit((show) => (show.elements[id] ? updateElement(show, id, { [field]: value }) : show));
+/** Sets or clears where a luminaire points, in plan millimetres. */
+export const setFocusPoint = (id: string, p: { x: number; y: number } | null): void => commit((show) => updateLuminaire(show, id, { focus: p ? { x: Math.round(p.x / 10) * 10, y: Math.round(p.y / 10) * 10 } : null }));
 export const numberUnits = (): void => commit((show) => autoNumber(show));
 
 /** A new bar across the stage, a third of the way from the back; `name` is the already-translated default. */
@@ -40,3 +42,7 @@ export const setDimmerMaxW = (dimmer: number, maxW: number | null): void => comm
 export function selectElement(id: string): void {
   if (session.value?.show.peek().elements[id]) selection.value = [id];
 }
+
+export const addNote = (text: string, refId: string | null = null): void => commit((show) => addWorkNote(show, text, refId)[0]);
+export const setNote = (id: string, patch: Parameters<typeof updateWorkNote>[2]): void => commit((show) => updateWorkNote(show, id, patch));
+export const removeNote = (id: string): void => commit((show) => removeWorkNote(show, id));

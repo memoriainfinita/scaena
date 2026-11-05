@@ -1,6 +1,7 @@
 // Light plot data: luminaires, mounting positions, numbering and the electrical load derived from them.
+import { fixtureById } from '../library/models.ts';
 import { nextId } from './ids.ts';
-import type { Luminaire, Mount, PlanElement, Show } from './schema.ts';
+import type { Luminaire, Mount, PlanElement, Show, WorkNote } from './schema.ts';
 
 export const emptyLuminaire = (): Luminaire => ({ mountId: null, unit: null, channel: null, dimmer: null, circuit: null, universe: null, address: null, color: '', modelId: null, accessories: [], focus: null, notes: '' });
 
@@ -169,3 +170,29 @@ export function setPhaseBreaker(show: Show, phase: number, breakerA: number | nu
   const [id, s] = nextId(show, 'ph');
   return { ...s, electrical: { ...s.electrical, phases: [...s.electrical.phases, { id, name, breakerA }] } };
 }
+
+/** The lens angle of a luminaire in degrees (the widest of a range), or null when it has no known model. */
+export function beamDegrees(el: PlanElement): number | null {
+  const f = el.luminaire?.modelId ? fixtureById(el.luminaire.modelId) : undefined;
+  const nums = (f?.beam.match(/\d+(?:[.,]\d+)?/g) ?? []).map((x) => Number(x.replace(',', '.')));
+  return nums.length > 0 ? Math.max(...nums) : null;
+}
+
+/** Where a luminaire points by default when the user asks for a focus point: the middle of the stage. */
+export function defaultFocus(show: Show): { x: number; y: number } {
+  const sh = show.stage.shape;
+  return sh.kind === 'rect' ? { x: Math.round(sh.width / 2), y: Math.round(sh.depth / 2) } : { x: 0, y: 0 };
+}
+
+/** Work notes: the to-do list of the light plot (refocus this, swap that colour), optionally tied to an element. */
+export function addWorkNote(show: Show, text: string, refId: string | null = null): [Show, WorkNote] {
+  const [id, s] = nextId(show, 'wn');
+  const note: WorkNote = { id, text: text.slice(0, 2000), done: false, refId: refId && show.elements[refId] ? refId : null };
+  return [{ ...s, workNotes: [...s.workNotes, note] }, note];
+}
+
+export function updateWorkNote(show: Show, id: string, patch: Partial<Omit<WorkNote, 'id'>>): Show {
+  return { ...show, workNotes: show.workNotes.map((n) => (n.id === id ? { ...n, ...patch, text: patch.text === undefined ? n.text : patch.text.slice(0, 2000) } : n)) };
+}
+
+export const removeWorkNote = (show: Show, id: string): Show => ({ ...show, workNotes: show.workNotes.filter((n) => n.id !== id) });

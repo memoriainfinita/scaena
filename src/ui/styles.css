@@ -309,3 +309,7 @@ main.canvas:focus { outline: none; }
 .plansvg.gesture .hit { display: none; }
 .plansvg.gesture .moving .hit { display: inline; }
 .plansvg .simple { shape-rendering: optimizeSpeed; }
+.row { display: flex; align-items: flex-end; gap: 8px; }
+.notelist { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.notelist li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line, rgba(128, 128, 128, 0.25)); }
+.notelist li .mod { flex: 1; }

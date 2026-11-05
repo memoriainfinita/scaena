@@ -7,7 +7,7 @@ import { openLibrary } from '../app/storage.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { diffShows } from '../model/diff.ts';
-import { updateLuminaire } from '../model/lights.ts';
+import { addWorkNote, removeWorkNote, updateLuminaire, updateWorkNote } from '../model/lights.ts';
 import { availableReports, buildReport, inputsAsText, REPORT_IDS, toCsv, toTsv } from './reports.ts';
 import type { Show } from '../model/schema.ts';
 
@@ -55,6 +55,32 @@ describe('reports', () => {
     const e = Object.values(show.elements).find((x) => x.luminaire)!;
     show = updateLuminaire(show, e.id, { unit: 7, channel: 21, dimmer: 5, circuit: 9, color: 'R80' });
     expect(buildReport(show, 'labels').rows[0]![0]).toBe('U7 · Canal 21 · D5 · C9 · R80');
+  });
+
+  test('the equipment count has one row per model and a total, and the cheat sheet one per channel', () => {
+    let show = theatre();
+    const lights = Object.values(show.elements).filter((e) => e.luminaire);
+    show = updateLuminaire(show, lights[0]!.id, { channel: 5, modelId: 'etc.s4-19', color: 'R26' });
+    show = updateLuminaire(show, lights[1]!.id, { channel: 5, modelId: 'etc.s4-19' });
+    const eq = buildReport(show, 'equipment').rows;
+    expect(eq[eq.length - 1]![0]).toBe('Total');
+    expect(eq[eq.length - 1]![1]).toBe(String(lights.length));
+    expect(eq.find((r) => r[0] === 'ETC Source Four 19°')![1]).toBe('2');
+    const cheat = buildReport(show, 'cheat').rows;
+    expect(cheat).toHaveLength(1);
+    expect(cheat[0]).toMatchObject({ 0: '5', 1: '2', 4: 'R26' });
+  });
+
+  test('work notes list the task, whether it is done and the element it is tied to', () => {
+    let show = theatre();
+    const e = Object.values(show.elements).find((x) => x.luminaire)!;
+    [show] = addWorkNote(show, 'Reenfocar', e.id);
+    show = updateWorkNote(show, show.workNotes[0]!.id, { done: true });
+    const rows = buildReport(show, 'worknotes').rows;
+    expect(rows).toEqual([['Reenfocar', 'Sí', expect.any(String)]]);
+    expect(rows[0]![2]).not.toBe('');
+    expect(removeWorkNote(show, show.workNotes[0]!.id).workNotes).toEqual([]);
+    expect(addWorkNote(show, 'x', 'no-such')[1].refId).toBeNull();
   });
 
   test('the input list as text', () => {
