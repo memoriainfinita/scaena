@@ -21,12 +21,22 @@ export function Editor() {
   const s = session.value!;
   return (
     <div class="editor">
+      <button
+        type="button"
+        class="skip"
+        onClick={() => {
+          const target = document.querySelector<HTMLElement>('main.canvas g.el[data-id][tabindex="0"], main.canvas [data-first-focus]') ?? document.querySelector<HTMLElement>('main.canvas');
+          target?.focus();
+        }}
+      >
+        {t('skip.canvas')}
+      </button>
       <TopBar />
       <Tabs show={s.show.value} />
       <div class="body">
         <Toolbar />
         <Library />
-        <main class="canvas" aria-label={t('canvas.label')}>
+        <main class="canvas" aria-label={t('canvas.label')} tabIndex={-1}>
           <MainView show={s.show.value} />
         </main>
         <Inspector show={s.show.value} />
@@ -61,7 +71,7 @@ function TopBar() {
       <button type="button" class="btn icon" aria-label={t('top.undo')} title={`${t('top.undo')} (Ctrl+Z)`} disabled={!s.canUndo.value} onClick={() => s.undo()}>
         <IconUndo />
       </button>
-      <button type="button" class="btn icon" aria-label={t('top.redo')} title={`${t('top.redo')} (Ctrl+Mayús+Z)`} disabled={!s.canRedo.value} onClick={() => s.redo()}>
+      <button type="button" class="btn icon" aria-label={t('top.redo')} title={`${t('top.redo')} (Ctrl+${t('key.shift')}+Z)`} disabled={!s.canRedo.value} onClick={() => s.redo()}>
         <IconRedo />
       </button>
       <button type="button" class="btn desk-only" onClick={() => (dialog.value = 'revisions')}>

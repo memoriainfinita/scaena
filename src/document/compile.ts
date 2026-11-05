@@ -1,6 +1,5 @@
 // The page's side of the Typst worker: one compile at a time, the worker recycled every RECYCLE compilations,
 // and the finished PDF fixed up so it opens with its title and keeps its tab order.
-import { PDFBool, PDFDict, PDFDocument, PDFName } from 'pdf-lib';
 import type { WorkerReply, WorkerRequest } from './typst.worker.ts';
 
 export const RECYCLE = 50;
@@ -76,6 +75,8 @@ export function compilePdf(source: string, files: Record<string, Uint8Array> = {
 
 /** Typst does not write DisplayDocTitle or /Tabs; both are needed for a PDF that reads well with assistive technology. */
 export async function fixPdf(bytes: Uint8Array): Promise<Uint8Array> {
+  // pdf-lib weighs about 400 KB: it loads when the first PDF is made, not with the app.
+  const { PDFBool, PDFDict, PDFDocument, PDFName } = await import('pdf-lib');
   const doc = await PDFDocument.load(bytes, { updateMetadata: false });
   const root = doc.catalog;
   let prefs = root.lookup(PDFName.of('ViewerPreferences'), PDFDict);

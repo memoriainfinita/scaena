@@ -50,7 +50,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const rows = [...lum]
       .sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit) || a.id.localeCompare(b.id, 'en', { numeric: true }))
       .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes]);
-    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, 'Univ.', 'Dir.', D.color, D.weight, D.power, D.note], rows };
+    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.color, D.weight, D.power, D.note], rows };
   }
   if (id === 'circuits') {
     const rows = circuitLoads(show).map((c) => [String(c.circuit), String(c.count), unitList(lum.filter((e) => e.luminaire!.circuit === c.circuit)), num(c.powerW), num(c.amps, 2), c.phase === null ? '' : `L${c.phase}`]);
