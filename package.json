@@ -10,12 +10,14 @@
     "dev": "vite",
     "build": "pnpm typecheck && vite build",
     "preview": "vite preview --port 4184 --strictPort",
-    "typecheck": "tsc",
+    "typecheck": "tsc && tsc -p tsconfig.sw.json",
     "lint": "eslint .",
     "test": "vitest run",
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@preact/signals": "2.11.3",
     "fflate": "0.8.3",
     "preact": "11.0.1",

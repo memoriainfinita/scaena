@@ -1,0 +1,11 @@
+{
+  "name": "scaena",
+  "short_name": "scaena",
+  "description": "Technical riders for live shows: stage plot, input list, light plot and PDF",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14171b",
+  "theme_color": "#0b6e78",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
