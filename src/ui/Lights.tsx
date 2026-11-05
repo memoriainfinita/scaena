@@ -1,5 +1,6 @@
 // The light plot lists: instruments, mounts, electrical load and the side section.
 import { useState } from 'preact/hooks';
+import { magicSheet } from '../document/magic-svg.ts';
 import { addNote, lightsTab, removeNote, setNote, numberUnits, selectElement, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
@@ -64,7 +65,7 @@ function MountSelect({ show, el, label, cls = 'input cell' }: { show: Show; el: 
 
 export function LightsView({ show }: { show: Show }) {
   const tab = lightsTab.value;
-  const tabs: LightsTab[] = ['instruments', 'mounts', 'electrical', 'section', 'worknotes'];
+  const tabs: LightsTab[] = ['instruments', 'mounts', 'electrical', 'section', 'magic', 'worknotes'];
   return (
     <div class="scroll">
       <nav class="subtabs" aria-label={t('lights.tabs')}>
@@ -78,6 +79,7 @@ export function LightsView({ show }: { show: Show }) {
       {tab === 'mounts' && <Mounts show={show} />}
       {tab === 'electrical' && <Electrical show={show} />}
       {tab === 'section' && <Section show={show} />}
+      {tab === 'magic' && <MagicSheetView show={show} />}
       {tab === 'worknotes' && <WorkNotes show={show} />}
     </div>
   );
@@ -390,6 +392,18 @@ function Electrical({ show }: { show: Show }) {
 }
 
 /** Side view: depth along the horizontal axis (back to audience), height up. Heights of 0 are drawn on the floor. */
+function MagicSheetView({ show }: { show: Show }) {
+  const sheet = magicSheet(show);
+  return (
+    <section class="pad" aria-labelledby="ms-title">
+      <h2 id="ms-title" class="sect-h">
+        {t('magic.title')}
+      </h2>
+      {sheet ? <div class="magic" role="img" aria-label={t('magic.alt', { n: sheet.count })} dangerouslySetInnerHTML={{ __html: sheet.svg }} /> : <p class="muted">{t('magic.empty')}</p>}
+    </section>
+  );
+}
+
 function WorkNotes({ show }: { show: Show }) {
   const [text, setText] = useState('');
   const sel = selection.value[0];

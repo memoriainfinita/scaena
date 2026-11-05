@@ -6,7 +6,7 @@ import { updateElement } from '../model/ops.ts';
 import type { Luminaire, Mount, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
-export type LightsTab = 'instruments' | 'mounts' | 'electrical' | 'section' | 'worknotes';
+export type LightsTab = 'instruments' | 'mounts' | 'electrical' | 'section' | 'magic' | 'worknotes';
 export const lightsTab = signal<LightsTab>('instruments');
 
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);

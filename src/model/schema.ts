@@ -195,7 +195,7 @@ export const Contract = v.object({
 /** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */

@@ -29,7 +29,7 @@ describe('sections', () => {
   });
 
   test('the light reports come in on their own with the Lights module and something to list', () => {
-    expect(effectiveSections(theatre())).toEqual(expect.arrayContaining(['lights', 'electrical']));
+    expect(effectiveSections(theatre())).toEqual(expect.arrayContaining(['lights', 'rigging', 'magic', 'electrical']));
     const noLights = { ...rock(), modules: ['audio' as const, 'document' as const] };
     expect(effectiveSections(noLights)).not.toContain('lights');
   });

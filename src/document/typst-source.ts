@@ -6,7 +6,9 @@ import { channelList, outputList } from '../model/audio.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
+import { magicSheet } from './magic-svg.ts';
 import { planSvg } from './plan-svg.ts';
+import { buildReport } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
 import { docStrings, prodStrings, type DocStrings } from './strings.ts';
@@ -196,6 +198,22 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
         }));
       }
       parts.push(md + '\n');
+    } else if (s === 'rigging') {
+      const rows = buildReport(show, 'rigging').rows;
+      parts.push(heading(D.rigging) + c.table(D.rigging, [{ fr: 1.2 }, { mm: 9 }, { mm: 14 }, { fr: 1.2 }, { fr: 1.4 }, { mm: 15 }, { fr: 0.8 }, { mm: 17 }, { mm: 17 }], [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows) + '\n');
+    } else if (s === 'magic') {
+      const sheet = magicSheet(show, show.lang);
+      if (sheet) {
+        const flipped = paper.h > paper.w;
+        const availW = flipped ? paper.h - 2 * MARGIN : paper.w - 2 * MARGIN;
+        const availH = (flipped ? paper.w : paper.h) - 2 * MARGIN - 14 - 10;
+        const width = Math.min(availW, availH * sheet.aspect);
+        files['/magic.svg'] = new TextEncoder().encode(sheet.svg);
+        parts.push(`#page(flipped: ${flipped})[
+${heading(D.magic)}#align(center)[#image("/magic.svg", width: ${width.toFixed(2)}mm, alt: ${lit(`${D.magic}: ${sheet.count}`)})]
+]
+`);
+      }
     } else if (s === 'electrical') {
       const kv: [string, string][] = [
         [D.voltage, `${show.region.voltage} V`],

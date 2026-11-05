@@ -3,15 +3,15 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
-import { circuitLoads, dimmerLoads, luminaires } from '../model/lights.ts';
+import { circuitLoads, dimmerLoads, luminaires, riggingPlan } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 
-export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'worknotes', 'inputs', 'outputs'] as const;
+export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'worknotes', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
 
 /** The module a report belongs to: it is offered only when that module is on. */
-export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', cheat: 'lights', worknotes: 'lights', inputs: 'audio', outputs: 'audio' };
+export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', cheat: 'lights', worknotes: 'lights', inputs: 'audio', outputs: 'audio' };
 
 export interface ReportTable {
   id: ReportId;
@@ -108,6 +108,15 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       return [String(ch), String(els.length), [...new Set(els.map((e) => name(e, lang)))].join(', '), mounts, colors];
     });
     return { id, header: [D.channel, D.count, D.element, D.mount, D.color], rows };
+  }
+  if (id === 'rigging') {
+    const rows: string[][] = [];
+    for (const g of riggingPlan(show)) {
+      const mname = g.mount?.name ?? D.none;
+      g.lights.forEach((e, i) => rows.push([mname, String(i + 1), num(e.luminaire!.unit), name(e, lang), model(e), num(e.luminaire!.channel), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW)]));
+      rows.push([mname, '', '', D.total, '', '', '', num(g.weightKg, 1), num(g.powerW)]);
+    }
+    return { id, header: [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows };
   }
   if (id === 'worknotes') {
     const rows = show.workNotes.map((n) => [n.text, n.done ? D.yes : D.no, n.refId && show.elements[n.refId] ? name(show.elements[n.refId], lang) : '']);
