@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (not yet published)
+## 0.1.0 (published 2026-11-05)
 
 First complete version.
 
