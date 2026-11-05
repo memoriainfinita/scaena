@@ -2,7 +2,7 @@
 
 ## Exportar
 
-![El menú Exportar](img/exportar.png)
+![El menú Exportar](../img/exportar.png)
 
 | Opción | Qué da |
 |---|---|
@@ -20,7 +20,7 @@ Los CSV se abren bien en Excel (llevan marca de codificación) y cualquier celda
 
 ## Revisiones
 
-![Revisiones](img/revisiones.png)
+![Revisiones](../img/revisiones.png)
 
 Una **revisión** es una copia del montaje en un momento dado, guardada en este navegador. **Guardar revisión** sube el número, anota la fecha y tu nota, y calcula qué cambió desde la anterior (elementos añadidos, quitados o movidos, canales, salidas, montajes…).
 

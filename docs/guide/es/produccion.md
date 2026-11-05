@@ -2,13 +2,13 @@
 
 Activa el módulo **Producción** en Ajustes del montaje.
 
-![Activar el módulo en los ajustes del montaje](img/ajustes-montaje.png)
+![Activar el módulo en los ajustes del montaje](../img/ajustes-montaje.png)
 
 Es para **un solo evento**. Si das varios conciertos, duplica el montaje desde la pantalla de inicio y cambia la fecha: cada uno tiene su propio rider.
 
 ## Horario del día y del montaje
 
-![Horario con los hitos habituales](img/produccion-horario.png)
+![Horario con los hitos habituales](../img/produccion-horario.png)
 
 Los botones **+ Carga, + Prueba de sonido, + Puertas…** añaden la fila con su nombre; tú pones la hora (`8:30` o `20:30`). Las filas se leen siempre por hora, y una hora con otro formato se marca y entra en los avisos. La pestaña **Montaje** es lo mismo para las llamadas de carga, focus y pruebas.
 
@@ -18,7 +18,7 @@ Título, comentario y duración (`4:30`, `4,5` minutos o `270 s`) con el total d
 
 ## Hospitalidad y contrato
 
-![Hospitalidad](img/produccion-hospitalidad.png)
+![Hospitalidad](../img/produccion-hospitalidad.png)
 
 Formularios con lo habitual de un rider: camerinos y sus condiciones, comidas y dietas, comida tras el show, bus stock, suministros, transporte, alojamiento y compensación en efectivo; y en el contrato, caché, anticipo, pago, cancelación, seguros, duración del show y personal. scaena solo lo guarda y lo imprime: no da consejo legal.
 

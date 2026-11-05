@@ -1,6 +1,6 @@
 # Móvil y sin conexión
 
-![El plano en el móvil](img/movil-plano.png)
+![El plano en el móvil](../img/movil-plano.png)
 
 En una pantalla estrecha el editor se reorganiza:
 
@@ -9,7 +9,7 @@ En una pantalla estrecha el editor se reorganiza:
 - La **biblioteca** y el **inspector** son hojas que suben desde abajo con los botones flotantes. «Cerrar el panel» las baja.
 - Lo que no cabe en la barra superior (revisiones, avisos, ajustes y exportar) está en el menú «⋯».
 
-![La biblioteca como hoja](img/movil-biblioteca.png)
+![La biblioteca como hoja](../img/movil-biblioteca.png)
 
 ## Instalarlo
 

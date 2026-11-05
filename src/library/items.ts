@@ -1,8 +1,9 @@
+import { MORE_DEFS } from './items-more.ts';
 import type { Bilingual, Category, LayerSubject, LibraryItem, SuggestedChannel } from './types.ts';
 
-const b = (es: string, en: string): Bilingual => ({ es, en });
+export const b = (es: string, en: string): Bilingual => ({ es, en });
 
-interface Def {
+export interface Def {
   id: string;
   category: Category;
   layer: LayerSubject;
@@ -17,7 +18,7 @@ interface Def {
   channels?: SuggestedChannel[];
 }
 
-const ch = (name: string, mic: string, stand: string, phantom = false): SuggestedChannel => ({ name, mic, stand, phantom });
+export const ch = (name: string, mic: string, stand: string, phantom = false): SuggestedChannel => ({ name, mic, stand, phantom });
 
 // Sizes are typical real dimensions in millimetres. Weight and power are left empty for generic types that
 // have no datasheet: the user fills them in, and the power report skips what is empty.
@@ -83,7 +84,7 @@ const LIGHT_DEFS: Def[] = [
   { id: 'effect.strobe', category: 'effect', layer: 'lights', name: b('Estroboscopio', 'Strobe'), tags: ['estrobo', 'strobe'], w: 450, d: 200, h: 150, symbol: 'strobe' },
 ];
 
-export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS].map((x) => ({
+export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS].map((x) => ({
   id: x.id,
   version: 1,
   category: x.category,

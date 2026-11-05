@@ -1,6 +1,6 @@
 # Los avisos
 
-![El panel de avisos](img/avisos.png)
+![El panel de avisos](../img/avisos.png)
 
 El botón **Avisos** de la barra superior muestra cuántos hay. Cada uno dice con palabras qué pasa y tiene un botón **Ir al aviso** que abre el sitio donde se arregla. **Los avisos nunca impiden exportar**: son ayuda, no un freno.
 

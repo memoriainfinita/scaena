@@ -15,15 +15,15 @@ test('creates a rock show, edits it, undoes, and the editor has no violations @a
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await expect(page.getByText('17 canales')).toBeVisible();
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
 
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Inspector' })).toBeVisible();
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Rehacer' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
 
   // Library search, with accents ignored.
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('bateria');
@@ -83,9 +83,9 @@ test('keyboard shortcuts: ? opens help, Ctrl+Z undoes', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await page.keyboard.press('Control+z');
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
   await page.keyboard.press('?');
   await expect(page.getByRole('dialog', { name: 'Atajos de teclado' })).toBeVisible();
 });

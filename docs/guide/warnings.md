@@ -1,6 +1,6 @@
 # Warnings
 
-![Warnings panel](../img/avisos.png)
+![Warnings panel](img/avisos.png)
 
 The **Warnings** button shows how many there are. Each says in words what is wrong and has **Go to the warning**. **Warnings never stop you from exporting.**
 

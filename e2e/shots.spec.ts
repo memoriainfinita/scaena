@@ -13,7 +13,7 @@ for (const theme of ['light', 'dark'] as const) {
     await page.getByRole('combobox', { name: /^Tema/ }).selectOption(theme);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: /Banda de rock/ }).click();
-    await expect(page.getByText('14 elementos')).toBeVisible();
+    await expect(page.getByText('16 elementos')).toBeVisible();
     await page.keyboard.press('Control+a');
     await page.mouse.move(700, 400);
     await page.screenshot({ path: `docs/design/img/paso-${step}-plano-${theme}.png` });

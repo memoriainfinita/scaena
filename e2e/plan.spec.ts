@@ -6,7 +6,7 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 async function rock(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
   await expect(page.locator('g.el').first()).toBeVisible();
 }
 
@@ -44,9 +44,9 @@ test('a marquee selects what it touches and Escape lets go', async ({ page }) =>
   await page.mouse.down();
   await page.mouse.move(area.x + area.width - 4, area.y + area.height - 4, { steps: 8 });
   await page.mouse.up();
-  await expect(page.getByText('14 seleccionados')).toBeVisible();
+  await expect(page.getByText('16 seleccionados')).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByText('14 seleccionados')).toHaveCount(0);
+  await expect(page.getByText('16 seleccionados')).toHaveCount(0);
 });
 
 test('keyboard: arrows move, R turns, Ctrl+D duplicates, Delete removes', async ({ page }) => {
@@ -61,11 +61,11 @@ test('keyboard: arrows move, R turns, Ctrl+D duplicates, Delete removes', async 
   await page.keyboard.press('r');
   await expect(page.getByLabel('Giro')).toHaveValue('15');
   await page.keyboard.press('Control+d');
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await page.keyboard.press('Delete');
-  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.getByText('16 elementos')).toBeVisible();
   await page.keyboard.press('Control+z');
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
 });
 
 test('the wheel zooms about the cursor and 0 fits the plan again', async ({ page }) => {
@@ -110,7 +110,7 @@ test('measure shows a distance and text places a note ready to type', async ({ p
 
   await page.getByRole('button', { name: 'Texto', exact: true }).click();
   await page.mouse.click(area.x + 300, area.y + 300);
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   const label = page.getByLabel('Etiqueta');
   await expect(label).toBeFocused();
   await label.fill('Bajar el telón');
@@ -147,7 +147,7 @@ test('an item dragged from the library lands where it is dropped, and the other 
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('atril');
   const item = page.getByRole('button', { name: /^Añadir Atril de conferencia al plano/ });
   await item.dragTo(page.locator('svg.plansvg'), { targetPosition: { x: area.width * 0.25, y: area.height * 0.25 } });
-  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByText('17 elementos')).toBeVisible();
   await expect(page.getByLabel('X (m)')).toBeVisible();
   const x = Number(await page.getByLabel('X (m)').inputValue());
   expect(x).toBeLessThan(4); // dropped in the left part of an 8 m stage

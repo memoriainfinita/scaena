@@ -2,6 +2,13 @@
 
 Technical riders for live shows, in the browser: stage plot, input and output lists, light plot, one event's production sheets, reports and a PDF rider, all views of one model. Free, open source (GPL-3.0), no accounts and no servers: everything stays in your browser and in the files you save. Spanish and English. **Live: https://memoriainfinita.github.io/scaena/**
 
+![The stage plot of a rock band, with the library on the left and the inspector on the right](docs/img/plot.png)
+
+| | |
+|---|---|
+| ![Input list](docs/img/inputs.png) | ![Light plot lists](docs/img/lights.png) |
+| ![The rider PDF, previewed](docs/img/document.png) | ![Start screen with the show packages](docs/img/start.png) |
+
 - **Plot:** a 2D plan with a library of 48 symbols drawn for it, alignment, groups, layers, measuring, text, a PDF or DXF venue plan as a calibrated background, and cables between elements.
 - **Sound:** input and output lists edited in place, stereo pairs, phantom power from the microphone's type, signal flow.
 - **Lights:** instruments with a model catalogue (weights and power from datasheets, estimates marked), mounts with height and load, circuits, dimmers and phases, side section.
@@ -10,7 +17,7 @@ Technical riders for live shows, in the browser: stage plot, input and output li
 - **Rider PDF:** compiled in the browser with Typst, tagged, with the plot at a print scale. Plus CSV, SVG, PNG, revisions with comparison and an update sheet.
 - **Warnings** (18 rules) that never block exporting; works on a phone; installable; works offline.
 
-[User guide](docs/guide/README.md) (Spanish) · [English guide](docs/guide/en/README.md) · [Documentation](docs/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
+[User guide](docs/guide/README.md) · [Guía en español](docs/guide/es/README.md) · [Documentation](docs/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
 
 ## Develop
 
@@ -26,7 +33,8 @@ pnpm dev
 | `pnpm build` | Production build into `dist/` |
 | `pnpm e2e` | Browser tests in Firefox (desktop, light theme, and a phone-sized window); needs `pnpm build` first |
 | `pnpm e2e:chrome` | The same tests in the installed Chrome, as a second opinion |
-| `node scripts/screenshots.mjs` | Regenerates the guide's screenshots |
+| `node scripts/screenshots.mjs` | Regenerates the guide screenshots (Spanish interface) |
+| `node scripts/readme-shots.mjs` | Regenerates the English screenshots of this README |
 | `node scripts/perf.mjs firefox 300 1000 3000` | Measures the plan with many elements (see `docs/research/rendimiento-app-2026-11-05.md`) |
 | `node scripts/live-sweep.mjs` | Passes every package, view and language of the published site and reports console errors, failed requests and leaked text |
 | `node scripts/live-check.mjs` | Opens the published site, makes a PDF and makes it again offline |
@@ -37,4 +45,4 @@ The code is organised by what it does: `src/model` (the data and its pure operat
 
 ## Publishing
 
-The workflow in `.github/workflows/ci.yml` lints, tests, builds, runs the browser tests and checks the structure of a generated PDF; on a push to `main` it deploys `dist/` to GitHub Pages. See `docs/publicar.md`.
+The workflow in `.github/workflows/ci.yml` lints, tests, builds, runs the browser tests and checks the structure of a generated PDF; on a push to `main` it deploys `dist/` to GitHub Pages. See `docs/publishing.md`.

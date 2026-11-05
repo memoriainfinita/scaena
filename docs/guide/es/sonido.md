@@ -2,7 +2,7 @@
 
 ## La lista de entradas
 
-![La lista de entradas](img/entradas.png)
+![La lista de entradas](../img/entradas.png)
 
 Cada fila es un canal. Se edita en la propia tabla; cada cambio se confirma al salir de la celda y se puede deshacer.
 
@@ -13,7 +13,7 @@ Cada fila es un canal. Se edita en la propia tabla; cada cambio se confirma al s
 
 ## Las salidas y el flujo de señal
 
-![Salidas y flujo de señal](img/salidas.png)
+![Salidas y flujo de señal](../img/salidas.png)
 
 Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. Debajo, el **flujo de señal**: las fuentes agrupadas por elemento, la mesa (escribe su modelo) y las salidas. Cada línea lleva su nombre escrito y un trazo distinto: el color nunca va solo.
 
