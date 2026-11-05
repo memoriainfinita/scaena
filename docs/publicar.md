@@ -14,6 +14,8 @@ Estado a 2026-11-05: **publicado** en https://memoriainfinita.github.io/scaena/ 
 
 `node scripts/live-check.mjs` (Firefox, silenciado): abre un montaje, genera el PDF y lo genera otra vez sin conexión. El 2026-11-05: primer PDF en 4,4 s, sin conexión en 2,4 s, sin errores de consola. El compilador (`typst/0.7.0/compiler.wasm`, 28,3 MB) se sirve como `application/wasm` con `Cache-Control: max-age=600`.
 
+Además, `node scripts/live-sweep.mjs` recorre los 7 paquetes en español e inglés con todas sus vistas: sin errores de consola, sin peticiones fallidas ni textos de un idioma en el otro (2026-11-05). `node scripts/live-look.mjs` saca capturas para mirarlas. El repositorio tiene descripción, enlace a la web y temas, y no contiene datos personales (los commits van con el correo anónimo de GitHub).
+
 ## Incidencias del primer despliegue
 
 - La primera ejecución de la CI falló en una prueba de móvil que usaba el toque de Playwright: en Firefox de Linux no genera los mismos eventos de puntero. Ahora la prueba envía los eventos directamente.

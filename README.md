@@ -28,6 +28,7 @@ pnpm dev
 | `pnpm e2e:chrome` | The same tests in the installed Chrome, as a second opinion |
 | `node scripts/screenshots.mjs` | Regenerates the guide's screenshots |
 | `node scripts/perf.mjs firefox 300 1000 3000` | Measures the plan with many elements (see `docs/research/rendimiento-app-2026-11-05.md`) |
+| `node scripts/live-sweep.mjs` | Passes every package, view and language of the published site and reports console errors, failed requests and leaked text |
 | `node scripts/live-check.mjs` | Opens the published site, makes a PDF and makes it again offline |
 | `node scripts/licenses.mjs` | Regenerates `THIRD-PARTY-NOTICES.md` |
 | `node scripts/make-icons.mjs` | Regenerates the app icons |
