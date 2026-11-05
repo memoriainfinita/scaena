@@ -1,6 +1,7 @@
 name: ci
 # Changes to documentation alone run nothing: none of it is part of the site.
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths-ignore: ['**.md', 'docs/**']
