@@ -74,6 +74,19 @@ export const AUDIO: AudioModel[] = [
 export const audioById = (id: string): AudioModel | undefined => AUDIO.find((a) => a.id === id);
 export const fixtureById = (id: string): FixtureModel | undefined => FIXTURES.find((f) => f.id === id);
 
+/** What the user reads: "Shure SM57". Free text that is not a model id is shown as it is. */
+export const audioLabel = (value: string): string => {
+  const m = audioById(value);
+  return m ? `${m.brand} ${m.model}` : value;
+};
+
+/** The model id for a label the user picked or typed ("shure sm57"), or the text itself when it is no known model. */
+export function audioFromLabel(text: string): string {
+  const q = text.trim().toLowerCase();
+  const m = AUDIO.find((a) => a.id === q || `${a.brand} ${a.model}`.toLowerCase() === q);
+  return m ? m.id : text.trim();
+}
+
 /** Phantom power follows the microphone type; a DI follows its own model; unknown models say nothing. */
 export function needsPhantom(modelId: string): boolean | null {
   const m = audioById(modelId);
