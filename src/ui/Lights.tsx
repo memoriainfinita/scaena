@@ -1,11 +1,12 @@
 // The light plot lists: instruments, mounts, electrical load and the side section.
-import { lightsTab, numberUnits, selectElement, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { useState } from 'preact/hooks';
+import { addNote, lightsTab, removeNote, setNote, numberUnits, selectElement, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { FIXTURES, fixtureById } from '../library/models.ts';
-import { circuitLoads, dimmerLoads, luminaires, mountList, mountStats, phaseLoads } from '../model/lights.ts';
+import { circuitLoads, defaultFocus, dimmerLoads, luminaires, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
 
 const name = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
@@ -63,7 +64,7 @@ function MountSelect({ show, el, label, cls = 'input cell' }: { show: Show; el: 
 
 export function LightsView({ show }: { show: Show }) {
   const tab = lightsTab.value;
-  const tabs: LightsTab[] = ['instruments', 'mounts', 'electrical', 'section'];
+  const tabs: LightsTab[] = ['instruments', 'mounts', 'electrical', 'section', 'worknotes'];
   return (
     <div class="scroll">
       <nav class="subtabs" aria-label={t('lights.tabs')}>
@@ -77,6 +78,7 @@ export function LightsView({ show }: { show: Show }) {
       {tab === 'mounts' && <Mounts show={show} />}
       {tab === 'electrical' && <Electrical show={show} />}
       {tab === 'section' && <Section show={show} />}
+      {tab === 'worknotes' && <WorkNotes show={show} />}
     </div>
   );
 }
@@ -388,6 +390,57 @@ function Electrical({ show }: { show: Show }) {
 }
 
 /** Side view: depth along the horizontal axis (back to audience), height up. Heights of 0 are drawn on the floor. */
+function WorkNotes({ show }: { show: Show }) {
+  const [text, setText] = useState('');
+  const sel = selection.value[0];
+  const selected = sel && show.elements[sel] ? show.elements[sel] : undefined;
+  const add = (e: Event) => {
+    e.preventDefault();
+    if (!text.trim()) return;
+    addNote(text.trim(), selected?.luminaire ? selected.id : null);
+    setText('');
+  };
+  return (
+    <section aria-labelledby="wn-title" class="pad">
+      <h2 id="wn-title" class="sect-h">
+        {t('worknotes.title')}
+      </h2>
+      <form class="row" onSubmit={add}>
+        <label class="field grow">
+          {t('worknotes.new')}
+          <input class="input" value={text} maxLength={2000} onInput={(e) => setText((e.currentTarget as HTMLInputElement).value)} />
+        </label>
+        <button type="submit" class="btn primary" disabled={!text.trim()}>
+          {t('worknotes.add')}
+        </button>
+      </form>
+      {selected?.luminaire && <p class="muted">{t('worknotes.tie', { name: name(selected) })}</p>}
+      {show.workNotes.length === 0 ? (
+        <p class="muted">{t('worknotes.empty')}</p>
+      ) : (
+        <ul class="notelist">
+          {show.workNotes.map((n) => (
+            <li key={n.id}>
+              <label class="mod">
+                <input type="checkbox" checked={n.done} onChange={() => setNote(n.id, { done: !n.done })} aria-label={t('worknotes.done', { text: n.text })} />
+                <span style={n.done ? 'text-decoration:line-through' : undefined}>{n.text}</span>
+              </label>
+              {n.refId && show.elements[n.refId] && (
+                <button type="button" class="chipbtn" onClick={() => selectElement(n.refId!)}>
+                  {name(show.elements[n.refId]!)}
+                </button>
+              )}
+              <button type="button" class="btn" aria-label={t('worknotes.remove', { text: n.text })} onClick={() => removeNote(n.id)}>
+                {t('worknotes.removeShort')}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 function Section({ show }: { show: Show }) {
   const sh = show.stage.shape;
   const depth = sh.kind === 'rect' ? sh.depth : Math.max(...sh.points.map((p) => p.y));
@@ -480,6 +533,28 @@ export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
           <NumCell value={el.powerW} label={t('table.power')} onCommit={(v) => setElementNumber(el.id, 'powerW', v)} />
         </label>
       </div>
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend>{t('focus.title')}</legend>
+        {l.focus ? (
+          <div class="grid2">
+            <label class="field">
+              X (m)
+              <NumCell value={l.focus.x} scale={1000} step={0.1} min={-1000} label={`${t('focus.title')} X (m)`} onCommit={(v) => setFocusPoint(el.id, { x: v ?? 0, y: l.focus!.y })} />
+            </label>
+            <label class="field">
+              Y (m)
+              <NumCell value={l.focus.y} scale={1000} step={0.1} min={-1000} label={`${t('focus.title')} Y (m)`} onCommit={(v) => setFocusPoint(el.id, { x: l.focus!.x, y: v ?? 0 })} />
+            </label>
+            <button type="button" class="btn" onClick={() => setFocusPoint(el.id, null)}>
+              {t('focus.clear')}
+            </button>
+          </div>
+        ) : (
+          <button type="button" class="btn" onClick={() => setFocusPoint(el.id, defaultFocus(show))}>
+            {t('focus.set')}
+          </button>
+        )}
+      </fieldset>
       <label class="field">
         {t('table.color')}
         <input class="input" value={l.color} maxLength={40} onChange={(e) => setLuminaire(el.id, { color: (e.currentTarget as HTMLInputElement).value })} />

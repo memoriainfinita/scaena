@@ -3,6 +3,8 @@
 import { batch, effect, signal, useComputed, useSignal, type Signal } from '@preact/signals';
 import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { setFocusPoint } from '../app/lights-actions.ts';
+import { beamDegrees } from '../model/lights.ts';
 import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
@@ -267,6 +269,62 @@ function Overlays({ cam, marquee, measure, units, link, cursor }: { cam: Signal<
             </>
           );
         })()}
+    </g>
+  );
+}
+
+/** Where the selected luminaires point: a dashed line to the focus point, the beam as a wedge, and a handle to drag. */
+function FocusOverlay({ show, ids, world }: { show: Show; ids: string[]; world: (e: { clientX: number; clientY: number }) => Pt }) {
+  if (!(show.layers.find((l) => l.subject === 'lights')?.visible ?? true)) return null;
+  const list = ids.map((id) => show.elements[id]).filter((e): e is PlanElement => !!e?.luminaire?.focus);
+  if (list.length === 0) return null;
+  return (
+    <g>
+      {list.map((e) => {
+        const f = e.luminaire!.focus!;
+        const beam = beamDegrees(e);
+        const dx = f.x - e.x;
+        const dy = f.y - e.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const half = beam ? dist * Math.tan(((beam / 2) * Math.PI) / 180) : 0;
+        const nx = (-dy / dist) * half;
+        const ny = (dx / dist) * half;
+        const name = e.label || itemById(e.type.id)?.name[lang.value] || '';
+        return (
+          <g key={e.id}>
+            {beam && <polygon points={`${e.x},${e.y} ${f.x + nx},${f.y + ny} ${f.x - nx},${f.y - ny}`} fill="rgba(11,110,120,0.13)" stroke="#0b6e78" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none" aria-hidden="true" />}
+            <line x1={e.x} y1={e.y} x2={f.x} y2={f.y} stroke="#0b6e78" stroke-width="1.5" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" pointer-events="none" aria-hidden="true" />
+            <g
+              class="focus-handle"
+              tabindex={0}
+              role="button"
+              aria-label={t('focus.handle', { name })}
+              onPointerDown={(ev) => {
+                ev.stopPropagation();
+                (ev.currentTarget as Element).setPointerCapture?.(ev.pointerId);
+              }}
+              onPointerMove={(ev) => {
+                if (!(ev.buttons & 1)) return;
+                ev.stopPropagation();
+                const w = world(ev);
+                setFocusPoint(e.id, w);
+              }}
+              onKeyDown={(ev) => {
+                const step = ev.shiftKey ? 1000 : 100;
+                const d = ev.key === 'ArrowLeft' ? [-step, 0] : ev.key === 'ArrowRight' ? [step, 0] : ev.key === 'ArrowUp' ? [0, -step] : ev.key === 'ArrowDown' ? [0, step] : null;
+                if (!d) return;
+                ev.preventDefault();
+                ev.stopPropagation();
+                setFocusPoint(e.id, { x: f.x + d[0]!, y: f.y + d[1]! });
+              }}
+            >
+              <circle cx={f.x} cy={f.y} r={260} fill="transparent" />
+              <circle cx={f.x} cy={f.y} r={110} fill="#fff" stroke="#0b6e78" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+              <path d={`M${f.x - 200} ${f.y}H${f.x + 200}M${f.x} ${f.y - 200}V${f.y + 200}`} stroke="#0b6e78" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+            </g>
+          </g>
+        );
+      })}
     </g>
   );
 }
@@ -740,6 +798,7 @@ export function PlanView({ show }: { show: Show }) {
           <g class="moving" transform={dragT}>
             {moving}
           </g>
+          <FocusOverlay show={show} ids={selection.value} world={world} />
         </g>
         <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>

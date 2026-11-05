@@ -256,6 +256,7 @@ export type Luminaire = v.InferOutput<typeof Luminaire>;
 export type SignalType = v.InferOutput<typeof SignalType>;
 export type Module = v.InferOutput<typeof Module>;
 export type RevisionMeta = v.InferOutput<typeof RevisionMeta>;
+export type WorkNote = v.InferOutput<typeof WorkNote>;
 
 export const parseShow = (raw: unknown): Show => v.parse(Show, raw);
 export const safeParseShow = (raw: unknown) => v.safeParse(Show, raw);

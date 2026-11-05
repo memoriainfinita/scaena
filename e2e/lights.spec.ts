@@ -72,3 +72,46 @@ test('a new light from the library is an instrument, and the plan draws the bar'
   await page.getByRole('button', { name: 'Luces', exact: true }).click();
   await expect(page.getByLabel(/^Unidad · Fresnel/).first()).toBeVisible();
 });
+
+test('a focus point is set from the panel, moved with the keyboard and shown on the plan with its beam @a11y', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Plano', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('recorte');
+  await page.getByRole('button', { name: /Añadir Recorte/ }).first().click();
+  await page.getByRole('button', { name: 'Fijar punto de mira' }).click();
+  const handle = page.getByRole('button', { name: /^Punto de mira de/ });
+  await expect(handle).toBeVisible();
+  await expect(page.getByLabel('Punto de mira X (m)')).toHaveValue('4');
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByLabel('Punto de mira X (m)')).toHaveValue('4.1');
+  await page.keyboard.press('Control+z');
+  await expect(page.getByLabel('Punto de mira X (m)')).toHaveValue('4');
+  const b = (await handle.boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(b.x + b.width / 2 + 40, b.y + b.height / 2 + 20, { steps: 5 });
+  await page.mouse.up();
+  expect(Number(await page.getByLabel('Punto de mira X (m)').inputValue())).toBeGreaterThan(4.2);
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Quitar punto de mira' }).click();
+  await expect(handle).toHaveCount(0);
+});
+
+test('work notes are added, ticked off and removed, and the new reports are offered @a11y', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Notas', exact: true }).click();
+  await page.getByLabel('Nueva nota').fill('Reenfocar la calle 2');
+  await page.getByRole('button', { name: 'Añadir', exact: true }).click();
+  await expect(page.getByText('Reenfocar la calle 2')).toBeVisible();
+  await page.getByRole('checkbox', { name: /Marcar como hecha/ }).check();
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  for (const name of ['Recuento de equipo', 'Hoja resumen de canales', 'Notas de trabajo']) await expect(page.getByRole('button', { name })).toBeVisible();
+  await page.getByRole('button', { name: 'Notas de trabajo' }).click();
+  await expect(page.getByRole('table')).toContainText('Reenfocar la calle 2');
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await page.getByRole('button', { name: 'Notas', exact: true }).click();
+  await page.getByRole('button', { name: /Quitar nota/ }).click();
+  await expect(page.getByText('Aún no hay notas de trabajo.')).toBeVisible();
+});
