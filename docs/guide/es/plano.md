@@ -19,7 +19,7 @@ Busca en la biblioteca (sin importar los acentos) y pulsa el elemento: aparece e
 
 ![Medir entre dos puntos](../img/medir.png)
 
-La herramienta **Medir** da la distancia entre dos puntos (en metros, o en pies si el montaje es imperial). La medida no se guarda. La herramienta **Texto** coloca una nota y deja la etiqueta lista para escribir.
+La herramienta **Medir** da la distancia entre dos puntos (en metros, o en pies si el montaje es imperial). Tras medir, **Fijar como cota** la deja en el plano como una cota en la capa Anotaciones: lee su longitud, se mueve como cualquier elemento, sale en el PDF y se deshace. La herramienta **Texto** coloca una nota y deja la etiqueta lista para escribir.
 
 ## Un plano de la sala de fondo
 
@@ -31,6 +31,10 @@ Con la herramienta **Fondo PDF o DXF** importas el plano de la sala. El PDF se c
 2. Ajusta la **opacidad** y, si quieres, **bloquéalo**.
 
 El fondo se guarda dentro del archivo del montaje.
+
+## El escenario
+
+En **Ajustes del montaje → Escenario**: ancho y fondo, un **ancho de proscenio** opcional (vacío, sin proscenio; la línea se dibuja como dos paredes con la boca en medio) y las **líneas de referencia** que se muestran (eje central, línea de proscenio, boca del proscenio). Para un escenario de forma irregular, marca **Escenario de forma libre** y escribe los puntos, uno por línea como `x; y` en metros (al menos tres). Un escenario de forma libre no tiene líneas de referencia.
 
 ## Mover la vista
 

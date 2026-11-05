@@ -244,6 +244,8 @@ export const es = {
   'magic.title': 'Magic sheet',
   'magic.alt': 'Magic sheet: {n} instrumentos con su canal',
   'magic.empty': 'Aún no hay instrumentos.',
+  'magic.reset': 'Restablecer disposición',
+  'magic.item': 'Instrumento, canal {ch}',
   'rack.title': 'Rack',
   'rack.build': 'Montar el rack',
   'rack.units': 'Unidades del rack (U)',

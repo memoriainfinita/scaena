@@ -195,7 +195,18 @@ export function updateWorkNote(show: Show, id: string, patch: Partial<Omit<WorkN
   return { ...show, workNotes: show.workNotes.map((n) => (n.id === id ? { ...n, ...patch, text: patch.text === undefined ? n.text : patch.text.slice(0, 2000) } : n)) };
 }
 
-export const removeWorkNote = (show: Show, id: string): Show => ({ ...show, workNotes: show.workNotes.filter((n) => n.id !== id) });
+/** Where a luminaire sits on the magic sheet: its own position when the user has moved it, else its place on the plan. */
+export const magicPosition = (show: Show, e: PlanElement): { x: number; y: number } => show.magicLayout[e.id] ?? { x: e.x, y: e.y };
+
+/** Moves a luminaire on the magic sheet only, rounded to 10 mm; the plan is untouched. */
+export function setMagicPosition(show: Show, id: string, p: { x: number; y: number }): Show {
+  if (!show.elements[id]?.luminaire) return show;
+  return { ...show, magicLayout: { ...show.magicLayout, [id]: { x: Math.round(p.x / 10) * 10, y: Math.round(p.y / 10) * 10 } } };
+}
+
+export const resetMagicLayout = (show: Show): Show => (Object.keys(show.magicLayout).length === 0 ? show : { ...show, magicLayout: {} });
+
+export const removeWorkNote =(show: Show, id: string): Show => ({ ...show, workNotes: show.workNotes.filter((n) => n.id !== id) });
 
 export interface RiggingGroup {
   mount: Mount | null;
@@ -212,7 +223,9 @@ export function riggingPlan(show: Show): RiggingGroup[] {
   const loose = lum.filter((e) => !e.luminaire!.mountId || !show.mounts[e.luminaire!.mountId]);
   if (loose.length > 0) groups.push({ mount: null, lights: loose, weightKg: 0, powerW: 0 });
   for (const g of groups) {
-    g.lights.sort((a, b) => a.x - b.x || a.id.localeCompare(b.id, 'en', { numeric: true }));
+    // Left to right from the audience on a horizontal position; a side tower or boom runs along the other axis.
+    const vertical = g.mount !== null && Math.abs(g.mount.to.y - g.mount.from.y) > Math.abs(g.mount.to.x - g.mount.from.x);
+    g.lights.sort((a, b) => (vertical ? a.y - b.y || a.x - b.x : a.x - b.x || a.y - b.y) || a.id.localeCompare(b.id, 'en', { numeric: true }));
     g.weightKg = g.lights.reduce((a, e) => a + (e.weightKg ?? 0), 0);
     g.powerW = g.lights.reduce((a, e) => a + (e.powerW ?? 0), 0);
   }

@@ -1,6 +1,6 @@
 # Luces
 
-Activa el módulo **Luces** en Ajustes del montaje (el paquete de teatro ya lo trae). Aparece la vista Luces con cuatro secciones.
+Activa el módulo **Luces** en Ajustes del montaje (el paquete de teatro ya lo trae). Aparece la vista Luces con seis secciones (Instrumentos, Montajes, Eléctrica, Sección, Magic sheet y Notas).
 
 ## Instrumentos
 
@@ -26,6 +26,18 @@ Potencia y amperios por circuito a la tensión de la región, el máximo de cada
 
 Una vista lateral del escenario: de fondo a público en horizontal y la altura en vertical. Cada montaje está a su altura con sus instrumentos. Un montaje sin altura se dibuja en el suelo y se dice.
 
+## Magic sheet
+
+Cada instrumento es un círculo con su canal (y su color) donde cuelga, para que quien lleva la mesa encuentre un canal por su sitio. Parte de las posiciones del plano, pero tiene su propia disposición: arrastra un instrumento, o enfócalo y usa las flechas (100 mm; **Mayús** 500 mm; **Alt** 20 mm) para ponerlo donde lo quiera el operador. Moverlos aquí nunca los mueve en el plano. Con la hoja ya ordenada dejan de dibujarse las posiciones de colgado; **Restablecer disposición** vuelve a las posiciones del plano. El PDF usa la misma disposición.
+
+## Notas
+
+Notas de trabajo (una tarea, con enlace opcional al instrumento seleccionado) que se marcan como hechas y se quitan; también son un informe.
+
+## Punto de mira
+
+En el plano, selecciona un foco y pulsa **Fijar punto de mira**: aparece un tirador donde apunta y el plano dibuja el haz como una cuña. Arrastra el tirador o muévelo con las flechas; **Quitar punto de mira** lo borra. El informe de focos lee de ahí.
+
 ## Informes de luces
 
-En **Informes** tienes el hookup de canales, la lista de instrumentos, circuitos, dimmers, recuento de color, focos y etiquetas imprimibles. Ver [El PDF del rider](pdf.md) y [Entregar](entregar.md).
+En **Informes** tienes el hookup de canales, la lista de instrumentos, circuitos, dimmers, recuento de color, focos, etiquetas imprimibles, recuento de equipo, hoja resumen de canales, plan de varas y notas de trabajo. El **plan de varas** lista los instrumentos de cada montaje en orden de colgado (de izquierda a derecha desde el público; una torre lateral, a lo largo de su eje) con el peso y la potencia del montaje. Ver [El PDF del rider](pdf.md) y [Entregar](entregar.md).

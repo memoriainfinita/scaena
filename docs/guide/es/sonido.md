@@ -17,6 +17,10 @@ Cada fila es un canal. Se edita en la propia tabla; cada cambio se confirma al s
 
 Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. Debajo, el **flujo de señal**: las fuentes agrupadas por elemento, la mesa (escribe su modelo) y las salidas. Cada línea lleva su nombre escrito y un trazo distinto: el color nunca va solo.
 
+## Racks
+
+Añade un **Rack** desde la biblioteca y pulsa **Montar el rack** en su panel: fija sus unidades (U), añade equipos con su altura y súbelos o bájalos. Avisa cuando sobran equipos y el rack aparece en los informes y como sección del documento.
+
 ## Cosas que avisan
 
 Canales sin nombre o sin micro, pares mal empezados, cuñas dibujadas que nadie pide (o al revés), monitores desordenados. Ver [Los avisos](avisos.md).

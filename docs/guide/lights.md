@@ -1,6 +1,6 @@
 # Lights
 
-Turn on the **Lights** module (the theatre package already has it). Four sections:
+Turn on the **Lights** module (the theatre package already has it). Six sections (Instruments, Mounts, Electrical, Section, Magic sheet and Notes):
 
 ![Instruments](img/luces-instrumentos.png)
 
@@ -18,4 +18,10 @@ Turn on the **Lights** module (the theatre package already has it). Four section
 
 **Section:** a side view, back to audience across and height up.
 
-The lighting reports (hookup, instrument schedule, circuits, dimmers, colour count, focus chart, labels) are in **Reports**.
+**Magic sheet:** every instrument as a circle with its channel (and colour) where it hangs, for the board operator to find a channel by position. It starts from the plan positions, but it has its own arrangement: drag an instrument, or focus it and use the arrow keys (100 mm; **Shift** 500 mm; **Alt** 20 mm) to put it where the operator wants it. Moving instruments here never moves them on the plan. Once the sheet is arranged the hanging positions are no longer drawn; **Reset arrangement** goes back to the plan positions. The PDF uses the same arrangement.
+
+**Notes:** work notes (a task, optionally tied to the selected instrument) that can be ticked off and removed; they are also a report.
+
+**Focus point:** on the plot, select a light and press **Set focus point**: a handle appears where it points and the plan draws the beam as a wedge. Drag the handle, or move it with the arrow keys; **Clear focus point** removes it. The focus chart reads from it.
+
+The lighting reports (hookup, instrument schedule, circuits, dimmers, colour count, focus chart, labels, equipment count, channel cheat sheet, hanging plot and work notes) are in **Reports**. The **hanging plot** lists each mount's instruments in hanging order (left to right from the audience; a side tower along its own axis) with the weight and power of the mount.

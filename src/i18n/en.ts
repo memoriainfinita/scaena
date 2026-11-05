@@ -240,6 +240,8 @@ export const en: Messages = {
   'magic.title': 'Magic sheet',
   'magic.alt': 'Magic sheet: {n} instruments with their channel',
   'magic.empty': 'There are no instruments yet.',
+  'magic.reset': 'Reset arrangement',
+  'magic.item': 'Instrument, channel {ch}',
   'rack.title': 'Rack',
   'rack.build': 'Build the rack',
   'rack.units': 'Rack units (U)',
