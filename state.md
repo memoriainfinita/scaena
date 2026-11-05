@@ -82,7 +82,9 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - [x] Ids secuenciales con `tipo@versión` y reciclado del worker de Typst cada 50 compilaciones: confirmados el 2026-11-02
 - [x] Sección 4 de la guía USITT 2025 leída el 2026-11-02 (`docs/research/usitt-2025-seccion4.md`); quedan sin leer sus subsecciones 4.5 a 4.7 y las propuestas para Conexión de señal, pendientes de aceptar
 - Conectores de teatro (`docs/research/conectores-teatro.md`) y cifras de inalámbricos Shure y Sennheiser y del DL32 (`docs/research/audio-modelos.md`) hechos el 2026-11-02; faltan medidas de X32, M32 y DL16
-- [ ] Sin medir todavía: `main` de typst.ts (reevaluar cuando salga versión con `evictCache`), la caché del `.wasm` en Pages con https real, pdf.js y el parser DXF de verdad, memoria y Chrome en el SVG
+- Medido el 2026-11-05 (`docs/research/svg-chrome-memoria.md`, Chrome 156): el arrastre va bien, pero el zoom del plano completo es peor que en Firefox (con 1000 elementos y las técnicas aceptadas, 18 fps frente a 35); a 3000 sin técnicas, 1,3 fps. Memoria JS sin problema (17 MB con 3000). Lo aceptado para Firefox no vale tal cual en Chrome para el zoom; en el plan por pasos probar un detalle más agresivo mientras dura el gesto de zoom
+- Medido el 2026-11-05 (`docs/research/importar-pdf-dxf.md`, muestras sintéticas): pdf.js funciona con CSP estricta sin `wasm-unsafe-eval` en Firefox 155 y Chrome 156 (worker de 308 a 376 KB comprimido, render de 32 a 139 ms); `dxf-parser` lee el DXF de muestra en 5 ms y el dibujo sobre canvas es trivial. Falta probar con planos reales, imágenes incrustadas y DXF con bloques o splines
+- [ ] Sin medir todavía: `main` de typst.ts (reevaluar cuando salga versión con `evictCache`), la caché del `.wasm` en Pages con https real, pdf.js y DXF con archivos reales, e ideas para el zoom en Chrome
 - [ ] Pasar un validador PDF/UA: veraPDF en CI sobre ubuntu-24.04 (el PDF de prueba falla por `DisplayDocTitle` y `/Tabs`)
 - [x] Modelo de datos y formato `.scaena`: `docs/design/modelo-2026-10-29.md`
 - [ ] Montar el lienzo de diseño en artifact (inicio, plano, tablas, documento, móvil; los dos temas; color y acento)
