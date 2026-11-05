@@ -12,7 +12,7 @@ export function addElement(show: Show, init: NewElement): [Show, PlanElement] {
   const [id, s] = nextId(show, 'e');
   const el: PlanElement = {
     z: 0, rotation: 0, flipX: false, flipY: false, width: null, depth: null, label: '', groupId: null,
-    suppliedBy: 'unset', notes: '', weightKg: null, powerW: null, computer: null, luminaire: null,
+    suppliedBy: 'unset', notes: '', weightKg: null, powerW: null, computer: null, luminaire: null, rack: null,
     ...init, id,
   };
   return [{ ...s, elements: { ...s.elements, [id]: el } }, el];

@@ -56,6 +56,10 @@ export const Luminaire = v.object({
   notes: text(),
 });
 
+export const RackSlot = v.object({ id, name: v.pipe(v.string(), v.maxLength(80)), u: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(20)) });
+/** A rack and what is mounted in it, from the top, in rack units. */
+export const Rack = v.object({ units: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(60)), slots: v.optional(v.array(RackSlot), []) });
+
 export const PlanElement = v.object({
   id,
   type: TypeRef,
@@ -76,6 +80,7 @@ export const PlanElement = v.object({
   powerW: v.optional(v.nullable(v.number()), null),
   computer: v.optional(v.nullable(Computer), null),
   luminaire: v.optional(v.nullable(Luminaire), null),
+  rack: v.optional(v.nullable(Rack), null),
 });
 
 export const InputChannel = v.object({
@@ -195,7 +200,7 @@ export const Contract = v.object({
 /** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */
@@ -256,6 +261,8 @@ export type Luminaire = v.InferOutput<typeof Luminaire>;
 export type SignalType = v.InferOutput<typeof SignalType>;
 export type Module = v.InferOutput<typeof Module>;
 export type RevisionMeta = v.InferOutput<typeof RevisionMeta>;
+export type Rack = v.InferOutput<typeof Rack>;
+export type RackSlot = v.InferOutput<typeof RackSlot>;
 export type WorkNote = v.InferOutput<typeof WorkNote>;
 
 export const parseShow = (raw: unknown): Show => v.parse(Show, raw);

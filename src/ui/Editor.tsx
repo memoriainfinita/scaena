@@ -12,6 +12,8 @@ import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
 import { DocumentView } from './Document.tsx';
 import { ProductionView } from './Production.tsx';
 import { ReportsView } from './Reports.tsx';
+import { RackPanel } from './Rack.tsx';
+import { RACK_ITEM } from '../model/racks.ts';
 import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
@@ -226,6 +228,7 @@ function Inspector({ show }: { show: Show }) {
               <NumberField label={t('inspector.rotation')} value={el.rotation} step={5} onCommit={(v) => setElementField(el.id, { rotation: v })} />
             </div>
           </div>
+          {el.type.id === RACK_ITEM && <RackPanel el={el} />}
           {el.computer && <ComputerPanel el={el} c={el.computer} />}
           {el.luminaire && <LuminairePanel el={el} show={show} />}
           <ConnectionsPanel show={show} el={el} />
