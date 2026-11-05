@@ -5,6 +5,8 @@ import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { regionByCode } from '../library/regions.ts';
 import { History } from '../model/history.ts';
+import { translatePackageText } from '../library/translate.ts';
+import { addChannel } from '../model/audio.ts';
 import { emptyLuminaire } from '../model/lights.ts';
 import { UnsupportedFormat } from '../model/migrate.ts';
 import { newShow } from '../model/new.ts';
@@ -22,10 +24,14 @@ export type Theme = 'auto' | 'light' | 'dark';
 export interface Settings {
   theme: Theme;
   lang: 'auto' | Lang;
+  /** What a new show starts with; each show can change them afterwards. */
+  units: Show['units'];
+  paper: Show['paper'];
+  region: string;
 }
 
 const SETTINGS_KEY = 'scaena:settings';
-const DEFAULT_SETTINGS: Settings = { theme: 'auto', lang: 'auto' };
+const DEFAULT_SETTINGS: Settings = { theme: 'auto', lang: 'auto', units: 'metric', paper: 'A4', region: 'ES' };
 
 function readSettings(): Settings {
   try {
@@ -33,6 +39,9 @@ function readSettings(): Settings {
     return {
       theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'auto',
       lang: raw.lang === 'es' || raw.lang === 'en' ? raw.lang : 'auto',
+      units: raw.units === 'imperial' ? 'imperial' : 'metric',
+      paper: raw.paper === 'A3' || raw.paper === 'Letter' || raw.paper === 'Tabloid' ? raw.paper : 'A4',
+      region: typeof raw.region === 'string' && regionByCode(raw.region) ? raw.region : 'ES',
     };
   } catch {
     return DEFAULT_SETTINGS;
@@ -198,11 +207,23 @@ function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {})
 export function startFromPackage(pkgId: string, name: string): void {
   const pkg = packageById(pkgId);
   if (!pkg) throw new Error(`unknown package ${pkgId}`);
-  open(showFromPackage(pkg, name, lang.value));
+  open(withDefaults(showFromPackage(pkg, name, lang.value)));
+}
+
+/** A new show starts with the units, paper and region chosen in the app settings. */
+function withDefaults(show: Show): Show {
+  const d = settings.value;
+  const region = regionByCode(d.region);
+  return {
+    ...show,
+    units: d.units,
+    paper: d.paper,
+    region: region && region.code !== show.region.code ? { code: region.code, voltage: region.voltage, plug: region.plugs.join(', ') } : show.region,
+  };
 }
 
 export function startEmpty(name: string, modules: Module[] = ['audio', 'document']): void {
-  open({ ...newShow(name, modules), lang: lang.value });
+  open(withDefaults({ ...newShow(name, modules), lang: lang.value }));
 }
 
 export function openFileBytes(bytes: Uint8Array): void {
@@ -263,7 +284,11 @@ export async function goHome(): Promise<void> {
 
 // ---- edits used by the shell ----
 
-export function addFromLibrary(itemId: string): string | null {
+/**
+ * Places a library item: where the user dropped it, or in the first free spot near the middle of the stage. An item that
+ * comes with suggested channels (a drum kit, a vocal mic) also adds them to the input list, tied to it, in the same undo step.
+ */
+export function addFromLibrary(itemId: string, at?: { x: number; y: number }): string | null {
   const s = session.value;
   const item = itemById(itemId);
   if (!s || !item) return null;
@@ -273,17 +298,28 @@ export function addFromLibrary(itemId: string): string | null {
     if (!layer) return show;
     const [next, el] = addElement(show, {
       type: { id: item.id, version: item.version },
-      ...freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0),
+      ...(at ? snapPoint(show, at) : freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0)),
       layerId: layer.id,
       computer: item.symbol === 'laptop' ? emptyComputer() : null,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
     });
     created = el;
-    return next;
+    let out = next;
+    if (show.modules.includes('audio')) {
+      for (const sc of item.suggestedChannels ?? []) {
+        [out] = addChannel(out, { shortName: translatePackageText(sc.name, show.lang).slice(0, 16), mic: translatePackageText(sc.mic, show.lang), stand: translatePackageText(sc.stand, show.lang), phantom: sc.phantom, sourceElementId: el.id });
+      }
+    }
+    return out;
   });
   const c = created as PlanElement | null;
   if (c) selection.value = [c.id];
   return c?.id ?? null;
+}
+
+function snapPoint(show: Show, p: { x: number; y: number }): { x: number; y: number } {
+  const step = show.view.grid ? show.view.gridMm : 10;
+  return { x: Math.round(p.x / step) * step, y: Math.round(p.y / step) * step };
 }
 
 export function setElementField(id: string, patch: Partial<Omit<PlanElement, 'id'>>): void {
@@ -312,6 +348,7 @@ export interface ShowSettings {
   /** Width of the proscenium opening in metres, or null for none (rectangular stage only). */
   prosceniumM?: number | null;
   referenceLines?: Show['stage']['referenceLines'];
+  gridMm?: number;
 }
 
 function stageShape(shape: Show['stage']['shape'], p: ShowSettings): Show['stage']['shape'] {
@@ -339,6 +376,7 @@ export function applyShowSettings(p: ShowSettings): void {
         shape: stageShape(shape, p),
         referenceLines: p.referenceLines ?? show.stage.referenceLines,
       },
+      view: p.gridMm ? { ...show.view, gridMm: Math.max(10, Math.round(p.gridMm)) } : show.view,
     };
   });
 }

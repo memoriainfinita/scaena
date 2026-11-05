@@ -16,7 +16,7 @@ const EN: Record<string, string> = {
   'Efectos L': 'Effects L', 'Efectos R': 'Effects R', 'Ordenador L': 'Computer L', 'Ordenador R': 'Computer R',
   // Stands, microphones that are text, and what programs are for
   'Pie corto': 'Short stand', Pinza: 'Clamp', 'Pie recto': 'Straight stand', 'Pie largo': 'Boom stand', 'Cuello de cisne': 'Gooseneck', 'Salida del ordenador': 'Computer output',
-  Reproducción: 'Playback', Diapositivas: 'Slides', 'Efectos y música': 'Effects and music', 'Vídeo en directo': 'Live video',
+  Multipar: 'Multicore', Inalámbrico: 'Wireless', 'Mesa de luces': 'Lighting desk', 'Rack de dimmers': 'Dimmer rack', Reproducción: 'Playback', Diapositivas: 'Slides', 'Efectos y música': 'Effects and music', 'Vídeo en directo': 'Live video',
 };
 
 /** `Voz 2` becomes `Vocal 2`: the base is translated and a trailing number stays. */

@@ -91,6 +91,33 @@ describe('editing', () => {
   });
 });
 
+describe('placing from the library', () => {
+  test('an item with suggested channels adds them to the input list in the same undo step', () => {
+    startEmpty('x');
+    const before = Object.keys(session.value!.show.value.channels).length;
+    const id = addFromLibrary('kit.drums5');
+    const show = session.value!.show.value;
+    const added = Object.values(show.channels).filter((c) => c.sourceElementId === id);
+    expect(added.length).toBeGreaterThan(3);
+    expect(Object.keys(show.channels)).toHaveLength(before + added.length);
+    session.value!.undo();
+    expect(session.value!.show.value.elements[id!]).toBeUndefined();
+    expect(Object.keys(session.value!.show.value.channels)).toHaveLength(before);
+  });
+  test('without the Audio module no channels are created', () => {
+    startEmpty('x');
+    session.value!.commit((s) => ({ ...s, modules: ['lights'] }));
+    addFromLibrary('kit.drums5');
+    expect(Object.keys(session.value!.show.value.channels)).toHaveLength(0);
+  });
+  test('an item dropped on the plan lands where it was dropped, on the grid', () => {
+    startEmpty('x');
+    const id = addFromLibrary('furniture.table', { x: 2130, y: 3860 });
+    const el = session.value!.show.value.elements[id!]!;
+    expect({ x: el.x, y: el.y }).toEqual({ x: 2000, y: 4000 });
+  });
+});
+
 describe('dimensions', () => {
   test('a measured distance becomes a dimension on the notes layer, readable and undoable', () => {
     startEmpty('x');

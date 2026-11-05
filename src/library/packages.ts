@@ -27,6 +27,8 @@ const rock: ShowPackage = {
     el('monitor.wedge', 5500, 4500, 'Cuña 4'), // 11
     el('rack.stagebox', 7400, 600, 'Stagebox'), // 12
     el('desk.digital', 4000, 7600, 'Mesa'), // 13
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 14
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 15
   ],
   channels: [
     ch('Bombo', 'shure.beta52a', 'Pie corto', false, 0),
@@ -47,7 +49,8 @@ const rock: ShowPackage = {
     ch('Voz 2', 'shure.sm58', 'Pie recto', false, 6),
     ch('Voz 3', 'shure.sm58', 'Pie recto', false, 7),
   ],
-  outputs: [8, 9, 10, 11].map((element) => ({ kind: 'wedge' as const, element })),
+  outputs: [...[8, 9, 10, 11].map((element) => ({ kind: 'wedge' as const, element })), { kind: 'main' as const, element: 14 }, { kind: 'main' as const, element: 15 }],
+  links: [{ from: 12, to: 13, signal: 'audio', connector: 'Multipar' }, { from: 13, to: 14, signal: 'audio' }, { from: 13, to: 15, signal: 'audio' }, ...[8, 9, 10, 11].map((to) => ({ from: 13, to, signal: 'audio' as const }))],
 };
 
 const jazz: ShowPackage = {
@@ -66,6 +69,9 @@ const jazz: ShowPackage = {
     el('monitor.wedge', 3300, 4500, 'Cuña 1'), // 7
     el('monitor.wedge', 4700, 4500, 'Cuña 2'), // 8
     el('desk.digital', 4000, 7600, 'Mesa'), // 9
+    el('rack.stagebox', 7400, 600, 'Stagebox'), // 10
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 11
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 12
   ],
   channels: [
     ch('Bombo', 'shure.beta52a', 'Pie corto', false, 0),
@@ -81,7 +87,8 @@ const jazz: ShowPackage = {
     ch('Viento 2', 'sennheiser.e906', 'Pie recto', false, 5),
     ch('Voz', 'shure.sm58', 'Pie recto', false, 6),
   ],
-  outputs: [7, 8].map((element) => ({ kind: 'wedge' as const, element })),
+  outputs: [...[7, 8].map((element) => ({ kind: 'wedge' as const, element })), { kind: 'main' as const, element: 11 }, { kind: 'main' as const, element: 12 }],
+  links: [{ from: 10, to: 9, signal: 'audio', connector: 'Multipar' }, { from: 9, to: 11, signal: 'audio' }, { from: 9, to: 12, signal: 'audio' }, { from: 9, to: 7, signal: 'audio' }, { from: 9, to: 8, signal: 'audio' }],
 };
 
 const singer: ShowPackage = {
@@ -96,9 +103,12 @@ const singer: ShowPackage = {
     el('vocals.mic-stand', 4600, 3300, 'Segunda voz'), // 3
     el('monitor.wedge', 4000, 4500, 'Cuña'), // 4
     el('desk.digital', 4000, 7600, 'Mesa'), // 5
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 6
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 7
   ],
   channels: [ch('Voz', 'shure.sm58', 'Pie recto', false, 0), ch('Guitarra DI', 'radial.jdi', '', false, 1), ch('Guitarra micro', 'shure.sm81', 'Pie recto', true, 1), ch('Segunda voz', 'shure.sm58', 'Pie recto', false, 3)],
-  outputs: [{ kind: 'wedge', element: 4 }],
+  outputs: [{ kind: 'wedge', element: 4 }, { kind: 'main', element: 6 }, { kind: 'main', element: 7 }],
+  links: [{ from: 5, to: 6, signal: 'audio' }, { from: 5, to: 7, signal: 'audio' }, { from: 5, to: 4, signal: 'audio' }],
 };
 
 const dj: ShowPackage = {
@@ -116,7 +126,8 @@ const dj: ShowPackage = {
     el('pa.sub', 6700, 4300, 'Sub derecho', { suppliedBy: 'venue' }), // 6
   ],
   channels: [ch('DJ L', 'Salida de mesa DJ', '', false, 0), ch('DJ R', 'Salida de mesa DJ', '', false, 0), ch('MC', 'shure.sm58', 'Pie recto', false, 2)],
-  outputs: [{ kind: 'main' }],
+  outputs: [{ kind: 'main', element: 3 }, { kind: 'main', element: 4 }],
+  links: [{ from: 1, to: 0, signal: 'audio', connector: 'USB' }, { from: 2, to: 0, signal: 'audio' }, { from: 0, to: 3, signal: 'audio' }, { from: 0, to: 4, signal: 'audio' }, { from: 3, to: 5, signal: 'audio', connector: 'Speakon' }, { from: 4, to: 6, signal: 'audio', connector: 'Speakon' }],
 };
 
 const conference: ShowPackage = {
@@ -132,6 +143,9 @@ const conference: ShowPackage = {
     el('video.screen', 4000, 300, 'Pantalla', { suppliedBy: 'venue' }), // 4
     el('video.projector', 4000, 7000, 'Proyector', { suppliedBy: 'venue' }), // 5
     el('control.laptop', 1600, 3800, 'Portátil de presentación', { suppliedBy: 'band', computer: { functions: ['video', 'sound'], os: 'windows', programs: [{ name: 'PowerPoint', use: 'Diapositivas' }] } }), // 6
+    el('desk.digital', 4000, 7600, 'Mesa'), // 7
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 8
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 9
   ],
   channels: [
     ch('Atril', 'sennheiser.e835', 'Cuello de cisne', false, 0),
@@ -144,7 +158,8 @@ const conference: ShowPackage = {
     ch('Portátil L', 'Salida del portátil', '', false, 6),
     ch('Portátil R', 'Salida del portátil', '', false, 6),
   ],
-  outputs: [{ kind: 'main' }],
+  outputs: [{ kind: 'main', element: 8 }, { kind: 'main', element: 9 }],
+  links: [{ from: 6, to: 5, signal: 'video', connector: 'HDMI' }, { from: 6, to: 7, signal: 'audio', connector: 'Jack' }, { from: 0, to: 7, signal: 'audio' }, { from: 2, to: 7, signal: 'audio', connector: 'Inalámbrico' }, { from: 3, to: 7, signal: 'audio', connector: 'Inalámbrico' }, { from: 7, to: 8, signal: 'audio' }, { from: 7, to: 9, signal: 'audio' }],
 };
 
 const theatre: ShowPackage = {
@@ -163,6 +178,11 @@ const theatre: ShowPackage = {
     el('light.ellipsoidal', 6500, 1500, 'Recorte 3'), // 14
     el('light.fresnel', 2000, 3000, 'Fresnel 1'), // 15
     el('light.fresnel', 6000, 3000, 'Fresnel 2'), // 16
+    el('desk.digital', 4000, 7600, 'Mesa'), // 17
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 18
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 19
+    el('control.lightdesk', 5600, 7600, 'Mesa de luces'), // 20
+    el('rack.dimmer', 7400, 700, 'Rack de dimmers'), // 21
   ],
   channels: [
     ...Array.from({ length: 8 }, (_, i) => ch(`Actor ${i + 1}`, 'sennheiser.ew-dx', '', false, i)),
@@ -171,7 +191,8 @@ const theatre: ShowPackage = {
     ch('Efectos L', 'Salida del ordenador', '', false, 11),
     ch('Efectos R', 'Salida del ordenador', '', false, 11),
   ],
-  outputs: [{ kind: 'main' }],
+  outputs: [{ kind: 'main', element: 18 }, { kind: 'main', element: 19 }],
+  links: [{ from: 11, to: 17, signal: 'audio', connector: 'Jack' }, { from: 17, to: 18, signal: 'audio' }, { from: 17, to: 19, signal: 'audio' }, { from: 20, to: 21, signal: 'lightControl', connector: 'DMX' }],
 };
 
 const av: ShowPackage = {
@@ -186,9 +207,13 @@ const av: ShowPackage = {
     el('control.laptop', 4400, 7400, 'Ordenador de vídeo', { suppliedBy: 'band', computer: { functions: ['video', 'sound'], os: 'windows', programs: [{ name: 'Resolume', use: 'Vídeo en directo' }] } }), // 3
     el('vocals.mic-stand', 3200, 3500, 'Micro 1'), // 4
     el('vocals.mic-stand', 4800, 3500, 'Micro 2'), // 5
+    el('desk.digital', 2600, 7600, 'Mesa'), // 6
+    el('pa.line', 500, 3800, 'PA izquierda', { suppliedBy: 'venue' }), // 7
+    el('pa.line', 7500, 3800, 'PA derecha', { suppliedBy: 'venue' }), // 8
   ],
   channels: [ch('Ordenador L', 'Salida del ordenador', '', false, 3), ch('Ordenador R', 'Salida del ordenador', '', false, 3), ch('Micro 1', 'shure.sm58', 'Pie recto', false, 4), ch('Micro 2', 'shure.sm58', 'Pie recto', false, 5)],
-  outputs: [{ kind: 'main' }],
+  outputs: [{ kind: 'main', element: 7 }, { kind: 'main', element: 8 }],
+  links: [{ from: 3, to: 2, signal: 'video', connector: 'HDMI' }, { from: 2, to: 1, signal: 'video', connector: 'HDMI' }, { from: 3, to: 6, signal: 'audio', connector: 'Jack' }, { from: 4, to: 6, signal: 'audio' }, { from: 5, to: 6, signal: 'audio' }, { from: 6, to: 7, signal: 'audio' }, { from: 6, to: 8, signal: 'audio' }],
 };
 
 export const PACKAGES: ShowPackage[] = [rock, jazz, singer, dj, conference, theatre, av];

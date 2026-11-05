@@ -60,6 +60,7 @@ export const setOutput = (id: string, patch: OutputPatch): void => commit((show)
 export const removeOutputRow = (id: string): void => commit((show) => removeOutput(show, id));
 export const moveOutputRow = (id: string, delta: -1 | 1): void => commit((show) => moveOutput(show, id, delta));
 
+export const setDeskShowFile = (file: string): void => commit((show) => ({ ...show, desk: { ...show.desk, showFile: file.slice(0, 120) } }));
 export const setDeskModel = (model: string): void => commit((show) => ({ ...show, desk: { ...show.desk, model: model.slice(0, 80) } }));
 
 /** Selects the plan element a row comes from, so the plan and the lists stay together. */

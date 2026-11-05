@@ -11,6 +11,7 @@ import { csvZipFile, baseName, daySheetFile, planPdfFile, planPngFile, planSvgFi
 import { saveAsTemplate } from '../app/library-actions.ts';
 import { inputsAsText } from '../reports/reports.ts';
 import { REGIONS, regionByCode } from '../library/regions.ts';
+import { appVersion } from '../app/version.ts';
 import { Paper, type Module } from '../model/schema.ts';
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -98,12 +99,13 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${q.x / 1000}; ${q.y / 1000}`).join('\n'));
   const [proscenium, setProscenium] = useState(shape.kind === 'rect' && shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
   const [refs, setRefs] = useState(show.stage.referenceLines);
+  const [gridMm, setGridMm] = useState(show.view.gridMm);
   const polygon = parsePolygon(polyText);
   const region = regionByCode(regionCode);
   const toggle = (m: Module) => setModules((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]));
   const apply = () => {
     const prosc = Number(proscenium.replace(',', '.'));
-    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs });
+    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs, gridMm });
     onClose();
   };
   return (
@@ -218,6 +220,10 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
             <option value="en">English</option>
           </select>
         </label>
+        <label class="field">
+          {t('settings.grid')}
+          <input class="input mono" type="number" min="10" step="50" value={gridMm} onChange={(e) => setGridMm(Math.max(10, Number((e.currentTarget as HTMLInputElement).value) || 500))} />
+        </label>
       </div>
     </Modal>
   );
@@ -306,9 +312,6 @@ function ExportDialog({ onClose }: { onClose: () => void }) {
             {error}
           </p>
         )}
-        <p class="muted" style="margin:8px 12px 4px">
-          {t('export.local')}
-        </p>
       </div>
     </Modal>
   );
@@ -336,6 +339,46 @@ function AppDialog({ onClose }: { onClose: () => void }) {
             <option value="en">English</option>
           </select>
         </label>
+      </div>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend style="font-weight:600;margin-bottom:8px">{t('app.defaults')}</legend>
+        <div class="grid2">
+          <label class="field">
+            {t('settings.units')}
+            <select class="input" value={cur.units} onChange={(e) => set({ units: (e.currentTarget as HTMLSelectElement).value as Settings['units'] })}>
+              <option value="metric">{t('settings.units.metric')}</option>
+              <option value="imperial">{t('settings.units.imperial')}</option>
+            </select>
+          </label>
+          <label class="field">
+            {t('settings.paper')}
+            <select class="input" value={cur.paper} onChange={(e) => set({ paper: (e.currentTarget as HTMLSelectElement).value as Settings['paper'] })}>
+              {Paper.options.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label class="field">
+            {t('settings.region')}
+            <select class="input" value={cur.region} onChange={(e) => set({ region: (e.currentTarget as HTMLSelectElement).value })}>
+              {REGIONS.map((r) => (
+                <option key={r.code} value={r.code}>
+                  {r.name[lang.value]}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </fieldset>
+      <div class="row">
+        <button type="button" class="btn" onClick={() => (dialog.value = 'help')}>
+          {t('app.shortcuts')}
+        </button>
+        <a class="btn" href="https://github.com/memoriainfinita/scaena" target="_blank" rel="noopener noreferrer">
+          {t('app.about', { version: appVersion() })}
+        </a>
       </div>
     </Modal>
   );

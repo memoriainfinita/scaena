@@ -1,3 +1,4 @@
+import { addConnection } from '../model/connections.ts';
 import { nextId } from '../model/ids.ts';
 import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
@@ -47,6 +48,12 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     [id, show] = nextId(show, 'out');
     outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, notes: '' };
   });
+  // Cables the package draws between its elements.
+  for (const link of pkg.links ?? []) {
+    const a = placed[link.from];
+    const b = placed[link.to];
+    if (a && b) [show] = addConnection(show, a.id, b.id, link.signal, link.connector === undefined ? undefined : translatePackageText(link.connector, lang));
+  }
   // Lights in a package hang from one bar across them, so the plot starts with a mounting position to edit.
   const lit = placed.filter((e) => e.luminaire);
   if (lit.length > 0) {

@@ -52,6 +52,8 @@ const SYMBOLS: Record<string, Draw> = {
   laptop: (w, d) => rect(0, 0, w, d * 0.6) + path(`M${w * 0.05} ${d * 0.6}L${w * 0.95} ${d * 0.6}L${w} ${d}L0 ${d}Z`, '#fff', 1.5),
   screen: (w, d) => rect(0, 0, w, d) + Array.from({ length: Math.max(2, Math.floor(w / 400)) }, (_, i) => line(w * ((i + 0.5) / Math.max(2, Math.floor(w / 400))), 0, w * ((i + 0.5) / Math.max(2, Math.floor(w / 400))) - d * 0.8, d, 1)).join('') + front(w, d),
   projector: (w, d) => rect(0, 0, w, d * 0.8) + circle(w / 2, d * 0.8, Math.min(w, d) * 0.18) + front(w, d),
+  lightDesk: (w, d) => rect(0, 0, w, d) + Array.from({ length: 8 }, (_, i) => line(w * (0.1 + i * 0.1), d * 0.3, w * (0.1 + i * 0.1), d * 0.85, 1.5) + rect(w * (0.07 + i * 0.1), d * (0.42 + (i % 3) * 0.12), w * 0.06, d * 0.1, '#000')).join('') + rect(w * 0.05, d * 0.08, w * 0.9, d * 0.14),
+  dimmerRack: (w, d) => rect(0, 0, w, d) + Array.from({ length: 4 }, (_, i) => rect(w * 0.12, d * (0.12 + i * 0.2), w * 0.76, d * 0.14)).join('') + path(`M${w * 0.2} ${d * 0.19}h${w * 0.2}M${w * 0.2} ${d * 0.39}h${w * 0.2}M${w * 0.2} ${d * 0.59}h${w * 0.2}M${w * 0.2} ${d * 0.79}h${w * 0.2}`, 'none', 2.5),
   videoMixer: (w, d) => rect(0, 0, w, d) + Array.from({ length: 4 }, (_, i) => rect(w * (0.1 + (i % 2) * 0.45), d * (0.12 + Math.floor(i / 2) * 0.42), w * 0.35, d * 0.32)).join(''),
   riser: (w, d) => rect(0, 0, w, d) + line(0, 0, w, d, 1) + line(w, 0, 0, d, 1),
   chair: (w, d) => rect(0, 0, w, d) + line(0, d * 0.15, w, d * 0.15, 4),

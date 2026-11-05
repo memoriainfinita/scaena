@@ -32,7 +32,6 @@ export function Start() {
           {t('app.name')}
         </span>
         <span class="grow" />
-        <span class="muted">{t('start.local')}</span>
         <button class="btn" type="button" onClick={() => (dialog.value = 'app')}>
           {t('top.app')}
         </button>
