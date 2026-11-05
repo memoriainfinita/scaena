@@ -2,7 +2,7 @@
 import { luminaires } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
 
-export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
+export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
 export type SectionId = (typeof ALL_SECTIONS)[number];
 
 export const TEMPLATES = ['concert', 'theatre', 'av', 'custom'] as const;
@@ -34,6 +34,7 @@ export function effectiveSections(show: Show): SectionId[] {
     list.add('magic');
     list.add('electrical');
   }
+  if (Object.values(show.elements).some((e) => e.rack && e.rack.slots.length > 0)) list.add('racks');
   if (!show.modules.includes('audio')) {
     list.delete('inputs');
     list.delete('outputs');

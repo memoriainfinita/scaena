@@ -80,3 +80,25 @@ test('outputs: add one and the signal flow draws sources, desk and outputs @a11y
   await expect(flow.getByText('Behringer X32')).toBeVisible();
   expect((await axe(page)).violations).toEqual([]);
 });
+
+test('a rack is built from its devices, flags too much gear and appears in the reports @a11y', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('rack');
+  await page.getByRole('button', { name: /^Añadir Rack al plano/ }).first().click();
+  await page.getByRole('button', { name: 'Montar el rack' }).click();
+  await page.getByLabel('Unidades del rack (U)').fill('3');
+  await page.getByLabel('Nuevo equipo').fill('Procesador');
+  await page.getByRole('button', { name: 'Añadir', exact: true }).click();
+  await page.getByLabel('Nuevo equipo').fill('Amplificador');
+  await page.getByLabel('U', { exact: true }).fill('3');
+  await page.getByRole('button', { name: 'Añadir', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Sobran equipos: 4 U en un rack de 3 U' })).toBeVisible();
+  await page.getByLabel('Unidades del rack (U)').fill('6');
+  await expect(page.getByRole('status').filter({ hasText: '4 de 6 U' }).or(page.getByText('Ocupadas 4 de 6 U'))).toBeVisible();
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Subir Amplificador' }).click();
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Racks', exact: true }).click();
+  await expect(page.getByRole('table')).toContainText('Amplificador');
+});

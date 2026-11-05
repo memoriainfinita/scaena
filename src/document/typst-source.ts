@@ -201,6 +201,9 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
     } else if (s === 'rigging') {
       const rows = buildReport(show, 'rigging').rows;
       parts.push(heading(D.rigging) + c.table(D.rigging, [{ fr: 1.2 }, { mm: 9 }, { mm: 14 }, { fr: 1.2 }, { fr: 1.4 }, { mm: 15 }, { fr: 0.8 }, { mm: 17 }, { mm: 17 }], [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows) + '\n');
+    } else if (s === 'racks') {
+      const rows = buildReport(show, 'racks').rows;
+      parts.push(heading(D.racks) + c.table(D.racks, [{ fr: 1.2 }, { mm: 16 }, { fr: 2 }, { mm: 20 }], [D.element, 'U', D.model, D.count], rows) + '\n');
     } else if (s === 'magic') {
       const sheet = magicSheet(show, show.lang);
       if (sheet) {
