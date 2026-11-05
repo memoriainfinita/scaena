@@ -133,3 +133,16 @@ test('reports and revisions', async ({ page }) => {
   await expect(page.getByText('Revisión 1 guardada.')).toBeVisible();
   await page.screenshot({ path: 'docs/design/img/paso-12-revisiones.png' });
 });
+
+test('phone', async ({ page }) => {
+  test.skip(step !== '14');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await expect(page.locator('g.el').first()).toBeVisible();
+  const hit = (await page.locator('g.el[data-id] .hit').first().boundingBox())!;
+  await page.mouse.click(hit.x + hit.width / 2, hit.y + hit.height / 2);
+  await page.screenshot({ path: 'docs/design/img/paso-14-movil-plano.png' });
+  await page.getByRole('button', { name: 'Biblioteca', exact: true }).click();
+  await page.screenshot({ path: 'docs/design/img/paso-14-movil-biblioteca.png' });
+});

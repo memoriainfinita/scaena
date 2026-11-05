@@ -13,7 +13,8 @@
     "typecheck": "tsc && tsc -p tsconfig.sw.json",
     "lint": "eslint .",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:chrome": "playwright test -c playwright.chrome.config.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
-import { addFromLibrary, dialog, goHome, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
+import { addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById, searchItems } from '../library/items.ts';
 import { symbolSvg } from '../library/symbols.ts';
@@ -30,6 +30,15 @@ export function Editor() {
           <MainView show={s.show.value} />
         </main>
         <Inspector show={s.show.value} />
+        <div class="fabs">
+          <button type="button" class="fab" aria-pressed={sheet.value === 'library'} onClick={() => (sheet.value = sheet.value === 'library' ? null : 'library')}>
+            {t('library.title')}
+          </button>
+          <button type="button" class="fab" aria-pressed={sheet.value === 'inspector'} onClick={() => (sheet.value = sheet.value === 'inspector' ? null : 'inspector')}>
+            {t('inspector.title')}
+            {selection.value.length > 0 && <span class="count">{selection.value.length}</span>}
+          </button>
+        </div>
       </div>
       <StatusBar show={s.show.value} />
     </div>
@@ -55,21 +64,24 @@ function TopBar() {
       <button type="button" class="btn icon" aria-label={t('top.redo')} title={`${t('top.redo')} (Ctrl+Mayús+Z)`} disabled={!s.canRedo.value} onClick={() => s.redo()}>
         <IconRedo />
       </button>
-      <button type="button" class="btn" onClick={() => (dialog.value = 'revisions')}>
+      <button type="button" class="btn desk-only" onClick={() => (dialog.value = 'revisions')}>
         {t('top.revisions')}
       </button>
-      <button type="button" class="btn" onClick={() => (dialog.value = 'issues')} aria-label={`${t('top.issues')} · ${t('issues.count', { n: issues.value.length })}`}>
+      <button type="button" class="btn desk-only" onClick={() => (dialog.value = 'issues')} aria-label={`${t('top.issues')} · ${t('issues.count', { n: issues.value.length })}`}>
         {t('top.issues')}
         <span class="count">{issues.value.length}</span>
       </button>
-      <button type="button" class="btn" onClick={() => (dialog.value = 'settings')}>
+      <button type="button" class="btn desk-only" onClick={() => (dialog.value = 'settings')}>
         {t('top.settings')}
       </button>
-      <button type="button" class="btn" onClick={() => (dialog.value = 'app')}>
+      <button type="button" class="btn desk-only" onClick={() => (dialog.value = 'app')}>
         {t('top.app')}
       </button>
-      <button type="button" class="btn primary" onClick={() => (dialog.value = 'export')}>
+      <button type="button" class="btn primary desk-only" onClick={() => (dialog.value = 'export')}>
         {t('top.export')}
+      </button>
+      <button type="button" class="btn mobile-only" aria-label={t('menu.title')} title={t('menu.title')} onClick={() => (dialog.value = 'menu')}>
+        ⋯
       </button>
     </header>
   );
@@ -124,7 +136,10 @@ function Library() {
   const items = useMemo(() => searchItems(query), [query]);
   const l = lang.value;
   return (
-    <aside class="library" aria-label={t('library.title')}>
+    <aside class={`library${sheet.value === 'library' ? ' open' : ''}`} aria-label={t('library.title')}>
+      <button type="button" class="sheet-close" onClick={() => (sheet.value = null)}>
+        {t('sheet.close')}
+      </button>
       <div class="search">
         <input class="input" style="width:100%" type="search" aria-label={t('library.search')} placeholder={t('library.search')} value={query} onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)} />
       </div>
@@ -165,7 +180,10 @@ function Inspector({ show }: { show: Show }) {
   const el = sel ? show.elements[sel] : undefined;
   const it = el ? itemById(el.type.id) : undefined;
   return (
-    <aside class="inspector" aria-label={t('inspector.title')}>
+    <aside class={`inspector${sheet.value === 'inspector' ? ' open' : ''}`} aria-label={t('inspector.title')}>
+      <button type="button" class="sheet-close" onClick={() => (sheet.value = null)}>
+        {t('sheet.close')}
+      </button>
       {el && it ? (
         <>
           <div class="panel">
