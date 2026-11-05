@@ -1,5 +1,5 @@
 name: ci
-# Changes to documentation alone run nothing: none of it is part of the site.
+# Changes to documentation alone run nothing: none of it is part of the site (an empty commit counts as such).
 on:
   workflow_dispatch:
   push:
