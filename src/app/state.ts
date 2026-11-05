@@ -16,7 +16,7 @@ import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readSh
 
 export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
-export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | null;
+export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | 'menu' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
 export interface Settings {
@@ -160,6 +160,8 @@ export const session = signal<Session | null>(null);
 export const view = signal<ViewId>('plan');
 export const selection = signal<string[]>([]);
 export const dialog = signal<Dialog>(null);
+/** On a narrow screen the library and the inspector are sheets over the plan; at most one is open. */
+export const sheet = signal<'library' | 'inspector' | null>(null);
 export const recents = signal<{ id: string; name: string; updated: number }[]>([]);
 export const startError = signal<string | null>(null);
 

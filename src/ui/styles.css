@@ -162,10 +162,6 @@ table.list td { padding: 7px 12px; border-top: 1px solid var(--line); }
 .toast { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3); z-index: 20; }
 kbd { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); }
 
-@media (max-width: 900px) {
-  .start-main { grid-template-columns: 1fr; padding: 24px 16px; }
-  .library, .inspector { display: none; }
-}
 .listbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px 4px; flex-wrap: wrap; }
 .listbar h2 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
 .pad { padding: 8px 16px; }
@@ -251,3 +247,50 @@ table.narrow caption { text-align: left; font-size: 13px; font-weight: 600; padd
 td.plain { padding: 4px 8px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .form { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 640px; }
+
+/* Narrow screens: tabs at the bottom, the plan on the whole screen, the library and the inspector as sheets over it. */
+.fabs, .sheet-close, .mobile-only { display: none; }
+@media (max-width: 900px) {
+  .start-main { grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }
+  .start-bar { padding: 0 16px; }
+  .start-bar .muted { display: none; }
+  .desk-only { display: none !important; }
+  .mobile-only { display: inline-flex; }
+  .topbar { padding: 0 8px; gap: 6px; }
+  .topbar .name { width: auto; flex: 1; min-width: 0; }
+  .topbar .sep, .topbar .muted[role='status'] { display: none; }
+  /* The tabs are the last row of the editor, under the status bar, so nothing is covered. */
+  .editor > .tabs { order: 5; flex: 0 0 56px; height: 56px; padding: 0; align-items: stretch; border-top: 1px solid var(--line); border-bottom: 0; overflow-x: auto; }
+  .editor > .statusbar { order: 4; gap: 12px; padding: 0 10px; white-space: nowrap; overflow: hidden; }
+  .statusbar span:nth-last-child(-n + 2) { display: none; }
+  .tab { height: 100%; min-width: 78px; flex: 1 0 auto; justify-content: center; padding: 0 10px; border-bottom: 0; border-top: 3px solid transparent; }
+  .tab[aria-current='page'] { border-top-color: var(--accent); }
+  .chips, .tabs .grow { display: none; }
+  .body { flex-direction: column; position: relative; }
+  .toolbar { flex: 0 0 44px; flex-direction: row; justify-content: flex-start; align-items: center; padding: 4px 8px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tool { width: 44px; height: 36px; flex: 0 0 auto; }
+  .canvas { padding: 0; }
+  .library, .inspector { display: flex; flex: none; position: fixed; left: 0; right: 0; bottom: 84px; width: auto; max-height: 58vh; z-index: 18; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0; box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3); transform: translateY(110%); visibility: hidden; transition: transform 0.2s, visibility 0.2s; }
+  .library.open, .inspector.open { transform: none; visibility: visible; }
+  .sheet-close { display: block; align-self: flex-end; margin: 6px 10px 0; height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
+  .library .list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fabs { display: flex; position: fixed; left: 10px; right: 10px; bottom: 92px; z-index: 16; justify-content: space-between; pointer-events: none; }
+  .fab { pointer-events: auto; height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: 22px; background: var(--panel); color: var(--fg); font-weight: 500; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); display: inline-flex; align-items: center; gap: 8px; }
+  .fab[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .fab .count { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--accent); color: var(--on-accent); font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+  .pbtn { width: 40px; height: 40px; }
+  .planbar { max-width: calc(100% - 16px); overflow-x: auto; }
+  .planbar.top { left: 8px; right: 8px; transform: none; max-width: none; }
+  .planbar.bottom { bottom: 60px; }
+  .planbar.left { top: 62px; }
+  .docview { flex-direction: column; }
+  .doccontrols { flex: 0 0 auto; max-height: 46%; border-right: 0; border-bottom: 1px solid var(--line); }
+  .listbar, .subtabs { padding-left: 10px; padding-right: 10px; }
+  .scroll { padding: 12px 8px; }
+  .form { padding: 12px; }
+}
+
+/* Chrome draws checkboxes at 13 px: a size and spacing that meet the 24 px target rule (WCAG 2.2, 2.5.8). */
+input[type='checkbox'] { width: 18px; height: 18px; margin: 3px; }
+.checks label, .check { min-height: 30px; }
+.checks.col { gap: 0; }

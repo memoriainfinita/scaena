@@ -26,6 +26,8 @@ export const en: Messages = {
   'outputs.row': 'Output {n}',
   'outputs.empty': 'No outputs yet. Add one with the button.',
   'table.outNumber': 'Output',
+  'menu.title': 'Menu',
+  'sheet.close': 'Close the panel',
   'view.production': 'Production',
   'prod.tabs': 'Production sections',
   'prod.tab.setlist': 'Setlist',

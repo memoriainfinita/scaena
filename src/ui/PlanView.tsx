@@ -16,7 +16,7 @@ import { symbolBody } from '../library/symbols.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
-import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
+import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -346,9 +346,18 @@ function CalibrateBar({ measure, onDone }: { measure: Signal<Measure | null>; on
 }
 
 type Interaction =
-  | { kind: 'pan'; sx: number; sy: number; cam: Camera }
+  | { kind: 'pan'; sx: number; sy: number; cam: Camera; tap?: boolean; moved?: boolean }
   | { kind: 'drag'; ids: string[]; hitId: string; p0: Pt; w0: Pt; sx: number; sy: number; moved: boolean; shift: boolean; wasMulti: boolean }
   | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] };
+
+/** Keeps the pointer events coming to the plan while a finger or the mouse moves outside it; some environments refuse, and nothing depends on it. */
+const capture = (el: Element, id: number) => {
+  try {
+    el.setPointerCapture(id);
+  } catch {
+    // The pointer is already gone or never existed (a synthetic event): the gesture still works inside the plan.
+  }
+};
 
 const isTyping = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName));
 
@@ -372,6 +381,9 @@ export function PlanView({ show }: { show: Show }) {
   const space = useRef(false);
   const timer = useRef(0);
   const act = useRef<Interaction | null>(null);
+  // Fingers on the screen: a second one turns whatever was going on into a pinch (zoom and pan together).
+  const pointers = useRef(new Map<number, Pt>());
+  const pinch = useRef<{ d0: number; cam: Camera; c0: Pt; w0: Pt } | null>(null);
 
   const fit = () => {
     const { w, h } = size.peek();
@@ -499,11 +511,26 @@ export function PlanView({ show }: { show: Show }) {
     if (e.button !== 0 && e.button !== 1) return;
     const svg = svgRef.current!;
     const p = local(e);
+    pointers.current.set(e.pointerId, p);
+    if (pointers.current.size === 2) {
+      capture(svg, e.pointerId);
+      act.current = null;
+      batch(() => {
+        marquee.value = null;
+        dragIds.value = null;
+        dragDelta.value = { dx: 0, dy: 0 };
+      });
+      const [a, b] = [...pointers.current.values()] as [Pt, Pt];
+      const c0 = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      pinch.current = { d0: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), cam: cam.peek(), c0, w0: toWorld(cam.peek(), c0.x, c0.y) };
+      return;
+    }
+    if (pointers.current.size > 2) return;
     const mode = e.button === 1 || space.current || tool.value === 'pan' ? 'pan' : tool.value;
     const s = showRef.current;
     if (mode === 'pan') {
       e.preventDefault();
-      svg.setPointerCapture(e.pointerId);
+      capture(svg, e.pointerId);
       act.current = { kind: 'pan', sx: p.x, sy: p.y, cam: cam.peek() };
     } else if (mode === 'measure' || mode === 'background') {
       const w = world(e);
@@ -529,7 +556,7 @@ export function PlanView({ show }: { show: Show }) {
     } else if (mode === 'select') {
       const id = (e.target as Element).closest('[data-id]')?.getAttribute('data-id');
       const el = id ? s.elements[id] : undefined;
-      svg.setPointerCapture(e.pointerId);
+      capture(svg, e.pointerId);
       if (el && editable(s, el)) {
         const group = expandGroups(s, [el.id]);
         const was = selection.peek().includes(el.id);
@@ -541,15 +568,29 @@ export function PlanView({ show }: { show: Show }) {
         const w0 = world(e);
         act.current = { kind: 'drag', ids: targets(s, sel), hitId: el.id, p0: { x: el.x, y: el.y }, w0, sx: p.x, sy: p.y, moved: false, shift: e.shiftKey, wasMulti: was && sel.length > 1 };
       } else {
-        act.current = { kind: 'marquee', sx: p.x, sy: p.y, add: e.shiftKey, base: selection.peek() };
+        // A finger on the background pans; a tap that does not move lets go of the selection. A mouse draws a marquee.
+        if (e.pointerType === 'touch') act.current = { kind: 'pan', sx: p.x, sy: p.y, cam: cam.peek(), tap: true };
+        else act.current = { kind: 'marquee', sx: p.x, sy: p.y, add: e.shiftKey, base: selection.peek() };
         marquee.value = null;
       }
     }
   };
 
   const onMove = (e: PointerEvent) => {
-    const a = act.current;
     const p = local(e);
+    if (pointers.current.has(e.pointerId)) pointers.current.set(e.pointerId, p);
+    const pz = pinch.current;
+    if (pz && pointers.current.size >= 2) {
+      const [a1, b1] = [...pointers.current.values()] as [Pt, Pt];
+      const k = clampK(pz.cam.k * (Math.hypot(a1.x - b1.x, a1.y - b1.y) / pz.d0));
+      const c = { x: (a1.x + b1.x) / 2, y: (a1.y + b1.y) / 2 };
+      cam.value = { k, x: c.x - pz.w0.x * k, y: c.y - pz.w0.y * k };
+      gesture.value = true;
+      clearTimeout(timer.current);
+      timer.current = window.setTimeout(() => (gesture.value = false), 140);
+      return;
+    }
+    const a = act.current;
     if (!a) {
       if (linkFrom.peek()) cursor.value = toWorld(cam.peek(), p.x, p.y);
       const m = measure.peek();
@@ -560,7 +601,10 @@ export function PlanView({ show }: { show: Show }) {
       }
       return;
     }
-    if (a.kind === 'pan') cam.value = { ...a.cam, x: a.cam.x + p.x - a.sx, y: a.cam.y + p.y - a.sy };
+    if (a.kind === 'pan') {
+      if (Math.hypot(p.x - a.sx, p.y - a.sy) >= 4) a.moved = true;
+      cam.value = { ...a.cam, x: a.cam.x + p.x - a.sx, y: a.cam.y + p.y - a.sy };
+    }
     else if (a.kind === 'drag') {
       if (!a.moved && Math.hypot(p.x - a.sx, p.y - a.sy) < 4) return;
       a.moved = true;
@@ -581,11 +625,17 @@ export function PlanView({ show }: { show: Show }) {
     }
   };
 
-  const finish = (cancelled: boolean) => {
+  const finish = (cancelled: boolean, pointerId: number) => {
+    pointers.current.delete(pointerId);
+    if (pinch.current) {
+      if (pointers.current.size < 2) pinch.current = null;
+      return;
+    }
     const a = act.current;
     act.current = null;
     if (!a) return;
     const s = showRef.current;
+    if (a.kind === 'pan' && a.tap && !a.moved && !cancelled) selection.value = [];
     if (a.kind === 'drag') {
       batch(() => {
         const d = dragDelta.peek();
@@ -648,8 +698,8 @@ export function PlanView({ show }: { show: Show }) {
         aria-label={t('canvas.alt', { n: rows.length })}
         onPointerDown={onDown}
         onPointerMove={onMove}
-        onPointerUp={() => finish(false)}
-        onPointerCancel={() => finish(true)}
+        onPointerUp={(e) => finish(false, e.pointerId)}
+        onPointerCancel={(e) => finish(true, e.pointerId)}
       >
         {show.view.grid && <Grid cam={cam} size={size} stepMm={show.view.gridMm} />}
         <g transform={camT}>

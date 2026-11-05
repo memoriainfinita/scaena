@@ -30,6 +30,8 @@ export const es = {
   'outputs.row': 'Salida {n}',
   'outputs.empty': 'Aún no hay salidas. Añade una con el botón.',
   'table.outNumber': 'Salida',
+  'menu.title': 'Menú',
+  'sheet.close': 'Cerrar el panel',
   'view.production': 'Producción',
   'prod.tabs': 'Secciones de producción',
   'prod.tab.setlist': 'Setlist',

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
-import { applySettings, applyShowSettings, dialog, session, settings, type Settings } from '../app/state.ts';
+import { applySettings, applyShowSettings, dialog, session, settings, type Dialog, type Settings } from '../app/state.ts';
 import { goToIssue, issues, issueText } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
@@ -75,6 +75,7 @@ export function Dialogs() {
   if (d === 'issues' && session.value) return <IssuesDialog onClose={close} />;
   if (d === 'background' && session.value) return <BackgroundDialog onClose={close} />;
   if (d === 'revisions' && session.value) return <RevisionsDialog onClose={close} />;
+  if (d === 'menu' && session.value) return <MenuDialog onClose={close} />;
   return null;
 }
 
@@ -387,6 +388,36 @@ function IssuesDialog({ onClose }: { onClose: () => void }) {
           ))}
         </ul>
       )}
+    </Modal>
+  );
+}
+
+/** What the top bar holds on a wide screen, as a list for a narrow one. */
+function MenuDialog({ onClose }: { onClose: () => void }) {
+  const open = (next: Exclude<Dialog, 'menu' | null>) => () => {
+    dialog.value = next;
+  };
+  const count = issues.value.length;
+  return (
+    <Modal title={t('menu.title')} onClose={onClose} menu>
+      <div style="display:flex;flex-direction:column;gap:2px;margin:-8px">
+        <button type="button" class="menu-item" onClick={open('export')}>
+          <strong>{t('top.export')}</strong>
+        </button>
+        <button type="button" class="menu-item" onClick={open('revisions')}>
+          <strong>{t('top.revisions')}</strong>
+        </button>
+        <button type="button" class="menu-item" onClick={open('issues')}>
+          <strong>{t('top.issues')}</strong>
+          <span class="muted">{t('issues.count', { n: count })}</span>
+        </button>
+        <button type="button" class="menu-item" onClick={open('settings')}>
+          <strong>{t('top.settings')}</strong>
+        </button>
+        <button type="button" class="menu-item" onClick={open('app')}>
+          <strong>{t('top.app')}</strong>
+        </button>
+      </div>
     </Modal>
   );
 }
