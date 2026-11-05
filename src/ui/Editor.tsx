@@ -10,11 +10,12 @@ import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, I
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
 import { DocumentView } from './Document.tsx';
+import { ProductionView } from './Production.tsx';
 import { ReportsView } from './Reports.tsx';
 import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
-const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', document: 'document' };
+const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document' | 'production'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', production: 'production', document: 'document' };
 
 export function Editor() {
   const s = session.value!;
@@ -148,6 +149,7 @@ function MainView({ show }: { show: Show }) {
   if (v === 'lights') return <LightsView show={show} />;
   if (v === 'document') return <DocumentView show={show} />;
   if (v === 'reports') return <ReportsView show={show} />;
+  if (v === 'production') return <ProductionView show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>

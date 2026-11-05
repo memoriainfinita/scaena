@@ -1,6 +1,6 @@
 // The document view: choose what goes in the rider, see it compiled to PDF, download it.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { addContact, addSlot, removeContact, removeSlot, setContactHidden, setDate, setRevisionNumber, setTitleBlock, updateContact, updateSlot } from '../app/document-data-actions.ts';
+import { addContact, removeContact, setContactHidden, setDate, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
 import { setPaper, setPlanScale, setTemplate, toggleSection } from '../app/document-actions.ts';
 import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
@@ -223,22 +223,6 @@ function DocData({ show }: { show: Show }) {
         })}
         <button type="button" class="btn" onClick={() => addContact()}>
           {t('data.addContact')}
-        </button>
-        <h3>{t('data.schedule')}</h3>
-        {show.schedule.map((x, i) => {
-          const n = i + 1;
-          return (
-            <div class="sub" key={x.id}>
-              <input class="input mono" style="flex:0 0 76px" aria-label={`${t('slot.time')} · ${n}`} value={x.time} maxLength={10} onChange={(e) => updateSlot(x.id, { time: (e.currentTarget as HTMLInputElement).value })} />
-              <input class="input" aria-label={`${t('slot.what')} · ${n}`} value={x.what} maxLength={200} onChange={(e) => updateSlot(x.id, { what: (e.currentTarget as HTMLInputElement).value })} />
-              <button type="button" class="pbtn" aria-label={t('slot.remove', { n })} title={t('slot.remove', { n })} onClick={() => removeSlot(x.id)}>
-                ✕
-              </button>
-            </div>
-          );
-        })}
-        <button type="button" class="btn" onClick={() => addSlot()}>
-          {t('data.addSlot')}
         </button>
       </div>
     </details>

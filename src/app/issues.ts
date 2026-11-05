@@ -3,6 +3,7 @@ import { computed } from '@preact/signals';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { validate, type Issue, type Severity } from '../validate/rules.ts';
 import { lightsTab } from './lights-actions.ts';
+import { prodTab } from './production-actions.ts';
 import { dialog, selection, session, view } from './state.ts';
 
 /** Recomputed whenever the show changes: every rule is a pure pass over the model. */
@@ -53,7 +54,10 @@ export function goToIssue(i: Issue): void {
     view.value = 'lights';
     lightsTab.value = 'electrical';
   } else {
-    view.value = id === 'channels' ? 'inputs' : 'document';
+    if (id === 'schedule') {
+      view.value = 'production';
+      prodTab.value = 'schedule';
+    } else view.value = id === 'channels' ? 'inputs' : 'document';
   }
   dialog.value = null;
 }

@@ -161,7 +161,41 @@ export const ReportConfig = v.object({
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
 export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false) });
 
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'notes', 'revisions']);
+export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(86400)), 0) });
+
+/** What the artist asks of the venue for the day: structured, not free-form (docs/investigacion.md, section on hospitality). */
+export const Hospitality = v.object({
+  dressingRooms: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(99))), null),
+  dressingNotes: text(),
+  meals: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(999))), null),
+  dietary: text(),
+  cateringNotes: text(),
+  afterShowMeal: v.optional(v.boolean(), false),
+  busStock: v.optional(v.boolean(), false),
+  supplies: text(),
+  transport: text(),
+  lodging: text(),
+  localTransport: text(),
+  cashInstead: v.optional(v.boolean(), false),
+  cashAmount: text(60),
+});
+
+/** The business terms that travel with the rider. Text fields: the app records them, it does not judge them. */
+export const Contract = v.object({
+  fee: text(120),
+  deposit: text(120),
+  payment: text(300),
+  cancellation: text(500),
+  insurance: text(300),
+  setLengthMin: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(1440))), null),
+  crew: text(300),
+  other: text(),
+});
+
+/** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
+export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
+
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */
@@ -197,12 +231,20 @@ export const Show = v.object({
   revisions: v.optional(v.array(RevisionMeta), []),
   view: v.optional(ViewSettings, {}),
   document: v.optional(DocumentConfig, {}),
+  setlist: v.optional(v.array(SetlistItem), []),
+  hospitality: v.optional(Hospitality, {}),
+  contract: v.optional(Contract, {}),
+  event: v.optional(EventInfo, {}),
   /** Last number given per id prefix, so ids stay sequential and stable. */
   counters: v.optional(v.record(v.string(), v.number()), {}),
 });
 
 export type Show = v.InferOutput<typeof Show>;
 export type DocumentConfig = v.InferOutput<typeof DocumentConfig>;
+export type SetlistItem = v.InferOutput<typeof SetlistItem>;
+export type Hospitality = v.InferOutput<typeof Hospitality>;
+export type Contract = v.InferOutput<typeof Contract>;
+export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type Layer = v.InferOutput<typeof Layer>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;

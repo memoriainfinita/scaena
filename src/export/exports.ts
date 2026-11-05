@@ -1,6 +1,7 @@
 // The files the app can hand to the user. Each function builds the bytes; `saveFile` is what puts them in the downloads.
 import { fixPdf, compilePdf } from '../document/compile.ts';
 import { planSvg } from '../document/plan-svg.ts';
+import { buildDaySheet } from '../document/daysheet.ts';
 import { buildDocument, lit, PAPERS } from '../document/typst-source.ts';
 import { docStrings } from '../document/strings.ts';
 import { zipSync } from 'fflate';
@@ -96,4 +97,10 @@ ${rev.note ? q(rev.note) : ''}
 ${rev.changes.length ? `== ${q(D.changes)}\n${rev.changes.map((c) => `- ${q(c)}`).join('\n')}` : ''}
 `;
   return { name: `${baseName(show.name)}-rev${rev.number}.pdf`, bytes: await fixPdf(await compilePdf(source)), mime: 'application/pdf' };
+}
+
+/** The day sheet of the event: schedules, contacts and where to be. */
+export async function daySheetFile(show: Show): Promise<OutFile> {
+  const sheet = buildDaySheet(show);
+  return { name: `${baseName(show.name)}-hoja-de-ruta.pdf`, bytes: await fixPdf(await compilePdf(sheet.source)), mime: 'application/pdf' };
 }

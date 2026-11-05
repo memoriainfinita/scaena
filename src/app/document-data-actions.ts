@@ -4,7 +4,6 @@ import type { Show } from '../model/schema.ts';
 import { session } from './state.ts';
 
 type Contact = Show['contacts'][number];
-type Slot = Show['schedule'][number];
 
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 
@@ -24,11 +23,3 @@ export const removeContact = (id: string): void => commit((show) => ({ ...show, 
 export const setContactHidden = (id: string, field: 'phone' | 'email', hide: boolean): void =>
   commit((show) => ({ ...show, contacts: show.contacts.map((c) => (c.id === id ? { ...c, hidden: hide ? [...new Set([...c.hidden, field])] : c.hidden.filter((f) => f !== field) } : c)) }));
 
-export const addSlot = (): void =>
-  commit((show) => {
-    const [id, s] = nextId(show, 'sl');
-    const slot: Slot = { id, time: '', what: '', kind: 'day' };
-    return { ...s, schedule: [...s.schedule, slot] };
-  });
-export const updateSlot = (id: string, patch: Partial<Omit<Slot, 'id'>>): void => commit((show) => ({ ...show, schedule: show.schedule.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
-export const removeSlot = (id: string): void => commit((show) => ({ ...show, schedule: show.schedule.filter((x) => x.id !== id) }));

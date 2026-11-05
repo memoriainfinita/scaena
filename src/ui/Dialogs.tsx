@@ -6,7 +6,7 @@ import { lang, t, type Key } from '../i18n/index.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { BackgroundDialog } from './Background.tsx';
 import { RevisionsDialog } from './Revisions.tsx';
-import { csvZipFile, baseName, planPdfFile, planPngFile, planSvgFile, riderPdfFile, saveFile, type OutFile } from '../export/exports.ts';
+import { csvZipFile, baseName, daySheetFile, planPdfFile, planPngFile, planSvgFile, riderPdfFile, saveFile, type OutFile } from '../export/exports.ts';
 import { saveAsTemplate } from '../app/library-actions.ts';
 import { inputsAsText } from '../reports/reports.ts';
 import { REGIONS, regionByCode } from '../library/regions.ts';
@@ -219,6 +219,7 @@ function ExportDialog({ onClose }: { onClose: () => void }) {
   const items: { key: string; label: Key; tip?: Key; job: () => Promise<OutFile | null> | OutFile | null }[] = [
     { key: 'scaena', label: 'export.scaena', tip: 'export.scaena.tip', job: () => ({ name: `${baseName(show().name)}.scaena`, bytes: s.toFile(), mime: 'application/zip' }) },
     { key: 'pdf', label: 'export.pdf', tip: 'export.pdf.tip', job: () => riderPdfFile(show(), s.allImages()) },
+    { key: 'daysheet', label: 'export.daysheet', tip: 'export.daysheet.tip', job: () => daySheetFile(show()) },
     { key: 'planpdf', label: 'export.planpdf', job: () => planPdfFile(show(), s.allImages()) },
     { key: 'svg', label: 'export.svg', job: () => planSvgFile(show(), s.allImages()) },
     { key: 'png', label: 'export.png', job: () => planPngFile(show(), s.allImages()) },
