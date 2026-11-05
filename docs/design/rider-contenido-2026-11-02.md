@@ -38,3 +38,7 @@ Aceptado el 2026-11-02. Todas llevan portada y cajetín, plano, lista de canales
 | Audiovisual y proyección | Ordenadores y software |
 
 Reglas añadidas: «Ordenadores y software» aparece sola en cualquier plantilla si el montaje tiene un ordenador; los informes de luces entran solos con el módulo de Luces activo.
+
+## Después de construirlo
+
+Construido en el paso 11 y ampliado en el 13: las secciones del documento son las de `src/document/sections.ts` (portada, contactos, horario, programación de montaje, plano, entradas, salidas, ordenadores, luces, eléctrica, setlist, hospitalidad, contrato, notas y revisiones). Las plantillas son tres (concierto, teatro, audiovisual) más la personalizada, en lugar de una por paquete; el paquete elige la suya al crearse.

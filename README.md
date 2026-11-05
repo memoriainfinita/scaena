@@ -10,7 +10,7 @@ Technical riders for live shows, in the browser: stage plot, input and output li
 - **Rider PDF:** compiled in the browser with Typst, tagged, with the plot at a print scale. Plus CSV, SVG, PNG, revisions with comparison and an update sheet.
 - **Warnings** (18 rules) that never block exporting; works on a phone; installable; works offline.
 
-[User guide](docs/guide/README.md) (Spanish) · [English guide](docs/guide/en/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
+[User guide](docs/guide/README.md) (Spanish) · [English guide](docs/guide/en/README.md) · [Documentation](docs/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
 
 ## Develop
 

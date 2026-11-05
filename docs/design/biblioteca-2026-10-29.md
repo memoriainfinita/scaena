@@ -87,3 +87,7 @@ Estado: lista de contenido propuesta el 2026-10-29. El usuario decidió las dos 
 
 ### Audiovisual (aceptado 2026-10-29)
 - Pantallas y proyectores como formas simples, sin cálculo de píxeles
+
+## Después de construirlo
+
+Cifras de lo construido: 48 símbolos dibujados (más el cuadro de texto y la toma de corriente, añadidos después), 51 elementos, 29 luminarias y 28 modelos de audio con fuente, 16 regiones eléctricas, 7 paquetes y un catálogo de 62 programas. Los textos de los paquetes se traducen al inglés en `src/library/translate.ts`. Los símbolos se ven en `docs/design/img/simbolos-2026-11-05.png`.
