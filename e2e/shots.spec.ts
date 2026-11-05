@@ -94,3 +94,15 @@ test('issues dialog', async ({ page }) => {
   await page.getByRole('button', { name: /^Avisos/ }).click();
   await page.screenshot({ path: 'docs/design/img/paso-9-avisos.png' });
 });
+
+test('background', async ({ page }) => {
+  test.skip(step !== '10');
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: 'Fondo PDF o DXF' }).click();
+  await page.getByLabel('Elegir un PDF o un DXF').setInputFiles('e2e/fixtures/sala.dxf');
+  await expect(page.locator('svg.plansvg image')).toHaveCount(1, { timeout: 20000 });
+  await page.getByRole('button', { name: 'Fondo PDF o DXF' }).click();
+  await page.screenshot({ path: 'docs/design/img/paso-10-fondo.png' });
+});

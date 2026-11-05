@@ -2,8 +2,10 @@
 // camera only changes the `transform` of one group, so zooming does not repaint the elements.
 import { batch, signal, useComputed, useSignal, type Signal } from '@preact/signals';
 import { memo } from 'preact/compat';
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { calibrateBackground, fitRequest } from '../app/background-actions.ts';
+import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
 import { issues } from '../app/issues.ts';
 import type { Severity } from '../validate/rules.ts';
@@ -14,7 +16,7 @@ import { symbolBody } from '../library/symbols.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
-import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, zoomAt, type Camera } from '../plan/geometry.ts';
+import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -100,6 +102,18 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
     </g>
   );
 });
+
+/** The imported PDF or DXF, drawn over the stage floor and under everything else. */
+function BackgroundImage({ show }: { show: Show }) {
+  const bg = show.stage.background;
+  const layer = show.layers.find((l) => l.subject === 'background');
+  const s = session.value;
+  if (!bg || !s || layer?.visible === false) return null;
+  const url = s.imageUrl(bg.file);
+  const size = pngSize(s.imageBytes(bg.file) ?? new Uint8Array());
+  if (!url || !size) return null;
+  return <image href={url} x={bg.x} y={bg.y} width={size.w * bg.scale} height={size.h * bg.scale} opacity={bg.opacity * (1 - (layer?.dim ?? 0) * 0.7)} preserveAspectRatio="none" aria-hidden="true" pointer-events="none" />;
+}
 
 function Stage({ show }: { show: Show }) {
   const sh = show.stage.shape;
@@ -297,6 +311,40 @@ function Btn({ icon, label, onClick, pressed, disabled }: { icon: string; label:
   );
 }
 
+/** Asks for the real distance between the two clicked points and rescales the background to match. */
+function CalibrateBar({ measure, onDone }: { measure: Signal<Measure | null>; onDone: () => void }) {
+  const [real, setReal] = useState('');
+  const m = measure.value;
+  const submit = (e: Event) => {
+    e.preventDefault();
+    if (!m?.b) return;
+    const mm = Number(real.replace(',', '.')) * 1000;
+    if (calibrateBackground(m.a, m.b, mm)) onDone();
+  };
+  return (
+    <form class="planbar left" onSubmit={submit} aria-label={t('bg.calibrate')}>
+      {m?.done && m.b ? (
+        <>
+          <label class="pad-s">
+            {t('bg.distance')}
+            <input class="input mono" style="width:90px;margin-left:8px" inputMode="decimal" value={real} onInput={(e) => setReal((e.currentTarget as HTMLInputElement).value)} />
+          </label>
+          <button type="submit" class="btn primary" disabled={!(Number(real.replace(',', '.')) > 0)}>
+            {t('bg.apply')}
+          </button>
+        </>
+      ) : (
+        <span class="pad-s" role="status">
+          {t('bg.pick')}
+        </span>
+      )}
+      <button type="button" class="btn" onClick={onDone}>
+        {t('settings.cancel')}
+      </button>
+    </form>
+  );
+}
+
 type Interaction =
   | { kind: 'pan'; sx: number; sy: number; cam: Camera }
   | { kind: 'drag'; ids: string[]; hitId: string; p0: Pt; w0: Pt; sx: number; sy: number; moved: boolean; shift: boolean; wasMulti: boolean }
@@ -317,6 +365,7 @@ export function PlanView({ show }: { show: Show }) {
   const camT = useComputed(() => `translate(${cam.value.x} ${cam.value.y}) scale(${cam.value.k})`);
   const dragT = useComputed(() => `translate(${dragDelta.value.dx} ${dragDelta.value.dy})`);
 
+  const fitReq = fitRequest.value;
   const showRef = useRef(show);
   showRef.current = show;
   const fitted = useRef(false);
@@ -326,8 +375,18 @@ export function PlanView({ show }: { show: Show }) {
 
   const fit = () => {
     const { w, h } = size.peek();
-    if (w > 0) cam.value = fitCamera(planBox(showRef.current), w, h);
+    if (w <= 0) return;
+    let box = planBox(showRef.current);
+    const bg = showRef.current.stage.background;
+    const dims = bg ? pngSize(session.value?.imageBytes(bg.file) ?? new Uint8Array()) : null;
+    if (bg && dims) box = unionBox([box, { x0: bg.x, y0: bg.y, x1: bg.x + dims.w * bg.scale, y1: bg.y + dims.h * bg.scale }])!;
+    cam.value = fitCamera(box, w, h);
   };
+
+  // A new background asks for the view to fit the plan and the image.
+  useEffect(() => {
+    if (fitReq > 0) fit();
+  }, [fitReq]);
 
   // Size of the drawing area; the first measurement fits the plan.
   useEffect(() => {
@@ -446,7 +505,7 @@ export function PlanView({ show }: { show: Show }) {
       e.preventDefault();
       svg.setPointerCapture(e.pointerId);
       act.current = { kind: 'pan', sx: p.x, sy: p.y, cam: cam.peek() };
-    } else if (mode === 'measure') {
+    } else if (mode === 'measure' || mode === 'background') {
       const w = world(e);
       const st = e.altKey ? 0 : gridStep();
       const pt = { x: snap(w.x, st), y: snap(w.y, st) };
@@ -494,7 +553,7 @@ export function PlanView({ show }: { show: Show }) {
     if (!a) {
       if (linkFrom.peek()) cursor.value = toWorld(cam.peek(), p.x, p.y);
       const m = measure.peek();
-      if (m && !m.done && tool.peek() === 'measure') {
+      if (m && !m.done && (tool.peek() === 'measure' || tool.peek() === 'background')) {
         const w = toWorld(cam.peek(), p.x, p.y);
         const st = e.altKey ? 0 : gridStep();
         measure.value = { ...m, b: { x: snap(w.x, st), y: snap(w.y, st) } };
@@ -595,6 +654,7 @@ export function PlanView({ show }: { show: Show }) {
         {show.view.grid && <Grid cam={cam} size={size} stepMm={show.view.gridMm} />}
         <g transform={camT}>
           <Stage show={show} />
+          <BackgroundImage show={show} />
           <Mounts show={show} />
           <Connections show={show} hidden={dragSet ?? new Set()} />
           <g>{resting}</g>
@@ -615,6 +675,15 @@ export function PlanView({ show }: { show: Show }) {
             </span>
           )}
         </div>
+      )}
+      {mode === 'background' && (
+        <CalibrateBar
+          measure={measure}
+          onDone={() => {
+            measure.value = null;
+            tool.value = 'select';
+          }}
+        />
       )}
       <div class="planbar top" role="toolbar" aria-label={t('align.label')} hidden={count === 0}>
         <Btn icon="rotate" label={`${t('plan.rotate')} (R)`} onClick={() => rotateSelection(15)} />

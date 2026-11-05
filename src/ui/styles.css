@@ -227,3 +227,6 @@ table.narrow caption { text-align: left; font-size: 13px; font-weight: 600; padd
 .issues-filter { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; border: 0; padding: 0; }
 .issues-filter label { display: flex; align-items: center; gap: 6px; }
 .btn .count { margin-left: 4px; font-weight: 600; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.bgbox { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+.bgbox legend { padding: 0 6px; font-size: 12px; color: var(--muted); }
