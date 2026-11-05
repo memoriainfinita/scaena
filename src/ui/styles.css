@@ -166,3 +166,30 @@ kbd { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border: 1px s
   .start-main { grid-template-columns: 1fr; padding: 24px 16px; }
   .library, .inspector { display: none; }
 }
+.listbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px 4px; flex-wrap: wrap; }
+.listbar h2 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.pad { padding: 8px 16px; }
+table.editable td { padding: 3px 4px; }
+table.editable td.num { text-align: right; padding-right: 10px; }
+table.editable td.center { text-align: center; }
+table.editable tr.sel td { background: var(--accent-soft); }
+.input.cell { height: 28px; width: 100%; min-width: 90px; padding: 0 6px; }
+.rowbtns { white-space: nowrap; }
+.field.inline { flex-direction: row; align-items: center; gap: 8px; margin-left: auto; }
+.flow { padding-bottom: 24px; }
+.flowsvg { width: calc(100% - 32px); max-width: 900px; margin: 8px 16px; display: block; }
+.flowhead { font-size: 11px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font); }
+.flbox { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
+.flbox.desk { stroke: var(--accent); stroke-width: 2; }
+.flbox-t { font-size: 13px; fill: var(--fg); font-family: var(--font); }
+.flbox-t.strong { font-weight: 600; }
+.fltext { font-size: 11px; fill: var(--muted); font-family: var(--font); }
+.fl { fill: none; stroke-width: 2; }
+.fl.mic { stroke: var(--accent); }
+.fl.ret { stroke: var(--warn); stroke-dasharray: 6 4; }
+.fl.main { stroke: var(--fg); stroke-width: 3.5; }
+.scroll { overflow: auto; }
+table.editable { min-width: 820px; }
+table.editable td:nth-child(3) .cell { min-width: 150px; }
+.input.cell { min-width: 64px; }
+.fltext.halo { stroke: var(--canvas); stroke-width: 4; paint-order: stroke; }

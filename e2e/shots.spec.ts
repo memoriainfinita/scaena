@@ -19,3 +19,15 @@ for (const theme of ['light', 'dark'] as const) {
     await page.screenshot({ path: `docs/design/img/paso-${step}-plano-${theme}.png` });
   });
 }
+
+for (const [view, tab] of [['entradas', 'Entradas'], ['salidas', 'Salidas']] as const) {
+  test(`audio view ${view}`, async ({ page }) => {
+    test.skip(step !== '6');
+    await page.setViewportSize({ width: 1440, height: 860 });
+    await page.goto('/');
+    await page.getByRole('button', { name: /Banda de rock/ }).click();
+    await page.getByRole('button', { name: tab, exact: true }).click();
+    await page.mouse.move(700, 700);
+    await page.screenshot({ path: `docs/design/img/paso-6-${view}.png` });
+  });
+}

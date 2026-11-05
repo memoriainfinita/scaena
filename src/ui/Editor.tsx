@@ -6,6 +6,7 @@ import { itemById, searchItems } from '../library/items.ts';
 import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
+import { InputsView, OutputsView } from './Audio.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', document: 'document' };
@@ -133,41 +134,12 @@ function Library() {
 function MainView({ show }: { show: Show }) {
   const v = view.value;
   if (v === 'plan') return <PlanView key={session.value!.id} show={show} />;
-  if (v === 'inputs') return <InputsTable show={show} />;
+  if (v === 'inputs') return <InputsView show={show} />;
+  if (v === 'outputs') return <OutputsView show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>
       <span class="muted">{t('view.soon')}</span>
-    </div>
-  );
-}
-
-function InputsTable({ show }: { show: Show }) {
-  const rows = Object.values(show.channels).sort((a, b) => a.number - b.number);
-  return (
-    <div class="scroll">
-      <table class="list">
-        <thead>
-          <tr>
-            <th>{t('table.number')}</th>
-            <th>{t('table.name')}</th>
-            <th>{t('table.mic')}</th>
-            <th>{t('table.stand')}</th>
-            <th>{t('table.phantom')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((c) => (
-            <tr key={c.id}>
-              <td style="font-family:var(--mono)">{c.number}</td>
-              <td>{c.shortName}</td>
-              <td>{c.mic}</td>
-              <td>{c.stand}</td>
-              <td>{c.phantom ? t('table.yes') : t('table.no')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
