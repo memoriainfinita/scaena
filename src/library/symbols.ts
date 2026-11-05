@@ -78,6 +78,8 @@ const SYMBOLS: Record<string, Draw> = {
   haze: (w, d) => rect(0, 0, w, d) + path(`M${w * 0.15} ${d * 0.4}q${w * 0.1} -${d * 0.2} ${w * 0.2} 0t${w * 0.2} 0t${w * 0.2} 0`, 'none', 1.5) + path(`M${w * 0.15} ${d * 0.7}q${w * 0.1} -${d * 0.2} ${w * 0.2} 0t${w * 0.2} 0t${w * 0.2} 0`, 'none', 1.5),
   smoke: (w, d) => rect(0, 0, w, d) + circle(w * 0.32, d * 0.55, Math.min(w, d) * 0.22) + circle(w * 0.58, d * 0.45, Math.min(w, d) * 0.28) + circle(w * 0.76, d * 0.62, Math.min(w, d) * 0.18),
   strobe: (w, d) => rect(0, 0, w, d) + path(`M${w * 0.55} ${d * 0.1}L${w * 0.35} ${d * 0.55}L${w * 0.5} ${d * 0.55}L${w * 0.4} ${d * 0.92}L${w * 0.7} ${d * 0.4}L${w * 0.52} ${d * 0.4}Z`, '#000', 1) + front(w, d),
+  // A text note: the label is drawn inside by the plan; the symbol is only a light frame.
+  textbox: (w, d) => path(`M0 0H${w}V${d}H0Z`, 'none', 1, '6 5'),
   generic: (w, d) => rect(0, 0, w, d) + line(0, 0, w, d, 1) + line(w, 0, 0, d, 1),
 };
 

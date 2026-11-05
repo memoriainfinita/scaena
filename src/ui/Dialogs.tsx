@@ -239,6 +239,17 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
   const rows: [string, Key][] = [
     ['Ctrl + Z', 'help.undo'],
     ['Ctrl + Mayús + Z', 'help.redo'],
+    ['← ↑ → ↓', 'help.move'],
+    ['R', 'help.rotate'],
+    ['F', 'help.flip'],
+    ['Ctrl + D', 'help.duplicate'],
+    ['Ctrl + G', 'help.group'],
+    ['Supr', 'help.delete'],
+    ['Ctrl + A', 'help.selectAll'],
+    ['0', 'help.fit'],
+    ['+ −', 'help.zoom'],
+    ['Espacio', 'help.pan'],
+    ['Alt', 'help.noAlign'],
     ['?', 'help.help'],
     ['Esc', 'help.close'],
   ];
