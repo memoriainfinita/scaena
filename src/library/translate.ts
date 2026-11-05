@@ -1,0 +1,33 @@
+// The packages are written in Spanish; a show made from one in English gets the same words in English. Only what the
+// packages and the library's suggested channels say is here: whatever the user types stays as typed.
+import type { Lang } from '../i18n/index.ts';
+
+const EN: Record<string, string> = {
+  // Plan labels
+  Batería: 'Drums', Bajo: 'Bass', Guitarra: 'Guitar', Teclado: 'Keys', Voz: 'Vocal', Cuña: 'Wedge', Mesa: 'Desk', Contrabajo: 'Double bass', Piano: 'Piano', Viento: 'Horn', Silla: 'Chair',
+  'Segunda voz': 'Second vocal', 'Mesa de DJ': 'DJ booth', Portátil: 'Laptop', MC: 'MC', 'PA izquierda': 'PA left', 'PA derecha': 'PA right', 'Sub izquierdo': 'Sub left', 'Sub derecho': 'Sub right',
+  Atril: 'Lectern', 'Mesa de ponentes': "Speakers' table", Diadema: 'Headset', Pantalla: 'Screen', Proyector: 'Projector', 'Portátil de presentación': 'Presentation laptop', Actor: 'Actor',
+  'Pata izquierda': 'Left leg', 'Pata derecha': 'Right leg', 'Telón de fondo': 'Back curtain', 'Ordenador de sonido': 'Sound computer', Recorte: 'Ellipsoidal', Fresnel: 'Fresnel',
+  'Mesa de vídeo': 'Video mixer', 'Ordenador de vídeo': 'Video computer', Micro: 'Mic', Stagebox: 'Stagebox', Reserva: 'Spare', Efectos: 'Effects', Ordenador: 'Computer',
+  // Channel names (drums and others)
+  'OH I': 'OH L', 'OH D': 'OH R', Tom: 'Tom', 'DJ L': 'DJ L', 'DJ R': 'DJ R', 'Salida de mesa DJ': 'DJ desk output', 'Micro de mesa': 'Table mic', 'Salida del portátil': 'Laptop output',
+  Bombo: 'Kick', Caja: 'Snare', Charles: 'Hi-hat', 'Tom suelo': 'Floor tom', 'Bajo DI': 'Bass DI', 'Bajo ampli': 'Bass amp', 'Teclado L': 'Keys L', 'Teclado R': 'Keys R', 'Piano L': 'Piano L', 'Piano R': 'Piano R',
+  'Contrabajo DI': 'Double bass DI', 'Contrabajo micro': 'Double bass mic', 'Guitarra DI': 'Guitar DI', 'Guitarra micro': 'Guitar mic', 'Portátil L': 'Laptop L', 'Portátil R': 'Laptop R',
+  'Efectos L': 'Effects L', 'Efectos R': 'Effects R', 'Ordenador L': 'Computer L', 'Ordenador R': 'Computer R',
+  // Stands, microphones that are text, and what programs are for
+  'Pie corto': 'Short stand', Pinza: 'Clamp', 'Pie recto': 'Straight stand', 'Pie largo': 'Boom stand', 'Cuello de cisne': 'Gooseneck', 'Salida del ordenador': 'Computer output',
+  Reproducción: 'Playback', Diapositivas: 'Slides', 'Efectos y música': 'Effects and music', 'Vídeo en directo': 'Live video',
+};
+
+/** `Voz 2` becomes `Vocal 2`: the base is translated and a trailing number stays. */
+export function translatePackageText(text: string, lang: Lang): string {
+  if (lang !== 'en' || !text) return text;
+  const direct = EN[text];
+  if (direct) return direct;
+  const m = /^(.*\S) (\d+)$/.exec(text);
+  if (m && EN[m[1]!]) return `${EN[m[1]!]} ${m[2]}`;
+  return text;
+}
+
+/** Every Spanish phrase the dictionary knows, for the test that checks the packages are covered. */
+export const translatableTexts = (): string[] => Object.keys(EN);

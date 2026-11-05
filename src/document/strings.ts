@@ -51,6 +51,8 @@ export interface DocStrings {
   dongle: string;
   outputsOf: string;
   unit: string;
+  universe: string;
+  address: string;
   element: string;
   model: string;
   mount: string;
@@ -89,7 +91,7 @@ const es: DocStrings = {
   channel: 'Canal', shortName: 'Nombre', mic: 'Micro o DI', stand: 'Pie', phantom: '48 V', pair: 'Par', source: 'Fuente', yes: 'Sí', no: 'No',
   kind: 'Tipo', stereo: 'Estéreo', aux: 'Aux', supplier: 'Lo aporta', unset: 'Sin indicar', band: 'Banda', venueSupplies: 'Sala', rental: 'Alquiler',
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
-  unit: 'Unidad', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
+  unit: 'Unidad', universe: 'Univ.', address: 'Dir.', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
   height: 'Altura (m)', maxLoad: 'Carga máx. (kg)', count: 'Recuento', phase: 'Fase', amps: 'Amperios', voltage: 'Tensión', plug: 'Enchufe', total: 'Total', note: 'Nota',
   legend: 'Leyenda', none: '—', ref: 'Elemento', changes: 'Cambios',
   kinds: { wedge: 'Cuña', iem: 'In-ear', main: 'Principal', send: 'Envío' },
@@ -108,7 +110,7 @@ const en: DocStrings = {
   channel: 'Ch.', shortName: 'Name', mic: 'Mic or DI', stand: 'Stand', phantom: '48 V', pair: 'Pair', source: 'Source', yes: 'Yes', no: 'No',
   kind: 'Type', stereo: 'Stereo', aux: 'Aux', supplier: 'Supplied by', unset: 'Not stated', band: 'Band', venueSupplies: 'Venue', rental: 'Rental',
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',
-  unit: 'Unit', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',
+  unit: 'Unit', universe: 'Univ.', address: 'Addr.', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',
   height: 'Height (m)', maxLoad: 'Max load (kg)', count: 'Count', phase: 'Phase', amps: 'Amps', voltage: 'Voltage', plug: 'Plug', total: 'Total', note: 'Note',
   legend: 'Legend', none: '—', ref: 'Element', changes: 'Changes',
   kinds: { wedge: 'Wedge', iem: 'In-ear', main: 'Main', send: 'Send' },

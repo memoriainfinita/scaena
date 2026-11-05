@@ -32,10 +32,10 @@ export const FIXTURES: FixtureModel[] = [
   { id: 'rj.614sx', brand: 'Robert Juliat', model: '614SX', kind: 'ellipsoidal', weightKg: 13, powerW: 1200, beam: '16-35°', source: 'https://www.robertjuliat.com/Product_Specifications/Fiches_EN/Standard/DSEN049_614SX.pdf', note: '1000/1200 W; 695 × 330 × 415 mm' },
   { id: 'rj.merlin-1515', brand: 'Robert Juliat', model: 'Merlin 1515', kind: 'followspot', weightKg: 76, powerW: 2500, beam: 'zoom', source: 'https://www.robertjuliat.com/Product_Specifications/Fiches_EN/Standard/DSEN226_1515.pdf', note: 'HMI de 2500 W' },
   // No datasheet read: generic types marked as estimates (decided 2026-11-02).
-  { id: 'generic.par64', brand: 'Genérico', model: 'PAR 64 (1000 W)', kind: 'par', weightKg: 3.6, powerW: 1000, beam: 'según lámpara', estimate: true, note: 'Estimación; ficha sin leer' },
-  { id: 'generic.par56', brand: 'Genérico', model: 'PAR 56 (300 W)', kind: 'par', weightKg: 2.0, powerW: 300, beam: 'según lámpara', estimate: true, note: 'Estimación' },
-  { id: 'generic.fresnel-2k', brand: 'Genérico', model: 'Fresnel 2 kW', kind: 'fresnel', weightKg: null, powerW: 2000, beam: 'zoom', estimate: true },
-  { id: 'generic.pc-1k', brand: 'Genérico', model: 'PC 1 kW', kind: 'pc', weightKg: null, powerW: 1000, beam: 'zoom', estimate: true },
+  { id: 'generic.par64', brand: 'Generic', model: 'PAR 64 (1000 W)', kind: 'par', weightKg: 3.6, powerW: 1000, beam: 'según lámpara', estimate: true, note: 'Estimación; ficha sin leer' },
+  { id: 'generic.par56', brand: 'Generic', model: 'PAR 56 (300 W)', kind: 'par', weightKg: 2.0, powerW: 300, beam: 'según lámpara', estimate: true, note: 'Estimación' },
+  { id: 'generic.fresnel-2k', brand: 'Generic', model: 'Fresnel 2 kW', kind: 'fresnel', weightKg: null, powerW: 2000, beam: 'zoom', estimate: true },
+  { id: 'generic.pc-1k', brand: 'Generic', model: 'PC 1 kW', kind: 'pc', weightKg: null, powerW: 1000, beam: 'zoom', estimate: true },
 ];
 
 const SHURE = 'https://pubs.shure.com/view/guide';
@@ -65,7 +65,7 @@ export const AUDIO: AudioModel[] = [
   { id: 'yamaha.dm3', brand: 'Yamaha', model: 'DM3', kind: 'console', weightKg: 6.5, inputs: 16, source: 'https://usa.yamaha.com/products/proaudio/mixers/dm3/specs.html', note: '320 × 140 × 455 mm' },
   { id: 'yamaha.ql1', brand: 'Yamaha', model: 'QL1', kind: 'console', weightKg: 14.7, source: 'https://usa.yamaha.com/products/proaudio/mixers/ql_series/specs.html', note: '468 × 272 × 562 mm; descatalogada' },
   { id: 'yamaha.cl5', brand: 'Yamaha', model: 'CL5', kind: 'console', weightKg: 36, source: 'https://usa.yamaha.com/products/proaudio/mixers/cl_series/specs.html', note: '1053 × 299 × 667 mm; descatalogada' },
-  { id: 'sennheiser.ew-dx', brand: 'Sennheiser', model: 'EW-DX (diadema o mano)', kind: 'wireless', weightKg: null, source: 'https://docs.cloud.sennheiser.com/en-us/ew-d/ew-d/specifications-ew-dx-em2.html', note: 'Receptor EM 2: unos 1000 g; las bandas dependen de la región' },
+  { id: 'sennheiser.ew-dx', brand: 'Sennheiser', model: 'EW-DX', kind: 'wireless', weightKg: null, source: 'https://docs.cloud.sennheiser.com/en-us/ew-d/ew-d/specifications-ew-dx-em2.html', note: 'Receptor EM 2: unos 1000 g; las bandas dependen de la región' },
   { id: 'shure.ulxd', brand: 'Shure', model: 'ULX-D', kind: 'wireless', weightKg: 0.913, source: `${SHURE}/ULXD/en-US.pdf`, note: 'Receptor cuádruple sin antenas; petaca 142 g sin pilas' },
   { id: 'shure.qlxd', brand: 'Shure', model: 'QLX-D', kind: 'wireless', weightKg: 0.777, source: `${SHURE}/QLXD/en-US.pdf`, note: 'Receptor QLXD4 sin antenas; petaca 138 g sin pilas' },
   { id: 'shure.slxd', brand: 'Shure', model: 'SLX-D', kind: 'wireless', weightKg: 0.816, source: 'https://content-files.shure.com/publications/specSheet/en/slx-d-spec-sheet.pdf', note: 'Receptor SLXD4 sin antenas' },

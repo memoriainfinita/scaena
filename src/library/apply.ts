@@ -5,6 +5,7 @@ import { addMount, emptyLuminaire, updateLuminaire } from '../model/lights.ts';
 import type { Computer, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
 import { templateForPackage } from '../document/sections.ts';
 import { itemById } from './items.ts';
+import { translatePackageText } from './translate.ts';
 import type { ShowPackage } from './types.ts';
 
 
@@ -19,7 +20,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     const layer = show.layers.find((l) => l.subject === item.layer);
     if (!layer) throw new Error(`no layer for subject ${item.layer}`);
     const computer: Computer | null = pe.computer
-      ? { functions: pe.computer.functions, os: pe.computer.os, programs: pe.computer.programs.map((p) => ({ name: p.name, version: '', use: p.use })), license: '', dongle: false, outputs: [] }
+      ? { functions: pe.computer.functions, os: pe.computer.os, programs: pe.computer.programs.map((p) => ({ name: p.name, version: '', use: translatePackageText(p.use, lang) })), license: '', dongle: false, outputs: [] }
       : null;
     let el: PlanElement;
     [show, el] = addElement(show, {
@@ -27,7 +28,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
       x: pe.x,
       y: pe.y,
       layerId: layer.id,
-      label: pe.label ?? '',
+      label: translatePackageText(pe.label ?? '', lang),
       suppliedBy: pe.suppliedBy ?? 'unset',
       computer,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
@@ -38,7 +39,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
   pkg.channels.forEach((c, i) => {
     let id: string;
     [id, show] = nextId(show, 'ch');
-    channels[id] = { id, number: i + 1, shortName: c.name.slice(0, 16), mic: c.mic, stand: c.stand, phantom: c.phantom, insert: '', stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
+    channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
   });
   const outputs: Record<string, Output> = {};
   pkg.outputs.forEach((o, i) => {

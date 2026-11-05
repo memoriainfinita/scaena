@@ -1,6 +1,6 @@
 // The interactive plan: camera, selection, drag, keyboard. The drawing of one element is `PlanEl`; the
 // camera only changes the `transform` of one group, so zooming does not repaint the elements.
-import { batch, signal, useComputed, useSignal, type Signal } from '@preact/signals';
+import { batch, effect, signal, useComputed, useSignal, type Signal } from '@preact/signals';
 import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
@@ -20,6 +20,9 @@ import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLengt
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
+
+/** Above this many drawn elements the plan swaps to plain boxes while it zooms or something is dragged (measured in docs/research/rendimiento-app-2026-11-05.md). */
+export const LOD_MIN = 150;
 
 const symCache = new Map<string, string>();
 function symbolMarkup(key: string, w: number, d: number): string {
@@ -46,7 +49,6 @@ interface ElProps {
 const BADGE: Record<Severity, string> = { error: '#b3261e', warning: '#9a5b00', tip: '#1a5fb4' };
 
 const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps) {
-  const simple = gesture.value;
   const it = itemById(el.type.id);
   if (!it) return null;
   const { w, d } = elementSize(el);
@@ -60,7 +62,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
       data-id={el.id}
       transform={`translate(${el.x} ${el.y})`}
       opacity={dim > 0 ? 1 - dim * 0.7 : undefined}
-      tabIndex={locked ? -1 : 0}
+      tabindex={locked ? -1 : 0}
       role="button"
       aria-label={name}
       aria-pressed={selected}
@@ -77,25 +79,26 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
     >
       <g transform={`rotate(${el.rotation}) scale(${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})`}>
         <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="transparent" vector-effect="non-scaling-stroke" {...frame} />
-        {simple ? <rect width={w} height={d} fill="#fff" stroke="#000" stroke-width="1" vector-effect="non-scaling-stroke" /> : <g dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d) }} />}
+        <rect class="simple" width={w} height={d} fill="#c9cfd4" />
+        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d) }} />
       </g>
-      {isText && !simple && (
-        <g transform={`rotate(${el.rotation})`}>
+      {isText && (
+        <g class="detail" transform={`rotate(${el.rotation})`}>
           <text x={-w / 2 + 80} y={d * 0.28} font-size={d * 0.62} fill="#000" font-family="Inter Variable, sans-serif" style="white-space:pre">
             {el.label}
           </text>
         </g>
       )}
-      {sev && !simple && (
-        <g transform={`translate(${box.x1 - el.x} ${box.y0 - el.y})`} aria-hidden="true">
+      {sev && (
+        <g class="detail" transform={`translate(${box.x1 - el.x} ${box.y0 - el.y})`} aria-hidden="true">
           {sev === 'error' ? <circle r="150" fill={BADGE[sev]} /> : sev === 'warning' ? <path d="M0 -170L165 130H-165Z" fill={BADGE[sev]} /> : <rect x="-130" y="-130" width="260" height="260" rx="40" fill={BADGE[sev]} />}
           <text y="75" text-anchor="middle" font-size="210" font-weight="700" fill="#fff" font-family="Inter Variable, sans-serif">
             {sev === 'tip' ? 'i' : '!'}
           </text>
         </g>
       )}
-      {!isText && el.label && !simple && (
-        <text x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
+      {!isText && el.label && (
+        <text class="detail" x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
         </text>
       )}
@@ -134,7 +137,6 @@ function Stage({ show }: { show: Show }) {
 
 /** Mounting positions: bars and pipes as thick lines with their name, floor positions dotted. */
 function Mounts({ show }: { show: Show }) {
-  const simple = gesture.value;
   const visible = show.layers.find((l) => l.subject === 'lights')?.visible ?? true;
   const list = Object.values(show.mounts);
   if (!visible || list.length === 0) return null;
@@ -145,8 +147,8 @@ function Mounts({ show }: { show: Show }) {
         return (
           <g key={m.id}>
             <line x1={m.from.x} y1={m.from.y} x2={m.to.x} y2={m.to.y} stroke="#555" stroke-width={floor ? 2 : 4} stroke-dasharray={floor ? '2 6' : m.kind === 'truss' ? '12 4' : undefined} vector-effect="non-scaling-stroke" />
-            {!simple && (
-              <text x={Math.min(m.from.x, m.to.x) - 60} y={(m.from.y + m.to.y) / 2 + 55} text-anchor="end" font-size="170" fill="#444" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+            {(
+              <text class="detail" x={Math.min(m.from.x, m.to.x) - 60} y={(m.from.y + m.to.y) / 2 + 55} text-anchor="end" font-size="170" fill="#444" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                 {m.name}
               </text>
             )}
@@ -166,7 +168,6 @@ const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = {
 
 /** Cables between elements: the colour is always backed by a different dash and the connector name. */
 function Connections({ show, hidden }: { show: Show; hidden: Set<string> }) {
-  const simple = gesture.value;
   const layers = new Map(show.layers.map((l) => [l.id, l]));
   const shown = (id: string) => {
     const el = show.elements[id];
@@ -183,8 +184,8 @@ function Connections({ show, hidden }: { show: Show; hidden: Set<string> }) {
           return (
             <g key={c.id}>
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={st.stroke} stroke-width="2" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
-              {!simple && c.connector && (
-                <text x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 60} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+              {c.connector && (
+                <text class="detail" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 60} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                   {c.connector}
                 </text>
               )}
@@ -374,7 +375,16 @@ export function PlanView({ show }: { show: Show }) {
   const camT = useComputed(() => `translate(${cam.value.x} ${cam.value.y}) scale(${cam.value.k})`);
   const dragT = useComputed(() => `translate(${dragDelta.value.dx} ${dragDelta.value.dy})`);
 
+  // While a zoom or pinch runs, the plan carries a class that swaps every element for its plain box: one style change, no re-render.
+  useEffect(
+    () =>
+      effect(() => {
+        svgRef.current?.classList.toggle('gesture', gesture.value);
+      }),
+    [],
+  );
   const fitReq = fitRequest.value;
+  const lod = useRef(false);
   const showRef = useRef(show);
   showRef.current = show;
   const fitted = useRef(false);
@@ -429,9 +439,11 @@ export function PlanView({ show }: { show: Show }) {
     const { w, h } = size.peek();
     const p = at ?? { x: w / 2, y: h / 2 };
     cam.value = zoomAt(cam.peek(), p.x, p.y, factor);
-    gesture.value = true;
-    clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => (gesture.value = false), 140);
+    if (lod.current) {
+      gesture.value = true;
+      clearTimeout(timer.current);
+      timer.current = window.setTimeout(() => (gesture.value = false), 140);
+    }
   };
 
   // The wheel needs a non-passive listener to stop the page from scrolling.
@@ -585,9 +597,11 @@ export function PlanView({ show }: { show: Show }) {
       const k = clampK(pz.cam.k * (Math.hypot(a1.x - b1.x, a1.y - b1.y) / pz.d0));
       const c = { x: (a1.x + b1.x) / 2, y: (a1.y + b1.y) / 2 };
       cam.value = { k, x: c.x - pz.w0.x * k, y: c.y - pz.w0.y * k };
-      gesture.value = true;
-      clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => (gesture.value = false), 140);
+      if (lod.current) {
+        gesture.value = true;
+        clearTimeout(timer.current);
+        timer.current = window.setTimeout(() => (gesture.value = false), 140);
+      }
       return;
     }
     const a = act.current;
@@ -617,7 +631,10 @@ export function PlanView({ show }: { show: Show }) {
         dy = snap(a.p0.y + dy, st) - a.p0.y;
       }
       batch(() => {
-        if (dragIds.peek() === null) dragIds.value = a.ids;
+        if (dragIds.peek() === null) {
+          dragIds.value = a.ids;
+          if (lod.current) gesture.value = true;
+        }
         dragDelta.value = { dx, dy };
       });
     } else if (a.kind === 'marquee') {
@@ -643,6 +660,7 @@ export function PlanView({ show }: { show: Show }) {
         else if (!a.moved && !a.shift && a.wasMulti && !cancelled) selection.value = expandGroups(s, [a.hitId]);
         dragIds.value = null;
         dragDelta.value = { dx: 0, dy: 0 };
+        if (lod.current) gesture.value = false;
       });
     } else if (a.kind === 'marquee') {
       const q = marquee.peek();
@@ -677,6 +695,7 @@ export function PlanView({ show }: { show: Show }) {
     const l = layers.get(e.layerId)!;
     return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} />;
   };
+  lod.current = rows.length > LOD_MIN;
   const resting = (dragSet ? rows.filter((e) => !dragSet.has(e.id)) : rows).map(mk);
   const moving = dragSet ? rows.filter((e) => dragSet.has(e.id)).map(mk) : [];
 
@@ -708,7 +727,9 @@ export function PlanView({ show }: { show: Show }) {
           <Mounts show={show} />
           <Connections show={show} hidden={dragSet ?? new Set()} />
           <g>{resting}</g>
-          <g transform={dragT}>{moving}</g>
+          <g class="moving" transform={dragT}>
+            {moving}
+          </g>
         </g>
         <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>
@@ -739,8 +760,8 @@ export function PlanView({ show }: { show: Show }) {
         <Btn icon="rotate" label={`${t('plan.rotate')} (R)`} onClick={() => rotateSelection(15)} />
         <Btn icon="flip" label={`${t('plan.flip')} (F)`} onClick={() => flipSelection('x')} />
         <Btn icon="duplicate" label={`${t('plan.duplicate')} (Ctrl+D)`} onClick={() => duplicateSelection(show.view.grid ? show.view.gridMm : 500)} />
-        <Btn icon={grouped ? 'ungroup' : 'group'} label={grouped ? `${t('plan.ungroup')} (Ctrl+Mayús+G)` : `${t('plan.group')} (Ctrl+G)`} disabled={!grouped && count < 2} onClick={() => (grouped ? ungroupSelection() : groupSelection())} />
-        <Btn icon="trash" label={`${t('plan.delete')} (Supr)`} onClick={() => deleteSelection()} />
+        <Btn icon={grouped ? 'ungroup' : 'group'} label={grouped ? `${t('plan.ungroup')} (Ctrl+${t('key.shift')}+G)` : `${t('plan.group')} (Ctrl+G)`} disabled={!grouped && count < 2} onClick={() => (grouped ? ungroupSelection() : groupSelection())} />
+        <Btn icon="trash" label={`${t('plan.delete')} (${t('key.del')})`} onClick={() => deleteSelection()} />
         <span class="psep" />
         {(['left', 'center', 'right', 'top', 'middle', 'bottom'] as const).map((m) => (
           <Btn key={m} icon={m} label={t(`align.${m}` as Key)} disabled={count < 2} onClick={() => align(m)} />
