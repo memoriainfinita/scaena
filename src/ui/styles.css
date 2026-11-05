@@ -115,6 +115,21 @@ textarea.input { height: auto; padding: 8px 10px; resize: vertical; }
 .canvas { flex: 1; min-width: 0; background: var(--canvas); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 16px; }
 .sheet { background: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25); max-width: 100%; max-height: 100%; aspect-ratio: 210 / 297; height: 100%; display: flex; }
 .sheet svg { width: 100%; height: 100%; display: block; }
+.plan { position: absolute; inset: 0; background: #fff; overflow: hidden; }
+.plansvg { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; }
+.plansvg.pan { cursor: grab; }
+.plansvg.cross { cursor: crosshair; }
+.planbar { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18); color: var(--fg); }
+.planbar[hidden] { display: none; }
+.planbar.top { top: 12px; }
+.planbar.bottom { bottom: 12px; left: 12px; transform: none; }
+.pbtn { width: 30px; height: 30px; border: 0; border-radius: 6px; background: transparent; color: inherit; display: inline-flex; align-items: center; justify-content: center; }
+.pbtn:hover:not(:disabled) { background: var(--accent-soft); }
+.pbtn[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent-text); }
+.pbtn:disabled { opacity: 0.4; cursor: default; }
+.psep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.scalebar { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 0 8px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.scalebar span { height: 4px; border: 1.5px solid currentColor; border-top: 0; display: block; }
 .el:focus-visible { outline: none; }
 .el:focus-visible .hit { stroke: #0b6e78; stroke-width: 3; stroke-dasharray: 8 5; }
 .placeholder { max-width: 460px; padding: 28px; background: var(--panel); border: 1px dashed var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 8px; }

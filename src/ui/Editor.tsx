@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'preact/hooks';
+import { setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { addFromLibrary, dialog, goHome, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById, searchItems } from '../library/items.ts';
-import { symbolBody, symbolSvg } from '../library/symbols.ts';
+import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
+import { Ico, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', document: 'document' };
 
@@ -87,19 +89,18 @@ function Tabs({ show }: { show: Show }) {
 }
 
 function Toolbar() {
-  const [tool, setTool] = useState('select');
-  const tools: { id: string; key: Key; icon: preact.JSX.Element; enabled: boolean }[] = [
+  const tools: { id: ToolId; key: Key; icon: preact.JSX.Element; enabled: boolean }[] = [
     { id: 'select', key: 'tool.select', icon: <IconSelect />, enabled: true },
-    { id: 'pan', key: 'tool.pan', icon: <IconPan />, enabled: false },
+    { id: 'pan', key: 'tool.pan', icon: <IconPan />, enabled: true },
     { id: 'connect', key: 'tool.connect', icon: <IconConnect />, enabled: false },
-    { id: 'text', key: 'tool.text', icon: <IconText />, enabled: false },
-    { id: 'measure', key: 'tool.measure', icon: <IconMeasure />, enabled: false },
+    { id: 'text', key: 'tool.text', icon: <IconText />, enabled: true },
+    { id: 'measure', key: 'tool.measure', icon: <IconMeasure />, enabled: true },
     { id: 'background', key: 'tool.background', icon: <IconBackground />, enabled: false },
   ];
   return (
     <div class="toolbar" role="toolbar" aria-label={t('tools.label')} aria-orientation="vertical">
       {tools.map((x) => (
-        <button key={x.id} type="button" class="tool" aria-pressed={tool === x.id} aria-label={t(x.key)} title={x.enabled ? t(x.key) : `${t(x.key)} · ${t('export.soon')}`} disabled={!x.enabled} onClick={() => setTool(x.id)}>
+        <button key={x.id} type="button" class="tool" aria-pressed={tool.value === x.id} aria-label={t(x.key)} title={x.enabled ? t(x.key) : `${t(x.key)} · ${t('export.soon')}`} disabled={!x.enabled} onClick={() => (tool.value = x.id)}>
           {x.icon}
         </button>
       ))}
@@ -129,90 +130,15 @@ function Library() {
   );
 }
 
-function bounds(show: Show): { x: number; y: number; w: number; h: number } {
-  const sh = show.stage.shape;
-  let x0 = sh.kind === 'rect' ? 0 : Math.min(...sh.points.map((p) => p.x));
-  let x1 = sh.kind === 'rect' ? sh.width : Math.max(...sh.points.map((p) => p.x));
-  let y0 = sh.kind === 'rect' ? 0 : Math.min(...sh.points.map((p) => p.y));
-  let y1 = sh.kind === 'rect' ? sh.depth : Math.max(...sh.points.map((p) => p.y));
-  for (const e of Object.values(show.elements)) {
-    const it = itemById(e.type.id);
-    const w = e.width ?? it?.size.w ?? 500;
-    const d = e.depth ?? it?.size.d ?? 500;
-    x0 = Math.min(x0, e.x - w / 2);
-    x1 = Math.max(x1, e.x + w / 2);
-    y0 = Math.min(y0, e.y - d / 2);
-    y1 = Math.max(y1, e.y + d / 2);
-  }
-  const m = 900;
-  return { x: x0 - m, y: y0 - m, w: x1 - x0 + 2 * m, h: y1 - y0 + 2 * m + 300 };
-}
-
 function MainView({ show }: { show: Show }) {
   const v = view.value;
-  if (v === 'plan') return <PlanSheet show={show} />;
+  if (v === 'plan') return <PlanView key={session.value!.id} show={show} />;
   if (v === 'inputs') return <InputsTable show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>
       <span class="muted">{t('view.soon')}</span>
     </div>
-  );
-}
-
-// Read-only drawing of the plan: the interactive engine arrives in step 5.
-function PlanSheet({ show }: { show: Show }) {
-  const b = bounds(show);
-  const layers = new Map(show.layers.map((l) => [l.id, l]));
-  const sh = show.stage.shape;
-  const els = Object.values(show.elements).filter((e) => layers.get(e.layerId)?.visible);
-  const selected = new Set(selection.value);
-  return (
-    <div class="sheet">
-      <svg viewBox={`${b.x} ${b.y} ${b.w} ${b.h}`} role="img" aria-label={t('canvas.alt', { n: els.length })} onClick={() => (selection.value = [])}>
-        {sh.kind === 'rect' ? <rect x={0} y={0} width={sh.width} height={sh.depth} fill="#f3f3f3" stroke="#000" stroke-width="2" vector-effect="non-scaling-stroke" /> : <polygon points={sh.points.map((p) => `${p.x},${p.y}`).join(' ')} fill="#f3f3f3" stroke="#000" stroke-width="2" vector-effect="non-scaling-stroke" />}
-        {sh.kind === 'rect' && <line x1={-300} y1={sh.depth} x2={sh.width + 300} y2={sh.depth} stroke="#000" stroke-width="4" vector-effect="non-scaling-stroke" />}
-        {els.map((e) => (
-          <PlanEl key={e.id} el={e} locked={layers.get(e.layerId)?.locked ?? false} selected={selected.has(e.id)} />
-        ))}
-      </svg>
-    </div>
-  );
-}
-
-function PlanEl({ el, locked, selected }: { el: PlanElement; locked: boolean; selected: boolean }) {
-  const it = itemById(el.type.id);
-  if (!it) return null;
-  const w = el.width ?? it.size.w;
-  const d = el.depth ?? it.size.d;
-  const name = el.label || it.name[lang.value];
-  return (
-    <g
-      class="el"
-      transform={`translate(${el.x} ${el.y}) rotate(${el.rotation}) translate(${-w / 2} ${-d / 2})`}
-      tabIndex={locked ? -1 : 0}
-      role="button"
-      aria-label={name}
-      aria-pressed={selected}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!locked) selection.value = [el.id];
-      }}
-      onKeyDown={(e) => {
-        if (!locked && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
-          selection.value = [el.id];
-        }
-      }}
-    >
-      <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="none" stroke={selected ? '#0b6e78' : 'none'} stroke-width="3" stroke-dasharray="8 5" vector-effect="non-scaling-stroke" />
-      <g dangerouslySetInnerHTML={{ __html: symbolBody(it.symbol, w, d) }} />
-      {el.label && (
-        <text x={w / 2} y={d + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
-          {el.label}
-        </text>
-      )}
-    </g>
   );
 }
 
@@ -261,7 +187,7 @@ function Inspector({ show }: { show: Show }) {
             <strong style="font-size:15px">{it.name[lang.value]}</strong>
             <label class="field">
               {t('inspector.label')}
-              <input class="input" value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
+              <input class="input" data-label-field value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
             </label>
             <label class="field">
               {t('inspector.supplied')}
@@ -307,6 +233,10 @@ function Inspector({ show }: { show: Show }) {
                 <IconEye />
               </label>
               <label>
+                <input type="checkbox" aria-label={t('layers.dim', { name })} checked={(l.dim ?? 0) > 0} onChange={(e) => setLayerDim(l.id, (e.currentTarget as HTMLInputElement).checked ? 0.6 : 0)} />
+                <Ico name="dim" />
+              </label>
+              <label>
                 <input type="checkbox" aria-label={t('layers.lock', { name })} checked={l.locked} onChange={(e) => setLayerFlag(l.id, 'locked', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconLock />
               </label>
@@ -335,6 +265,7 @@ function StatusBar({ show }: { show: Show }) {
     <footer class="statusbar">
       <span>{t('status.elements', { n: Object.keys(show.elements).length })}</span>
       <span>{t('status.channels', { n: Object.keys(show.channels).length })}</span>
+      {selection.value.length > 0 && <span role="status">{t('plan.selected', { n: selection.value.length })}</span>}
       <span class="grow" />
       <span>{t('status.paper', { paper: show.paper })}</span>
       <span>

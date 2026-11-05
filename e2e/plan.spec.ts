@@ -1,0 +1,142 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test, type Page } from '@playwright/test';
+
+const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
+
+async function rock(page: Page) {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await expect(page.getByText('14 elementos')).toBeVisible();
+  await expect(page.locator('g.el').first()).toBeVisible();
+}
+
+const center = async (page: Page, sel: string) => {
+  const b = (await page.locator(sel).first().boundingBox())!;
+  return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+};
+const xField = (page: Page) => page.getByLabel('X (m)');
+
+test('dragging an element moves it onto the grid, as one undo step', async ({ page }) => {
+  await rock(page);
+  const el = page.locator('g.el[data-id]').first();
+  const c = await center(page, 'g.el[data-id] .hit');
+  await page.mouse.move(c.x, c.y);
+  await page.mouse.down();
+  await page.mouse.move(c.x + 40, c.y + 20, { steps: 4 });
+  await page.mouse.move(c.x + 120, c.y + 60, { steps: 6 });
+  await page.mouse.up();
+  await expect(xField(page)).toBeVisible();
+  const after = Number(await xField(page).inputValue());
+  expect((after * 2) % 1).toBeCloseTo(0, 6); // grid of 0.5 m
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  const before = Number(await xField(page).inputValue());
+  expect(before).not.toBe(after);
+  await expect(el).toBeVisible();
+  // One undo undid the whole drag: the next undo is the library start, not a half-step.
+  await page.getByRole('button', { name: 'Rehacer' }).click();
+  expect(Number(await xField(page).inputValue())).toBe(after);
+});
+
+test('a marquee selects what it touches and Escape lets go', async ({ page }) => {
+  await rock(page);
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.mouse.move(area.x + 4, area.y + 60);
+  await page.mouse.down();
+  await page.mouse.move(area.x + area.width - 4, area.y + area.height - 4, { steps: 8 });
+  await page.mouse.up();
+  await expect(page.getByText('14 seleccionados')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('14 seleccionados')).toHaveCount(0);
+});
+
+test('keyboard: arrows move, R turns, Ctrl+D duplicates, Delete removes', async ({ page }) => {
+  await rock(page);
+  const c = await center(page, 'g.el[data-id] .hit');
+  await page.mouse.click(c.x, c.y);
+  const x0 = Number(await xField(page).inputValue());
+  await page.keyboard.press('ArrowRight');
+  expect(Number(await xField(page).inputValue())).toBeCloseTo(x0 + 0.5, 6);
+  await page.keyboard.press('Shift+ArrowLeft');
+  expect(Number(await xField(page).inputValue())).toBeCloseTo(x0 + 0.49, 6);
+  await page.keyboard.press('r');
+  await expect(page.getByLabel('Giro')).toHaveValue('15');
+  await page.keyboard.press('Control+d');
+  await expect(page.getByText('15 elementos')).toBeVisible();
+  await page.keyboard.press('Delete');
+  await expect(page.getByText('14 elementos')).toBeVisible();
+  await page.keyboard.press('Control+z');
+  await expect(page.getByText('15 elementos')).toBeVisible();
+});
+
+test('the wheel zooms about the cursor and 0 fits the plan again', async ({ page }) => {
+  await rock(page);
+  const cam = page.locator('svg.plansvg > g').first();
+  const k = async () => Number(/scale\(([\d.]+)\)/.exec((await cam.getAttribute('transform'))!)![1]);
+  const k0 = await k();
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.mouse.move(area.x + area.width / 2, area.y + area.height / 2);
+  await page.mouse.wheel(0, -400);
+  await expect.poll(k).toBeGreaterThan(k0 * 1.3);
+  await page.keyboard.press('0');
+  await expect.poll(k).toBeCloseTo(k0, 4);
+});
+
+test('two selected elements align to the left edge', async ({ page }) => {
+  await rock(page);
+  const hits = page.locator('g.el[data-id] .hit');
+  const a = await hits.nth(0).boundingBox();
+  const b = await hits.nth(3).boundingBox();
+  await page.mouse.click(a!.x + a!.width / 2, a!.y + a!.height / 2);
+  await page.keyboard.down('Shift');
+  await page.mouse.click(b!.x + b!.width / 2, b!.y + b!.height / 2);
+  await page.keyboard.up('Shift');
+  await expect(page.getByText('2 seleccionados')).toBeVisible();
+  await page.getByRole('button', { name: 'Alinear a la izquierda' }).click();
+  const a2 = (await hits.nth(0).boundingBox())!;
+  const b2 = (await hits.nth(3).boundingBox())!;
+  expect(Math.abs(a2.x - b2.x)).toBeLessThan(1.5);
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  const b3 = (await hits.nth(3).boundingBox())!;
+  expect(Math.abs(b3.x - b!.x)).toBeLessThan(3); // the selection outline adds a stroke
+});
+
+test('measure shows a distance and text places a note ready to type', async ({ page }) => {
+  await rock(page);
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.getByRole('button', { name: 'Medir' }).click();
+  await page.mouse.click(area.x + 200, area.y + 200);
+  await page.mouse.click(area.x + 400, area.y + 200);
+  await expect(page.getByText(/Distancia: [\d,]+ m/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Texto', exact: true }).click();
+  await page.mouse.click(area.x + 300, area.y + 300);
+  await expect(page.getByText('15 elementos')).toBeVisible();
+  const label = page.getByLabel('Etiqueta');
+  await expect(label).toBeFocused();
+  await label.fill('Bajar el telón');
+  await label.press('Tab');
+  await expect(page.locator('g.el[aria-label="Bajar el telón"]')).toHaveCount(1);
+});
+
+test('a locked layer cannot be selected and a hidden one is not drawn', async ({ page }) => {
+  await rock(page);
+  await page.getByRole('checkbox', { name: 'Bloquear Audio' }).check();
+  const hits = page.locator('g.el[data-id] .hit');
+  const n = await hits.count();
+  expect(n).toBeGreaterThan(5);
+  const first = page.locator('g.el[data-id]').first();
+  await expect(first).toHaveAttribute('aria-disabled', 'true');
+  await page.getByRole('checkbox', { name: 'Mostrar Audio' }).uncheck();
+  await expect(page.locator('g.el[data-id]')).toHaveCount(0);
+});
+
+test('the plan with a selection has no accessibility violations @a11y', async ({ page }) => {
+  await rock(page);
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.mouse.move(area.x + 4, area.y + 60);
+  await page.mouse.down();
+  await page.mouse.move(area.x + area.width - 4, area.y + area.height - 4, { steps: 4 });
+  await page.mouse.up();
+  await expect(page.getByRole('toolbar', { name: 'Alinear y distribuir' })).toBeVisible();
+  expect((await axe(page)).violations).toEqual([]);
+});
