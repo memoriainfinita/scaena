@@ -34,7 +34,7 @@ El fondo se guarda dentro del archivo del montaje.
 
 ## El escenario
 
-En **Ajustes del montaje → Escenario**: ancho y fondo, un **ancho de proscenio** opcional (vacío, sin proscenio; la línea se dibuja como dos paredes con la boca en medio) y las **líneas de referencia** que se muestran (eje central, línea de proscenio, boca del proscenio). Para un escenario de forma irregular, marca **Escenario de forma libre** y escribe los puntos, uno por línea como `x; y` en metros (al menos tres). Un escenario de forma libre no tiene líneas de referencia.
+En **Ajustes del montaje → Escenario**: ancho y fondo, un **ancho de proscenio** opcional (vacío, sin proscenio; la línea se dibuja como dos paredes con la boca en medio) y las **líneas de referencia** que se muestran (eje central, línea de proscenio, boca del proscenio). La **altura de la tarima** es la del escenario sobre el suelo de la sala (cuenta en la sección lateral). Las zonas elevadas dentro del escenario son elementos **Tarima** y **Plataforma** de la biblioteca, cada uno con su altura en el inspector. Para un escenario de forma irregular, marca **Escenario de forma libre** y escribe los puntos, uno por línea como `x; y` en metros (al menos tres). Un escenario de forma libre no tiene líneas de referencia.
 
 ## Mover la vista
 

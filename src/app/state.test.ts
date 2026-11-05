@@ -76,6 +76,17 @@ describe('editing', () => {
     expect(session.value!.show.value.paper).toBe('A4');
   });
 
+  test('the stage deck height is set in metres and kept when the settings leave it out', () => {
+    startEmpty('x');
+    const base = { modules: ['audio' as const], regionCode: 'ES', voltage: 230, paper: 'A4' as const, units: 'metric' as const, lang: 'es' as const, stageWidthM: 8, stageDepthM: 5 };
+    applyShowSettings({ ...base, stageHeightM: 1.2 });
+    expect(session.value!.show.value.stage.height).toBe(1200);
+    applyShowSettings(base);
+    expect(session.value!.show.value.stage.height).toBe(1200);
+    applyShowSettings({ ...base, stageHeightM: -3 });
+    expect(session.value!.show.value.stage.height).toBe(0);
+  });
+
   test('the stage can become a free-form polygon, get a proscenium opening and hide reference lines', () => {
     startEmpty('x');
     const base = { modules: ['audio' as const], regionCode: 'ES', voltage: 230, paper: 'A4' as const, units: 'metric' as const, lang: 'es' as const, stageWidthM: 8, stageDepthM: 5 };

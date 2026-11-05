@@ -71,6 +71,8 @@ export const PlanElement = v.object({
   flipY: v.optional(v.boolean(), false),
   width: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
   depth: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
+  /** Top of a riser or platform above the stage deck, in millimetres; null uses the library's. */
+  height: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
   layerId: id,
   label: text(120),
   groupId: v.optional(v.nullable(id), null),

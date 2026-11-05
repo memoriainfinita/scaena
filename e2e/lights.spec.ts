@@ -34,8 +34,8 @@ test('mounts: a load limit flags an overloaded bar and the section draws it @a11
   await page.getByRole('button', { name: 'Montajes', exact: true }).click();
   await L(page, 'Carga máx. (kg) · Vara 1').fill('1');
   await L(page, 'Carga máx. (kg) · Vara 1').press('Tab');
-  await L(page, 'Altura (m) · Vara 1').fill('5.5');
-  await L(page, 'Altura (m) · Vara 1').press('Tab');
+  await L(page, 'Altura sobre la tarima (m) · Vara 1').fill('5.5');
+  await L(page, 'Altura sobre la tarima (m) · Vara 1').press('Tab');
   // Weights are empty until a model is picked, so the bar is not overloaded yet.
   await expect(page.getByRole('note')).toHaveCount(0);
   await page.getByRole('button', { name: 'Instrumentos', exact: true }).click();
@@ -158,4 +158,23 @@ test('the hanging plot report lists each mount with its total row', async ({ pag
   const table = page.getByRole('table');
   await expect(table.getByRole('row').nth(1)).toContainText('1');
   await expect(table.getByRole('cell', { name: 'Total' }).first()).toBeVisible();
+});
+
+test('the section draws the stage deck and the raised areas, and mounts are measured from the deck @a11y', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
+  const dlg = page.getByRole('dialog', { name: 'Ajustes del montaje' });
+  await dlg.getByLabel('Altura de la tarima (m)').fill('1.2');
+  await dlg.getByRole('button', { name: 'Aplicar' }).click();
+  await page.getByRole('button', { name: 'Plano', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('tarima');
+  await page.getByRole('button', { name: /Añadir Tarima/ }).first().click();
+  await page.getByLabel('Altura sobre la tarima (m)', { exact: true }).fill('0.5');
+  await page.getByLabel('Altura sobre la tarima (m)', { exact: true }).press('Tab');
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await page.getByRole('button', { name: 'Sección', exact: true }).click();
+  const section = page.getByRole('img', { name: /Sección lateral/ });
+  await expect(section).toContainText('Tarima · 1,2 m');
+  await expect(section).toContainText('1,7 m'); // the riser's top: deck 1.2 m plus 0.5 m
+  expect((await axe(page)).violations).toEqual([]);
 });
