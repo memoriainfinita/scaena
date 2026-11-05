@@ -2,16 +2,16 @@
 import { luminaires } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
 
-export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'notes', 'revisions'] as const;
+export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
 export type SectionId = (typeof ALL_SECTIONS)[number];
 
 export const TEMPLATES = ['concert', 'theatre', 'av', 'custom'] as const;
 export type Template = (typeof TEMPLATES)[number];
 
 export const TEMPLATE_SECTIONS: Record<Exclude<Template, 'custom'>, SectionId[]> = {
-  concert: ['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'notes', 'revisions'],
-  theatre: ['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'lights', 'electrical', 'notes', 'revisions'],
-  av: ['cover', 'contacts', 'schedule', 'plan', 'computers', 'inputs', 'outputs', 'notes', 'revisions'],
+  concert: ['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'],
+  theatre: ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'lights', 'electrical', 'hospitality', 'notes', 'revisions'],
+  av: ['cover', 'contacts', 'schedule', 'build', 'plan', 'computers', 'inputs', 'outputs', 'notes', 'revisions'],
 };
 
 const inOrder = (ids: Iterable<SectionId>): SectionId[] => {

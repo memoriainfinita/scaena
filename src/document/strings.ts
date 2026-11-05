@@ -120,3 +120,61 @@ const en: DocStrings = {
 };
 
 export const docStrings = (lang: Lang): DocStrings => (lang === 'en' ? en : es);
+
+export interface ProdStrings {
+  setlist: string;
+  song: string;
+  songTitle: string;
+  comment: string;
+  duration: string;
+  total: string;
+  build: string;
+  daySheet: string;
+  hospitality: string;
+  contract: string;
+  event: string;
+  venueAddress: string;
+  parking: string;
+  dressingRooms: string;
+  dressingNotes: string;
+  meals: string;
+  dietary: string;
+  cateringNotes: string;
+  afterShowMeal: string;
+  busStock: string;
+  supplies: string;
+  transport: string;
+  lodging: string;
+  localTransport: string;
+  cashInstead: string;
+  cashAmount: string;
+  fee: string;
+  deposit: string;
+  payment: string;
+  cancellation: string;
+  insurance: string;
+  setLength: string;
+  crew: string;
+  other: string;
+  minutes: string;
+  yes: string;
+  milestones: Record<'loadIn' | 'soundcheck' | 'meal' | 'doors' | 'opener' | 'changeover' | 'show' | 'loadOut' | 'curfew' | 'dressingEnd', string>;
+}
+
+const prodEs: ProdStrings = {
+  setlist: 'Setlist', song: 'N.º', songTitle: 'Título', comment: 'Comentario', duration: 'Duración', total: 'Total', build: 'Programación de montaje', daySheet: 'Hoja de ruta', hospitality: 'Hospitalidad', contract: 'Contrato', event: 'El evento',
+  venueAddress: 'Dirección de la sala', parking: 'Aparcamiento', dressingRooms: 'Camerinos', dressingNotes: 'Camerino: condiciones', meals: 'Comidas', dietary: 'Restricciones dietéticas', cateringNotes: 'Catering: notas', afterShowMeal: 'Comida tras el show', busStock: 'Bus stock',
+  supplies: 'Suministros de camerino', transport: 'Transporte', lodging: 'Alojamiento', localTransport: 'Transporte local', cashInstead: 'Compensación en efectivo en lugar de suministros', cashAmount: 'Importe',
+  fee: 'Caché', deposit: 'Anticipo', payment: 'Forma y plazo de pago', cancellation: 'Cancelación', insurance: 'Seguros', setLength: 'Duración del show', crew: 'Personal', other: 'Otras condiciones', minutes: 'min', yes: 'Sí',
+  milestones: { loadIn: 'Carga', soundcheck: 'Prueba de sonido', meal: 'Comida', doors: 'Puertas', opener: 'Telonero', changeover: 'Cambio de escenario', show: 'Show', loadOut: 'Descarga', curfew: 'Toque de queda', dressingEnd: 'Fin de camerino' },
+};
+
+const prodEn: ProdStrings = {
+  setlist: 'Setlist', song: 'No.', songTitle: 'Title', comment: 'Comment', duration: 'Length', total: 'Total', build: 'Build schedule', daySheet: 'Day sheet', hospitality: 'Hospitality', contract: 'Contract', event: 'The event',
+  venueAddress: 'Venue address', parking: 'Parking', dressingRooms: 'Dressing rooms', dressingNotes: 'Dressing room: conditions', meals: 'Meals', dietary: 'Dietary restrictions', cateringNotes: 'Catering: notes', afterShowMeal: 'Meal after the show', busStock: 'Bus stock',
+  supplies: 'Dressing room supplies', transport: 'Transport', lodging: 'Lodging', localTransport: 'Local transport', cashInstead: 'Cash in place of supplies', cashAmount: 'Amount',
+  fee: 'Fee', deposit: 'Deposit', payment: 'Payment terms', cancellation: 'Cancellation', insurance: 'Insurance', setLength: 'Show length', crew: 'Crew', other: 'Other terms', minutes: 'min', yes: 'Yes',
+  milestones: { loadIn: 'Load-in', soundcheck: 'Soundcheck', meal: 'Meal', doors: 'Doors', opener: 'Opener', changeover: 'Changeover', show: 'Show', loadOut: 'Load-out', curfew: 'Curfew', dressingEnd: 'End of dressing room' },
+};
+
+export const prodStrings = (lang: Lang): ProdStrings => (lang === 'en' ? prodEn : prodEs);

@@ -250,3 +250,4 @@ table.narrow caption { text-align: left; font-size: 13px; font-weight: 600; padd
 .diff p { margin: 4px 0 0; }
 td.plain { padding: 4px 8px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.form { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 640px; }

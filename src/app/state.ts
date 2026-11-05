@@ -14,8 +14,8 @@ import { packShow, unpackShow } from '../model/archive.ts';
 import { itemById } from '../library/items.ts';
 import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
 
-export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'reports' | 'document';
-export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'reports', 'document'];
+export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
+export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
 export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 

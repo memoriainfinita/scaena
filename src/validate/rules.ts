@@ -4,6 +4,7 @@ import { itemById } from '../library/items.ts';
 import { incompatiblePrograms } from '../library/programs.ts';
 import { channelList, outputList } from '../model/audio.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
+import { isClock } from '../model/production.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 
 export type Severity = 'error' | 'warning' | 'tip';
@@ -27,7 +28,8 @@ export type RuleId =
   | 'luminaireMissing'
   | 'noContact'
   | 'noDate'
-  | 'programOs';
+  | 'programOs'
+  | 'timeFormat';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -66,6 +68,7 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   noContact: 'warning',
   noDate: 'warning',
   programOs: 'warning',
+  timeFormat: 'warning',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -250,7 +253,10 @@ const programOs: Rule = (show) =>
       : [],
   );
 
-export const RULES: Record<RuleId, Rule> = { stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+const timeFormat: Rule = (show) =>
+  show.schedule.filter((x) => x.time.trim() !== '' && !isClock(x.time)).map((x) => issue('timeFormat', { kind: 'show', id: 'schedule' }, { time: x.time, what: x.what }));
+
+export const RULES: Record<RuleId, Rule> = { timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

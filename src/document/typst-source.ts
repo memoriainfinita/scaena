@@ -8,7 +8,8 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
 import { planSvg } from './plan-svg.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
-import { docStrings, type DocStrings } from './strings.ts';
+import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
+import { docStrings, prodStrings, type DocStrings } from './strings.ts';
 
 export interface DocWarning {
   kind: 'overflow' | 'scale';
@@ -81,6 +82,7 @@ const numNZ = (n: number | null, digits = 0) => (n === null || n === 0 ? '' : nu
 
 export function buildDocument(show: Show, images: Record<string, Uint8Array> = {}): Built {
   const D = docStrings(show.lang);
+  const P = prodStrings(show.lang);
   const paper = PAPERS[show.paper];
   const contentMm = paper.w - 2 * MARGIN;
   const c = new Collector(contentMm, D);
@@ -93,7 +95,11 @@ export function buildDocument(show: Show, images: Record<string, Uint8Array> = {
 
   const hasData: Partial<Record<SectionId, boolean>> = {
     contacts: show.contacts.length > 0,
-    schedule: show.schedule.length > 0,
+    schedule: show.schedule.some((x) => x.kind === 'day'),
+    build: show.schedule.some((x) => x.kind === 'build'),
+    setlist: show.setlist.length > 0,
+    hospitality: hospitalityRows(show, P).length > 0,
+    contract: contractRows(show, P).length > 0,
     notes: elements.some((e) => e.notes.trim()),
     revisions: show.revisions.length > 0,
   };
@@ -122,7 +128,17 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       const rows = show.contacts.map((ct) => ['role', 'name', 'phone', 'email'].map((f) => (ct.hidden.includes(f as 'role') ? D.none : ct[f as 'role'])));
       parts.push(heading(D.contacts) + (rows.length ? c.table(D.contacts, [{ fr: 1 }, { fr: 1.4 }, { fr: 1 }, { fr: 1.6 }], [D.role, D.name, D.phone, D.email], rows) : txt(D.none)) + '\n');
     } else if (s === 'schedule') {
-      parts.push(heading(D.schedule) + (show.schedule.length ? c.table(D.schedule, [{ mm: 22 }, { fr: 1 }], [D.time, D.what], show.schedule.map((x) => [x.time, x.what])) : txt(D.none)) + '\n');
+      parts.push(heading(D.schedule) + c.table(D.schedule, [{ mm: 22 }, { fr: 1 }], [D.time, D.what], sortedSlots(show, 'day').map((x) => [x.time, x.what])) + '\n');
+    } else if (s === 'build') {
+      parts.push(heading(P.build) + c.table(P.build, [{ mm: 22 }, { fr: 1 }], [D.time, D.what], sortedSlots(show, 'build').map((x) => [x.time, x.what])) + '\n');
+    } else if (s === 'setlist') {
+      const rows = show.setlist.map((x, i) => [String(i + 1), x.title, x.comment, x.seconds ? formatDuration(x.seconds) : '']);
+      rows.push(['', P.total, '', formatDuration(setlistTotal(show))]);
+      parts.push(heading(P.setlist) + c.table(P.setlist, [{ mm: 12 }, { fr: 1.6 }, { fr: 1.4 }, { mm: 22 }], [P.song, P.songTitle, P.comment, P.duration], rows) + '\n');
+    } else if (s === 'hospitality') {
+      parts.push(heading(P.hospitality) + keyValueTable(hospitalityRows(show, P)) + '\n');
+    } else if (s === 'contract') {
+      parts.push(heading(P.contract) + keyValueTable(contractRows(show, P)) + '\n');
     } else if (s === 'plan') {
       const flipped = paper.h > paper.w;
       const availW = paper.h - 2 * MARGIN;
@@ -217,4 +233,48 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
 
 ${parts.join('\n')}`;
   return { source, files, warnings: c.warnings, sections: printed };
+}
+
+type Row = [string, string];
+
+/** A two-column table of label and value; the value is Typst-safe text. */
+export function keyValueTable(rows: Row[]): string {
+  return `#table(columns: (46mm, 1fr), inset: 4.5pt, stroke: 0.4pt + luma(160), ${rows.map(([k, v]) => `[*${txt(k)}*], [${txt(v)}]`).join(', ')})\n`;
+}
+
+const yesNo = (P: { yes: string }, on: boolean, no: string): string => (on ? P.yes : no);
+
+/** The hospitality block as label and value rows; what the artist left empty is not printed. */
+export function hospitalityRows(show: Show, P: ReturnType<typeof prodStrings>): Row[] {
+  const h = show.hospitality;
+  const rows: Row[] = [
+    [P.dressingRooms, h.dressingRooms === null ? '' : String(h.dressingRooms)],
+    [P.dressingNotes, h.dressingNotes],
+    [P.meals, h.meals === null ? '' : String(h.meals)],
+    [P.dietary, h.dietary],
+    [P.cateringNotes, h.cateringNotes],
+    [P.afterShowMeal, yesNo(P, h.afterShowMeal, '')],
+    [P.busStock, yesNo(P, h.busStock, '')],
+    [P.supplies, h.supplies],
+    [P.transport, h.transport],
+    [P.lodging, h.lodging],
+    [P.localTransport, h.localTransport],
+    [P.cashInstead, h.cashInstead ? `${P.yes}${h.cashAmount ? ` — ${h.cashAmount}` : ''}` : ''],
+  ];
+  return rows.filter(([, v]) => v.trim() !== '');
+}
+
+export function contractRows(show: Show, P: ReturnType<typeof prodStrings>): Row[] {
+  const c = show.contract;
+  const rows: Row[] = [
+    [P.fee, c.fee],
+    [P.deposit, c.deposit],
+    [P.payment, c.payment],
+    [P.cancellation, c.cancellation],
+    [P.insurance, c.insurance],
+    [P.setLength, c.setLengthMin === null ? '' : `${c.setLengthMin} ${P.minutes}`],
+    [P.crew, c.crew],
+    [P.other, c.other],
+  ];
+  return rows.filter(([, v]) => v.trim() !== '');
 }
