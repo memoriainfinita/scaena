@@ -196,3 +196,25 @@ export function updateWorkNote(show: Show, id: string, patch: Partial<Omit<WorkN
 }
 
 export const removeWorkNote = (show: Show, id: string): Show => ({ ...show, workNotes: show.workNotes.filter((n) => n.id !== id) });
+
+export interface RiggingGroup {
+  mount: Mount | null;
+  /** Instruments hung there, left to right as seen from the audience. */
+  lights: PlanElement[];
+  weightKg: number;
+  powerW: number;
+}
+
+/** The hanging plot: the instruments of each mounting position in hanging order, with the totals a rigger reads. */
+export function riggingPlan(show: Show): RiggingGroup[] {
+  const lum = luminaires(show);
+  const groups: RiggingGroup[] = mountList(show).map((m) => ({ mount: m, lights: lum.filter((e) => e.luminaire!.mountId === m.id), weightKg: 0, powerW: 0 }));
+  const loose = lum.filter((e) => !e.luminaire!.mountId || !show.mounts[e.luminaire!.mountId]);
+  if (loose.length > 0) groups.push({ mount: null, lights: loose, weightKg: 0, powerW: 0 });
+  for (const g of groups) {
+    g.lights.sort((a, b) => a.x - b.x || a.id.localeCompare(b.id, 'en', { numeric: true }));
+    g.weightKg = g.lights.reduce((a, e) => a + (e.weightKg ?? 0), 0);
+    g.powerW = g.lights.reduce((a, e) => a + (e.powerW ?? 0), 0);
+  }
+  return groups.filter((g) => g.lights.length > 0 || g.mount !== null);
+}
