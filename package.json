@@ -1,0 +1,36 @@
+{
+  "name": "scaena",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Technical riders for live shows in the browser: stage plot, input list, light plot and PDF",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "packageManager": "pnpm@11.1.1",
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm typecheck && vite build",
+    "preview": "vite preview --port 4184 --strictPort",
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@preact/signals": "2.11.3",
+    "preact": "11.0.1",
+    "valibot": "1.5.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.2",
+    "eslint": "10.13.0",
+    "fake-indexeddb": "6.2.6",
+    "globals": "17.13.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}
