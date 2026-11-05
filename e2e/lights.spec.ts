@@ -115,3 +115,47 @@ test('work notes are added, ticked off and removed, and the new reports are offe
   await page.getByRole('button', { name: /Quitar nota/ }).click();
   await expect(page.getByText('Aún no hay notas de trabajo.')).toBeVisible();
 });
+
+test('magic sheet: an instrument is moved with the keyboard and the mouse, undone and reset @a11y', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Magic sheet', exact: true }).click();
+  const sheet = page.getByRole('group', { name: /^Magic sheet: \d+ instrumentos/ });
+  const reset = page.getByRole('button', { name: 'Restablecer disposición' });
+  await expect(reset).toBeDisabled();
+  const first = sheet.getByRole('button', { name: /^Instrumento, canal/ }).first();
+  const id = (await first.getAttribute('data-id'))!;
+  const circle = sheet.locator(`g.mi[data-id="${id}"] circle`);
+  const cx = async () => Number(await circle.getAttribute('cx'));
+  const before = await cx();
+  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeVisible(); // the hanging positions are drawn until the sheet is arranged
+  await first.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(cx).toBe(before + 100);
+  await expect(sheet.locator(`g.mi[data-id="${id}"]`)).toBeFocused(); // focus survives the redraw
+  await expect(reset).toBeEnabled();
+  await expect(sheet.locator('line[stroke-dasharray]')).toHaveCount(0);
+  await page.keyboard.press('Shift+ArrowLeft');
+  await expect.poll(cx).toBe(before - 400);
+  const at = (await circle.boundingBox())!;
+  await page.mouse.move(at.x + at.width / 2, at.y + at.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(at.x + at.width / 2 + 60, at.y + at.height / 2 + 30, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(cx).toBeGreaterThan(before - 400);
+  expect((await axe(page)).violations).toEqual([]);
+  await reset.click();
+  await expect.poll(cx).toBe(before);
+  await expect(reset).toBeDisabled();
+  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeVisible();
+  await page.keyboard.press('Control+z'); // undo the reset: the arrangement is back
+  await expect(reset).toBeEnabled();
+});
+
+test('the hanging plot report lists each mount with its total row', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Plan de varas' }).click();
+  const table = page.getByRole('table');
+  await expect(table.getByRole('row').nth(1)).toContainText('1');
+  await expect(table.getByRole('cell', { name: 'Total' }).first()).toBeVisible();
+});

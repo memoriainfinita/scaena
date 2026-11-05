@@ -7,3 +7,5 @@ Each row is a channel, edited in the table (each change is one undo step). Type 
 ![Outputs and signal flow](img/salidas.png)
 
 Wedges, in-ears, main and sends, with their aux and the element that carries them. Below, the **signal flow**: sources grouped by element, the desk (type its model) and the outputs. Every line has a written label and its own stroke pattern, so colour is never the only cue.
+
+**Racks:** add a **Rack** from the library and press **Build the rack** in its panel: set its units (U), add devices with their height, and move them up and down. It warns when the gear does not fit ("too much gear"), and the rack appears in the reports and as a section of the document.

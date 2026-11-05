@@ -314,7 +314,9 @@ main.canvas:focus { outline: none; }
 .notelist li { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line, rgba(128, 128, 128, 0.25)); }
 .notelist li .mod { flex: 1; }
 .magic { background: #fff; border: 1px solid var(--line, rgba(128, 128, 128, 0.35)); max-width: 100%; }
-.magic svg { display: block; width: 100%; height: auto; }
+.magic svg { display: block; width: 100%; height: auto; touch-action: none; }
+.magic g.mi { cursor: grab; outline: none; }
+.magic g.mi:focus-visible circle, .magic g.mi.drag circle { stroke: #0b6e78; fill: #cfeef0; }
 .racklist { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .racklist li { display: flex; align-items: center; gap: 6px; }
 .racku { width: 42px; text-align: right; color: var(--muted); font-size: 12px; }

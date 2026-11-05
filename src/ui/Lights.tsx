@@ -1,13 +1,13 @@
 // The light plot lists: instruments, mounts, electrical load and the side section.
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { magicSheet } from '../document/magic-svg.ts';
-import { addNote, lightsTab, removeNote, setNote, numberUnits, selectElement, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { addNote, lightsTab, removeNote, setNote, numberUnits, resetMagic, selectElement, setMagicPos, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { FIXTURES, fixtureById } from '../library/models.ts';
-import { circuitLoads, defaultFocus, dimmerLoads, luminaires, mountList, mountStats, phaseLoads } from '../model/lights.ts';
+import { circuitLoads, defaultFocus, dimmerLoads, luminaires, magicPosition, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
 
 const name = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
@@ -391,15 +391,77 @@ function Electrical({ show }: { show: Show }) {
   );
 }
 
-/** Side view: depth along the horizontal axis (back to audience), height up. Heights of 0 are drawn on the floor. */
+/** The magic sheet: instruments dragged (or moved with the arrow keys) to where the board operator wants to find them. */
 function MagicSheetView({ show }: { show: Show }) {
-  const sheet = magicSheet(show);
+  const box = useRef<HTMLDivElement>(null);
+  const focusId = useRef<string | null>(null);
+  const drag = useRef<{ id: string; g: SVGGElement; from: { x: number; y: number }; base: { x: number; y: number }; moved: boolean } | null>(null);
+  const sheet = magicSheet(show, show.lang, { interactive: { label: (ch) => t('magic.item', { ch }) } });
+  const arranged = Object.keys(show.magicLayout).length > 0;
+  useEffect(() => {
+    if (!focusId.current) return;
+    box.current?.querySelector<SVGGElement>(`g.mi[data-id="${CSS.escape(focusId.current)}"]`)?.focus();
+    focusId.current = null;
+  });
+  const toSheet = (ev: PointerEvent) => {
+    const svg = box.current!.querySelector('svg')!;
+    const p = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(svg.getScreenCTM()!.inverse());
+    return { x: p.x, y: p.y };
+  };
+  const el = (id: string) => show.elements[id];
+  const onDown = (ev: PointerEvent) => {
+    const g = (ev.target as Element).closest<SVGGElement>('g.mi');
+    const id = g?.dataset.id;
+    if (!g || !id || !el(id) || ev.button !== 0) return;
+    drag.current = { id, g, from: toSheet(ev), base: magicPosition(show, el(id)!), moved: false };
+    g.classList.add('drag');
+    box.current!.setPointerCapture(ev.pointerId);
+  };
+  const onMove = (ev: PointerEvent) => {
+    const d = drag.current;
+    if (!d) return;
+    const p = toSheet(ev);
+    d.moved = true;
+    d.g.setAttribute('transform', `translate(${p.x - d.from.x} ${p.y - d.from.y})`);
+  };
+  const onUp = (ev: PointerEvent) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d) return;
+    d.g.classList.remove('drag');
+    d.g.removeAttribute('transform');
+    if (!d.moved) return;
+    const p = toSheet(ev);
+    focusId.current = d.id;
+    setMagicPos(d.id, { x: d.base.x + p.x - d.from.x, y: d.base.y + p.y - d.from.y });
+  };
+  const onKey = (ev: KeyboardEvent) => {
+    const id = (ev.target as Element).closest<SVGGElement>('g.mi')?.dataset.id;
+    const dir = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
+    if (!id || !dir || !el(id)) return;
+    ev.preventDefault();
+    const step = ev.shiftKey ? 500 : ev.altKey ? 20 : 100;
+    const b = magicPosition(show, el(id)!);
+    focusId.current = id;
+    setMagicPos(id, { x: b.x + dir[0]! * step, y: b.y + dir[1]! * step });
+  };
   return (
     <section class="pad" aria-labelledby="ms-title">
       <h2 id="ms-title" class="sect-h">
         {t('magic.title')}
       </h2>
-      {sheet ? <div class="magic" role="img" aria-label={t('magic.alt', { n: sheet.count })} dangerouslySetInnerHTML={{ __html: sheet.svg }} /> : <p class="muted">{t('magic.empty')}</p>}
+      {sheet ? (
+        <>
+          <div class="row">
+            <button type="button" class="btn" disabled={!arranged} onClick={() => resetMagic()}>
+              {t('magic.reset')}
+            </button>
+          </div>
+          <div ref={box} class="magic" role="group" aria-label={t('magic.alt', { n: sheet.count })} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onKeyDown={onKey} dangerouslySetInnerHTML={{ __html: sheet.svg }} />
+        </>
+      ) : (
+        <p class="muted">{t('magic.empty')}</p>
+      )}
     </section>
   );
 }

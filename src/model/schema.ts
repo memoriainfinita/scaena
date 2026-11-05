@@ -236,6 +236,8 @@ export const Show = v.object({
   schedule: v.optional(v.array(ScheduleItem), []),
   titleBlock: v.optional(TitleBlock, {}),
   workNotes: v.optional(v.array(WorkNote), []),
+  /** The magic sheet's own arrangement: luminaire id to a position in millimetres; no entry means the plan position. */
+  magicLayout: v.optional(v.record(id, Point), {}),
   /** Warnings the user chose to silence, by key (rule and thing). */
   muted: v.optional(v.array(v.pipe(v.string(), v.maxLength(120))), []),
   reports: v.optional(v.array(ReportConfig), []),

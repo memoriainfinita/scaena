@@ -10,10 +10,14 @@ Search the library (accents ignored) and click an element: it appears in the fir
 
 ![Measuring](img/medir.png)
 
-**Measure** gives the distance between two points (metres, or feet in imperial shows) and is not saved. **Text** drops a note and leaves its label ready to type.
+**Measure** gives the distance between two points (metres, or feet in imperial shows). After measuring, **Keep as dimension** leaves it on the plot as a dimension on the Annotations layer: it reads its length, moves like any element, prints on the PDF and can be undone. **Text** drops a note and leaves its label ready to type.
 
 ![Background](img/fondo.png)
 
 **PDF or DXF background** imports the venue plan (up to 25 MB; a PDF becomes an image in your browser, a DXF is drawn as lines). **Calibrate the scale** by clicking two points a known distance apart and typing that distance; set the opacity and lock it. It is saved inside the show file.
 
 Wheel to zoom, **Space** + drag or the Hand tool to pan, **0** to fit. On a phone: two fingers.
+
+## The stage
+
+In **Show settings → Stage**: width and depth, an optional **proscenium width** (leave it empty for none; the proscenium line is drawn as two walls with the opening between them), and the **reference lines** to show (centre line, plaster line, proscenium opening). For an odd-shaped stage tick **Free-form stage** and type the points, one per line as `x; y` in metres (at least three). A free-form stage has no reference lines.
