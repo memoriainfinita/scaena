@@ -111,6 +111,14 @@ export interface PackageChannel {
   element?: number;
 }
 
+/** A cable drawn on the plan between two of the package's elements (indexes into `elements`). */
+export interface PackageLink {
+  from: number;
+  to: number;
+  signal: 'audio' | 'video' | 'lightControl' | 'network';
+  connector?: string;
+}
+
 export interface ShowPackage {
   id: string;
   name: Bilingual;
@@ -120,4 +128,5 @@ export interface ShowPackage {
   channels: PackageChannel[];
   /** Number of wedge monitors (placed by the package among the elements) and in-ears. */
   outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number }[];
+  links?: PackageLink[];
 }

@@ -58,6 +58,8 @@ const DEFS: Def[] = [
   { id: 'room.foh', category: 'room', layer: 'audio', name: b('Mesa de FOH', 'FOH position'), tags: ['foh', 'control'], w: 1500, d: 800, h: 1000, symbol: 'foh' },
   { id: 'room.access', category: 'room', layer: 'stage', name: b('Acceso', 'Access'), tags: ['acceso', 'puerta'], w: 1200, d: 300, h: 0, symbol: 'access' },
   { id: 'control.laptop', category: 'control', layer: 'control', name: b('Ordenador portátil', 'Laptop'), tags: ['ordenador', 'portátil', 'pc'], w: 400, d: 300, h: 30, symbol: 'laptop' },
+  { id: 'control.lightdesk', category: 'control', layer: 'control', name: b('Mesa de luces', 'Lighting desk'), tags: ['luces', 'mesa de luces', 'consola', 'dmx', 'lighting', 'desk'], w: 900, d: 500, h: 150, symbol: 'lightDesk' },
+  { id: 'rack.dimmer', category: 'rack', layer: 'lights', name: b('Rack de dimmers', 'Dimmer rack'), tags: ['dimmer', 'rack', 'potencia', 'luces'], w: 600, d: 600, h: 1000, symbol: 'dimmerRack' },
   { id: 'control.videomixer', category: 'control', layer: 'control', name: b('Mesa de vídeo', 'Video switcher'), tags: ['vídeo', 'mezclador'], w: 500, d: 350, h: 100, symbol: 'videoMixer' },
   { id: 'video.screen', category: 'video', layer: 'control', name: b('Pantalla', 'Screen'), tags: ['pantalla', 'proyección'], w: 3000, d: 120, h: 2000, symbol: 'screen' },
   { id: 'video.projector', category: 'video', layer: 'control', name: b('Proyector', 'Projector'), tags: ['proyector'], w: 450, d: 350, h: 150, symbol: 'projector' },

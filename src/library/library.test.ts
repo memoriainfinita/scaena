@@ -85,13 +85,13 @@ describe('regions and connectors', () => {
 
 describe('packages', () => {
   const expected: Record<string, { channels: number; outputs: number }> = {
-    rock: { channels: 17, outputs: 4 },
-    jazz: { channels: 12, outputs: 2 },
-    singer: { channels: 4, outputs: 1 },
-    dj: { channels: 3, outputs: 1 },
-    conference: { channels: 9, outputs: 1 },
-    theatre: { channels: 12, outputs: 1 },
-    av: { channels: 4, outputs: 1 },
+    rock: { channels: 17, outputs: 6 },
+    jazz: { channels: 12, outputs: 4 },
+    singer: { channels: 4, outputs: 3 },
+    dj: { channels: 3, outputs: 2 },
+    conference: { channels: 9, outputs: 2 },
+    theatre: { channels: 12, outputs: 2 },
+    av: { channels: 4, outputs: 2 },
   };
 
   test('the seven packages exist', () => {
@@ -108,8 +108,19 @@ describe('packages', () => {
       expect(Object.keys(show.elements)).toHaveLength(pkg.elements.length);
     });
 
+    test(`${pkg.id} draws its cables between elements that exist, none repeated`, () => {
+      const show = showFromPackage(pkg, pkg.name.es);
+      const conns = Object.values(show.connections);
+      expect(conns.length).toBeGreaterThan(1);
+      for (const c of conns) {
+        expect(show.elements[c.from]).toBeDefined();
+        expect(show.elements[c.to]).toBeDefined();
+      }
+      expect(conns).toHaveLength(pkg.links!.length);
+    });
+
     test(`${pkg.id}: elements are on stage or at the control position, items exist and phantom matches the mic`, () => {
-      const roomTypes = new Set(['desk.digital', 'control.laptop', 'control.videomixer', 'video.projector']);
+      const roomTypes = new Set(['desk.digital', 'control.laptop', 'control.videomixer', 'control.lightdesk', 'video.projector']);
       for (const e of pkg.elements) {
         expect(itemById(e.type), e.type).toBeDefined();
         expect(e.x).toBeGreaterThanOrEqual(0);

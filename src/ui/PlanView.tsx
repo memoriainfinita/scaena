@@ -11,7 +11,7 @@ import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
 import { issues } from '../app/issues.ts';
 import type { Severity } from '../validate/rules.ts';
-import { dialog, selection, session } from '../app/state.ts';
+import { addFromLibrary, dialog, selection, session } from '../app/state.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
@@ -39,6 +39,9 @@ function symbolMarkup(key: string, w: number, d: number): string {
 }
 
 const focusLabel = () => requestAnimationFrame(() => document.querySelector<HTMLInputElement>('[data-label-field]')?.select());
+
+/** The drag-and-drop type that carries a library item id from the library onto the plan. */
+export const LIBRARY_DRAG = 'application/x-scaena-item';
 
 interface ElProps {
   el: PlanElement;
@@ -101,7 +104,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
         </g>
       )}
       {sev && (
-        <g class="detail" transform={`translate(${box.x1 - el.x} ${box.y0 - el.y})`} aria-hidden="true">
+        <g class="detail" transform={`translate(${box.x1 - el.x + 130} ${box.y0 - el.y - 130})`} aria-hidden="true">
           {sev === 'error' ? <circle r="150" fill={BADGE[sev]} /> : sev === 'warning' ? <path d="M0 -170L165 130H-165Z" fill={BADGE[sev]} /> : <rect x="-130" y="-130" width="260" height="260" rx="40" fill={BADGE[sev]} />}
           <text y="75" text-anchor="middle" font-size="210" font-weight="700" fill="#fff" font-family="Inter Variable, sans-serif">
             {sev === 'tip' ? 'i' : '!'}
@@ -777,7 +780,22 @@ export function PlanView({ show }: { show: Show }) {
   const isPan = mode === 'pan';
 
   return (
-    <div class="plan" ref={wrap}>
+    <div
+      class="plan"
+      ref={wrap}
+      onDragOver={(e) => {
+        if (e.dataTransfer?.types.includes(LIBRARY_DRAG)) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'copy';
+        }
+      }}
+      onDrop={(e) => {
+        const itemId = e.dataTransfer?.getData(LIBRARY_DRAG);
+        if (!itemId) return;
+        e.preventDefault();
+        addFromLibrary(itemId, world(e));
+      }}
+    >
       <svg
         ref={svgRef}
         class={`plansvg${isPan ? ' pan' : mode === 'measure' || mode === 'text' ? ' cross' : ''}`}

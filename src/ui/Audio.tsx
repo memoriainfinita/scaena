@@ -1,5 +1,5 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
-import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setOutput, sortByInstrument } from '../app/audio-actions.ts';
+import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
@@ -248,6 +248,10 @@ export function FlowDiagram({ show }: { show: Show }) {
         <label class="field inline">
           {t('flow.desk')}
           <input class="input" placeholder={t('flow.deskHint')} value={show.desk.model} maxLength={80} onChange={(e) => setDeskModel((e.currentTarget as HTMLInputElement).value)} />
+        </label>
+        <label class="field inline">
+          {t('flow.showFile')}
+          <input class="input" value={show.desk.showFile} maxLength={120} onChange={(e) => setDeskShowFile((e.currentTarget as HTMLInputElement).value)} />
         </label>
       </div>
       {left.length === 0 && kinds.length === 0 ? (

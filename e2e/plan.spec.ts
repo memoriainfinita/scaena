@@ -140,3 +140,19 @@ test('the plan with a selection has no accessibility violations @a11y', async ({
   await expect(page.getByRole('toolbar', { name: 'Alinear y distribuir' })).toBeVisible();
   expect((await axe(page)).violations).toEqual([]);
 });
+
+test('an item dragged from the library lands where it is dropped, and the other views have no plan tools', async ({ page }) => {
+  await rock(page);
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('atril');
+  const item = page.getByRole('button', { name: /^Añadir Atril de conferencia al plano/ });
+  await item.dragTo(page.locator('svg.plansvg'), { targetPosition: { x: area.width * 0.25, y: area.height * 0.25 } });
+  await expect(page.getByText('15 elementos')).toBeVisible();
+  await expect(page.getByLabel('X (m)')).toBeVisible();
+  const x = Number(await page.getByLabel('X (m)').inputValue());
+  expect(x).toBeLessThan(4); // dropped in the left part of an 8 m stage
+  await page.getByRole('button', { name: 'Entradas', exact: true }).click();
+  await expect(page.getByRole('toolbar', { name: 'Herramientas' })).toHaveCount(0);
+  await expect(page.getByRole('searchbox', { name: 'Buscar en la biblioteca' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Capas' })).toHaveCount(0);
+});

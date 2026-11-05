@@ -15,12 +15,14 @@ import { ReportsView } from './Reports.tsx';
 import { RackPanel } from './Rack.tsx';
 import { RACK_ITEM } from '../model/racks.ts';
 import { LightsView, LuminairePanel } from './Lights.tsx';
-import { Ico, PlanView } from './PlanView.tsx';
+import { Ico, LIBRARY_DRAG, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document' | 'production'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', production: 'production', document: 'document' };
 
 export function Editor() {
   const s = session.value!;
+  // The tools, the library and the inspector belong to the plan; the other views have their own tables and forms.
+  const onPlan = view.value === 'plan';
   return (
     <div class="editor">
       <button
@@ -36,13 +38,13 @@ export function Editor() {
       <TopBar />
       <Tabs show={s.show.value} />
       <div class="body">
-        <Toolbar />
-        <Library />
+        {onPlan && <Toolbar />}
+        {onPlan && <Library />}
         <main class="canvas" aria-label={t('canvas.label')} tabIndex={-1}>
           <MainView show={s.show.value} />
         </main>
-        <Inspector show={s.show.value} />
-        <div class="fabs">
+        {onPlan && <Inspector show={s.show.value} />}
+        {onPlan && <div class="fabs">
           <button type="button" class="fab" aria-pressed={sheet.value === 'library'} onClick={() => (sheet.value = sheet.value === 'library' ? null : 'library')}>
             {t('library.title')}
           </button>
@@ -50,7 +52,7 @@ export function Editor() {
             {t('inspector.title')}
             {selection.value.length > 0 && <span class="count">{selection.value.length}</span>}
           </button>
-        </div>
+        </div>}
       </div>
       <StatusBar show={s.show.value} />
     </div>
@@ -158,7 +160,10 @@ function Library() {
       <div class="list">
         {items.length === 0 && <p class="muted" style="grid-column:1/-1">{t('library.none', { query })}</p>}
         {items.map((i) => (
-          <button key={i.id} type="button" class="lib-item" title={t('library.add', { name: i.name[l] })} aria-label={t('library.add', { name: i.name[l] })} onClick={() => addFromLibrary(i.id)}>
+          <button key={i.id} type="button" class="lib-item" title={t('library.add', { name: i.name[l] })} aria-label={t('library.add', { name: i.name[l] })} draggable onDragStart={(e) => {
+            e.dataTransfer?.setData(LIBRARY_DRAG, i.id);
+            if (e.dataTransfer) e.dataTransfer.effectAllowed = 'copy';
+          }} onClick={() => addFromLibrary(i.id)}>
             <span class="sym" aria-hidden="true" dangerouslySetInnerHTML={{ __html: symbolSvg(i.symbol, i.size.w, i.size.d, '') }} />
             <span>{i.name[l]}</span>
           </button>
@@ -248,15 +253,15 @@ function Inspector({ show }: { show: Show }) {
             <div class="layer" key={l.id}>
               <span class="swatch" aria-hidden="true" />
               <span style="flex:1">{name}</span>
-              <label>
+              <label title={t('layers.show', { name })}>
                 <input type="checkbox" aria-label={t('layers.show', { name })} checked={l.visible} onChange={(e) => setLayerFlag(l.id, 'visible', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconEye />
               </label>
-              <label>
+              <label title={t('layers.dim', { name })}>
                 <input type="checkbox" aria-label={t('layers.dim', { name })} checked={(l.dim ?? 0) > 0} onChange={(e) => setLayerDim(l.id, (e.currentTarget as HTMLInputElement).checked ? 0.6 : 0)} />
                 <Ico name="dim" />
               </label>
-              <label>
+              <label title={t('layers.lock', { name })}>
                 <input type="checkbox" aria-label={t('layers.lock', { name })} checked={l.locked} onChange={(e) => setLayerFlag(l.id, 'locked', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconLock />
               </label>
