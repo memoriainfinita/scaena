@@ -103,12 +103,12 @@ function Toolbar() {
     { id: 'connect', key: 'tool.connect', icon: <IconConnect />, enabled: true },
     { id: 'text', key: 'tool.text', icon: <IconText />, enabled: true },
     { id: 'measure', key: 'tool.measure', icon: <IconMeasure />, enabled: true },
-    { id: 'background', key: 'tool.background', icon: <IconBackground />, enabled: false },
+    { id: 'background', key: 'tool.background', icon: <IconBackground />, enabled: true },
   ];
   return (
     <div class="toolbar" role="toolbar" aria-label={t('tools.label')} aria-orientation="vertical">
       {tools.map((x) => (
-        <button key={x.id} type="button" class="tool" aria-pressed={tool.value === x.id} aria-label={t(x.key)} title={x.enabled ? t(x.key) : `${t(x.key)} · ${t('export.soon')}`} disabled={!x.enabled} onClick={() => (tool.value = x.id)}>
+        <button key={x.id} type="button" class="tool" aria-pressed={tool.value === x.id} aria-label={t(x.key)} title={x.enabled ? t(x.key) : `${t(x.key)} · ${t('export.soon')}`} disabled={!x.enabled} onClick={() => (x.id === 'background' ? (dialog.value = 'background') : (tool.value = x.id))}>
           {x.icon}
         </button>
       ))}

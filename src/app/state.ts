@@ -16,7 +16,7 @@ import { autosave, getLastShow, listShows, openLibrary, readShow, saveShow, setL
 
 export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'reports', 'document'];
-export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | null;
+export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
 export interface Settings {
@@ -113,9 +113,30 @@ export class Session {
   flush(): Promise<void> {
     return this.saver.flush();
   }
-  /** The `.scaena` bytes of the current state. */
+  /** The `.scaena` bytes of the current state: only the images the show still uses. */
   toFile(): Uint8Array {
-    return packShow(this.show.value, this.images);
+    const show = this.show.value;
+    const used = new Set([show.stage.background?.file, show.titleBlock.logo].filter((f): f is string => !!f));
+    return packShow(show, Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name))));
+  }
+
+  private readonly urls = new Map<string, string>();
+  /** Keeps an imported image with the show; it is saved with it. Images stay until export so undo can bring one back. */
+  addImage(name: string, bytes: Uint8Array): void {
+    this.images[name] = bytes;
+  }
+  imageBytes(name: string): Uint8Array | undefined {
+    return this.images[name];
+  }
+  /** A blob URL for an image of the show, made once and kept for the session. */
+  imageUrl(name: string): string | null {
+    const cached = this.urls.get(name);
+    if (cached) return cached;
+    const bytes = this.images[name];
+    if (!bytes) return null;
+    const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'image/png' }));
+    this.urls.set(name, url);
+    return url;
   }
 }
 

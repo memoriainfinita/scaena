@@ -4,6 +4,7 @@ import { applySettings, applyShowSettings, dialog, session, settings, type Setti
 import { goToIssue, issues, issueText } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
+import { BackgroundDialog } from './Background.tsx';
 import { REGIONS, regionByCode } from '../library/regions.ts';
 import { Paper, type Module } from '../model/schema.ts';
 
@@ -60,6 +61,7 @@ export function Dialogs() {
   if (d === 'app') return <AppDialog onClose={close} />;
   if (d === 'help') return <HelpDialog onClose={close} />;
   if (d === 'issues' && session.value) return <IssuesDialog onClose={close} />;
+  if (d === 'background' && session.value) return <BackgroundDialog onClose={close} />;
   return null;
 }
 
