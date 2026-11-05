@@ -9,6 +9,7 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
+import { DocumentView } from './Document.tsx';
 import { LightsView, LuminairePanel } from './Lights.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
@@ -144,6 +145,7 @@ function MainView({ show }: { show: Show }) {
   if (v === 'inputs') return <InputsView show={show} />;
   if (v === 'outputs') return <OutputsView show={show} />;
   if (v === 'lights') return <LightsView show={show} />;
+  if (v === 'document') return <DocumentView show={show} />;
   return (
     <div class="placeholder">
       <strong>{t(`view.${v}` as Key)}</strong>

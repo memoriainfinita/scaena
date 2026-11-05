@@ -161,6 +161,15 @@ export const ReportConfig = v.object({
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
 export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false) });
 
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'electrical', 'notes', 'revisions']);
+export const DocumentConfig = v.object({
+  template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
+  /** The sections of a custom document; the other templates have their own list. */
+  sections: v.optional(v.array(DocSection), []),
+  /** Print scale of the plan as 1:N, or null to fit the page. */
+  planScale: v.optional(v.nullable(v.pipe(v.number(), v.minValue(1))), null),
+});
+
 export const Show = v.object({
   formatVersion: v.literal(FORMAT_VERSION),
   name: v.pipe(v.string(), v.maxLength(120)),
@@ -187,11 +196,13 @@ export const Show = v.object({
   reports: v.optional(v.array(ReportConfig), []),
   revisions: v.optional(v.array(RevisionMeta), []),
   view: v.optional(ViewSettings, {}),
+  document: v.optional(DocumentConfig, {}),
   /** Last number given per id prefix, so ids stay sequential and stable. */
   counters: v.optional(v.record(v.string(), v.number()), {}),
 });
 
 export type Show = v.InferOutput<typeof Show>;
+export type DocumentConfig = v.InferOutput<typeof DocumentConfig>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type Layer = v.InferOutput<typeof Layer>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;

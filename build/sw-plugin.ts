@@ -13,7 +13,7 @@ function listFiles(dir: string): string[] {
   });
 }
 
-export function serviceWorker(): Plugin {
+export function serviceWorker(typstVersion: string): Plugin {
   let config: ResolvedConfig;
   return {
     name: 'scaena-sw',
@@ -38,7 +38,7 @@ export function serviceWorker(): Plugin {
         define: {
           __PRECACHE__: JSON.stringify(files),
           __VERSION__: JSON.stringify(hash.digest('hex').slice(0, 12)),
-          __TYPST__: JSON.stringify('none'),
+          __TYPST__: JSON.stringify(typstVersion),
           __CSP__: JSON.stringify(CSP_HEADER),
         },
         build: {

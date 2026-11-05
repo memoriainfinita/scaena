@@ -230,3 +230,16 @@ table.narrow caption { text-align: left; font-size: 13px; font-weight: 600; padd
 .stack { display: flex; flex-direction: column; gap: 14px; }
 .bgbox { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
 .bgbox legend { padding: 0 6px; font-size: 12px; color: var(--muted); }
+.docview { position: absolute; inset: 0; display: flex; }
+.doccontrols { flex: 0 0 280px; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: auto; background: var(--panel); border-right: 1px solid var(--line); }
+.doccontrols h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 8px 0; }
+.checks.col { flex-direction: column; flex-wrap: nowrap; }
+.docpages { flex: 1; overflow: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.docpages img { max-width: 100%; height: auto; background: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25); }
+.docpages.grey img { filter: grayscale(1); }
+.docwarns { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.docdata summary { cursor: pointer; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 4px 0; }
+.docdata h3 { margin: 10px 0 2px; font-size: 12px; color: var(--muted); }
+.stackS { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.card legend { font-size: 12px; color: var(--muted); padding: 0 4px; }

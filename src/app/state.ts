@@ -125,6 +125,10 @@ export class Session {
   addImage(name: string, bytes: Uint8Array): void {
     this.images[name] = bytes;
   }
+  /** Every image kept with the show, by name. */
+  allImages(): Record<string, Uint8Array> {
+    return this.images;
+  }
   imageBytes(name: string): Uint8Array | undefined {
     return this.images[name];
   }
