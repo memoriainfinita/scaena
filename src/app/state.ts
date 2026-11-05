@@ -7,7 +7,7 @@ import { regionByCode } from '../library/regions.ts';
 import { History } from '../model/history.ts';
 import { UnsupportedFormat } from '../model/migrate.ts';
 import { newShow } from '../model/new.ts';
-import { addElement, updateElement } from '../model/ops.ts';
+import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops.ts';
 import type { Module, PlanElement, Show } from '../model/schema.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
 import { itemById } from '../library/items.ts';
@@ -233,9 +233,9 @@ export function addFromLibrary(itemId: string): string | null {
     if (!layer) return show;
     const [next, el] = addElement(show, {
       type: { id: item.id, version: item.version },
-      x: show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0,
-      y: show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0,
+      ...freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0),
       layerId: layer.id,
+      computer: item.symbol === 'laptop' ? emptyComputer() : null,
     });
     created = el;
     return next;

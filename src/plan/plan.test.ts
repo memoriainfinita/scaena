@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { newShow } from '../model/new.ts';
-import { addElement, alignElements, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, rotateElements, ungroupElements } from '../model/ops.ts';
+import { addElement, alignElements, freeSpot, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, rotateElements, ungroupElements } from '../model/ops.ts';
 import type { Show } from '../model/schema.ts';
 import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, snap, toWorld, unionBox, zoomAt } from './geometry.ts';
 
@@ -129,5 +129,15 @@ describe('plan operations', () => {
     const [show, ids] = withElements([0, 0], [500, 0]);
     expect(distributeElements(show, ids, 'x', boxOf)).toBe(show);
     expect(alignElements(show, [ids[0]!], 'left', boxOf)).toBe(show);
+  });
+});
+
+describe('placing new elements', () => {
+  test('a taken spot moves the next one aside, and a free one stays', () => {
+    const [show] = withElements([4000, 2500]);
+    expect(freeSpot(show, 9000, 9000)).toEqual({ x: 9000, y: 9000 });
+    expect(freeSpot(show, 4000, 2500)).toEqual({ x: 4500, y: 2500 });
+    const [two] = withElements([4000, 2500], [4500, 2500]);
+    expect(freeSpot(two, 4000, 2500)).toEqual({ x: 5000, y: 2500 });
   });
 });

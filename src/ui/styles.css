@@ -193,3 +193,16 @@ table.editable { min-width: 820px; }
 table.editable td:nth-child(3) .cell { min-width: 150px; }
 .input.cell { min-width: 64px; }
 .fltext.halo { stroke: var(--canvas); stroke-width: 4; paint-order: stroke; }
+.planbar.left { top: 58px; left: 12px; transform: none; }
+.chipbtn { height: 28px; padding: 0 10px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: inherit; font-size: 12px; }
+.chipbtn:hover { background: var(--accent-soft); }
+.chipbtn[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+.pad-s { padding: 0 8px; font-size: 12px; }
+.warn { color: var(--warn); font-size: 12px; margin: 2px 0; }
+.sub { display: flex; align-items: center; gap: 6px; }
+.sub .input { flex: 1; min-width: 0; }
+.sub.wrap { flex-wrap: wrap; }
+.checks { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.checks legend { padding: 0; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.checks label, .check { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.conn { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
