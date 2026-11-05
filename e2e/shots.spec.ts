@@ -31,3 +31,29 @@ for (const [view, tab] of [['entradas', 'Entradas'], ['salidas', 'Salidas']] as 
     await page.screenshot({ path: `docs/design/img/paso-6-${view}.png` });
   });
 }
+
+test('computer and connection', async ({ page }) => {
+  test.skip(step !== '7');
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  const search = page.getByRole('searchbox', { name: 'Buscar en la biblioteca' });
+  await search.fill('portátil');
+  await page.getByRole('button', { name: /Añadir Ordenador portátil/ }).click();
+  await page.getByRole('combobox', { name: 'Nombre del programa' }).fill('QLab');
+  await page.getByRole('button', { name: 'Añadir programa' }).click();
+  await page.getByLabel('Sistema operativo').selectOption('windows');
+  await search.fill('proyector');
+  await page.getByRole('button', { name: /Añadir Proyector/ }).click();
+  await page.getByRole('button', { name: 'Cable o conexión' }).click();
+  const els = page.locator('g.el[data-id] .hit');
+  const n = await els.count();
+  const a = (await els.nth(n - 2).boundingBox())!;
+  const b = (await els.nth(n - 1).boundingBox())!;
+  await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
+  await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+  await page.getByRole('button', { name: 'Seleccionar', exact: true }).click();
+  await page.getByRole('button', { name: /Añadir/ }).first().focus();
+  await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
+  await page.screenshot({ path: 'docs/design/img/paso-7-ordenador.png' });
+});

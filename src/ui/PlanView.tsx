@@ -4,10 +4,12 @@ import { batch, signal, useComputed, useSignal, type Signal } from '@preact/sign
 import { memo } from 'preact/compat';
 import { useEffect, useRef } from 'preact/hooks';
 import { addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
 import { dialog, selection, session } from '../app/state.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
+import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { boxesIntersect, elementBox, elementSize, fitCamera, formatLength, planBox, snap, toWorld, zoomAt, type Camera } from '../plan/geometry.ts';
@@ -103,6 +105,44 @@ function Stage({ show }: { show: Show }) {
   );
 }
 
+const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = {
+  audio: { stroke: '#0b6e78', dash: '' },
+  video: { stroke: '#7a3db8', dash: '10 5' },
+  lightControl: { stroke: '#b36b00', dash: '10 4 2 4' },
+  network: { stroke: '#3a6e1a', dash: '2 5' },
+};
+
+/** Cables between elements: the colour is always backed by a different dash and the connector name. */
+function Connections({ show, hidden }: { show: Show; hidden: Set<string> }) {
+  const simple = gesture.value;
+  const layers = new Map(show.layers.map((l) => [l.id, l]));
+  const shown = (id: string) => {
+    const el = show.elements[id];
+    return !!el && !hidden.has(id) && !!layers.get(el.layerId)?.visible;
+  };
+  return (
+    <g aria-hidden="true" pointer-events="none">
+      {Object.values(show.connections)
+        .filter((c) => shown(c.from) && shown(c.to))
+        .map((c) => {
+          const a = show.elements[c.from]!;
+          const b = show.elements[c.to]!;
+          const st = LINK_STYLE[c.signal];
+          return (
+            <g key={c.id}>
+              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={st.stroke} stroke-width="2" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
+              {!simple && c.connector && (
+                <text x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 60} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+                  {c.connector}
+                </text>
+              )}
+            </g>
+          );
+        })}
+    </g>
+  );
+}
+
 /** Grid lines in screen space: never denser than one every 12 px. */
 function Grid({ cam, size, stepMm }: { cam: Signal<Camera>; size: Signal<{ w: number; h: number }>; stepMm: number }) {
   const c = cam.value;
@@ -131,13 +171,19 @@ interface Measure {
 }
 
 /** Overlays that live in screen space so their strokes and text keep a constant size. */
-function Overlays({ cam, marquee, measure, units }: { cam: Signal<Camera>; marquee: Signal<Marquee | null>; measure: Signal<Measure | null>; units: Show['units'] }) {
+function Overlays({ cam, marquee, measure, units, link, cursor }: { cam: Signal<Camera>; marquee: Signal<Marquee | null>; measure: Signal<Measure | null>; units: Show['units']; link: Pt | null; cursor: Signal<Pt | null> }) {
   const c = cam.value;
   const m = measure.value;
   const q = marquee.value;
   const toScreen = (p: Pt) => ({ x: p.x * c.k + c.x, y: p.y * c.k + c.y });
+  const cur = cursor.value;
   return (
     <g aria-hidden="true" pointer-events="none">
+      {link && cur && (() => {
+        const a = toScreen(link);
+        const b = toScreen(cur);
+        return <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#0b6e78" stroke-width="2" stroke-dasharray="5 4" />;
+      })()}
       {q && <rect x={Math.min(q.x0, q.x1)} y={Math.min(q.y0, q.y1)} width={Math.abs(q.x1 - q.x0)} height={Math.abs(q.y1 - q.y0)} fill="rgba(11,110,120,0.12)" stroke="#0b6e78" stroke-width="1" stroke-dasharray="4 3" />}
       {m &&
         (() => {
@@ -229,6 +275,7 @@ export function PlanView({ show }: { show: Show }) {
   const dragDelta = useSignal({ dx: 0, dy: 0 });
   const marquee = useSignal<Marquee | null>(null);
   const measure = useSignal<Measure | null>(null);
+  const cursor = useSignal<Pt | null>(null);
   const camT = useComputed(() => `translate(${cam.value.x} ${cam.value.y}) scale(${cam.value.k})`);
   const dragT = useComputed(() => `translate(${dragDelta.value.dx} ${dragDelta.value.dy})`);
 
@@ -293,6 +340,7 @@ export function PlanView({ show }: { show: Show }) {
     node.addEventListener('wheel', onWheel, { passive: false });
     return () => {
       node.removeEventListener('wheel', onWheel);
+      linkFrom.value = null;
       clearTimeout(timer.current);
       gesture.value = false;
     };
@@ -334,6 +382,7 @@ export function PlanView({ show }: { show: Show }) {
         selection.value = [];
         tool.value = 'select';
         measure.value = null;
+        linkFrom.value = null;
         handled = false; // dialogs and menus still get their Escape
       } else handled = false;
       if (handled) e.preventDefault();
@@ -365,6 +414,14 @@ export function PlanView({ show }: { show: Show }) {
       const pt = { x: snap(w.x, st), y: snap(w.y, st) };
       const m = measure.peek();
       measure.value = !m || m.done ? { a: pt, b: null, done: false } : { a: m.a, b: pt, done: true };
+    } else if (mode === 'connect') {
+      const id = (e.target as Element).closest('[data-id]')?.getAttribute('data-id');
+      const el = id ? s.elements[id] : undefined;
+      if (!el || !editable(s, el)) linkFrom.value = null;
+      else if (!linkFrom.peek()) {
+        linkFrom.value = el.id;
+        selection.value = [el.id];
+      } else if (!connectTo(el.id)) linkFrom.value = null;
     } else if (mode === 'text') {
       const w = world(e);
       const st = e.altKey ? 0 : gridStep();
@@ -397,6 +454,7 @@ export function PlanView({ show }: { show: Show }) {
     const a = act.current;
     const p = local(e);
     if (!a) {
+      if (linkFrom.peek()) cursor.value = toWorld(cam.peek(), p.x, p.y);
       const m = measure.peek();
       if (m && !m.done && tool.peek() === 'measure') {
         const w = toWorld(cam.peek(), p.x, p.y);
@@ -475,6 +533,9 @@ export function PlanView({ show }: { show: Show }) {
   const count = targets(show, selection.value).length;
   const grouped = targets(show, selection.value).some((id) => show.elements[id]?.groupId);
   const mode = tool.value;
+  const linkId = linkFrom.value;
+  const linkEl = linkId ? show.elements[linkId] : undefined;
+  const signal = connectSignal.value;
   const align = (m: AlignMode) => alignSelection(m);
   const isPan = mode === 'pan';
 
@@ -493,11 +554,26 @@ export function PlanView({ show }: { show: Show }) {
         {show.view.grid && <Grid cam={cam} size={size} stepMm={show.view.gridMm} />}
         <g transform={camT}>
           <Stage show={show} />
+          <Connections show={show} hidden={dragSet ?? new Set()} />
           <g>{resting}</g>
           <g transform={dragT}>{moving}</g>
         </g>
-        <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} />
+        <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>
+      {mode === 'connect' && (
+        <div class="planbar left" role="group" aria-label={t('connect.signal')}>
+          {SIGNALS.map((sg) => (
+            <button key={sg} type="button" class="chipbtn" aria-pressed={signal === sg} onClick={() => (connectSignal.value = sg)}>
+              {t(`signal.${sg}` as Key)}
+            </button>
+          ))}
+          {linkEl && (
+            <span class="muted pad-s" role="status">
+              {t('plan.connecting', { name: linkEl.label || itemById(linkEl.type.id)?.name[lang.value] || '' })}
+            </span>
+          )}
+        </div>
+      )}
       <div class="planbar top" role="toolbar" aria-label={t('align.label')} hidden={count === 0}>
         <Btn icon="rotate" label={`${t('plan.rotate')} (R)`} onClick={() => rotateSelection(15)} />
         <Btn icon="flip" label={`${t('plan.flip')} (F)`} onClick={() => flipSelection('x')} />

@@ -7,6 +7,7 @@ import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
 import { InputsView, OutputsView } from './Audio.tsx';
+import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
 import { Ico, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', document: 'document' };
@@ -93,7 +94,7 @@ function Toolbar() {
   const tools: { id: ToolId; key: Key; icon: preact.JSX.Element; enabled: boolean }[] = [
     { id: 'select', key: 'tool.select', icon: <IconSelect />, enabled: true },
     { id: 'pan', key: 'tool.pan', icon: <IconPan />, enabled: true },
-    { id: 'connect', key: 'tool.connect', icon: <IconConnect />, enabled: false },
+    { id: 'connect', key: 'tool.connect', icon: <IconConnect />, enabled: true },
     { id: 'text', key: 'tool.text', icon: <IconText />, enabled: true },
     { id: 'measure', key: 'tool.measure', icon: <IconMeasure />, enabled: true },
     { id: 'background', key: 'tool.background', icon: <IconBackground />, enabled: false },
@@ -184,6 +185,8 @@ function Inspector({ show }: { show: Show }) {
               <NumberField label={t('inspector.rotation')} value={el.rotation} step={5} onCommit={(v) => setElementField(el.id, { rotation: v })} />
             </div>
           </div>
+          {el.computer && <ComputerPanel el={el} c={el.computer} />}
+          <ConnectionsPanel show={show} el={el} />
         </>
       ) : (
         <div class="panel">

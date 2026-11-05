@@ -1,6 +1,9 @@
 // Pure operations on a show: each returns a new show and never mutates the old one.
 import { nextId } from './ids.ts';
-import type { PlanElement, Show } from './schema.ts';
+import type { Computer, PlanElement, Show } from './schema.ts';
+
+/** A computer element with nothing filled in: it does sound until the user says otherwise. */
+export const emptyComputer = (): Computer => ({ functions: ['sound'], os: 'other', programs: [], license: '', dongle: false, outputs: [] });
 
 export type NewElement = Pick<PlanElement, 'type' | 'x' | 'y' | 'layerId'> & Partial<PlanElement>;
 
@@ -180,6 +183,16 @@ export function distributeElements(show: Show, ids: string[], axis: 'x' | 'y', b
     cursor += hi(it.b) - lo(it.b) + gap;
   }
   return { ...show, elements };
+}
+
+/** The first free spot at or after (x, y), stepping right and then down, so new elements do not pile up on one another. */
+export function freeSpot(show: Show, x: number, y: number, step = 500, clearance = 300): { x: number; y: number } {
+  const els = Object.values(show.elements);
+  for (let k = 0; k < 60; k++) {
+    const p = { x: x + (k % 6) * step, y: y + Math.floor(k / 6) * step };
+    if (!els.some((e) => Math.abs(e.x - p.x) < clearance && Math.abs(e.y - p.y) < clearance)) return p;
+  }
+  return { x, y };
 }
 
 export function setModules(show: Show, modules: Show['modules']): Show {
