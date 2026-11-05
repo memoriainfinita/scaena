@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { packShow } from '../model/archive.ts';
 import { newShow } from '../model/new.ts';
+import { addDimension } from './plan-actions.ts';
 import { addFromLibrary, applyShowSettings, openFileBytes, renameShow, selection, session, setElementField, setLayerFlag, setLibrary, startEmpty, startError, startFromPackage } from './state.ts';
 
 beforeEach(() => {
@@ -73,6 +74,38 @@ describe('editing', () => {
     expect(show.stage.shape).toMatchObject({ kind: 'rect', width: 10000, depth: 6000 });
     session.value!.undo();
     expect(session.value!.show.value.paper).toBe('A4');
+  });
+
+  test('the stage can become a free-form polygon, get a proscenium opening and hide reference lines', () => {
+    startEmpty('x');
+    const base = { modules: ['audio' as const], regionCode: 'ES', voltage: 230, paper: 'A4' as const, units: 'metric' as const, lang: 'es' as const, stageWidthM: 8, stageDepthM: 5 };
+    applyShowSettings({ ...base, prosceniumM: 5, referenceLines: { center: false, plaster: true, proscenium: true } });
+    let show = session.value!.show.value;
+    expect(show.stage.shape).toMatchObject({ kind: 'rect', prosceniumWidth: 5000 });
+    expect(show.stage.referenceLines.center).toBe(false);
+    applyShowSettings({ ...base, stagePolygonM: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 4 }] });
+    show = session.value!.show.value;
+    expect(show.stage.shape).toEqual({ kind: 'polygon', points: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 4000 }] });
+    applyShowSettings({ ...base, stagePolygonM: null });
+    expect(session.value!.show.value.stage.shape.kind).toBe('rect');
+  });
+});
+
+describe('dimensions', () => {
+  test('a measured distance becomes a dimension on the notes layer, readable and undoable', () => {
+    startEmpty('x');
+    const id = addDimension({ x: 1000, y: 1000 }, { x: 1000, y: -2000 });
+    const show = session.value!.show.value;
+    const el = show.elements[id!]!;
+    expect(el.type.id).toBe('note.dimension');
+    expect(el.width).toBe(3000);
+    expect(el.x).toBe(1000);
+    expect(el.y).toBe(-500);
+    expect(Math.abs(el.rotation)).toBe(90);
+    expect(show.layers.find((l) => l.id === el.layerId)?.subject).toBe('notes');
+    expect(addDimension({ x: 5, y: 5 }, { x: 5, y: 5 })).toBeNull();
+    session.value!.undo();
+    expect(session.value!.show.value.elements[id!]).toBeUndefined();
   });
 });
 

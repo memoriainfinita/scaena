@@ -85,3 +85,24 @@ export function formatLength(mm: number, units: 'metric' | 'imperial', locale: s
   }
   return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(mm / 1000)} m`;
 }
+
+/** The wall segments of the proscenium line: the whole width when there is no opening, else the two sides of it. */
+export function prosceniumWalls(width: number, opening: number | null): [number, number][] {
+  if (opening === null || opening >= width) return [[-300, width + 300]];
+  const side = (width - opening) / 2;
+  return [[-300, side], [width - side, width + 300]];
+}
+
+/** Reads "x; y" lines in metres; null when there are fewer than three valid points. */
+export function parsePolygon(text: string): { x: number; y: number }[] | null {
+  const pts: { x: number; y: number }[] = [];
+  for (const line of text.split('\n')) {
+    if (line.trim() === '') continue;
+    const m = line.trim().replace(/,/g, '.').split(/[;\s]+/);
+    const x = Number(m[0]);
+    const y = Number(m[1]);
+    if (m.length !== 2 || !Number.isFinite(x) || !Number.isFinite(y)) return null;
+    pts.push({ x, y });
+  }
+  return pts.length >= 3 ? pts : null;
+}

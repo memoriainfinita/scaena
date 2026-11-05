@@ -4,7 +4,7 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import type { Connection, PlanElement, Show } from '../model/schema.ts';
-import { elementBox, elementSize, planBox, unionBox, type Box } from '../plan/geometry.ts';
+import { elementBox, elementSize, formatLength, planBox, prosceniumWalls, unionBox, type Box } from '../plan/geometry.ts';
 import { docStrings } from './strings.ts';
 
 export interface PlanSvgOptions {
@@ -102,7 +102,8 @@ export function planSvg(show: Show, images: Record<string, Uint8Array>, opts: Pl
     out.push(`<image href="data:image/png;base64,${toBase64(bytes)}" x="${bg.x}" y="${bg.y}" width="${r(bgInfo.dims.w * bg.scale)}" height="${r(bgInfo.dims.h * bg.scale)}" opacity="${bg.opacity}" preserveAspectRatio="none"/>`);
   }
   if (stage.kind === 'rect') {
-    if (show.stage.referenceLines.proscenium) out.push(`<line x1="-300" y1="${stage.depth}" x2="${stage.width + 300}" y2="${stage.depth}" stroke="#000" stroke-width="${r(0.8 / k)}"/>`);
+    if (show.stage.referenceLines.plaster) out.push(`<line x1="-300" y1="${stage.depth}" x2="${stage.width + 300}" y2="${stage.depth}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
+    if (show.stage.referenceLines.proscenium) for (const [a, b] of prosceniumWalls(stage.width, stage.prosceniumWidth)) out.push(`<line x1="${a}" y1="${stage.depth}" x2="${b}" y2="${stage.depth}" stroke="#000" stroke-width="${r(0.8 / k)}"/>`);
     if (show.stage.referenceLines.center) out.push(`<line x1="${stage.width / 2}" y1="0" x2="${stage.width / 2}" y2="${stage.depth + 300}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
   }
 
@@ -123,7 +124,7 @@ export function planSvg(show: Show, images: Record<string, Uint8Array>, opts: Pl
     if (c.connector) out.push(`<text x="${r((a.x + b.x) / 2)}" y="${r((a.y + b.y) / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2 / k)}" fill="${st.stroke}" font-family="Inter">${esc(c.connector)}</text>`);
   }
 
-  for (const e of els) out.push(elementSvg(e, f, k, layers.get(e.layerId)?.l.dim ?? 0));
+  for (const e of els) out.push(elementSvg(e, f, k, layers.get(e.layerId)?.l.dim ?? 0, show.units, opts.lang));
 
   // Scale bar and legend, below the plan.
   const y0 = box.y1 + 1.5 / k;
@@ -151,7 +152,7 @@ export function planSvg(show: Show, images: Record<string, Uint8Array>, opts: Pl
   return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };
 }
 
-function elementSvg(e: PlanElement, f: number, k: number, dim: number): string {
+function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Show['units'], lang: Lang): string {
   const it = itemById(e.type.id);
   if (!it) return '';
   const { w, d } = elementSize(e);
@@ -160,7 +161,8 @@ function elementSvg(e: PlanElement, f: number, k: number, dim: number): string {
   const opacity = dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : '';
   let s = `<g transform="translate(${e.x} ${e.y})"${opacity}>`;
   s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(symbolBody(it.symbol, w, d), f)}</g>`;
-  if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
+  if (it.symbol === 'dimension') s += `<g transform="rotate(${e.rotation})"><text x="0" y="${r(-d / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label || formatLength(w, units, lang))}</text></g>`;
+  else if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
   else if (e.label) s += `<text x="0" y="${r(box.y1 - e.y + 2.6 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
   return s + '</g>';
 }

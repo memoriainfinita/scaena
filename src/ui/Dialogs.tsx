@@ -3,6 +3,7 @@ import type { ComponentChildren } from 'preact';
 import { applySettings, applyShowSettings, dialog, session, settings, type Dialog, type Settings } from '../app/state.ts';
 import { goToIssue, issues, issueText } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
+import { parsePolygon } from '../plan/geometry.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { BackgroundDialog } from './Background.tsx';
 import { RevisionsDialog } from './Revisions.tsx';
@@ -83,19 +84,26 @@ const ALL_MODULES: Module[] = ['audio', 'lights', 'computers', 'video', 'room', 
 
 function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const show = session.value!.show.value;
-  const rect = show.stage.shape.kind === 'rect' ? show.stage.shape : null;
+  const shape = show.stage.shape;
+  const bounds = shape.kind === 'polygon' ? shape.points.reduce((b, q) => ({ x: Math.max(b.x, q.x), y: Math.max(b.y, q.y) }), { x: 0, y: 0 }) : null;
   const [modules, setModules] = useState<Module[]>(show.modules);
   const [regionCode, setRegionCode] = useState(show.region.code);
   const [voltage, setVoltage] = useState(show.region.voltage);
   const [paper, setPaper] = useState(show.paper);
   const [units, setUnits] = useState(show.units);
   const [docLang, setDocLang] = useState(show.lang);
-  const [w, setW] = useState((rect?.width ?? 8000) / 1000);
-  const [dpt, setD] = useState((rect?.depth ?? 5000) / 1000);
+  const [w, setW] = useState((shape.kind === 'rect' ? shape.width : (bounds?.x ?? 8000)) / 1000);
+  const [dpt, setD] = useState((shape.kind === 'rect' ? shape.depth : (bounds?.y ?? 5000)) / 1000);
+  const [freeForm, setFreeForm] = useState(shape.kind === 'polygon');
+  const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${q.x / 1000}; ${q.y / 1000}`).join('\n'));
+  const [proscenium, setProscenium] = useState(shape.kind === 'rect' && shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
+  const [refs, setRefs] = useState(show.stage.referenceLines);
+  const polygon = parsePolygon(polyText);
   const region = regionByCode(regionCode);
   const toggle = (m: Module) => setModules((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]));
   const apply = () => {
-    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt });
+    const prosc = Number(proscenium.replace(',', '.'));
+    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs });
     onClose();
   };
   return (
@@ -124,9 +132,19 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
           ))}
         </div>
       </fieldset>
-      {rect && (
-        <fieldset style="border:0;padding:0;margin:0">
-          <legend style="font-weight:600;margin-bottom:8px">{t('settings.stage')}</legend>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend style="font-weight:600;margin-bottom:8px">{t('settings.stage')}</legend>
+        <label class="mod">
+          <input type="checkbox" checked={freeForm} onChange={() => setFreeForm(!freeForm)} />
+          {t('settings.stage.free')}
+        </label>
+        {freeForm ? (
+          <label class="field">
+            {t('settings.stage.points')}
+            <textarea class="input mono" rows={5} value={polyText} onInput={(e) => setPolyText((e.currentTarget as HTMLTextAreaElement).value)} aria-invalid={polygon === null} />
+            {polygon === null && <span class="muted" role="status">{t('settings.stage.pointsBad')}</span>}
+          </label>
+        ) : (
           <div class="grid2">
             <label class="field">
               {t('settings.stage.width')}
@@ -136,9 +154,21 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
               {t('settings.stage.depth')}
               <input class="input mono" type="number" min="1" step="0.1" value={dpt} onChange={(e) => setD(Math.max(1, Number((e.currentTarget as HTMLInputElement).value) || 1))} />
             </label>
+            <label class="field">
+              {t('settings.stage.proscenium')}
+              <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscenium} onInput={(e) => setProscenium((e.currentTarget as HTMLInputElement).value)} />
+            </label>
           </div>
-        </fieldset>
-      )}
+        )}
+        <div class="mods" role="group" aria-label={t('settings.refs')}>
+          {(['center', 'plaster', 'proscenium'] as const).map((k) => (
+            <label class="mod" key={k}>
+              <input type="checkbox" checked={refs[k]} onChange={() => setRefs({ ...refs, [k]: !refs[k] })} disabled={freeForm} />
+              {t(`settings.refs.${k}` as Key)}
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <div class="grid2">
         <label class="field">
           {t('settings.region')}
