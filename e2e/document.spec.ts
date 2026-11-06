@@ -30,12 +30,49 @@ test.describe('PDF rider', () => {
     expect(text).toContain('/Tabs /S');
   });
 
+  test('the channel list can be turned and split in blocks, and the layout is kept as an own template', async ({ page }) => {
+    await open(page, /Banda de rock/);
+    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await page.getByLabel('Orientación de la lista de canales').selectOption({ label: 'Horizontal' });
+    await page.getByLabel('Bloques de la lista de canales').selectOption('2');
+    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
+
+    await page.getByText('Plantillas propias').click();
+    await page.getByLabel('Nombre de la plantilla').fill('Mi gira');
+    await page.getByRole('button', { name: 'Guardar como plantilla' }).click();
+    await expect(page.getByText('Plantilla «Mi gira» guardada.')).toBeVisible();
+    await page.getByLabel('Orientación de la lista de canales').selectOption({ label: 'Vertical' });
+    await page.getByLabel('Bloques de la lista de canales').selectOption({ label: 'Automático' });
+    await page.getByRole('button', { name: 'Aplicar', exact: true }).click();
+    await expect(page.getByLabel('Orientación de la lista de canales')).toHaveValue('landscape');
+    await expect(page.getByLabel('Bloques de la lista de canales')).toHaveValue('2');
+    await page.getByRole('button', { name: 'Borrar', exact: true }).click();
+    await expect(page.getByLabel('Plantilla guardada')).toHaveCount(0);
+  });
+
+  test('a logo goes on the cover, and a file that is not an image is refused', async ({ page }) => {
+    await open(page, /Banda de rock/);
+    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    await page.getByText('Datos del documento', { exact: true }).click();
+    const input = page.getByLabel(/Logotipo de la portada/);
+    await input.setInputFiles({ name: 'logo.txt', mimeType: 'text/plain', buffer: Buffer.from('not an image at all') });
+    await expect(page.getByRole('alert').filter({ hasText: 'El logotipo debe ser' })).toBeVisible();
+    await input.setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: png });
+    await expect(page.getByRole('button', { name: 'Quitar logotipo' })).toBeVisible();
+    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
+    await page.getByRole('button', { name: 'Quitar logotipo' }).click();
+    await expect(page.getByRole('button', { name: 'Quitar logotipo' })).toHaveCount(0);
+  });
+
   test('turning a section off recompiles with fewer pages and switches to a custom template', async ({ page }) => {
     await open(page, /Banda de rock/);
     await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
     const before = await page.getByRole('img', { name: /^Página \d+$/ }).count();
     for (const s of ['Lista de entradas', 'Lista de salidas', 'Plano del escenario', 'Notas', 'Revisiones', 'Contactos', 'Horario']) await page.getByRole('checkbox', { name: s, exact: true }).uncheck();
-    await expect(page.getByLabel('Plantilla')).toHaveValue('custom');
+    await expect(page.getByRole('combobox', { name: /^Plantilla(?! guardada)/ })).toHaveValue('custom');
     await expect.poll(() => page.getByRole('img', { name: /^Página \d+$/ }).count(), { timeout: 60_000 }).toBeLessThan(before);
   });
 });

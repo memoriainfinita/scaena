@@ -30,6 +30,16 @@ export async function compareWithCurrent(n: number): Promise<string[] | null> {
   return s && data ? diffShows(restore(data), s.show.value, lang.value) : null;
 }
 
+/** What changed from one stored revision to another, or to the show as it is now when `to` is null; null when one is missing. */
+export async function compareRevisions(from: number, to: number | null): Promise<string[] | null> {
+  const s = session.value;
+  if (!s) return null;
+  const a = await s.loadRevision(from);
+  const b = to === null ? undefined : await s.loadRevision(to);
+  if (!a || (to !== null && !b)) return null;
+  return diffShows(restore(a), b ? restore(b) : s.show.value, lang.value);
+}
+
 /** Brings a revision's content back as one undoable step. The list of revisions and the revision number are kept. */
 export async function restoreRevision(n: number): Promise<boolean> {
   const s = session.value;

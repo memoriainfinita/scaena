@@ -35,7 +35,7 @@ describe('sections', () => {
   });
 
   test('a custom template is exactly its list', () => {
-    const show: Show = { ...rock(), document: { template: 'custom', sections: ['inputs', 'cover'], planScale: null } };
+    const show: Show = { ...rock(), document: { template: 'custom', sections: ['inputs', 'cover'], planScale: null, inputs: { landscape: false, blocks: 'auto' as const } } };
     expect(effectiveSections(show)).toEqual(['cover', 'inputs']);
   });
 
@@ -49,7 +49,7 @@ describe('Typst source', () => {
   test('user text can never become markup or code', () => {
     expect(lit('a "b" \\ c\nd')).toBe('"a \\"b\\" \\\\ c\\nd"');
     const [show] = addChannel(newShow('#panic("boom")'), { shortName: '*bold* #let x', mic: '$x$ <label> @ref' });
-    const b = buildDocument({ ...show, name: '#panic("boom")', modules: ['audio'], document: { template: 'custom', sections: ['inputs', 'cover'], planScale: null } });
+    const b = buildDocument({ ...show, name: '#panic("boom")', modules: ['audio'], document: { template: 'custom', sections: ['inputs', 'cover'], planScale: null, inputs: { landscape: false, blocks: 'auto' as const } } });
     expect(b.source).toContain(txt('#panic("boom")'));
     expect(b.source).not.toMatch(/\n#panic/);
     expect(b.source).toContain(txt('*bold* #let x'));

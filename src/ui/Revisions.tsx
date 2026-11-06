@@ -1,6 +1,6 @@
 // The revisions dialog: save the state as a revision, see what changed, restore one, make the update sheet.
 import { useState } from 'preact/hooks';
-import { compareWithCurrent, restoreRevision, saveCurrentRevision } from '../app/revisions-actions.ts';
+import { compareRevisions, compareWithCurrent, restoreRevision, saveCurrentRevision } from '../app/revisions-actions.ts';
 import { session } from '../app/state.ts';
 import { baseName, saveFile, updateSheetFile } from '../export/exports.ts';
 import { t } from '../i18n/index.ts';
@@ -18,6 +18,10 @@ export function RevisionsDialog({ onClose }: { onClose: () => void }) {
   const [info, setInfo] = useState<string | null>(null);
   const [diff, setDiff] = useState<{ n: number; lines: string[] } | null>(null);
   const list = [...show.revisions].sort((a, b) => b.number - a.number);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('current');
+  const [pair, setPair] = useState<{ title: string; lines: string[] } | null>(null);
+  const fromN = Number(from || list[list.length - 1]?.number);
 
   const guard = async (job: () => Promise<void>) => {
     setBusy(true);
@@ -43,6 +47,13 @@ export function RevisionsDialog({ onClose }: { onClose: () => void }) {
       const lines = await compareWithCurrent(n);
       if (lines === null) throw new Error(t('rev.missing'));
       setDiff({ n, lines });
+    });
+  const comparePair = () =>
+    guard(async () => {
+      const toN = to === 'current' ? null : Number(to);
+      const lines = await compareRevisions(fromN, toN);
+      if (lines === null) throw new Error(t('rev.missing'));
+      setPair({ title: toN === null ? t('rev.diffPairCurrent', { a: fromN }) : t('rev.diffPair', { a: fromN, b: toN }), lines });
     });
   const restore = (n: number) =>
     guard(async () => {
@@ -92,6 +103,51 @@ export function RevisionsDialog({ onClose }: { onClose: () => void }) {
             <span aria-hidden="true">⚠ </span>
             {error}
           </p>
+        )}
+        {list.length > 0 && (
+          <fieldset class="sub">
+            <legend>{t('rev.pair')}</legend>
+            <label class="field">
+              {t('rev.from')}
+              <select class="input" value={String(fromN)} onChange={(e) => setFrom((e.currentTarget as HTMLSelectElement).value)}>
+                {[...list].reverse().map((r) => (
+                  <option key={r.number} value={r.number}>
+                    {t('rev.number', { n: r.number })} · {r.date}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label class="field">
+              {t('rev.to')}
+              <select class="input" value={to} onChange={(e) => setTo((e.currentTarget as HTMLSelectElement).value)}>
+                {[...list].reverse().map((r) => (
+                  <option key={r.number} value={r.number}>
+                    {t('rev.number', { n: r.number })} · {r.date}
+                  </option>
+                ))}
+                <option value="current">{t('rev.current')}</option>
+              </select>
+            </label>
+            <button type="button" class="btn" style="align-self:flex-end" disabled={busy} onClick={() => void comparePair()}>
+              {t('rev.compareTwo')}
+            </button>
+          </fieldset>
+        )}
+        {pair && (
+          <div class="diff" role="region" aria-label={pair.title}>
+            <strong>{pair.title}</strong>
+            {pair.lines.length === 0 ? (
+              <p>{noChangesText(lang.value)}</p>
+            ) : (
+              <ul class="plainlist">
+                {pair.lines.map((l, i) => (
+                  <li key={i} style="border:0;padding:0">
+                    {l}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
         {list.length === 0 ? (
           <p class="muted">{t('rev.none')}</p>

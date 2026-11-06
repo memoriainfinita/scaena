@@ -7,6 +7,7 @@ import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '.
 import { stagePosition } from '../model/position.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
+import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
 import { planSvg } from './plan-svg.ts';
 import { buildReport } from '../reports/reports.ts';
@@ -51,10 +52,10 @@ class Collector {
   ) {}
 
   /** A table with a header row; cells that hold a word too long for their column raise a warning. */
-  table(section: string, cols: Col[], header: string[], rows: string[][]): string {
+  table(section: string, cols: Col[], header: string[], rows: string[][], widthMm = this.contentMm): string {
     const fixed = cols.reduce((a, c) => a + ('mm' in c ? c.mm : 0), 0);
     const fr = cols.reduce((a, c) => a + ('fr' in c ? c.fr : 0), 0) || 1;
-    const widths = cols.map((c) => ('mm' in c ? c.mm : ((this.contentMm - fixed) * c.fr) / fr));
+    const widths = cols.map((c) => ('mm' in c ? c.mm : ((widthMm - fixed) * c.fr) / fr));
     rows.forEach((row, r) =>
       row.forEach((cell, i) => {
         const longest = cell.split(/\s+/).reduce((a, w) => Math.max(a, w.length), 0);
@@ -82,6 +83,12 @@ const elName = (e: PlanElement | undefined, lang: 'es' | 'en'): string => (e ? e
 const num = (n: number | null, digits = 0) => (n === null ? '' : String(Math.round(n * 10 ** digits) / 10 ** digits));
 /** Like num, but zero reads as nothing: an unstated weight or height is not a measurement of zero. */
 const numNZ = (n: number | null, digits = 0) => (n === null || n === 0 ? '' : num(n, digits));
+
+/** Rows of the channel list that fit one page, vertical and horizontal (an estimate from the row height at 9 pt). */
+const ROWS_PER_PAGE = { portrait: 32, landscape: 20 };
+
+/** The fewest blocks (1 to 4) with which the whole channel list fits on one page. */
+export const autoBlocks = (rows: number, landscape: boolean): number => Math.min(4, Math.max(1, Math.ceil(rows / ROWS_PER_PAGE[landscape ? 'landscape' : 'portrait'])));
 
 export function buildDocument(show: Show, images: Record<string, Uint8Array> = {}): Built {
   const D = docStrings(show.lang);
@@ -117,9 +124,16 @@ export function buildDocument(show: Show, images: Record<string, Uint8Array> = {
         [D.date, show.date],
         [D.revision, String(show.revision)],
       ].filter(([, v]) => v) as [string, string][];
+      const logoName = show.titleBlock.logo;
+      const logoBytes = logoName ? images[logoName] : undefined;
+      const logoExt = logoName ? logoKind(logoName) : null;
+      if (logoBytes && logoExt) files[`/logo.${logoExt}`] = logoBytes;
+      const logo = logoBytes && logoExt ? `#image("/logo.${logoExt}", height: 22mm, fit: "contain", alt: ${lit(D.logo)})
+  #v(14pt)
+  ` : '';
       parts.push(`#align(center)[
   #v(40pt)
-  #text(size: 26pt, weight: "bold")[${txt(show.name)}]
+  ${logo}#text(size: 26pt, weight: "bold")[${txt(show.name)}]
   #v(6pt)
   #text(size: 13pt, fill: luma(80))[${txt(D.rider)}]
   #v(24pt)
@@ -162,9 +176,24 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
         return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, ch.patch, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : ''];
       });
       const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
-      parts.push(heading(D.inputs) + (deskLine ? `${txt(deskLine)}
-
-` : '') + c.table(D.inputs, [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }], [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position], rows) + `\n${txt(D.positionLegend)}\n`);
+      const cfg = show.document.inputs;
+      const widthMm = (cfg.landscape ? paper.h : paper.w) - 2 * MARGIN;
+      const blocks = cfg.blocks === 'auto' ? autoBlocks(list.length, cfg.landscape) : cfg.blocks;
+      let body: string;
+      if (blocks === 1) {
+        body = c.table(D.inputs, [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }], [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position], rows, widthMm) + `\n${txt(D.positionLegend)}\n`;
+      } else {
+        // Several blocks side by side: the compact table (channel, name, mic, patch, 48 V), consecutive channels in each.
+        const gutter = 5;
+        const blockMm = (widthMm - gutter * (blocks - 1)) / blocks;
+        const size = Math.ceil(rows.length / blocks);
+        const tables = Array.from({ length: blocks }, (_, i) => rows.slice(i * size, (i + 1) * size))
+          .filter((chunk) => chunk.length > 0)
+          .map((chunk) => c.table(D.inputs, [{ mm: 8 }, { fr: 1 }, { fr: 1.3 }, { mm: 14 }, { mm: 9 }], ['#', D.shortName, D.mic, D.patch, '48 V'], chunk.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]), blockMm));
+        body = `#grid(columns: (${tables.map(() => '1fr').join(', ')}), column-gutter: ${gutter}mm, align: top, ${tables.map((tb) => `[${tb}]`).join(', ')})\n`;
+      }
+      const inputsMd = heading(D.inputs) + (deskLine ? `${txt(deskLine)}\n\n` : '') + body;
+      parts.push(cfg.landscape ? `#page(flipped: true)[\n${inputsMd}\n]\n` : inputsMd);
     } else if (s === 'outputs') {
       const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
       parts.push(heading(D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');

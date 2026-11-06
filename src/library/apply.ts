@@ -63,5 +63,5 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     [show, mount] = addMount(show, { kind: 'bar', name: lang === 'en' ? 'Bar 1' : 'Vara 1', from: { x: Math.min(...xs) - 500, y }, to: { x: Math.max(...xs) + 500, y } });
     for (const e of lit) show = updateLuminaire(show, e.id, { mountId: mount.id });
   }
-  return { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null } };
+  return { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null, inputs: { landscape: false, blocks: 'auto' } } };
 }

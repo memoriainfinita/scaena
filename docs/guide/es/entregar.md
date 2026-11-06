@@ -25,6 +25,7 @@ Los CSV se abren bien en Excel (llevan marca de codificación) y cualquier celda
 Una **revisión** es una copia del montaje en un momento dado, guardada en este navegador. **Guardar revisión** sube el número, anota la fecha y tu nota, y calcula qué cambió desde la anterior (elementos añadidos, quitados o movidos, canales, salidas, montajes…).
 
 - **Comparar con el actual** muestra qué ha cambiado desde esa revisión.
+- **Comparar dos revisiones** (desde, hasta; «hasta» admite el estado actual) muestra los cambios de una a otra, en el orden elegido.
 - **Restaurar** devuelve su contenido como un paso que se puede deshacer; la lista de revisiones se conserva.
 - **Hoja de actualización** es un PDF de una página con el número, la fecha, la nota y los cambios, para quien ya tiene la versión anterior.
 

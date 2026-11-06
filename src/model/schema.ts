@@ -213,6 +213,8 @@ export const DocumentConfig = v.object({
   sections: v.optional(v.array(DocSection), []),
   /** Print scale of the plan as 1:N, or null to fit the page. */
   planScale: v.optional(v.nullable(v.pipe(v.number(), v.minValue(1))), null),
+  /** The channel list: horizontal pages, and how many blocks side by side (automatic fits it on one page). */
+  inputs: v.optional(v.object({ landscape: v.optional(v.boolean(), false), blocks: v.optional(v.union([v.literal('auto'), v.literal(1), v.literal(2), v.literal(3), v.literal(4)]), 'auto') }), {}),
 });
 
 export const Show = v.object({

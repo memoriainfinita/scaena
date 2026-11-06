@@ -106,7 +106,7 @@ test('the start screen and the document view fit a phone without sideways scroll
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await page.getByRole('button', { name: 'Documento', exact: true }).click();
-  await expect(page.getByLabel('Plantilla')).toBeVisible();
+  await expect(page.getByRole('combobox', { name: /^Plantilla(?! guardada)/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 

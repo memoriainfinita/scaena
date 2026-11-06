@@ -82,6 +82,19 @@ test('revisions: save two, read what changed, compare, restore and undo, and mak
   await dlg.getByRole('listitem').filter({ hasText: 'Revisión 1' }).getByRole('button', { name: 'Comparar con el actual' }).click();
   await expect(dlg.getByRole('region', { name: /Cambios desde la revisión 1/ })).toContainText('Añadido: Persona');
 
+  await dlg.getByRole('combobox', { name: /^Desde/ }).selectOption('1');
+  await dlg.getByRole('combobox', { name: /^Hasta/ }).selectOption('2');
+  await dlg.getByRole('button', { name: 'Comparar', exact: true }).click();
+  await expect(dlg.getByRole('region', { name: 'Cambios de la revisión 1 a la 2' })).toContainText('Añadido: Persona');
+  await dlg.getByRole('combobox', { name: /^Desde/ }).selectOption('2');
+  await dlg.getByRole('combobox', { name: /^Hasta/ }).selectOption('1');
+  await dlg.getByRole('button', { name: 'Comparar', exact: true }).click();
+  await expect(dlg.getByRole('region', { name: 'Cambios de la revisión 2 a la 1' })).toContainText(/Quitado: Persona/);
+  await dlg.getByRole('combobox', { name: /^Hasta/ }).selectOption('current');
+  await dlg.getByRole('combobox', { name: /^Desde/ }).selectOption('1');
+  await dlg.getByRole('button', { name: 'Comparar', exact: true }).click();
+  await expect(dlg.getByRole('region', { name: 'Cambios de la revisión 1 al estado actual' })).toContainText('Añadido: Persona');
+
   await dlg.getByRole('listitem').filter({ hasText: 'Revisión 1' }).getByRole('button', { name: 'Restaurar' }).click();
   await expect(dlg.getByText(/Revisión 1 restaurada/)).toBeVisible();
   await page.keyboard.press('Escape');
