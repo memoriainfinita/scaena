@@ -17,6 +17,10 @@ Cada fila es un canal. Se edita en la propia tabla; cada cambio se confirma al s
 
 Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. Debajo, el **flujo de señal**: las fuentes agrupadas por elemento, la mesa (escribe su modelo) y las salidas. Cada línea lleva su nombre escrito y un trazo distinto: el color nunca va solo.
 
+## Patch y posición
+
+**Patch** es dónde se conecta el canal (stagebox y puerto, por ejemplo «SB A 12»); el mismo patch en dos canales avisa. **Pos.** muestra dónde está la fuente en el escenario (US fondo, DS proscenio, C centro, SL izquierda del artista, SR derecha del artista, y combinaciones como USC o DSL), leída del plano; el PDF añade una leyenda bajo la tabla. En Salidas, **Numerar cuñas** renumera las cuñas dibujadas de izquierda a derecha y de delante atrás con los números que ya tienen; las demás salidas conservan los suyos.
+
 ## Racks
 
 Añade un **Rack** desde la biblioteca y pulsa **Montar el rack** en su panel: fija sus unidades (U), añade equipos con su altura y súbelos o bájalos. Avisa cuando sobran equipos y el rack aparece en los informes y como sección del documento.

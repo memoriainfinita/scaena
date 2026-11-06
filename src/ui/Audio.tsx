@@ -1,11 +1,12 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
-import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setOutput, sortByInstrument } from '../app/audio-actions.ts';
+import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
-import { channelList, outputList } from '../model/audio.ts';
+import { channelList, outputList, wedgesInOrder } from '../model/audio.ts';
+import { stagePosition } from '../model/position.ts';
 import type { InputChannel, Output, PlanElement, Show } from '../model/schema.ts';
 
 const elementName = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
@@ -67,16 +68,18 @@ export function InputsView({ show }: { show: Show }) {
               <th>{t('table.name')}</th>
               <th>{t('table.mic')}</th>
               <th>{t('table.stand')}</th>
+              <th>{t('table.patch')}</th>
               <th>{t('table.phantom')}</th>
               <th>{t('table.pair')}</th>
               <th>{t('table.source')}</th>
+              <th>{t('table.position')}</th>
               <th>{t('table.notes')}</th>
               <th />
             </tr>
           </thead>
           <tbody>
             {rows.map((c, i) => (
-              <ChannelRow key={c.id} c={c} i={i} count={rows.length} rows={rows} sources={sources} selected={!!c.sourceElementId && sel.has(c.sourceElementId)} />
+              <ChannelRow key={c.id} show={show} c={c} i={i} count={rows.length} rows={rows} sources={sources} selected={!!c.sourceElementId && sel.has(c.sourceElementId)} />
             ))}
           </tbody>
         </table>
@@ -85,9 +88,10 @@ export function InputsView({ show }: { show: Show }) {
   );
 }
 
-function ChannelRow({ c, i, count, rows, sources, selected }: { c: InputChannel; i: number; count: number; rows: InputChannel[]; sources: { id: string; name: string }[]; selected: boolean }) {
+function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show; c: InputChannel; i: number; count: number; rows: InputChannel[]; sources: { id: string; name: string }[]; selected: boolean }) {
   const row = t('inputs.row', { n: c.number });
   const tag = (k: Key) => `${t(k)} · ${row}`;
+  const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
   return (
     <tr class={selected ? 'sel' : undefined} onFocusIn={() => selectSource(c.sourceElementId)}>
       <td class="mono num">
@@ -102,6 +106,9 @@ function ChannelRow({ c, i, count, rows, sources, selected }: { c: InputChannel;
       </td>
       <td>
         <Cell value={c.stand} label={tag('table.stand')} max={80} onCommit={(v) => setChannel(c.id, { stand: v })} />
+      </td>
+      <td>
+        <Cell value={c.patch} label={tag('table.patch')} max={24} mono onCommit={(v) => setChannel(c.id, { patch: v })} />
       </td>
       <td class="center">
         <input type="checkbox" aria-label={tag('table.phantom')} checked={c.phantom} onChange={(e) => setChannel(c.id, { phantom: (e.currentTarget as HTMLInputElement).checked })} />
@@ -128,6 +135,7 @@ function ChannelRow({ c, i, count, rows, sources, selected }: { c: InputChannel;
           ))}
         </select>
       </td>
+      <td class="mono">{src ? stagePosition(show, src) : ''}</td>
       <td>
         <Cell value={c.notes} label={tag('table.notes')} onCommit={(v) => setChannel(c.id, { notes: v })} />
       </td>
@@ -147,6 +155,9 @@ export function OutputsView({ show }: { show: Show }) {
       <div class="listbar">
         <button type="button" class="btn" onClick={() => addOutputRow()}>
           {t('outputs.add')}
+        </button>
+        <button type="button" class="btn" onClick={() => numberWedgeOutputs()} disabled={wedgesInOrder(show)}>
+          {t('outputs.numberWedges')}
         </button>
       </div>
       {rows.length === 0 ? (

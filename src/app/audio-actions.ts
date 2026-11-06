@@ -1,7 +1,7 @@
 // Edits of the input and output lists: each one is a single undo step.
 import { itemById } from '../library/items.ts';
 import { audioFromLabel, needsPhantom } from '../library/models.ts';
-import { addChannel, addOutput, moveChannel, moveOutput, removeChannel, removeOutput, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
+import { addChannel, addOutput, moveChannel, numberWedges, moveOutput, removeChannel, removeOutput, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
 import type { InputChannel, Output, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
@@ -36,6 +36,9 @@ export const pairChannel = (id: string, other: string | null): void => commit((s
 const ORDER = ['drums', 'amp', 'guitar', 'keys', 'strings', 'winds', 'vocals', 'dj', 'person', 'video', 'control', 'pa', 'monitor', 'desk', 'rack', 'furniture'];
 
 /** Groups the channels by the category of the element they come from; channels with no source go last. */
+/** Numbers the drawn wedges left to right and front to back, as one undo step. */
+export const numberWedgeOutputs = (): void => commit((show) => numberWedges(show));
+
 export function sortByInstrument(): void {
   commit((show) =>
     sortChannels(show, (c) => {

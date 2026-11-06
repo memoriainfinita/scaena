@@ -3,6 +3,7 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
+import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
 import { circuitLoads, dimmerLoads, luminaires, riggingPlan } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
@@ -134,9 +135,10 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   if (id === 'inputs') {
     const rows = channelList(show).map((c) => {
       const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
-      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(c.sourceElementId ? show.elements[c.sourceElementId] : undefined, lang), c.notes];
+      const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
+      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, c.patch, c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes];
     });
-    return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.phantom, D.pair, D.source, D.note], rows };
+    return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note], rows };
   }
   const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.notes]);
   return { id, header: ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows };

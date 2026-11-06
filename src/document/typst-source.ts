@@ -4,6 +4,7 @@ import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
+import { stagePosition } from '../model/position.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
 import { magicSheet } from './magic-svg.ts';
@@ -157,12 +158,13 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const list = channelList(show);
       const rows = list.map((ch) => {
         const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
-        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined, show.lang)];
+        const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
+        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, ch.patch, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : ''];
       });
       const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
       parts.push(heading(D.inputs) + (deskLine ? `${txt(deskLine)}
 
-` : '') + c.table(D.inputs, [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }], [D.channel, D.shortName, D.mic, D.stand, D.phantom, D.pair, D.source], rows) + '\n');
+` : '') + c.table(D.inputs, [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }], [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position], rows) + `\n${txt(D.positionLegend)}\n`);
     } else if (s === 'outputs') {
       const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
       parts.push(heading(D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');

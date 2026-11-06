@@ -1,6 +1,6 @@
 // Input channels and outputs: pure operations that keep the numbers 1..n without gaps.
 import { nextId } from './ids.ts';
-import type { InputChannel, Output, Show } from './schema.ts';
+import type { InputChannel, Output, PlanElement, Show } from './schema.ts';
 
 const byNumber = <T extends { number: number }>(rec: Record<string, T>): T[] => Object.values(rec).sort((a, b) => a.number - b.number);
 
@@ -10,6 +10,38 @@ function renumber<T extends { id: string; number: number }>(list: T[]): Record<s
 
 export const channelList = (show: Show): InputChannel[] => byNumber(show.channels);
 export const outputList = (show: Show): Output[] => byNumber(show.outputs);
+
+export interface DrawnWedge {
+  o: Output;
+  e: PlanElement;
+}
+
+/** Wedge outputs whose wedge is drawn on the plan. */
+export const drawnWedges = (show: Show): DrawnWedge[] =>
+  outputList(show)
+    .filter((o) => o.kind === 'wedge' && o.sourceElementId && show.elements[o.sourceElementId])
+    .map((o) => ({ o, e: show.elements[o.sourceElementId!]! }));
+
+/** Left to right and, at the same x, front (large y) first: the order wedges are numbered in. */
+export const wedgeOrder = (a: DrawnWedge, b: DrawnWedge): number => a.e.x - b.e.x || b.e.y - a.e.y;
+
+/** True when the drawn wedges already carry their numbers in that order. */
+export function wedgesInOrder(show: Show): boolean {
+  const w = drawnWedges(show); // already by number
+  return [...w].sort(wedgeOrder).every((x, i) => x === w[i]);
+}
+
+/** Shares the numbers the drawn wedges already hold out again in order; other outputs keep theirs. */
+export function numberWedges(show: Show): Show {
+  const wedges = drawnWedges(show);
+  if (wedges.length < 2 || wedgesInOrder(show)) return show;
+  const numbers = wedges.map((w) => w.o.number).sort((a, b) => a - b);
+  const outputs = { ...show.outputs };
+  [...wedges].sort(wedgeOrder).forEach((w, i) => {
+    outputs[w.o.id] = { ...w.o, number: numbers[i]! };
+  });
+  return { ...show, outputs };
+}
 
 export function addChannel(show: Show, init: Partial<Omit<InputChannel, 'id' | 'number'>> = {}): [Show, InputChannel] {
   const [id, s] = nextId(show, 'ch');
