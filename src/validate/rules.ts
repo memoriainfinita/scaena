@@ -2,8 +2,9 @@
 // only a colour) and points at the thing to fix. Findings never block anything, exporting included.
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms } from '../library/programs.ts';
-import { channelList, outputList } from '../model/audio.ts';
+import { channelList, drawnWedges, outputList, wedgeOrder } from '../model/audio.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
+import { handlesSignal, maxCableM } from '../model/compat.ts';
 import { isClock } from '../model/production.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 
@@ -29,7 +30,11 @@ export type RuleId =
   | 'noContact'
   | 'noDate'
   | 'programOs'
-  | 'timeFormat';
+  | 'timeFormat'
+  | 'duplicatePatch'
+  | 'connectionMismatch'
+  | 'cableTooLong'
+  | 'ipDuplicate';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -46,6 +51,8 @@ export interface Issue {
   vars: Record<string, string | number>;
   /** Names to list in the message: field keys or operating-system ids, according to the rule. */
   list?: string[];
+  /** True when the user silenced this finding; it stays out of counts and marks. */
+  muted?: true;
 }
 
 /** The severity of every rule, in one place so the UI and the documentation read the same table. */
@@ -69,12 +76,16 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   noDate: 'warning',
   programOs: 'warning',
   timeFormat: 'warning',
+  duplicatePatch: 'warning',
+  connectionMismatch: 'warning',
+  cableTooLong: 'warning',
+  ipDuplicate: 'error',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
 
 type Rule = (show: Show) => Issue[];
-const issue = (rule: RuleId, ref: Ref, vars: Issue['vars'] = {}, list?: string[]): Issue => ({ key: `${rule}:${ref.kind}:${ref.id}`, rule, severity: SEVERITY_OF[rule], ref, vars, ...(list ? { list } : {}) });
+const issue = (rule: RuleId, ref: Ref, vars: Issue['vars'] = {}, list?: string[], part?: string): Issue => ({ key: `${rule}:${ref.kind}:${ref.id}${part ? `:${part}` : ''}`, rule, severity: SEVERITY_OF[rule], ref, vars, ...(list ? { list } : {}) });
 
 const audioOn = (s: Show) => s.modules.includes('audio');
 const lightsOn = (s: Show) => s.modules.includes('lights');
@@ -128,12 +139,9 @@ const sourceWithoutChannel: Rule = (show) => {
 
 const monitorOrder: Rule = (show) => {
   if (!audioOn(show)) return [];
-  const wedges = outputList(show)
-    .filter((o) => o.kind === 'wedge' && o.sourceElementId && show.elements[o.sourceElementId])
-    .map((o) => ({ o, e: show.elements[o.sourceElementId!]! }));
+  const wedges = drawnWedges(show);
   if (wedges.length < 2) return [];
-  // Left to right and, at the same x, front (large y) first.
-  const expected = [...wedges].sort((a, b) => a.e.x - b.e.x || b.e.y - a.e.y).map((w) => w.o.number);
+  const expected = [...wedges].sort(wedgeOrder).map((w) => w.o.number);
   const actual = [...wedges].sort((a, b) => a.o.number - b.o.number).map((w) => w.o.number);
   const bad = actual.findIndex((n, i) => n !== expected[i]);
   if (bad < 0) return [];
@@ -256,18 +264,63 @@ const programOs: Rule = (show) =>
 const timeFormat: Rule = (show) =>
   show.schedule.filter((x) => x.time.trim() !== '' && !isClock(x.time)).map((x) => issue('timeFormat', { kind: 'show', id: 'schedule' }, { time: x.time, what: x.what }));
 
-export const RULES: Record<RuleId, Rule> = { timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+const duplicatePatch: Rule = (show) => {
+  if (!audioOn(show)) return [];
+  const seen = new Map<string, number>();
+  const out: Issue[] = [];
+  for (const c of channelList(show)) {
+    const p = c.patch.trim().toLowerCase();
+    if (!p) continue;
+    const first = seen.get(p);
+    if (first === undefined) seen.set(p, c.number);
+    else out.push(issue('duplicatePatch', { kind: 'channel', id: c.id }, { patch: c.patch.trim(), other: first, n: c.number }));
+  }
+  return out;
+};
+
+const connectionMismatch: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) =>
+    [c.from, c.to]
+      .map((id) => show.elements[id])
+      .filter((e): e is PlanElement => !!e && !handlesSignal(e, c.signal))
+      .map((e) => issue('connectionMismatch', { kind: 'element', id: e.id }, { name: elName(e), signal: c.signal }, undefined, c.id)),
+  );
+
+const cableTooLong: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) => {
+    const max = maxCableM(c.connector);
+    const from = show.elements[c.from];
+    if (c.lengthMm === null || max === null || c.lengthMm / 1000 <= max || !from) return [];
+    return [issue('cableTooLong', { kind: 'element', id: from.id }, { name: elName(from), connector: c.connector.trim(), m: Math.round(c.lengthMm / 100) / 10, max }, undefined, c.id)];
+  });
+
+const ipDuplicate: Rule = (show) => {
+  const seen = new Map<string, PlanElement>();
+  const out: Issue[] = [];
+  for (const e of Object.values(show.elements)) {
+    const ip = e.ip.trim().toLowerCase();
+    if (!ip) continue;
+    const first = seen.get(ip);
+    if (!first) seen.set(ip, e);
+    else out.push(issue('ipDuplicate', { kind: 'element', id: e.id }, { ip: e.ip.trim(), a: elName(first), b: elName(e) }));
+  }
+  return out;
+};
+
+export const RULES: Record<RuleId, Rule> = { duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 
-/** All findings, errors first, with keys that are unique within the list. */
+/** All findings, errors first, with keys that are unique within the list. The ones the user silenced carry `muted`. */
 export function validate(show: Show): Issue[] {
+  const muted = new Set(show.muted);
   const all = Object.values(RULES).flatMap((r) => r(show));
   const count = new Map<string, number>();
   const unique = all.map((i) => {
     const n = (count.get(i.key) ?? 0) + 1;
     count.set(i.key, n);
-    return n === 1 ? i : { ...i, key: `${i.key}#${n}` };
+    const u = n === 1 ? i : { ...i, key: `${i.key}#${n}` };
+    return muted.has(u.key) ? { ...u, muted: true as const } : u;
   });
   return unique.sort((a, b) => RANK[a.severity] - RANK[b.severity]);
 }

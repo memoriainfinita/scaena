@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { applySettings, applyShowSettings, dialog, session, settings, type Dialog, type Settings } from '../app/state.ts';
-import { goToIssue, issues, issueText } from '../app/issues.ts';
+import { allIssues, goToIssue, issues, issueText, setIssueMuted } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { parsePolygon } from '../plan/geometry.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
@@ -427,8 +427,10 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
 
 function IssuesDialog({ onClose }: { onClose: () => void }) {
   const [shown, setShown] = useState<Set<Severity>>(new Set(SEVERITIES));
+  const [showMuted, setShowMuted] = useState(false);
   const all = issues.value;
-  const list = all.filter((i) => shown.has(i.severity));
+  const mutedCount = allIssues.value.length - all.length;
+  const list = (showMuted ? allIssues.value : all).filter((i) => shown.has(i.severity));
   const toggle = (s: Severity) =>
     setShown((cur) => {
       const next = new Set(cur);
@@ -447,20 +449,30 @@ function IssuesDialog({ onClose }: { onClose: () => void }) {
           </label>
         ))}
       </fieldset>
-      {all.length === 0 ? (
+      {mutedCount > 0 && (
+        <label class="issues-filter">
+          <input type="checkbox" checked={showMuted} onChange={() => setShowMuted(!showMuted)} />
+          {t('issues.showMuted', { n: mutedCount })}
+        </label>
+      )}
+      {list.length === 0 ? (
         <p>{t('issues.none')}</p>
       ) : (
         <ul class="issues-list">
           {list.map((i) => (
-            <li key={i.key}>
+            <li key={i.key} class={i.muted ? 'muted' : undefined}>
               <span class={`imark ${i.severity}`} aria-hidden="true">
                 {i.severity === 'tip' ? 'i' : '!'}
               </span>
               <p>
-                <strong>{t(`severity.${i.severity}` as Key)}.</strong> {issueText(i)}
+                <strong>{t(`severity.${i.severity}` as Key)}.</strong> {i.muted && <em>{t('issues.mutedTag')} </em>}
+                {issueText(i)}
               </p>
               <button type="button" class="btn" onClick={() => goToIssue(i)}>
                 {t('issues.go')}
+              </button>
+              <button type="button" class="btn" aria-label={`${t(i.muted ? 'issues.unmute' : 'issues.mute')}: ${issueText(i)}`} onClick={() => setIssueMuted(i.key, !i.muted)}>
+                {t(i.muted ? 'issues.unmute' : 'issues.mute')}
               </button>
             </li>
           ))}

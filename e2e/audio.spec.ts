@@ -102,3 +102,50 @@ test('a rack is built from its devices, flags too much gear and appears in the r
   await page.getByRole('button', { name: 'Racks', exact: true }).click();
   await expect(page.getByRole('table')).toContainText('Amplificador');
 });
+
+test('patch and stage position are columns, a repeated patch warns and the warning can be muted @a11y', async ({ page }) => {
+  await inputs(page);
+  await expect(page.getByRole('columnheader', { name: 'Pos.' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Patch' })).toBeVisible();
+  for (const n of [1, 2]) {
+    await L(page, `Patch · Canal ${n}`).fill('SB A 1');
+    await L(page, `Patch · Canal ${n}`).press('Tab');
+  }
+  await page.getByRole('button', { name: /^Avisos/ }).click();
+  const dlg = page.getByRole('dialog', { name: 'Avisos' });
+  await expect(dlg).toContainText('El patch «SB A 1» está en los canales 1 y 2');
+  expect((await axe(page)).violations).toEqual([]);
+  await dlg.getByRole('button', { name: /^Silenciar: El patch/ }).click();
+  await expect(dlg).not.toContainText('El patch «SB A 1»');
+  await dlg.getByRole('checkbox', { name: /Mostrar silenciados \(1\)/ }).check();
+  await expect(dlg).toContainText('Silenciado.');
+  await dlg.getByRole('button', { name: /^Reactivar: El patch/ }).click();
+  await expect(dlg.getByRole('checkbox', { name: /Mostrar silenciados/ })).toHaveCount(0);
+  await expect(dlg).toContainText('El patch «SB A 1» está en los canales 1 y 2');
+});
+
+test('wedges out of order are renumbered left to right with one button @a11y', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: 'Salidas', exact: true }).click();
+  const button = page.getByRole('button', { name: 'Numerar cuñas' });
+  await expect(button).toBeDisabled();
+  await L(page, 'Fuente · Salida 1').selectOption({ label: 'Cuña 4' });
+  await L(page, 'Fuente · Salida 4').selectOption({ label: 'Cuña 1' });
+  await expect(button).toBeEnabled();
+  expect((await axe(page)).violations).toEqual([]);
+  await button.click();
+  await expect(button).toBeDisabled();
+  await expect(L(page, 'Fuente · Salida 1').locator('option:checked')).toHaveText('Cuña 1');
+  await expect(L(page, 'Fuente · Salida 4').locator('option:checked')).toHaveText('Cuña 4');
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  await expect(button).toBeEnabled();
+});
+
+test('a power outlet from the library comes labelled with the region voltage', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('toma de corriente');
+  await page.getByRole('button', { name: /^Añadir Toma de corriente/ }).first().click();
+  await expect(page.getByLabel('Etiqueta', { exact: true })).toHaveValue(/^230 V/);
+});

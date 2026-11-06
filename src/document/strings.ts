@@ -71,6 +71,9 @@ export interface DocStrings {
   total: string;
   note: string;
   legend: string;
+  patch: string;
+  position: string;
+  positionLegend: string;
   none: string;
   magic: string;
   audience: string;
@@ -101,7 +104,7 @@ const es: DocStrings = {
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
   unit: 'Unidad', universe: 'Univ.', address: 'Dir.', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
   height: 'Altura sobre la tarima (m)', maxLoad: 'Carga máx. (kg)', count: 'Recuento', phase: 'Fase', amps: 'Amperios', voltage: 'Tensión', plug: 'Enchufe', total: 'Total', note: 'Nota',
-  legend: 'Leyenda', none: '—', magic: 'Magic sheet', audience: 'Público', rigging: 'Plan de varas', desk: 'Mesa', showFile: 'Show file', racks: 'Racks', task: 'Tarea', done: 'Hecha', ref: 'Elemento', changes: 'Cambios',
+  legend: 'Leyenda', patch: 'Patch', position: 'Pos.', positionLegend: 'US fondo · DS proscenio (hacia el público) · C centro · SL izquierda del artista · SR derecha del artista', none: '—', magic: 'Magic sheet', audience: 'Público', rigging: 'Plan de varas', desk: 'Mesa', showFile: 'Show file', racks: 'Racks', task: 'Tarea', done: 'Hecha', ref: 'Elemento', changes: 'Cambios',
   kinds: { wedge: 'Cuña', iem: 'In-ear', main: 'Principal', send: 'Envío' },
   mountKinds: { bar: 'Vara', pipe: 'Tubo', truss: 'Truss', boom: 'Calle lateral', floor: 'Suelo' },
   fn: { sound: 'Sonido', video: 'Vídeo', lights: 'Luces', network: 'Red' },
@@ -120,7 +123,7 @@ const en: DocStrings = {
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',
   unit: 'Unit', universe: 'Univ.', address: 'Addr.', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',
   height: 'Height above the stage (m)', maxLoad: 'Max load (kg)', count: 'Count', phase: 'Phase', amps: 'Amps', voltage: 'Voltage', plug: 'Plug', total: 'Total', note: 'Note',
-  legend: 'Legend', none: '—', magic: 'Magic sheet', audience: 'Audience', rigging: 'Hanging plot', desk: 'Desk', showFile: 'Show file', racks: 'Racks', task: 'Task', done: 'Done', ref: 'Element', changes: 'Changes',
+  legend: 'Legend', patch: 'Patch', position: 'Pos.', positionLegend: 'US upstage · DS downstage (towards the audience) · C centre · SL stage left · SR stage right', none: '—', magic: 'Magic sheet', audience: 'Audience', rigging: 'Hanging plot', desk: 'Desk', showFile: 'Show file', racks: 'Racks', task: 'Task', done: 'Done', ref: 'Element', changes: 'Changes',
   kinds: { wedge: 'Wedge', iem: 'In-ear', main: 'Main', send: 'Send' },
   mountKinds: { bar: 'Bar', pipe: 'Pipe', truss: 'Truss', boom: 'Boom', floor: 'Floor' },
   fn: { sound: 'Sound', video: 'Video', lights: 'Lights', network: 'Network' },

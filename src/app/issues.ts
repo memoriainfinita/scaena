@@ -6,8 +6,20 @@ import { lightsTab } from './lights-actions.ts';
 import { prodTab } from './production-actions.ts';
 import { dialog, selection, session, view } from './state.ts';
 
-/** Recomputed whenever the show changes: every rule is a pure pass over the model. */
-export const issues = computed<Issue[]>(() => (session.value ? validate(session.value.show.value) : []));
+/** Recomputed whenever the show changes: every rule is a pure pass over the model. Includes the silenced ones. */
+export const allIssues = computed<Issue[]>(() => (session.value ? validate(session.value.show.value) : []));
+
+/** What counts: the findings the user has not silenced. */
+export const issues = computed<Issue[]>(() => allIssues.value.filter((i) => !i.muted));
+
+/** Silences a finding, or brings it back; each is one undo step. */
+export function setIssueMuted(key: string, muted: boolean): void {
+  session.value?.commit((show) => {
+    const has = show.muted.includes(key);
+    if (muted === has) return show;
+    return { ...show, muted: muted ? [...show.muted, key] : show.muted.filter((k) => k !== key) };
+  });
+}
 
 /** The findings that point at one thing, by `kind:id`. */
 export const issuesByRef = computed(() => {
@@ -27,7 +39,8 @@ export function issueText(i: Issue): string {
   const key = `issue.${i.rule}${i.rule === 'wedgeMismatch' ? `.${i.vars.side}` : ''}` as Key;
   const items = (i.list ?? []).map((x) => (i.rule === 'programOs' ? t(`os.${x}` as Key) : t(`issue.field.${x}` as Key)));
   const list = new Intl.ListFormat(lang.value, { style: 'long', type: 'conjunction' }).format(items);
-  return t(key, { ...i.vars, list });
+  const signal = typeof i.vars.signal === 'string' ? t(`signal.${i.vars.signal}` as Key) : undefined;
+  return t(key, { ...i.vars, ...(signal ? { signal } : {}), list });
 }
 
 /** Opens the place where the finding can be fixed and selects what it is about. */

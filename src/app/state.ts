@@ -300,6 +300,7 @@ export function addFromLibrary(itemId: string, at?: { x: number; y: number }): s
       type: { id: item.id, version: item.version },
       ...(at ? snapPoint(show, at) : freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0)),
       layerId: layer.id,
+      ...(item.id === 'power.outlet' ? { label: [show.region.voltage ? `${show.region.voltage} V` : '', show.region.plug].filter(Boolean).join(' · ') } : {}),
       computer: item.symbol === 'laptop' ? emptyComputer() : null,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
     });
