@@ -116,7 +116,7 @@ describe('document sections for the event', () => {
     [show] = addSlot(show, 'day', 'Show', '21:00');
     [show] = addSlot(show, 'day', 'Puertas', '20:00');
     [show] = addSlot(show, 'build', 'Focus', '14:00');
-    show = { ...show, document: { template: 'custom', sections: ['schedule', 'build'], planScale: null } };
+    show = { ...show, document: { template: 'custom', sections: ['schedule', 'build'], planScale: null, inputs: { landscape: false, blocks: 'auto' as const } } };
     const b = buildDocument(show);
     expect(b.source.indexOf('"Puertas"')).toBeLessThan(b.source.indexOf('"Show"'));
     expect(b.source).toContain(`"${P.build}"`);

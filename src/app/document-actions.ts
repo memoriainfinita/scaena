@@ -18,4 +18,5 @@ export const toggleSection = (id: SectionId, on: boolean): void =>
   });
 
 export const setPlanScale = (planScale: number | null): void => commit((show) => ({ ...show, document: { ...show.document, planScale } }));
+export const setInputsLayout = (patch: Partial<Show['document']['inputs']>): void => commit((show) => ({ ...show, document: { ...show.document, inputs: { ...show.document.inputs, ...patch } } }));
 export const setPaper = (paper: Show['paper']): void => commit((show) => ({ ...show, paper }));

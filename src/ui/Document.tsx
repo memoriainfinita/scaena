@@ -1,7 +1,8 @@
 // The document view: choose what goes in the rider, see it compiled to PDF, download it.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { addContact, removeContact, setContactHidden, setDate, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
-import { setPaper, setPlanScale, setTemplate, toggleSection } from '../app/document-actions.ts';
+import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
+import { applyDocTemplate, deleteDocTemplate, docTemplates, MAX_TEMPLATES, saveDocTemplate } from '../app/doc-templates.ts';
+import { setInputsLayout, setPaper, setPlanScale, setTemplate, toggleSection } from '../app/document-actions.ts';
 import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
 import { compilePdf, fixPdf } from '../document/compile.ts';
@@ -18,6 +19,7 @@ interface Result {
 }
 
 const SCALES = [25, 50, 100, 200];
+const blocksOf = (v: string): Show['document']['inputs']['blocks'] => (v === '1' ? 1 : v === '2' ? 2 : v === '3' ? 3 : v === '4' ? 4 : 'auto');
 const fileName = (name: string) => `${name.trim().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'rider'}.pdf`;
 
 export function DocumentView({ show }: { show: Show }) {
@@ -96,6 +98,7 @@ export function DocumentView({ show }: { show: Show }) {
             ))}
           </select>
         </label>
+        <OwnTemplates />
         <fieldset class="checks col">
           <legend>{t('doc.sections')}</legend>
           {ALL_SECTIONS.map((s) => (
@@ -126,6 +129,28 @@ export function DocumentView({ show }: { show: Show }) {
             ))}
           </select>
         </label>
+        {sections.includes('inputs') && (
+          <>
+            <label class="field">
+              {t('doc.inputsOrient')}
+              <select class="input" value={show.document.inputs.landscape ? 'landscape' : 'portrait'} onChange={(e) => setInputsLayout({ landscape: (e.currentTarget as HTMLSelectElement).value === 'landscape' })}>
+                <option value="portrait">{t('doc.orient.portrait')}</option>
+                <option value="landscape">{t('doc.orient.landscape')}</option>
+              </select>
+            </label>
+            <label class="field">
+              {t('doc.inputsBlocks')}
+              <select class="input" value={String(show.document.inputs.blocks)} onChange={(e) => setInputsLayout({ blocks: blocksOf((e.currentTarget as HTMLSelectElement).value) })}>
+                <option value="auto">{t('doc.blocks.auto')}</option>
+                {[1, 2, 3, 4].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
         <DocData show={show} />
         <label class="check">
           <input type="checkbox" checked={grey} onChange={(e) => setGrey((e.currentTarget as HTMLInputElement).checked)} />
@@ -167,9 +192,73 @@ export function DocumentView({ show }: { show: Show }) {
   );
 }
 
+/** The user's own document templates: save the layout under a name, apply a saved one, delete it. */
+function OwnTemplates() {
+  const list = docTemplates.value;
+  const [name, setName] = useState('');
+  const [pick, setPick] = useState('');
+  const [saved, setSaved] = useState<string | null>(null);
+  const full = list.length >= MAX_TEMPLATES && !list.some((x) => x.name.toLowerCase() === name.trim().toLowerCase());
+  const chosen = list.find((x) => x.id === pick) ?? list[0];
+  return (
+    <details class="docdata">
+      <summary>{t('doc.own')}</summary>
+      <div class="stackS">
+        <form
+          class="sub"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (saveDocTemplate(name)) {
+              setSaved(t('doc.own.saved', { name: name.trim() }));
+              setName('');
+            }
+          }}
+        >
+          <label class="field" style="flex:1">
+            {t('doc.own.name')}
+            <input class="input" value={name} maxLength={60} onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)} />
+          </label>
+          <button type="submit" class="btn" disabled={!name.trim() || full} style="align-self:flex-end">
+            {t('doc.own.save')}
+          </button>
+        </form>
+        {full && (
+          <p class="warn" role="note">
+            {t('doc.own.full')}
+          </p>
+        )}
+        <p class="muted" role="status">
+          {saved}
+        </p>
+        {list.length > 0 && (
+          <div class="sub">
+            <label class="field" style="flex:1">
+              {t('doc.own.pick')}
+              <select class="input" value={chosen?.id ?? ''} onChange={(e) => setPick((e.currentTarget as HTMLSelectElement).value)}>
+                {list.map((x) => (
+                  <option key={x.id} value={x.id}>
+                    {x.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="button" class="btn" style="align-self:flex-end" onClick={() => chosen && applyDocTemplate(chosen.id)}>
+              {t('doc.own.apply')}
+            </button>
+            <button type="button" class="btn" style="align-self:flex-end" onClick={() => chosen && deleteDocTemplate(chosen.id)}>
+              {t('doc.own.delete')}
+            </button>
+          </div>
+        )}
+      </div>
+    </details>
+  );
+}
+
 /** The facts the cover, contacts and schedule print. */
 function DocData({ show }: { show: Show }) {
   const tb = show.titleBlock;
+  const [logoBad, setLogoBad] = useState(false);
   return (
     <details class="docdata">
       <summary>{t('data.title')}</summary>
@@ -186,6 +275,30 @@ function DocData({ show }: { show: Show }) {
           {t('data.author')}
           <input class="input" value={tb.author} maxLength={120} onChange={(e) => setTitleBlock({ author: (e.currentTarget as HTMLInputElement).value })} />
         </label>
+        <label class="field">
+          {t('data.logo')}
+          <input
+            class="input"
+            type="file"
+            accept="image/png,image/jpeg,image/svg+xml"
+            onChange={async (e) => {
+              const input = e.currentTarget as HTMLInputElement;
+              const file = input.files?.[0];
+              input.value = '';
+              if (file) setLogoBad(!setLogo(new Uint8Array(await file.arrayBuffer())));
+            }}
+          />
+          {logoBad && (
+            <span class="warn" role="alert">
+              {t('data.logoBad')}
+            </span>
+          )}
+        </label>
+        {tb.logo && (
+          <button type="button" class="btn" onClick={() => removeLogo()}>
+            {t('data.logoRemove')}
+          </button>
+        )}
         <div class="grid2">
           <label class="field">
             {t('data.date')}

@@ -1,6 +1,7 @@
 // Edits of what the printed document says about the production: title block, date, contacts and schedule.
 import { nextId } from '../model/ids.ts';
 import type { Show } from '../model/schema.ts';
+import { sniffLogo } from '../document/logo.ts';
 import { session } from './state.ts';
 
 type Contact = Show['contacts'][number];
@@ -8,6 +9,17 @@ type Contact = Show['contacts'][number];
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 
 export const setTitleBlock = (patch: Partial<Show['titleBlock']>): void => commit((show) => ({ ...show, titleBlock: { ...show.titleBlock, ...patch } }));
+/** Stores an image as the cover logo; false when it is not a PNG, JPEG or SVG of up to 2 MB. */
+export function setLogo(bytes: Uint8Array): boolean {
+  const s = session.value;
+  const kind = sniffLogo(bytes);
+  if (!s || !kind) return false;
+  const name = `logo-${Date.now().toString(36)}.${kind}`;
+  s.addImage(name, bytes);
+  setTitleBlock({ logo: name });
+  return true;
+}
+export const removeLogo = (): void => setTitleBlock({ logo: null });
 export const setDate = (date: string): void => commit((show) => ({ ...show, date }));
 export const setRevisionNumber = (n: number): void => commit((show) => ({ ...show, revision: Math.max(1, Math.round(n)) }));
 
