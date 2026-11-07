@@ -250,3 +250,203 @@ List to paste:
 7 control tablet (28 x 20 cm)
 8 pc or media server (45 x 45 cm)
 ```
+
+## Sheet 8 (Microphones and wireless)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Mic on tall boom stand | `mic.boom-tall` | 50 x 50 |
+| 2 | Mic on short boom stand | `mic.boom-short` | 40 x 40 |
+| 3 | Mic on straight stand | `mic.straight` | 40 x 40 |
+| 4 | Gooseneck mic | `mic.gooseneck` | 10 x 10 |
+| 5 | Stereo pair on bar | `mic.stereo-pair` | 60 x 40 |
+| 6 | Boundary mic | `mic.boundary` | 20 x 20 |
+| 7 | Shotgun mic on pole | `mic.shotgun` | 40 x 40 |
+| 8 | Wireless handheld mic | `mic.wireless-handheld` | 10 x 10 |
+| 9 | Wireless receiver | `rack.wireless-receiver` | 25 x 20 |
+| 10 | Antenna on stand | `rack.antenna` | 30 x 30 |
+| 11 | Speaker on tripod | `pa.tripod` | 60 x 60 |
+| 12 | Intercom beltpack | `comms.beltpack` | 15 x 10 |
+
+List to paste:
+
+```text
+1 microphone on a tall boom stand (50 x 50 cm)
+2 microphone on a short boom stand (40 x 40 cm)
+3 microphone on a straight stand (40 x 40 cm)
+4 gooseneck lectern microphone (10 x 10 cm)
+5 stereo pair of microphones on one bar stand (60 x 40 cm)
+6 boundary microphone lying flat (20 x 20 cm)
+7 shotgun microphone on a boom pole (40 x 40 cm)
+8 wireless handheld microphone (10 x 10 cm)
+9 wireless microphone receiver with two antennas (25 x 20 cm)
+10 directional antenna on a stand (30 x 30 cm)
+11 loudspeaker on a tripod stand (60 x 60 cm)
+12 intercom beltpack with a headset (15 x 10 cm)
+```
+
+## Sheet 9 (Small backline and stands)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Guitar stand | `stand.guitar` | 40 x 40 |
+| 2 | Drum throne | `kit.throne` | 40 x 40 |
+| 3 | Leslie cabinet | `amp.leslie` | 60 x 60 |
+| 4 | Bass cabinet 8x10 | `amp.bass-cab` | 60 x 50 |
+| 5 | Small combo amp | `amp.combo` | 50 x 25 |
+| 6 | Keyboard stand, two tiers | `keys.stand-2` | 140 x 70 |
+| 7 | Cymbal stand | `kit.cymbal-stand` | 50 x 50 |
+| 8 | Tech station | `furniture.tech` | 150 x 80 |
+| 9 | Laptop stand with controller | `control.laptop-stand` | 60 x 40 |
+| 10 | Instrument rack | `stand.instrument-rack` | 120 x 40 |
+| 11 | Cable reel | `power.cable-reel` | 50 x 50 |
+| 12 | Snake reel | `rack.snake-reel` | 60 x 60 |
+
+List to paste:
+
+```text
+1 guitar stand holding two guitars (40 x 40 cm)
+2 drum throne (40 x 40 cm)
+3 leslie rotary speaker cabinet (60 x 60 cm)
+4 tall bass speaker cabinet (60 x 50 cm)
+5 small combo amplifier (50 x 25 cm)
+6 two-tier keyboard stand with two keyboards (140 x 70 cm)
+7 cymbal stand (50 x 50 cm)
+8 backline technician station with a small table and a case (150 x 80 cm)
+9 laptop on a stand with a midi controller (60 x 40 cm)
+10 rack holding several guitars (120 x 40 cm)
+11 cable reel (50 x 50 cm)
+12 multicore snake reel (60 x 60 cm)
+```
+
+## Sheet 10 (Orchestral and world instruments)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Tuba | `winds.tuba` | 70 x 70 |
+| 2 | French horn | `winds.horn` | 60 x 60 |
+| 3 | Oboe or bassoon | `winds.double-reed` | 50 x 50 |
+| 4 | Timpani | `perc.timpani` | 150 x 120 |
+| 5 | Marimba | `perc.marimba` | 200 x 80 |
+| 6 | Vibraphone | `perc.vibraphone` | 150 x 70 |
+| 7 | Accordion | `keys.accordion` | 60 x 60 |
+| 8 | Keytar | `keys.keytar` | 60 x 60 |
+| 9 | Banjo or mandolin | `strings.banjo` | 50 x 50 |
+| 10 | Steel pan | `perc.steelpan` | 90 x 90 |
+| 11 | Gong | `perc.gong` | 90 x 40 |
+| 12 | Conductor | `person.conductor` | 80 x 80 |
+
+List to paste:
+
+```text
+1 tuba player (70 x 70 cm)
+2 french horn player (60 x 60 cm)
+3 oboe or bassoon player (50 x 50 cm)
+4 timpani, four kettledrums (150 x 120 cm)
+5 marimba with its player (200 x 80 cm)
+6 vibraphone with its player (150 x 70 cm)
+7 accordion player (60 x 60 cm)
+8 keytar player (60 x 60 cm)
+9 banjo or mandolin player (50 x 50 cm)
+10 steel pan on a stand (90 x 90 cm)
+11 gong on a standing frame (90 x 40 cm)
+12 conductor on a podium (80 x 80 cm)
+```
+
+## Sheet 11 (Rigging, power and safety)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Truss section | `rig.truss` | 300 x 30 |
+| 2 | Light stand | `rig.light-stand` | 80 x 80 |
+| 3 | Chain hoist | `rig.hoist` | 30 x 30 |
+| 4 | Power distribution | `power.distro` | 50 x 30 |
+| 5 | Generator | `power.generator` | 100 x 60 |
+| 6 | Power strip | `power.strip` | 40 x 10 |
+| 7 | Fire extinguisher | `safety.extinguisher` | 15 x 15 |
+| 8 | First aid | `safety.first-aid` | 30 x 30 |
+| 9 | Crowd barrier | `safety.barrier` | 200 x 50 |
+| 10 | Emergency exit | `safety.exit` | 100 x 20 |
+| 11 | Sandbag | `rig.sandbag` | 30 x 30 |
+| 12 | Gaffer tape marks | `rig.marks` | 30 x 30 |
+
+List to paste:
+
+```text
+1 section of lighting truss seen from above (300 x 30 cm)
+2 tripod light stand with one light (80 x 80 cm)
+3 chain hoist motor (30 x 30 cm)
+4 power distribution box (50 x 30 cm)
+5 portable generator (100 x 60 cm)
+6 power strip (40 x 10 cm)
+7 fire extinguisher (15 x 15 cm)
+8 first aid kit with a cross (30 x 30 cm)
+9 crowd barrier section (200 x 50 cm)
+10 emergency exit door with a running figure (100 x 20 cm)
+11 sandbag ballast (30 x 30 cm)
+12 cross-shaped spike mark (30 x 30 cm)
+```
+
+## Sheet 12 (Video, comms and show control)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | PTZ camera on tripod | `video.ptz` | 60 x 60 |
+| 2 | Camera with operator | `video.camera-op` | 80 x 80 |
+| 3 | Jib crane | `video.jib` | 300 x 100 |
+| 4 | Teleprompter | `video.teleprompter` | 60 x 40 |
+| 5 | Intercom station | `comms.station` | 30 x 20 |
+| 6 | Cue light | `comms.cue-light` | 15 x 15 |
+| 7 | Stage manager desk | `control.sm-desk` | 120 x 70 |
+| 8 | Audio recorder | `rack.recorder` | 45 x 30 |
+| 9 | Confidence monitor | `video.confidence` | 60 x 30 |
+| 10 | Presentation remote desk | `control.slides` | 60 x 40 |
+
+List to paste:
+
+```text
+1 remote PTZ camera on a tripod (60 x 60 cm)
+2 video camera on a tripod with its operator (80 x 80 cm)
+3 camera jib crane (300 x 100 cm)
+4 teleprompter on a stand (60 x 40 cm)
+5 intercom master station (30 x 20 cm)
+6 cue light box (15 x 15 cm)
+7 stage manager desk with monitor and headset (120 x 70 cm)
+8 multitrack audio recorder (45 x 30 cm)
+9 confidence monitor on a stand (60 x 30 cm)
+10 presentation desk with laptop and clicker (60 x 40 cm)
+```
+
+## Sheet 13 (Theatre furniture and set)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Sofa | `set.sofa` | 200 x 90 |
+| 2 | Armchair | `set.armchair` | 90 x 90 |
+| 3 | Bed | `set.bed` | 200 x 140 |
+| 4 | Door flat | `set.door` | 100 x 15 |
+| 5 | Window flat | `set.window` | 120 x 15 |
+| 6 | Bookcase | `set.bookcase` | 120 x 35 |
+| 7 | Bar stool | `set.bar-stool` | 40 x 40 |
+| 8 | Desk with chair | `set.desk` | 140 x 70 |
+| 9 | Rug | `set.rug` | 200 x 140 |
+| 10 | Plant or tree | `set.plant` | 60 x 60 |
+| 11 | Trunk | `set.trunk` | 80 x 50 |
+| 12 | Banner stand | `set.banner` | 85 x 20 |
+
+List to paste:
+
+```text
+1 sofa (200 x 90 cm)
+2 armchair (90 x 90 cm)
+3 bed with pillows (200 x 140 cm)
+4 door in a flat (100 x 15 cm)
+5 window in a flat (120 x 15 cm)
+6 bookcase (120 x 35 cm)
+7 bar stool (40 x 40 cm)
+8 desk with a chair (140 x 70 cm)
+9 rectangular rug with a border (200 x 140 cm)
+10 potted plant or tree (60 x 60 cm)
+11 travel trunk (80 x 50 cm)
+12 roll-up banner stand (85 x 20 cm)
+```
