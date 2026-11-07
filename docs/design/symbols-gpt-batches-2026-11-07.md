@@ -486,3 +486,233 @@ List to paste:
 11 moving head wash: a wide round head with a lens, held in a U-shaped arm on a base (35 x 35 cm)
 12 LED bar with a row of round LEDs (100 x 10 cm)
 ```
+
+## Sheet 15 (Wireless, in-ears and personal monitoring)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Bodypack transmitter | `rack.bodypack` | 10 x 7 |
+| 2 | Lavalier mic | `mic.lavalier` | 5 x 5 |
+| 3 | Headset mic | `mic.headset` | 15 x 15 |
+| 4 | IEM transmitter | `rack.iem-tx` | 22 x 20 |
+| 5 | Personal monitor mixer | `rack.personal-mixer` | 20 x 20 |
+| 6 | Headphones | `monitor.headphones` | 20 x 20 |
+| 7 | Headphone amplifier | `rack.headphone-amp` | 25 x 15 |
+| 8 | Antenna combiner | `rack.antenna-combiner` | 25 x 10 |
+| 9 | Click box | `rack.click` | 15 x 10 |
+| 10 | Audio interface | `rack.interface` | 25 x 20 |
+| 11 | Mic preamp | `rack.preamp` | 25 x 20 |
+| 12 | Power conditioner | `rack.power-conditioner` | 45 x 20 |
+
+List to paste:
+
+```text
+1 wireless bodypack transmitter with a belt clip and a short antenna (10 x 7 cm)
+2 tiny lavalier clip microphone with a cable (5 x 5 cm)
+3 headset microphone worn over the ear with a boom (15 x 15 cm)
+4 wireless in-ear monitor transmitter box with two antennas (22 x 20 cm)
+5 personal monitor mixer with a row of small knobs and a headphone jack (20 x 20 cm)
+6 studio headphones (20 x 20 cm)
+7 headphone amplifier box with four headphone jacks (25 x 15 cm)
+8 antenna combiner box with several antenna connectors (25 x 10 cm)
+9 small click track box with one knob and a display (15 x 10 cm)
+10 desktop audio interface with two knobs (25 x 20 cm)
+11 single-channel microphone preamp with knobs (25 x 20 cm)
+12 power conditioner with a row of outlets (45 x 20 cm)
+```
+
+## Sheet 16 (Microphone types)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Large-diaphragm condenser | `mic.condenser` | 20 x 20 |
+| 2 | Pencil condenser | `mic.pencil` | 15 x 15 |
+| 3 | Ribbon mic | `mic.ribbon` | 20 x 20 |
+| 4 | Instrument dynamic mic | `mic.dynamic` | 10 x 10 |
+| 5 | Kick drum mic | `mic.kick` | 15 x 15 |
+| 6 | Drum clip mic | `mic.clip` | 8 x 8 |
+| 7 | Contact pickup | `mic.pickup` | 5 x 5 |
+| 8 | USB desktop mic | `mic.usb` | 15 x 15 |
+| 9 | Hanging choir mic | `mic.hanging` | 20 x 20 |
+| 10 | Desktop mic stand | `mic.desktop` | 20 x 20 |
+| 11 | Parabolic mic | `mic.parabolic` | 40 x 40 |
+| 12 | Talkback mic | `mic.talkback` | 15 x 15 |
+
+List to paste:
+
+```text
+1 large-diaphragm condenser microphone in a shock mount (20 x 20 cm)
+2 small-diaphragm pencil condenser microphone (15 x 15 cm)
+3 ribbon microphone with a long cylindrical grille (20 x 20 cm)
+4 small dynamic instrument microphone, classic cylinder shape (10 x 10 cm)
+5 kick drum microphone, a short fat cylinder with a stand mount (15 x 15 cm)
+6 small clip-on microphone on a drum rim clip (8 x 8 cm)
+7 small contact pickup disc with a cable (5 x 5 cm)
+8 USB desktop microphone on a small stand (15 x 15 cm)
+9 thin microphone hanging from a cable (20 x 20 cm)
+10 microphone on a short desktop stand (20 x 20 cm)
+11 parabolic dish microphone (40 x 40 cm)
+12 talkback microphone with a push button on a gooseneck (15 x 15 cm)
+```
+
+## Sheet 17 (Direct boxes and guitar effects)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Active DI box | `rack.di-active` | 13 x 9 |
+| 2 | Stereo DI | `rack.di-stereo` | 20 x 10 |
+| 3 | Reamp box | `rack.reamp` | 15 x 10 |
+| 4 | Signal splitter | `rack.splitter` | 25 x 15 |
+| 5 | Distortion pedal | `pedal.drive` | 10 x 12 |
+| 6 | Wah pedal | `pedal.wah` | 10 x 25 |
+| 7 | Volume or expression pedal | `pedal.volume` | 10 x 25 |
+| 8 | Looper pedal | `pedal.looper` | 15 x 15 |
+| 9 | Tuner pedal | `pedal.tuner` | 7 x 12 |
+| 10 | Multi-effects unit | `pedal.multi` | 50 x 25 |
+| 11 | Footswitch controller | `pedal.switch` | 40 x 15 |
+| 12 | Large pedalboard | `pedal.board-large` | 100 x 40 |
+
+List to paste:
+
+```text
+1 active direct box with a gain switch and two jacks (13 x 9 cm)
+2 stereo direct box with two channels (20 x 10 cm)
+3 reamp box with a knob (15 x 10 cm)
+4 signal splitter box with several outputs (25 x 15 cm)
+5 guitar distortion stompbox with three knobs and a footswitch (10 x 12 cm)
+6 wah pedal with a long rocker treadle (10 x 25 cm)
+7 volume pedal with a long rocker treadle and no knobs (10 x 25 cm)
+8 looper pedal with two footswitches and a knob (15 x 15 cm)
+9 tuner pedal with a round display (7 x 12 cm)
+10 multi-effects floor unit with a row of footswitches and a small screen (50 x 25 cm)
+11 footswitch controller with a row of large round switches (40 x 15 cm)
+12 large pedalboard with many stompboxes (100 x 40 cm)
+```
+
+## Sheet 18 (Backline electronics)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Guitar amp head | `amp.head` | 60 x 25 |
+| 2 | Amp stack | `amp.stack` | 80 x 40 |
+| 3 | Sampler pad | `perc.sampler` | 30 x 30 |
+| 4 | Drum module | `kit.module` | 30 x 25 |
+| 5 | MIDI controller | `keys.midi` | 50 x 25 |
+| 6 | Looper station | `control.looper` | 40 x 30 |
+| 7 | Single drum pad | `perc.pad` | 25 x 25 |
+| 8 | Electronic percussion pad | `perc.octapad` | 40 x 40 |
+
+List to paste:
+
+```text
+1 guitar amplifier head with knobs (60 x 25 cm)
+2 guitar amp head on top of a 4x12 cabinet (80 x 40 cm)
+3 sampler pad with a grid of square pads (30 x 30 cm)
+4 electronic drum sound module with a screen and knobs (30 x 25 cm)
+5 midi keyboard controller with small keys and knobs (50 x 25 cm)
+6 looper station with large pads and a small screen (40 x 30 cm)
+7 single electronic drum pad on a stand (25 x 25 cm)
+8 multi-pad electronic percussion unit (40 x 40 cm)
+```
+
+## Sheet 19 (Lamps and practicals)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Floor lamp | `set.floor-lamp` | 40 x 40 |
+| 2 | Table lamp | `set.table-lamp` | 30 x 30 |
+| 3 | Desk lamp | `set.desk-lamp` | 20 x 30 |
+| 4 | Chandelier | `set.chandelier` | 80 x 80 |
+| 5 | Candelabra | `set.candelabra` | 30 x 30 |
+| 6 | Lantern | `set.lantern` | 25 x 25 |
+| 7 | Pendant lamp | `set.pendant` | 40 x 40 |
+| 8 | Wall sconce | `set.sconce` | 20 x 15 |
+| 9 | Neon sign | `set.neon` | 100 x 10 |
+| 10 | String lights | `set.string-lights` | 300 x 10 |
+| 11 | LED uplighter | `light.uplighter` | 30 x 30 |
+| 12 | Work light on tripod | `light.work` | 40 x 40 |
+
+List to paste:
+
+```text
+1 floor lamp with a shade (40 x 40 cm)
+2 table lamp with a shade (30 x 30 cm)
+3 desk lamp with a jointed arm (20 x 30 cm)
+4 chandelier with several arms (80 x 80 cm)
+5 candelabra with three candles (30 x 30 cm)
+6 lantern (25 x 25 cm)
+7 pendant lamp with a dome shade (40 x 40 cm)
+8 wall sconce (20 x 15 cm)
+9 neon sign tube in a wavy shape (100 x 10 cm)
+10 string of festoon lights (300 x 10 cm)
+11 LED uplighter can on the floor (30 x 30 cm)
+12 work light on a tripod (40 x 40 cm)
+```
+
+## Sheet 20 (More furniture)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Round table | `furniture.round-table` | 150 x 150 |
+| 2 | Coffee table | `furniture.coffee-table` | 100 x 60 |
+| 3 | Side table | `furniture.side-table` | 50 x 50 |
+| 4 | High cocktail table | `furniture.cocktail` | 60 x 60 |
+| 5 | Folding chair | `furniture.folding-chair` | 45 x 45 |
+| 6 | Ottoman | `furniture.ottoman` | 60 x 60 |
+| 7 | Director chair | `furniture.director` | 55 x 55 |
+| 8 | Bar counter | `furniture.bar` | 200 x 60 |
+| 9 | Wardrobe | `furniture.wardrobe` | 100 x 50 |
+| 10 | Fireplace | `set.fireplace` | 120 x 40 |
+| 11 | Mirror | `set.mirror` | 80 x 10 |
+| 12 | Folding screen | `set.folding-screen` | 150 x 10 |
+
+List to paste:
+
+```text
+1 round banquet table (150 x 150 cm)
+2 low coffee table (100 x 60 cm)
+3 small side table (50 x 50 cm)
+4 high round cocktail table (60 x 60 cm)
+5 folding chair (45 x 45 cm)
+6 round ottoman pouf (60 x 60 cm)
+7 director chair (55 x 55 cm)
+8 bar counter with a footrest (200 x 60 cm)
+9 wardrobe with two doors (100 x 50 cm)
+10 fireplace with a mantel (120 x 40 cm)
+11 tall standing mirror in a frame (80 x 10 cm)
+12 folding screen with three panels (150 x 10 cm)
+```
+
+## Sheet 21 (Site, access and crew)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Merch stand | `site.merch` | 200 x 80 |
+| 2 | Tent | `site.tent` | 300 x 300 |
+| 3 | Accessibility platform | `site.wheelchair` | 300 x 200 |
+| 4 | Sign language interpreter | `person.interpreter` | 60 x 60 |
+| 5 | Stagehand | `person.crew` | 50 x 50 |
+| 6 | Security | `person.security` | 50 x 50 |
+| 7 | Portable toilet | `site.toilet` | 120 x 120 |
+| 8 | Ticket booth | `site.ticket` | 120 x 120 |
+| 9 | Food stall | `site.food` | 300 x 200 |
+| 10 | Truck | `site.truck` | 250 x 700 |
+| 11 | Tour bus | `site.bus` | 250 x 1200 |
+| 12 | Trailer | `site.trailer` | 250 x 600 |
+
+List to paste:
+
+```text
+1 merchandise stand with a table and a hanging banner (200 x 80 cm)
+2 event tent (300 x 300 cm)
+3 accessibility platform with a wheelchair symbol (300 x 200 cm)
+4 sign language interpreter standing with both hands raised (60 x 60 cm)
+5 stagehand standing with a cable coil (50 x 50 cm)
+6 security guard standing with arms folded (50 x 50 cm)
+7 portable toilet cabin (120 x 120 cm)
+8 ticket booth with a window (120 x 120 cm)
+9 food stall with an awning (300 x 200 cm)
+10 box truck seen from above (250 x 700 cm)
+11 tour bus seen from above (250 x 1200 cm)
+12 trailer seen from above (250 x 600 cm)
+```
