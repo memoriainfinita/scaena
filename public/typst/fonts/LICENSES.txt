@@ -1,4 +1,4 @@
-Fonts embedded in the PDF are Inter and JetBrains Mono, subset to Latin Extended, both under the SIL Open Font License 1.1.
+Fonts embedded in the PDF are Inter and JetBrains Mono, subset to Latin Extended (typst/fonts/) or to Latin Extended plus Greek, Cyrillic and combining marks (typst/fonts/wide/, used only when a document has those scripts), both under the SIL Open Font License 1.1.
 
 === Inter ===
 Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter) Inter-Italic[opsz,wght].ttf: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)

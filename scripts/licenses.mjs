@@ -26,7 +26,7 @@ const lines = [
   '',
   '## Fonts',
   '',
-  '- **Inter** (Copyright 2016 The Inter Project Authors) and **JetBrains Mono** (Copyright 2020 The JetBrains Mono Project Authors), SIL Open Font License 1.1. They are bundled for the screen as woff2 files by `@fontsource-variable/*` and embedded in generated PDFs as subsets (Latin Extended). The license texts are in `public/typst/fonts/LICENSES.txt`.',
+  '- **Inter** (Copyright 2016 The Inter Project Authors) and **JetBrains Mono** (Copyright 2020 The JetBrains Mono Project Authors), SIL Open Font License 1.1. They are bundled for the screen as woff2 files by `@fontsource-variable/*` and embedded in generated PDFs as subsets (Latin Extended; Greek, Cyrillic and combining marks are added only for documents that use them, from `public/typst/fonts/wide/`). The subsets are built by `scripts/fonts/subset-pdf-fonts.sh`. The license texts are in `public/typst/fonts/LICENSES.txt`.',
   '',
   '## Data',
   '',

@@ -97,6 +97,7 @@ Recomendación: empaquetar Inter (Regular, Medium, Bold y, si hace falta, Italic
 - `evictCache` y la opción `ua-1` (no hay versión publicada; `main` sin compilar).
 - Llegar al fallo en Chrome y con 0.8.0-rc3 (solo se llevó a 300; el fallo a las 987 es de Firefox con 0.7.0 en una tanda anterior).
 - Caché en Pages real (https) y compresión de `.ttf` allí; precarga corregida con las fuentes de latín extendido.
-- Fuera de latín: cirílico y griego con subconjuntos; Inter Italic.
+- Inter Italic.
+- Cirílico y griego: resuelto el 2026-11-07 con fuentes anchas (`public/typst/fonts/wide/`, 267 KB cada Inter y 146-150 KB cada JetBrains Mono) que se usan solo cuando el documento tiene esos alfabetos; el compilador se reinicia al cambiar de juego. Árabe, hebreo, CJK y devanagari siguen sin cubrir.
 - veraPDF en CI, `pdf_oxide`, `pdfua`.
 - Versiones exactas de Chrome y Firefox.

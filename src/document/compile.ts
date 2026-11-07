@@ -4,10 +4,21 @@ import type { WorkerReply, WorkerRequest } from './typst.worker.ts';
 
 export const RECYCLE = 50;
 const FONTS = ['Inter-Regular.ttf', 'Inter-Medium.ttf', 'Inter-Bold.ttf', 'JetBrainsMono-Regular.ttf', 'JetBrainsMono-Bold.ttf'];
+/** The same five files with Greek, Cyrillic and combining marks added (`typst/fonts/wide/`). They load only when a document uses those scripts. */
+const WIDE_FONTS = FONTS.map((f) => `wide/${f}`);
+const OTHER_SCRIPTS = /[\p{Script=Greek}\p{Script=Cyrillic}\p{M}]/u;
+
+/** True when the source or one of its SVG files holds Greek or Cyrillic text, so the wider fonts are needed. */
+export function needsWideFonts(source: string, files: Record<string, Uint8Array> = {}): boolean {
+  if (OTHER_SCRIPTS.test(source)) return true;
+  const dec = new TextDecoder();
+  return Object.entries(files).some(([name, bytes]) => /\.svg$/i.test(name) && OTHER_SCRIPTS.test(dec.decode(bytes)));
+}
 
 let worker: Worker | null = null;
 let ready: Promise<void> | null = null;
 let used = 0;
+let wide = false;
 let seq = 0;
 const pending = new Map<number, { ok: (r: WorkerReply & { ok: true }) => void; fail: (e: Error) => void }>();
 let chain: Promise<unknown> = Promise.resolve();
@@ -27,7 +38,7 @@ function send(msg: Body<WorkerRequest>, transfer: Transferable[] = []): Promise<
   });
 }
 
-function start(): Promise<void> {
+function start(useWide: boolean): Promise<void> {
   worker = new Worker(new URL('./typst.worker.ts', import.meta.url), { type: 'module' });
   worker.onmessage = (ev: MessageEvent<WorkerReply>) => {
     const p = pending.get(ev.data.id);
@@ -38,8 +49,9 @@ function start(): Promise<void> {
   };
   worker.onerror = (e) => fail(new Error(e.message || 'worker error'));
   used = 0;
+  wide = useWide;
   const base = document.baseURI;
-  return send({ cmd: 'init', wasm: new URL(`typst/${__TYPST_VERSION__}/compiler.wasm`, base).href, fonts: FONTS.map((f) => new URL(`typst/fonts/${f}`, base).href) }).then(() => undefined);
+  return send({ cmd: 'init', wasm: new URL(`typst/${__TYPST_VERSION__}/compiler.wasm`, base).href, fonts: (useWide ? WIDE_FONTS : FONTS).map((f) => new URL(`typst/fonts/${f}`, base).href) }).then(() => undefined);
 }
 
 function recycle(): void {
@@ -54,8 +66,10 @@ export const stopCompiler = recycle;
 /** Compiles a Typst project to PDF bytes. Calls are queued; a failed one does not stop the next. */
 export function compilePdf(source: string, files: Record<string, Uint8Array> = {}): Promise<Uint8Array> {
   const run = async () => {
-    if (used >= RECYCLE) recycle();
-    if (!worker || !ready) ready = start();
+    const useWide = needsWideFonts(source, files);
+    // A document in Greek or Cyrillic needs the wide fonts; the next one in Latin goes back to the small ones.
+    if (used >= RECYCLE || (worker && wide !== useWide)) recycle();
+    if (!worker || !ready) ready = start(useWide);
     try {
       await ready;
     } catch (e) {

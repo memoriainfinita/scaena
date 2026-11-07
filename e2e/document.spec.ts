@@ -30,6 +30,19 @@ test.describe('PDF rider', () => {
     expect(text).toContain('/Tabs /S');
   });
 
+  test('a show named in Cyrillic and Greek compiles with the wide fonts and keeps its letters', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /Banda de rock/ }).click();
+    const name = 'Группа Ελληνικά';
+    await page.getByRole('textbox', { name: 'Nombre del montaje' }).fill(name);
+    await page.getByRole('textbox', { name: 'Nombre del montaje' }).press('Tab');
+    await page.getByRole('button', { name: 'Documento', exact: true }).click();
+    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar PDF' }).click()]);
+    mkdirSync('test-results', { recursive: true });
+    writeFileSync('test-results/rider-cyrillic.pdf', readFileSync((await download.path())!));
+  });
+
   test('the channel list can be turned and split in blocks, and the layout is kept as an own template', async ({ page }) => {
     await open(page, /Banda de rock/);
     await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
