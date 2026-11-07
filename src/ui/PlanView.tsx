@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
 import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
-import { calibrateBackground, fitRequest } from '../app/background-actions.ts';
+import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
 import { issues } from '../app/issues.ts';
@@ -129,7 +129,8 @@ function BackgroundImage({ show }: { show: Show }) {
   const url = s.imageUrl(bg.file);
   const size = pngSize(s.imageBytes(bg.file) ?? new Uint8Array());
   if (!url || !size) return null;
-  return <image href={url} x={bg.x} y={bg.y} width={size.w * bg.scale} height={size.h * bg.scale} opacity={bg.opacity * (1 - (layer?.dim ?? 0) * 0.7)} preserveAspectRatio="none" aria-hidden="true" pointer-events="none" />;
+  const off = bgDrag.value;
+  return <image href={url} x={bg.x + (off?.dx ?? 0)} y={bg.y + (off?.dy ?? 0)} width={size.w * bg.scale} height={size.h * bg.scale} opacity={bg.opacity * (1 - (layer?.dim ?? 0) * 0.7)} preserveAspectRatio="none" aria-hidden="true" pointer-events="none" />;
 }
 
 function Stage({ show }: { show: Show }) {
@@ -420,7 +421,11 @@ function CalibrateBar({ measure, onDone }: { measure: Signal<Measure | null>; on
 type Interaction =
   | { kind: 'pan'; sx: number; sy: number; cam: Camera; tap?: boolean; moved?: boolean }
   | { kind: 'drag'; ids: string[]; hitId: string; p0: Pt; w0: Pt; sx: number; sy: number; moved: boolean; shift: boolean; wasMulti: boolean }
-  | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] };
+  | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] }
+  | { kind: 'bgdrag'; w0: Pt; x0: number; y0: number };
+
+/** How far the background has been dragged while the mouse is still down; written to the show on release. */
+const bgDrag = signal<{ dx: number; dy: number } | null>(null);
 
 /** Keeps the pointer events coming to the plan while a finger or the mouse moves outside it; some environments refuse, and nothing depends on it. */
 const capture = (el: Element, id: number) => {
@@ -615,6 +620,12 @@ export function PlanView({ show }: { show: Show }) {
       e.preventDefault();
       capture(svg, e.pointerId);
       act.current = { kind: 'pan', sx: p.x, sy: p.y, cam: cam.peek() };
+    } else if (mode === 'bgmove') {
+      const bg = s.stage.background;
+      if (bg && !bg.locked) {
+        capture(svg, e.pointerId);
+        act.current = { kind: 'bgdrag', w0: world(e), x0: bg.x, y0: bg.y };
+      }
     } else if (mode === 'measure' || mode === 'background') {
       const w = world(e);
       const st = e.altKey ? 0 : gridStep();
@@ -690,7 +701,10 @@ export function PlanView({ show }: { show: Show }) {
       if (Math.hypot(p.x - a.sx, p.y - a.sy) >= 4) a.moved = true;
       cam.value = { ...a.cam, x: a.cam.x + p.x - a.sx, y: a.cam.y + p.y - a.sy };
     }
-    else if (a.kind === 'drag') {
+    else if (a.kind === 'bgdrag') {
+      const w = world(e);
+      bgDrag.value = { dx: Math.round(w.x - a.w0.x), dy: Math.round(w.y - a.w0.y) };
+    } else if (a.kind === 'drag') {
       if (!a.moved && Math.hypot(p.x - a.sx, p.y - a.sy) < 4) return;
       a.moved = true;
       const w = world(e);
@@ -724,7 +738,11 @@ export function PlanView({ show }: { show: Show }) {
     if (!a) return;
     const s = showRef.current;
     if (a.kind === 'pan' && a.tap && !a.moved && !cancelled) selection.value = [];
-    if (a.kind === 'drag') {
+    if (a.kind === 'bgdrag') {
+      const d = bgDrag.peek();
+      bgDrag.value = null;
+      if (d && !cancelled && (d.dx !== 0 || d.dy !== 0)) updateBackground({ x: a.x0 + d.dx, y: a.y0 + d.dy });
+    } else if (a.kind === 'drag') {
       batch(() => {
         const d = dragDelta.peek();
         if (a.moved && !cancelled) commitDrag(a.ids, d.dx, d.dy);
@@ -847,6 +865,16 @@ export function PlanView({ show }: { show: Show }) {
             }}
           >
             {t('plan.dimension.fix')}
+          </button>
+        </div>
+      )}
+      {mode === 'bgmove' && (
+        <div class="planbar left" role="group" aria-label={t('bg.move')}>
+          <span class="pad-s" role="status">
+            {t('bg.moveHint')}
+          </span>
+          <button type="button" class="btn primary" onClick={() => (tool.value = 'select')}>
+            {t('bg.moveDone')}
           </button>
         </div>
       )}

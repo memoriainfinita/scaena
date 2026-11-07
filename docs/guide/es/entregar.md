@@ -11,6 +11,7 @@
 | Hoja de ruta en PDF | Horarios, contactos y datos del evento |
 | Plano en PDF | Solo el plano, a la escala elegida |
 | Plano en SVG | El plano en vectores, medido en milímetros de papel |
+| Plano en DXF | Para programas de CAD: milímetros, una capa DXF por capa del plano, símbolos como líneas y círculos y etiquetas de texto |
 | Plano en PNG | El plano como imagen de 3000 píxeles de ancho |
 | Listas en CSV | Un CSV por informe, en un zip |
 | Copiar la lista de entradas como texto | Para un mensaje o un correo |

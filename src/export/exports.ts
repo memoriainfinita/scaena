@@ -5,6 +5,7 @@ import { buildDaySheet } from '../document/daysheet.ts';
 import { buildDocument, lit, PAPERS } from '../document/typst-source.ts';
 import { docStrings } from '../document/strings.ts';
 import { zipSync } from 'fflate';
+import { planDxf } from './dxf.ts';
 import type { RevisionMeta, Show } from '../model/schema.ts';
 import { availableReports, buildReport, toCsv } from '../reports/reports.ts';
 
@@ -34,6 +35,11 @@ export function planSvgFile(show: Show, images: Record<string, Uint8Array>): Out
   const plan = planSvg(show, images, { availWidthMm: paper.h - 30, availHeightMm: paper.w - 30, planScale: show.document.planScale, lang: show.lang });
   const svg = plan.svg.replace(/ width="[\d.]+" height="[\d.]+">/, ` width="${plan.widthMm.toFixed(2)}mm" height="${plan.heightMm.toFixed(2)}mm">`);
   return { name: `${baseName(show.name)}-plano.svg`, bytes: enc.encode(svg), mime: 'image/svg+xml' };
+}
+
+/** The plan as a DXF drawing in millimetres for CAD programs. */
+export function planDxfFile(show: Show): OutFile {
+  return { name: `${baseName(show.name)}-plano.dxf`, bytes: enc.encode(planDxf(show).text), mime: 'application/dxf' };
 }
 
 /** The plan as a PNG, drawn through the browser's own SVG renderer (the loaded fonts are not available there). */

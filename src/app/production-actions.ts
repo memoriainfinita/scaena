@@ -1,6 +1,6 @@
 // Edits of the production data: setlist, schedules, hospitality, contract and event facts. Each is one undo step.
 import { signal } from '@preact/signals';
-import { addSlot, addSong, moveSong, parseDuration, removeSlot, removeSong, updateSlot, updateSong } from '../model/production.ts';
+import { applyBackwards, addSlot, addSong, type BackwardRow, type Milestone, moveSong, parseDuration, removeSlot, removeSong, updateSlot, updateSong } from '../model/production.ts';
 import type { Contract, EventInfo, Hospitality, SetlistItem, Show } from '../model/schema.ts';
 import { session } from './state.ts';
 
@@ -24,6 +24,7 @@ export const moveSongRow = (id: string, delta: -1 | 1): void => commit((show) =>
 
 export const addSlotRow = (kind: Slot['kind'], what = ''): void => commit((show) => addSlot(show, kind, what)[0]);
 export const setSlot = (id: string, patch: Partial<Omit<Slot, 'id'>>): void => commit((show) => updateSlot(show, id, patch));
+export const applyBackwardPlan = (rows: BackwardRow[], names: Record<Milestone, string>): void => commit((show) => applyBackwards(show, rows, names));
 export const removeSlotRow = (id: string): void => commit((show) => removeSlot(show, id));
 
 export const setHospitality = (patch: Partial<Hospitality>): void => commit((show) => ({ ...show, hospitality: { ...show.hospitality, ...patch } }));

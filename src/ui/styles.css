@@ -250,7 +250,7 @@ td.plain { padding: 4px 8px; }
 
 /* Narrow screens: tabs at the bottom, the plan on the whole screen, the library and the inspector as sheets over it. */
 .fabs, .sheet-close, .mobile-only { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 520px) and (max-width: 1100px) and (orientation: landscape) {
   .start-main { grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }
   .start-bar { padding: 0 16px; }
   .start-bar .muted { display: none; }
@@ -288,6 +288,26 @@ td.plain { padding: 4px 8px; }
   .listbar, .subtabs { padding-left: 10px; padding-right: 10px; }
   .scroll { padding: 12px 8px; }
   .form { padding: 12px; }
+}
+
+/* A phone turned sideways: there is little height, so the views go to a rail on the left and the sheets slide in from the right. */
+@media (max-height: 520px) and (max-width: 1100px) and (orientation: landscape) {
+  .editor { display: grid; grid-template-columns: 76px minmax(0, 1fr); grid-template-rows: 40px minmax(0, 1fr) 24px; grid-template-areas: 'top top' 'tabs body' 'tabs status'; }
+  .editor > .topbar { grid-area: top; height: 40px; }
+  .editor > .body { grid-area: body; min-height: 0; flex-direction: row; }
+  .editor > .statusbar { grid-area: status; height: 24px; }
+  .editor > .tabs { grid-area: tabs; order: 0; flex: none; height: auto; flex-direction: column; align-items: stretch; border-top: 0; border-right: 1px solid var(--line); overflow-x: hidden; overflow-y: auto; }
+  .tab { height: 44px; min-width: 0; width: 100%; flex: 0 0 44px; padding: 0 4px; border-top: 0; border-left: 3px solid transparent; font-size: 12px; }
+  .tab[aria-current='page'] { border-left-color: var(--accent); }
+  .toolbar { flex: 0 0 48px; flex-direction: column; justify-content: flex-start; padding: 6px 4px; border-right: 1px solid var(--line); border-bottom: 0; overflow-x: hidden; overflow-y: auto; }
+  .library, .inspector { left: auto; right: 0; top: 40px; bottom: 24px; width: min(360px, 55vw); max-height: none; border: 1px solid var(--line); border-right: 0; border-radius: 14px 0 0 14px; box-shadow: -6px 0 24px rgba(0, 0, 0, 0.3); transform: translateX(110%); }
+  .library.open, .inspector.open { transform: none; }
+  .library .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fabs { left: 84px; right: 10px; bottom: 32px; }
+  .planbar.bottom { bottom: 30px; }
+  .planbar.left { top: 8px; }
+  .docview { flex-direction: row; }
+  .doccontrols { flex: 0 0 40%; max-height: none; border-right: 1px solid var(--line); border-bottom: 0; }
 }
 
 /* Chrome draws checkboxes at 13 px: a size and spacing that meet the 24 px target rule (WCAG 2.2, 2.5.8). */

@@ -11,6 +11,10 @@ En una pantalla estrecha el editor se reorganiza:
 
 ![La biblioteca como hoja](../img/movil-biblioteca.png)
 
+## En horizontal
+
+Con el móvil de lado (poca altura), las vistas pasan a una columna a la izquierda y la biblioteca y el inspector entran desde la derecha, para que el plano ocupe casi toda la pantalla.
+
 ## Instalarlo
 
 En un navegador compatible, el menú del navegador ofrece **Instalar** o **Añadir a la pantalla de inicio**. Se abre en su propia ventana, como una aplicación.

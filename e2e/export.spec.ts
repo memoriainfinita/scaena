@@ -134,3 +134,16 @@ test('the local library: duplicate, own templates, and a confirmed delete', asyn
   await page.locator('.side-card', { has: page.getByRole('heading', { name: 'Mis plantillas' }) }).getByRole('button', { name: /Cantautor/ }).first().click();
   await expect(page.getByText('4 canales')).toBeVisible();
 });
+
+test('the plan is exported as a DXF that CAD programs can read', async ({ page }) => {
+  await start(page, /Banda de rock/);
+  await page.getByRole('button', { name: 'Exportar' }).click();
+  const dxf = await downloaded(page, () => page.getByRole('button', { name: /Plano en DXF/ }).click());
+  expect(dxf.name).toBe('Banda-de-rock-plano.dxf');
+  const text = dxf.bytes.toString('latin1');
+  expect(text.startsWith('  0' + String.fromCharCode(13, 10) + 'SECTION')).toBe(true);
+  expect(text).toContain('AC1009');
+  expect(text).toContain('STAGE-OUTLINE');
+  expect(text.split(String.fromCharCode(10) + 'LINE' + String.fromCharCode(13)).length - 1).toBeGreaterThan(100);
+  expect(text.trimEnd().endsWith('EOF')).toBe(true);
+});

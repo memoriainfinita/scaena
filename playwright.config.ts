@@ -14,10 +14,10 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   use: { trace: 'retain-on-failure' },
   projects: [
-    { name: 'app', testIgnore: /mobile.spec/, use: { ...firefox(), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/' } },
-    { name: 'app-light', testIgnore: /mobile.spec/, grep: /@a11y/, use: { ...firefox(1), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/' } },
+    { name: 'app', testIgnore: /(mobile|landscape).spec/, use: { ...firefox(), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/' } },
+    { name: 'app-light', testIgnore: /(mobile|landscape).spec/, grep: /@a11y/, use: { ...firefox(1), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/' } },
     // A phone-sized window with touch, in Firefox (it cannot emulate a mobile browser, but the layout and the gestures are the same).
-    { name: 'mobile', testMatch: /mobile.spec/, use: { ...firefox(), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/', viewport: { width: 390, height: 844 }, hasTouch: true } },
+    { name: 'mobile', testMatch: /(mobile|landscape).spec/, use: { ...firefox(), locale: 'es-ES', baseURL: 'http://127.0.0.1:4184/', viewport: { width: 390, height: 844 }, hasTouch: true } },
   ],
   webServer: [{ command: 'pnpm preview --host 127.0.0.1', url: 'http://127.0.0.1:4184/', reuseExistingServer: !process.env.CI }],
 });
