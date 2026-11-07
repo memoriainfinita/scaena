@@ -5,6 +5,7 @@ import { allIssues, goToIssue, issues, issueText, setIssueMuted } from '../app/i
 import { lang, t, type Key } from '../i18n/index.ts';
 import { parsePolygon } from '../plan/geometry.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
+import { CustomItemDialog } from './CustomItem.tsx';
 import { BackgroundDialog } from './Background.tsx';
 import { RevisionsDialog } from './Revisions.tsx';
 import { csvZipFile, baseName, daySheetFile, planPdfFile, planPngFile, planSvgFile, riderPdfFile, saveFile, type OutFile } from '../export/exports.ts';
@@ -70,6 +71,7 @@ export function Modal({ title, onClose, children, footer, menu = false }: { titl
 export function Dialogs() {
   const d = dialog.value;
   const close = () => (dialog.value = null);
+  if (d === 'customItem' && session.value) return <CustomItemDialog onClose={close} />;
   if (d === 'settings' && session.value) return <ShowSettingsDialog onClose={close} />;
   if (d === 'export' && session.value) return <ExportDialog onClose={close} />;
   if (d === 'app') return <AppDialog onClose={close} />;
@@ -383,6 +385,8 @@ function AppDialog({ onClose }: { onClose: () => void }) {
         </button>
         <a class="btn" href="https://github.com/memoriainfinita/scaena" target="_blank" rel="noopener noreferrer">
           {t('app.about', { version: appVersion() })}
+          {' · '}
+          {t('app.data')}
         </a>
       </div>
     </Modal>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
-import { setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
+import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById, searchItems } from '../library/items.ts';
@@ -159,6 +159,9 @@ function Library() {
       <div class="search">
         <input class="input" style="width:100%" type="search" aria-label={t('library.search')} placeholder={t('library.search')} value={query} onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)} />
       </div>
+      <button type="button" class="btn" style="margin:0 8px 8px" onClick={() => (dialog.value = 'customItem')}>
+        {t('custom.new')}
+      </button>
       <div class="list">
         {items.length === 0 && <p class="muted" style="grid-column:1/-1">{t('library.none', { query })}</p>}
         {items.map((i) => (
@@ -213,6 +216,16 @@ function Inspector({ show }: { show: Show }) {
               <input class="input" data-label-field value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
             </label>
             <label class="field">
+              {t('inspector.layer')}
+              <select class="input" value={el.layerId} onChange={(e) => moveToLayer(selection.value, (e.currentTarget as HTMLSelectElement).value)}>
+                {show.layers.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {DEFAULT_LAYER_IDS.has(l.id) ? t(`layer.${l.subject}` as Key) : l.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label class="field">
               {t('inspector.supplied')}
               <select class="input" value={el.suppliedBy} onChange={(e) => setElementField(el.id, { suppliedBy: (e.currentTarget as HTMLSelectElement).value as PlanElement['suppliedBy'] })}>
                 {(['unset', 'band', 'venue', 'rental'] as const).map((o) => (
@@ -258,7 +271,24 @@ function Inspector({ show }: { show: Show }) {
           return (
             <div class="layer" key={l.id}>
               <span class="swatch" aria-hidden="true" />
-              <span style="flex:1">{name}</span>
+              {l.subject === 'custom' ? (
+                <input class="input" style="flex:1;min-width:0" aria-label={t('layers.rename', { name })} value={l.name} maxLength={80} onChange={(e) => renameCustomLayer(l.id, (e.currentTarget as HTMLInputElement).value)} />
+              ) : (
+                <span style="flex:1">{name}</span>
+              )}
+              {l.subject === 'custom' && (
+                <>
+                  <button type="button" class="btn" aria-label={t('layers.up', { name })} title={t('layers.up', { name })} onClick={() => moveCustomLayer(l.id, 1)}>
+                    ↑
+                  </button>
+                  <button type="button" class="btn" aria-label={t('layers.down', { name })} title={t('layers.down', { name })} onClick={() => moveCustomLayer(l.id, -1)}>
+                    ↓
+                  </button>
+                  <button type="button" class="btn" aria-label={t('layers.remove', { name })} title={t('layers.remove', { name })} onClick={() => removeCustomLayer(l.id)}>
+                    ×
+                  </button>
+                </>
+              )}
               <label title={t('layers.show', { name })}>
                 <input type="checkbox" aria-label={t('layers.show', { name })} checked={l.visible} onChange={(e) => setLayerFlag(l.id, 'visible', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconEye />
@@ -274,8 +304,27 @@ function Inspector({ show }: { show: Show }) {
             </div>
           );
         })}
+        <NewLayer />
       </div>
     </aside>
+  );
+}
+
+function NewLayer() {
+  const [name, setName] = useState('');
+  return (
+    <form
+      class="row"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (createLayer(name)) setName('');
+      }}
+    >
+      <input class="input" style="flex:1;min-width:0" aria-label={t('layers.newName')} value={name} maxLength={80} onInput={(e) => setName((e.currentTarget as HTMLInputElement).value)} />
+      <button type="submit" class="btn" disabled={!name.trim()}>
+        {t('layers.add')}
+      </button>
+    </form>
   );
 }
 

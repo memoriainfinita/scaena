@@ -6,7 +6,8 @@ import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
-import { FIXTURES, fixtureById } from '../library/models.ts';
+import { FIXTURES, OFL_FIXTURES, fixtureById } from '../library/models.ts';
+import type { FixtureModel } from '../library/types.ts';
 import { levels } from '../model/levels.ts';
 import { circuitLoads, defaultFocus, dimmerLoads, luminaires, magicPosition, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
@@ -35,17 +36,46 @@ export function NumCell({ value, label, onCommit, step = 1, scale = 1, min = 0 }
   );
 }
 
-function ModelSelect({ el, label, cls = 'input cell' }: { el: PlanElement; label: string; cls?: string }) {
-  const sorted = [...FIXTURES].sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`, lang.value));
+const byName = (lang: string) => (a: FixtureModel, b: FixtureModel) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`, lang);
+let theatreCache: [string, FixtureModel[]] | null = null;
+const SORTED_THEATRE = (lang: string): FixtureModel[] => (theatreCache?.[0] === lang ? theatreCache[1] : (theatreCache = [lang, [...FIXTURES].sort(byName(lang))])[1]);
+let oflCache: [string, [string, FixtureModel[]][]] | null = null;
+function oflGroups(lang: string): [string, FixtureModel[]][] {
+  if (oflCache?.[0] === lang) return oflCache[1];
+  const by = new Map<string, FixtureModel[]>();
+  for (const f of [...OFL_FIXTURES].sort(byName(lang))) by.set(f.brand, [...(by.get(f.brand) ?? []), f]);
+  oflCache = [lang, [...by.entries()].sort((a, b) => a[0].localeCompare(b[0], lang))];
+  return oflCache[1];
+}
+
+/** The table row keeps its select small (theatre list and the chosen model); the inspector offers the whole Open Fixture Library. */
+function ModelSelect({ el, label, cls = 'input cell', full = false }: { el: PlanElement; label: string; cls?: string; full?: boolean }) {
   const cur = el.luminaire?.modelId ?? '';
+  const chosen = cur.startsWith('ofl.') ? fixtureById(cur) : undefined;
   return (
     <select class={cls} aria-label={label} value={cur} onChange={(e) => setLuminaireModel(el.id, (e.currentTarget as HTMLSelectElement).value)}>
       <option value="">{t('lights.none')}</option>
-      {sorted.map((f) => (
-        <option key={f.id} value={f.id}>
-          {f.brand} {f.model}
-          {f.estimate ? ' ≈' : ''}
+      <optgroup label={t('lights.group.theatre')}>
+        {SORTED_THEATRE(lang.value).map((f) => (
+          <option key={f.id} value={f.id}>
+            {f.brand} {f.model}
+            {f.estimate ? ' ≈' : ''}
+          </option>
+        ))}
+      </optgroup>
+      {!full && chosen && (
+        <option value={chosen.id}>
+          {chosen.brand} {chosen.model}
         </option>
+      )}
+      {(full ? oflGroups(lang.value) : []).map(([brand, list]) => (
+        <optgroup key={brand} label={`${brand} · OFL`}>
+          {list.map((f) => (
+            <option key={f.id} value={f.id}>
+              {f.brand} {f.model}
+            </option>
+          ))}
+        </optgroup>
       ))}
     </select>
   );
@@ -593,9 +623,17 @@ export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
       <h2>{t('lights.title')}</h2>
       <label class="field">
         {t('table.model')}
-        <ModelSelect el={el} label={t('table.model')} cls="input" />
+        <ModelSelect el={el} label={t('table.model')} cls="input" full />
       </label>
       {f?.estimate && <span class="muted">{t('lights.estimate')}</span>}
+      {f?.community && (
+        <span class="muted">
+          {t('lights.community')}{' '}
+          <a href={f.source} target="_blank" rel="noopener noreferrer">
+            Open Fixture Library
+          </a>
+        </span>
+      )}
       <label class="field">
         {t('table.mount')}
         <MountSelect show={show} el={el} label={t('table.mount')} cls="input" />

@@ -37,7 +37,7 @@ export interface LibraryItem {
   estimate?: boolean;
 }
 
-export type FixtureKind = 'ellipsoidal' | 'fresnel' | 'pc' | 'par' | 'scoop' | 'strip' | 'cyc' | 'followspot' | 'ledpar' | 'haze' | 'smoke' | 'strobe';
+export type FixtureKind = 'ellipsoidal' | 'fresnel' | 'pc' | 'par' | 'scoop' | 'strip' | 'cyc' | 'followspot' | 'ledpar' | 'haze' | 'smoke' | 'strobe' | 'moving' | 'led';
 
 export interface FixtureModel {
   id: string;
@@ -52,6 +52,8 @@ export interface FixtureModel {
   source?: string;
   /** True for generic values that are not from a datasheet. */
   estimate?: boolean;
+  /** True for entries from the Open Fixture Library: contributed by volunteers, not checked against a datasheet. */
+  community?: boolean;
   note?: string;
 }
 

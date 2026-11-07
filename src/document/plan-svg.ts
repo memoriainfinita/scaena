@@ -1,6 +1,7 @@
 // The plan as a standalone SVG string, for the PDF. Sizes that must look right on paper (strokes, text, the legend, the
 // scale bar) are given in millimetres of paper and converted to plan units with the print scale `k` (paper mm per plan mm).
 import type { Lang } from '../i18n/index.ts';
+import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import type { Connection, PlanElement, Show } from '../model/schema.ts';
@@ -61,7 +62,10 @@ function backgroundBox(show: Show, images: Record<string, Uint8Array>): { box: B
 
 const NICE = [500, 1000, 2000, 5000, 10000, 20000, 50000];
 
-export function planSvg(show: Show, images: Record<string, Uint8Array>, opts: PlanSvgOptions): PlanSvg {
+/** The plan as a printable SVG. The show's own elements are drawn from the show itself, open or not. */
+export const planSvg = (show: Show, images: Record<string, Uint8Array>, opts: PlanSvgOptions): PlanSvg => withCustomItems(show.customItems, () => planSvgIn(show, images, opts));
+
+function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvgOptions): PlanSvg {
   const D = docStrings(opts.lang);
   const bgInfo = backgroundBox(show, images);
   const box = bgInfo ? unionBox([planBox(show, 700), bgInfo.box])! : planBox(show, 700);

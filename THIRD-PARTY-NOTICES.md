@@ -32,6 +32,10 @@ scaena 0.1.0 is released under the GNU General Public License, version 3 only (s
 
 - **Inter** (Copyright 2016 The Inter Project Authors) and **JetBrains Mono** (Copyright 2020 The JetBrains Mono Project Authors), SIL Open Font License 1.1. They are bundled for the screen as woff2 files by `@fontsource-variable/*` and embedded in generated PDFs as subsets (Latin Extended). The license texts are in `public/typst/fonts/LICENSES.txt`.
 
+## Data
+
+- **Open Fixture Library** (Copyright (c) 2017 Florian & Felix Edelmann), MIT license: weight, power and beam angle of the lighting fixtures listed under the Open Fixture Library group in the model list. Built by `scripts/import-ofl.mjs` into `src/library/ofl-data.json`; the license text is in `third_party/open-fixture-library-LICENSE`. Source: https://github.com/OpenLightingProject/open-fixture-library
+
 ## Typst compiler
 
 - The PDF is compiled in the browser by the Typst compiler (Apache-2.0) as built into `@myriaddreamin/typst-ts-web-compiler` (Apache-2.0). The WebAssembly file also contains the Rust libraries that Typst depends on; their licenses are listed in the Typst and typst.ts repositories and are not enumerated here.

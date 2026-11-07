@@ -21,3 +21,11 @@ Wheel to zoom, **Space** + drag or the Hand tool to pan, **0** to fit. On a phon
 ## The stage
 
 In **Show settings → Stage**: width and depth, an optional **proscenium width** (leave it empty for none; the proscenium line is drawn as two walls with the opening between them), and the **reference lines** to show (centre line, plaster line, proscenium opening). **Stage deck height** is the height of the stage above the hall floor (it matters for the side section). Raised areas inside the stage are **Riser** and **Platform** elements from the library, each with its own height in the inspector. For an odd-shaped stage tick **Free-form stage** and type the points, one per line as `x; y` in metres (at least three). A free-form stage has no reference lines.
+
+## Your own layers
+
+Below the layer list, type a name and press **Add layer** to make a layer of your own (up to 20). It can be renamed, moved up or down (higher layers are drawn over lower ones) and removed; removing it sends its elements back to the layer of their kind. To put an element on a layer, pick it in the inspector's **Layer** field.
+
+## Your own elements
+
+**Create own element** (top of the library) takes an SVG drawing up to 200 KB and asks for a name, the real size, height, weight, power and layer. The drawing is rebuilt from shapes, paths, groups and flat colours only: text, images, gradients, links, styles and scripts are left out (the dialog says how many), and strokes are redrawn 1.5 px wide. The element lives in the show and travels in the `.scaena` file; it appears first in library searches, and it can only be deleted once it is no longer on the plan.

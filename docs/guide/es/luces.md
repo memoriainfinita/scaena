@@ -6,7 +6,7 @@ Activa el módulo **Luces** en Ajustes del montaje (el paquete de teatro ya lo t
 
 ![Tabla de instrumentos](../img/luces-instrumentos.png)
 
-Cada luminaria es una fila: unidad, modelo, montaje, canal, dimmer, circuito, universo, dirección, color y potencia. Al elegir un **modelo** del catálogo se copian su peso y su potencia (los modelos genéricos llevan «≈»: son estimaciones, no datos de ficha). **Numerar instrumentos** da unidades de 1 a n por montaje y de izquierda a derecha. Debajo ves el **recuento por montaje**: cuántos hay, su peso y su potencia, y un aviso si pasan de la carga máxima.
+Cada luminaria es una fila: unidad, modelo, montaje, canal, dimmer, circuito, universo, dirección, color y potencia. Al elegir un **modelo** del catálogo se copian su peso y su potencia (los modelos genéricos llevan «≈»: son estimaciones, no datos de ficha). La lista de modelos del inspector ofrece además unos 650 equipos de la Open Fixture Library agrupados por fabricante (sobre todo LED y móviles); su peso y su potencia los aportan voluntarios, y el panel lo dice y enlaza a la ficha del equipo. **Numerar instrumentos** da unidades de 1 a n por montaje y de izquierda a derecha. Debajo ves el **recuento por montaje**: cuántos hay, su peso y su potencia, y un aviso si pasan de la carga máxima.
 
 ## Montajes
 

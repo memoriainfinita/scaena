@@ -1,5 +1,6 @@
 // Datasheet values read on 2026-11-02 (docs/research/luminarias-teatro.md and audio-modelos.md).
 // Every number has its source URL; what had no datasheet is empty or marked as an estimate.
+import oflData from './ofl-data.json';
 import type { AudioModel, FixtureModel } from './types.ts';
 
 const ETC_WEIGHTS = 'https://support.etcconnect.com/ETC/Fixtures/Source_Four/Source_Four_ERS_and_HID/Fixture_and_Shipping_Weights_of_Source_Four';
@@ -72,7 +73,10 @@ export const AUDIO: AudioModel[] = [
 ];
 
 export const audioById = (id: string): AudioModel | undefined => AUDIO.find((a) => a.id === id);
-export const fixtureById = (id: string): FixtureModel | undefined => FIXTURES.find((f) => f.id === id);
+/** Fixtures from the Open Fixture Library (MIT), built by `scripts/import-ofl.mjs`. Weight and power are volunteers' data, marked `community`. */
+export const OFL_FIXTURES: FixtureModel[] = (oflData as Omit<FixtureModel, 'estimate'>[]).map((f) => ({ ...f, community: true }));
+const FIXTURE_BY_ID = new Map<string, FixtureModel>([...FIXTURES, ...OFL_FIXTURES].map((f) => [f.id, f]));
+export const fixtureById = (id: string): FixtureModel | undefined => FIXTURE_BY_ID.get(id);
 
 /** What the user reads: "Shure SM57". Free text that is not a model id is shown as it is. */
 export const audioLabel = (value: string): string => {

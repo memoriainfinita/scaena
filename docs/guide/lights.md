@@ -4,7 +4,7 @@ Turn on the **Lights** module (the theatre package already has it). Six sections
 
 ![Instruments](img/luces-instrumentos.png)
 
-**Instruments:** unit, model, mount, channel, dimmer, circuit, universe, address, colour and power. Picking a **model** copies its weight and power (generic models carry “≈”: they are estimates, not datasheet values). **Number the instruments** gives units 1 to n by mount and left to right. Below, the **count by mount** with weight and power, and a warning when a bar is over its maximum load.
+**Instruments:** unit, model, mount, channel, dimmer, circuit, universe, address, colour and power. Picking a **model** copies its weight and power (generic models carry “≈”: they are estimates, not datasheet values). The inspector's model list also offers about 650 fixtures from the Open Fixture Library grouped by maker (mostly LED and moving lights); their weight and power are contributed by volunteers, so the panel says so and links to the fixture's page. **Number the instruments** gives units 1 to n by mount and left to right. Below, the **count by mount** with weight and power, and a warning when a bar is over its maximum load.
 
 ![Mounts](img/luces-montajes.png)
 

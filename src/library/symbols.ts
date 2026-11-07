@@ -3,6 +3,7 @@
 // shapes, 1.5 px strokes that do not scale with zoom, white fill so overlaps read, legible in black and white.
 // No brand shapes and no copied standard sheets.
 
+import { CUSTOM_SYMBOL_PREFIX, customSymbolBody } from './custom.ts';
 import { circle, ellipse, front, line, n, path, rect } from './symbol-kit.ts';
 import { MORE_SYMBOLS } from './symbols-more.ts';
 
@@ -85,7 +86,9 @@ export const symbolKeys = (): string[] => Object.keys(SYMBOLS);
 
 /** SVG inner markup for a symbol at a given real size, in millimetres with the origin at the top left. */
 export function symbolBody(key: string, w: number, d: number): string {
-  const draw = SYMBOLS[key];
+  const own = customSymbolBody(key, w, d);
+  if (own !== undefined) return own;
+  const draw = key.startsWith(CUSTOM_SYMBOL_PREFIX) ? SYMBOLS.generic : SYMBOLS[key];
   if (!draw) throw new Error(`unknown symbol ${key}`);
   return draw(w, d);
 }
