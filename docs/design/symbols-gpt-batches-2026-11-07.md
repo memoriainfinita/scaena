@@ -2062,3 +2062,63 @@ List to paste:
 11 photographer kneeling with a camera at the eye (60 x 60 cm)
 12 bartender standing behind a bar counter shaking a cocktail (60 x 60 cm)
 ```
+
+## Sheet 62 (Faceless staff, emergency and hosts)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Usher | `person3.usher` | 50 x 50 |
+| 2 | Paramedic | `person3.paramedic` | 60 x 60 |
+| 3 | Firefighter on duty | `person3.firefighter` | 60 x 60 |
+| 4 | Police officer | `person3.police` | 50 x 50 |
+| 5 | Safety marshal | `person3.marshal` | 50 x 50 |
+| 6 | Waiter | `person3.waiter` | 50 x 50 |
+| 7 | Merch seller | `person3.merch` | 50 x 50 |
+| 8 | Host or MC | `person3.mc` | 60 x 60 |
+| 9 | Comedian | `person3.comedian` | 60 x 60 |
+| 10 | Magician | `person3.magician` | 60 x 60 |
+| 11 | Reporter | `person3.reporter` | 60 x 60 |
+| 12 | Rigger | `person3.rigger` | 60 x 60 |
+
+List to paste (with the faceless style block above):
+
+```text
+1 usher standing holding a small torch pointing down (50 x 50 cm)
+2 paramedic standing with a medical bag and a cross on the uniform (60 x 60 cm)
+3 firefighter standing in a helmet and protective coat (60 x 60 cm)
+4 police officer standing with a cap and a radio (50 x 50 cm)
+5 safety marshal in a high-visibility vest holding a radio (50 x 50 cm)
+6 waiter standing holding a tray with glasses (50 x 50 cm)
+7 merchandise seller standing holding a t-shirt (50 x 50 cm)
+8 host standing with a microphone and one arm raised (60 x 60 cm)
+9 stand-up comedian at a microphone stand (60 x 60 cm)
+10 magician in a top hat and cape holding a wand (60 x 60 cm)
+11 reporter holding a microphone with a press badge (60 x 60 cm)
+12 rigger in a safety harness and helmet holding a rope (60 x 60 cm)
+```
+
+## Sheet 63 (Faceless groups and ensembles)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Dancing pair | `person3.dance-pair` | 100 x 80 |
+| 2 | Two actors | `person3.actors-2` | 120 x 70 |
+| 3 | String quartet | `person3.string-quartet` | 250 x 180 |
+| 4 | Brass section | `person3.brass-section` | 300 x 100 |
+| 5 | Rock band | `person3.rock-band` | 400 x 250 |
+| 6 | Vocal quartet | `person3.vocal-quartet` | 200 x 80 |
+| 7 | Concert crowd | `person3.crowd-cheering` | 800 x 600 |
+| 8 | Seated audience | `person3.audience-seated` | 800 x 600 |
+
+List to paste (with the faceless style block above):
+
+```text
+1 two dancers dancing together as a couple (100 x 80 cm)
+2 two actors facing each other in conversation (120 x 70 cm)
+3 string quartet of four seated musicians: two violins, a viola and a cello (250 x 180 cm)
+4 row of four standing brass players with trumpets and trombones (300 x 100 cm)
+5 rock band of four: a singer, a guitarist, a bassist and a drummer (400 x 250 cm)
+6 four singers standing in a row (200 x 80 cm)
+7 crowd seen from behind with hands raised, three rows (800 x 600 cm)
+8 seated audience seen from behind in three rows (800 x 600 cm)
+```
