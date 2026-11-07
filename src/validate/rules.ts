@@ -166,7 +166,7 @@ const wedgeMismatch: Rule = (show) => {
   ];
 };
 
-const STANDARD = new Set(['person', 'furniture', 'room', 'scenery', 'light', 'effect', 'vocals', 'power']);
+const STANDARD = new Set(['person', 'furniture', 'room', 'scenery', 'light', 'effect', 'vocals', 'power', 'safety', 'site', 'production', 'machinery', 'rigging', 'network']);
 const unmarkedSupplier: Rule = (show) => {
   if (!audioOn(show)) return [];
   return Object.values(show.elements)

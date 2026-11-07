@@ -4,7 +4,7 @@ import { issues } from '../app/issues.ts';
 import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
-import { itemById, searchItems } from '../library/items.ts';
+import { ITEMS, itemById, searchItems } from '../library/items.ts';
 import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
 import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
@@ -149,9 +149,16 @@ function Toolbar() {
   );
 }
 
+/** Items drawn before "see all": about 780 buttons with icons would slow the page and the accessibility checks. */
+const LIBRARY_PAGE = 60;
+const LIBRARY_CATEGORIES = [...new Set(ITEMS.map((i) => i.category))];
+
 function Library() {
   const [query, setQuery] = useState('');
-  const items = useMemo(() => searchItems(query), [query]);
+  const [cat, setCat] = useState('');
+  const [more, setMore] = useState(false);
+  const found = useMemo(() => searchItems(query).filter((i) => !cat || i.category === cat), [query, cat]);
+  const items = more ? found : found.slice(0, LIBRARY_PAGE);
   const l = lang.value;
   void iconsVersion.value; // redraw the thumbnails as sheets arrive
   useEffect(() => {
@@ -165,11 +172,21 @@ function Library() {
       <div class="search">
         <input class="input" style="width:100%" type="search" aria-label={t('library.search')} placeholder={t('library.search')} value={query} onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)} />
       </div>
+      <div class="search">
+        <select class="input" style="width:100%" aria-label={t('library.category')} value={cat} onChange={(e) => setCat((e.currentTarget as HTMLSelectElement).value)}>
+          <option value="">{t('library.cat.all')}</option>
+          {LIBRARY_CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {t(`library.cat.${c}`)}
+            </option>
+          ))}
+        </select>
+      </div>
       <button type="button" class="btn" style="margin:0 8px 8px" onClick={() => (dialog.value = 'customItem')}>
         {t('custom.new')}
       </button>
       <div class="list">
-        {items.length === 0 && <p class="muted" style="grid-column:1/-1">{t('library.none', { query })}</p>}
+        {found.length === 0 && <p class="muted" style="grid-column:1/-1">{t('library.none', { query })}</p>}
         {items.map((i) => (
           <button key={i.id} type="button" class="lib-item" title={t('library.add', { name: i.name[l] })} aria-label={t('library.add', { name: i.name[l] })} draggable onDragStart={(e) => {
             e.dataTransfer?.setData(LIBRARY_DRAG, i.id);
@@ -179,6 +196,11 @@ function Library() {
             <span>{i.name[l]}</span>
           </button>
         ))}
+        {found.length > LIBRARY_PAGE && (
+          <button type="button" class="btn" style="grid-column:1/-1" onClick={() => setMore(!more)}>
+            {more ? t('library.fewer') : t('library.all', { n: found.length })}
+          </button>
+        )}
       </div>
     </aside>
   );

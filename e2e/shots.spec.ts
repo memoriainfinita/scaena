@@ -44,7 +44,7 @@ test('computer and connection', async ({ page }) => {
   await page.getByRole('button', { name: 'Añadir programa' }).click();
   await page.getByLabel('Sistema operativo').selectOption('windows');
   await search.fill('proyector');
-  await page.getByRole('button', { name: /Añadir Proyector/ }).click();
+  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
   await page.getByRole('button', { name: 'Cable o conexión' }).click();
   const els = page.locator('g.el[data-id] .hit');
   const n = await els.count();

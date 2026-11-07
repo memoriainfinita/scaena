@@ -47,7 +47,7 @@ test('the connect tool joins two elements and the connection can be edited and u
   await start(page);
   await addLaptop(page);
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');
-  await page.getByRole('button', { name: /Añadir Proyector/ }).click();
+  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
   await page.getByRole('button', { name: 'Cable o conexión' }).click();
   await page.getByRole('button', { name: 'Vídeo', exact: true }).click();
   const els = page.locator('g.el[data-id] .hit');

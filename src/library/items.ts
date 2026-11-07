@@ -1,4 +1,5 @@
 import { customItemById, customItems } from './custom.ts';
+import { ICON_DEFS } from './items-icons.ts';
 import { MORE_DEFS } from './items-more.ts';
 import type { Bilingual, Category, LayerSubject, LibraryItem, SuggestedChannel } from './types.ts';
 
@@ -85,7 +86,7 @@ const LIGHT_DEFS: Def[] = [
   { id: 'effect.strobe', category: 'effect', layer: 'lights', name: b('Estroboscopio', 'Strobe'), tags: ['estrobo', 'strobe'], w: 450, d: 200, h: 150, symbol: 'strobe' },
 ];
 
-export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS].map((x) => ({
+export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...ICON_DEFS].map((x) => ({
   id: x.id,
   version: 1,
   category: x.category,

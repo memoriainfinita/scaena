@@ -1,0 +1,110 @@
+"""Writes src/library/icon-map.ts (item id -> icon key) and src/library/items-icons.ts (one library item per icon
+that no existing item uses). usage: python scripts/symbols/build-items.py   (after build-manifest.py)"""
+import json
+import pathlib
+import re
+import sys
+NL = chr(10)
+
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'scripts/symbols'))
+from names_es_1 import ES1  # noqa: E402
+from names_es_2 import ES2  # noqa: E402
+from names_es_3 import ES3  # noqa: E402
+
+ES = {**ES1, **ES2, **ES3}
+manifest = json.load(open(ROOT / 'assets/symbol-manifest.json', encoding='utf8'))
+manual = json.load(open(ROOT / 'scripts/symbols/item-map.json', encoding='utf8'))['existing']
+src = (ROOT / 'src/library/items.ts').read_text(encoding='utf8') + (ROOT / 'src/library/items-more.ts').read_text(encoding='utf8')
+existing = re.findall(r"id: '([a-z0-9.@-]+)'", src)
+keys = {m['key'] for m in manifest}
+assert all(v in keys for v in manual.values()), [v for v in manual.values() if v not in keys]
+
+icon_of = {}
+for m in manifest:
+    if m['pid'] in existing and m['pid'] not in icon_of:
+        icon_of[m['pid']] = m['key']
+icon_of.update(manual)
+used_keys = set(icon_of.values())
+
+CAT = {'mic': 'mic', 'rack': 'rack', 'pa': 'pa', 'comms': 'control', 'kit': 'drums', 'amp': 'amp', 'furniture': 'furniture', 'control': 'control', 'stand': 'furniture',
+       'power': 'power', 'perc': 'drums', 'rig': 'rigging', 'safety': 'safety', 'video': 'video', 'set': 'scenery', 'monitor': 'monitor', 'pedal': 'guitar', 'keys': 'keys',
+       'light': 'light', 'site': 'site', 'effect': 'effect', 'net': 'network', 'strings': 'strings', 'winds': 'winds', 'wind': 'winds', 'mach': 'machinery', 'prod': 'production',
+       'orch': 'furniture', 'desk': 'desk', 'venue': 'site', 'synth': 'keys', 'dj': 'dj', 'conf': 'site', 'guitar': 'guitar', 'gamelan': 'drums', 'person2': 'person', 'person3': 'person'}
+LAYER = {'audio': {'mic', 'rack', 'pa', 'amp', 'kit', 'perc', 'strings', 'winds', 'wind', 'keys', 'synth', 'dj', 'desk', 'monitor', 'pedal', 'guitar', 'gamelan', 'stand'},
+         'lights': {'light', 'effect', 'rig'}, 'control': {'video', 'control', 'net', 'comms'}, 'electrical': {'power'}}
+HEIGHT = {'mic': 300, 'rack': 400, 'pa': 800, 'control': 100, 'drums': 800, 'amp': 600, 'furniture': 800, 'keys': 900, 'strings': 1000, 'winds': 800, 'person': 1700, 'light': 300,
+          'effect': 300, 'network': 100, 'safety': 500, 'site': 2500, 'production': 800, 'machinery': 1500, 'rigging': 1000, 'scenery': 1500, 'video': 1000, 'monitor': 400,
+          'power': 300, 'desk': 200, 'dj': 1000, 'guitar': 1000}
+# icons without a size in the sheet lists: width x depth in cm
+SIZE_FIX = {'07-03': (45, 30), '07-09': (8, 16), '07-11': (30, 30), '07-12': (35, 35), '65h-01': (20, 20), '65s-01': (40, 40), '55b-11': (250, 30), '66-09': (50, 40)}
+ID_FIX = {'07-03': 'effect.smoke-2', '07-09': 'control.phone', '07-11': 'control.pad', '07-12': 'light.led-mover', '55b-11': 'gamelan.dungchen-2', '66-09': 'pa.array-hung', '65h-01': 'mic.headband-2', '65s-01': 'stand.guitar-3'}
+# musicians draw from the audio layer; everyone else from the stage
+MUSICIAN_SHEETS = {56, 57, 59}
+MUSICIAN_KEYS = {'58-04', '58-05', '58-08', '60-01', '60-12', '61-03'}
+
+
+def clean(n):
+    return re.sub(r' \((extra|alternative)\)$', '', n)
+
+
+def js(s):
+    return "'" + s.replace(chr(92), chr(92) * 2).replace("'", chr(92) + "'") + "'"
+
+
+taken = set(existing)
+defs = []
+missing = []
+for m in manifest:
+    key = m['key']
+    if key in used_keys:
+        continue
+    pid = ID_FIX.get(key) or m['pid']
+    prefix = pid.split('.')[0]
+    if prefix in ('person2', 'person3'):
+        pid = 'person.' + pid.split('.', 1)[1]
+    base = pid
+    n = 2
+    while pid in taken:
+        pid = f'{base}-{n}'
+        n += 1
+    taken.add(pid)
+    variant = pid != base and key not in ID_FIX
+    en = clean(m['name'])
+    es = ES.get(en)
+    if es is None:
+        missing.append(en)
+        es = en
+    if variant:
+        en, es = f'{en} (2)', f'{es} (2)'
+    cat = CAT[prefix] if prefix in CAT else 'scenery'
+    sheet = int(re.sub(r'\D', '', m['sheet']))
+    if cat == 'person':
+        layer = 'audio' if (sheet in MUSICIAN_SHEETS or key in MUSICIAN_KEYS) else 'stage'
+    else:
+        layer = next((l for l, ps in LAYER.items() if prefix in ps), 'stage')
+    if key in SIZE_FIX:
+        w, d = SIZE_FIX[key]
+    else:
+        r = re.match(r'(\d+(?:\.\d+)?) x (\d+(?:\.\d+)?)', m['size'])
+        w, d = (float(r.group(1)), float(r.group(2))) if r else (30, 30)
+    tail = pid.split('.', 1)[1].replace('-', ' ')
+    tags = sorted({t for t in {es.lower(), en.lower(), tail.lower()} if t})
+    defs.append({'id': pid, 'cat': cat, 'layer': layer, 'es': es, 'en': en, 'tags': tags, 'w': round(w * 10), 'd': round(d * 10), 'h': HEIGHT.get(cat, 500), 'key': key})
+    icon_of[pid] = key
+
+lines = ['// Generated by scripts/symbols/build-items.py from assets/symbol-manifest.json. Do not edit by hand.',
+         '// One library item per icon that no hand-made item uses. Sizes are the real footprint from the sheet lists; heights are estimates per category.',
+         "import type { Def } from './items.ts';", '', "const b = (es: string, en: string) => ({ es, en });", '', 'export const ICON_DEFS: Def[] = [']
+for x in defs:
+    tags = ', '.join(js(t) for t in x['tags'])
+    lines.append(f"  {{ id: {js(x['id'])}, category: '{x['cat']}', layer: '{x['layer']}', name: b({js(x['es'])}, {js(x['en'])}), tags: [{tags}], w: {x['w']}, d: {x['d']}, h: {x['h']}, symbol: 'generic' }},")
+lines.append('];')
+(ROOT / 'src/library/items-icons.ts').write_text(NL.join(lines) + NL, encoding='utf8')
+
+out = ['// Generated by scripts/symbols/build-items.py. Do not edit by hand.', '// Library item id -> icon key (see icons/<sheet>.json).', 'export const ICON_OF: Record<string, string> = {']
+for k in sorted(icon_of):
+    out.append(f"  '{k}': '{icon_of[k]}',")
+out.append('};')
+(ROOT / 'src/library/icon-map.ts').write_text(NL.join(out) + NL, encoding='utf8')
+print(len(defs), 'new items;', len(icon_of), 'items with an icon; missing es names:', sorted(set(missing)))
