@@ -1,6 +1,7 @@
 // Data model of a show (montaje). Everything is serializable; units are millimetres, kilograms and watts.
 // Derived data is not stored: only manual adjustments on top of it (see docs/design/modelo-2026-10-29.md).
 import * as v from 'valibot';
+import { isCleanMarkup, MAX_SVG_BYTES } from '../library/svg-clean.ts';
 
 export const FORMAT_VERSION = 1;
 
@@ -27,6 +28,23 @@ export const Layer = v.object({
   locked: v.optional(v.boolean(), false),
   dim: v.optional(v.pipe(v.number(), v.minValue(0), v.maxValue(1)), 0),
 });
+
+/** An element the user drew: the markup is checked on every load, so a file cannot carry anything the cleaner would not produce. */
+export const CustomItem = v.pipe(
+  v.object({
+    id,
+    name: v.pipe(v.string(), v.minLength(1), v.maxLength(80)),
+    layer: v.optional(Subject, 'stage'),
+    w: v.pipe(v.number(), v.minValue(10), v.maxValue(100000)),
+    d: v.pipe(v.number(), v.minValue(10), v.maxValue(100000)),
+    h: v.optional(v.pipe(v.number(), v.minValue(0), v.maxValue(100000)), 0),
+    weightKg: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
+    powerW: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
+    viewBox: v.tuple([v.pipe(v.number(), v.finite()), v.pipe(v.number(), v.finite()), v.pipe(v.number(), v.finite(), v.minValue(0.000001)), v.pipe(v.number(), v.finite(), v.minValue(0.000001))]),
+    markup: v.pipe(v.string(), v.maxLength(MAX_SVG_BYTES)),
+  }),
+  v.check((c) => isCleanMarkup(c.markup, c.viewBox), 'custom drawing is not clean'),
+);
 
 export const Computer = v.object({
   functions: v.pipe(v.array(v.picklist(['sound', 'video', 'lights', 'network'])), v.minLength(1)),
@@ -230,6 +248,7 @@ export const Show = v.object({
   desk: v.optional(v.object({ model: text(80), showFile: text(120) }), {}),
   stage: Stage,
   layers: v.array(Layer),
+  customItems: v.optional(v.record(id, CustomItem), {}),
   elements: v.record(id, PlanElement),
   channels: v.optional(v.record(id, InputChannel), {}),
   outputs: v.optional(v.record(id, Output), {}),
@@ -263,6 +282,7 @@ export type Hospitality = v.InferOutput<typeof Hospitality>;
 export type Contract = v.InferOutput<typeof Contract>;
 export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
+export type CustomItem = v.InferOutput<typeof CustomItem>;
 export type Layer = v.InferOutput<typeof Layer>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;
 export type Output = v.InferOutput<typeof Output>;

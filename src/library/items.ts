@@ -1,3 +1,4 @@
+import { customItemById, customItems } from './custom.ts';
 import { MORE_DEFS } from './items-more.ts';
 import type { Bilingual, Category, LayerSubject, LibraryItem, SuggestedChannel } from './types.ts';
 
@@ -99,12 +100,13 @@ export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS].map((
 }));
 
 const BY_ID = new Map(ITEMS.map((i) => [i.id, i]));
-export const itemById = (id: string): LibraryItem | undefined => BY_ID.get(id);
+export const itemById = (id: string): LibraryItem | undefined => BY_ID.get(id) ?? customItemById(id);
 
 /** Accent-insensitive search over names and tags, in both languages. */
 export function searchItems(query: string): LibraryItem[] {
   const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
   const q = norm(query).trim();
-  if (!q) return ITEMS;
-  return ITEMS.filter((i) => [i.name.es, i.name.en, ...i.tags].some((t) => norm(t).includes(q)));
+  const all = [...customItems(), ...ITEMS];
+  if (!q) return all;
+  return all.filter((i) => [i.name.es, i.name.en, ...i.tags].some((t) => norm(t).includes(q)));
 }

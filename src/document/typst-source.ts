@@ -1,5 +1,6 @@
 // Builds the Typst source of the rider from a show. Every user string goes in as a Typst string literal, so nothing a
 // user types can be read as markup or code.
+import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
@@ -90,7 +91,10 @@ const ROWS_PER_PAGE = { portrait: 32, landscape: 20 };
 /** The fewest blocks (1 to 4) with which the whole channel list fits on one page. */
 export const autoBlocks = (rows: number, landscape: boolean): number => Math.min(4, Math.max(1, Math.ceil(rows / ROWS_PER_PAGE[landscape ? 'landscape' : 'portrait'])));
 
-export function buildDocument(show: Show, images: Record<string, Uint8Array> = {}): Built {
+/** The document source of a show; the show's own elements are drawn from the show itself, open or not. */
+export const buildDocument = (show: Show, images: Record<string, Uint8Array> = {}): Built => withCustomItems(show.customItems, () => buildDocumentIn(show, images));
+
+function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built {
   const D = docStrings(show.lang);
   const P = prodStrings(show.lang);
   const paper = PAPERS[show.paper];

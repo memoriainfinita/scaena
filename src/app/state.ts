@@ -13,12 +13,13 @@ import { newShow } from '../model/new.ts';
 import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops.ts';
 import type { Module, PlanElement, Show } from '../model/schema.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
+import { setCustomSource } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
 
 export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
-export type Dialog = 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | 'menu' | null;
+export type Dialog = 'customItem' | 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | 'menu' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
 export interface Settings {
@@ -166,6 +167,7 @@ export class Session {
 }
 
 export const session = signal<Session | null>(null);
+setCustomSource(() => session.value?.show.value.customItems ?? {});
 export const view = signal<ViewId>('plan');
 export const selection = signal<string[]>([]);
 export const dialog = signal<Dialog>(null);

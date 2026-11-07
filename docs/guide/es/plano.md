@@ -39,3 +39,11 @@ En **Ajustes del montaje → Escenario**: ancho y fondo, un **ancho de proscenio
 ## Mover la vista
 
 Rueda del ratón para acercar, **Espacio** + arrastrar (o la herramienta Mano) para desplazar, **0** para encajar el plano. En el móvil: dos dedos. Ver [Atajos](atajos.md).
+
+## Capas propias
+
+Bajo la lista de capas, escribe un nombre y pulsa **Añadir capa** para crear una capa tuya (hasta 20). Se puede renombrar, subir o bajar (las de arriba se dibujan sobre las de abajo) y quitar; al quitarla, sus elementos vuelven a la capa de su tipo. Para pasar un elemento a una capa, elígela en el campo **Capa** del inspector.
+
+## Elementos propios
+
+**Crear elemento propio** (arriba de la biblioteca) toma un dibujo SVG de hasta 200 KB y pide nombre, tamaño real, altura, peso, potencia y capa. El dibujo se reconstruye solo con formas, trazados, grupos y colores lisos: el texto, las imágenes, los degradados, los enlaces, los estilos y los scripts se omiten (el diálogo dice cuántas partes), y los trazos se redibujan a 1,5 px. El elemento vive en el montaje y viaja en el archivo `.scaena`; sale el primero en las búsquedas de la biblioteca y solo se puede borrar cuando ya no está en el plano.
