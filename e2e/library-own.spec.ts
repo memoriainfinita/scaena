@@ -16,6 +16,7 @@ test('your own layers: add, move an element to it, rename and remove @a11y', asy
   await expect(page.getByLabel('Nombre de la capa Vestuario')).toBeVisible();
   expect((await axe(page)).violations).toEqual([]);
 
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
   const layer = page.getByRole('combobox', { name: 'Capa' });
   await expect(layer).toHaveValue('l-stage');
@@ -64,6 +65,7 @@ test('your own element: a drawing is cleaned, saved, placed, and kept while it i
 
   const before = Number((await page.getByText(/\d+ elementos/).textContent())!.match(/\d+/)![0]);
   await page.getByPlaceholder('Buscar en la biblioteca').fill('regiduria');
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Mesa de regiduría');
   await page.getByRole('button', { name: 'Añadir Mesa de regiduría al plano' }).click();
   await expect(page.getByText(`${before + 1} elementos`)).toBeVisible();
   await expect(page.locator('g.el[aria-label="Mesa de regiduría"] circle')).toHaveCount(1);
@@ -75,15 +77,15 @@ test('your own element: a drawing is cleaned, saved, placed, and kept while it i
 test('a luminaire can be given a model from the Open Fixture Library, with its source and a note @a11y', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Teatro con micros/ }).click();
-  await page.getByRole('button', { name: /^Recorte 1$/ }).first().click();
+  await page.getByRole('button', { name: /^Fresnel 1$/ }).first().click();
   const model = page.getByLabel('Modelo', { exact: true });
   await model.selectOption('ofl.etc.colorsource-par');
   await expect(page.getByText(/Datos aportados por voluntarios/)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Open Fixture Library' })).toHaveAttribute('href', 'https://open-fixture-library.org/etc/colorsource-par');
   expect((await axe(page)).violations).toEqual([]);
   await page.getByRole('button', { name: 'Luces', exact: true }).click();
-  await expect(page.getByLabel('Potencia (W) · Recorte 1', { exact: true })).toHaveValue('90');
-  await expect(page.getByLabel('Modelo · Recorte 1', { exact: true })).toHaveValue('ofl.etc.colorsource-par');
+  await expect(page.getByLabel('Potencia (W) · Fresnel 1', { exact: true })).toHaveValue('90');
+  await expect(page.getByLabel('Modelo · Fresnel 1', { exact: true })).toHaveValue('ofl.etc.colorsource-par');
 });
 
 test('the drawing file for the test is what the page was written for', () => {

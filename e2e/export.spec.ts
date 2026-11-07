@@ -19,12 +19,12 @@ test('the reports view lists a report as a table and downloads it as CSV @a11y',
   await page.getByRole('button', { name: 'Informes', exact: true }).click();
   await expect(page.getByRole('navigation', { name: 'Informes' })).toBeVisible();
   await page.getByRole('button', { name: 'Lista de instrumentos' }).click();
-  await expect(page.getByRole('table')).toContainText('Recorte 1');
+  await expect(page.getByRole('table')).toContainText('Fresnel 1');
   expect((await axe(page)).violations).toEqual([]);
   const f = await downloaded(page, () => page.getByRole('button', { name: 'Descargar CSV' }).click());
   expect(f.name).toBe('Teatro-con-micros-de-diadema-instruments.csv');
   expect(f.bytes.subarray(0, 3).toString('hex')).toBe('efbbbf'); // byte-order mark
-  expect(f.bytes.toString('utf8')).toContain('Recorte 1');
+  expect(f.bytes.toString('utf8')).toContain('Fresnel 1');
 });
 
 test('the export menu gives the plan as SVG and PNG and the lists as a zip of CSVs @a11y', async ({ page }) => {
@@ -70,8 +70,9 @@ test('revisions: save two, read what changed, compare, restore and undo, and mak
   await expect(dlg.getByText('Revisión 1 guardada.')).toBeVisible();
   await page.keyboard.press('Escape');
 
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Revisiones' }).click();
   await dlg.getByLabel('Nota de la revisión').fill('Con una persona más');
   await dlg.getByRole('button', { name: 'Guardar revisión' }).click();
@@ -98,9 +99,9 @@ test('revisions: save two, read what changed, compare, restore and undo, and mak
   await dlg.getByRole('listitem').filter({ hasText: 'Revisión 1' }).getByRole('button', { name: 'Restaurar' }).click();
   await expect(dlg.getByText(/Revisión 1 restaurada/)).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
 
   await page.getByRole('button', { name: 'Revisiones' }).click();
   const sheet = await downloaded(page, () => dlg.getByRole('listitem').filter({ hasText: 'Revisión 2' }).getByRole('button', { name: 'Hoja de actualización' }).click());

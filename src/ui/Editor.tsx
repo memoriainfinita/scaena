@@ -2,9 +2,9 @@ import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.t
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
-import { addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
+import { activeLayer, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
-import { ITEMS, itemById, searchItems } from '../library/items.ts';
+import { CATEGORY_ORDER, ITEMS, isCustomItem, itemById, searchItems } from '../library/items.ts';
 import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
 import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
@@ -151,13 +151,13 @@ function Toolbar() {
 
 /** Items drawn before "see all": about 780 buttons with icons would slow the page and the accessibility checks. */
 const LIBRARY_PAGE = 60;
-const LIBRARY_CATEGORIES = [...new Set(ITEMS.map((i) => i.category))];
+const LIBRARY_CATEGORIES = [...new Set([...CATEGORY_ORDER, ...ITEMS.map((i) => i.category)])].filter((c) => ITEMS.some((i) => i.category === c));
 
 function Library() {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('');
   const [more, setMore] = useState(false);
-  const found = useMemo(() => searchItems(query).filter((i) => !cat || i.category === cat), [query, cat]);
+  const found = useMemo(() => searchItems(query, lang.value).filter((i) => !cat || i.category === cat), [query, cat, lang.value]);
   const items = more ? found : found.slice(0, LIBRARY_PAGE);
   const l = lang.value;
   void iconsVersion.value; // redraw the thumbnails as sheets arrive
@@ -187,7 +187,12 @@ function Library() {
       </button>
       <div class="list">
         {found.length === 0 && <p class="muted" style="grid-column:1/-1">{t('library.none', { query })}</p>}
-        {items.map((i) => (
+        {items.map((i, n) => {
+          const group = isCustomItem(i) ? 'custom' : i.category;
+          const head = !query.trim() && !cat && (n === 0 || group !== (isCustomItem(items[n - 1]!) ? 'custom' : items[n - 1]!.category));
+          return (
+          <>
+          {head && <h3 class="lib-head" key={`h-${group}`}>{t(`library.cat.${group}` as Key)}</h3>}
           <button key={i.id} type="button" class="lib-item" title={t('library.add', { name: i.name[l] })} aria-label={t('library.add', { name: i.name[l] })} draggable onDragStart={(e) => {
             e.dataTransfer?.setData(LIBRARY_DRAG, i.id);
             if (e.dataTransfer) e.dataTransfer.effectAllowed = 'copy';
@@ -195,7 +200,9 @@ function Library() {
             <span class="sym" aria-hidden="true" dangerouslySetInnerHTML={{ __html: (iconKeyOf(i.id) && iconThumb(iconKeyOf(i.id)!, '')) || symbolSvg(i.symbol, i.size.w, i.size.d, '') }} />
             <span>{i.name[l]}</span>
           </button>
-        ))}
+          </>
+          );
+        })}
         {found.length > LIBRARY_PAGE && (
           <button type="button" class="btn" style="grid-column:1/-1" onClick={() => setMore(!more)}>
             {more ? t('library.fewer') : t('library.all', { n: found.length })}
@@ -300,26 +307,29 @@ function Inspector({ show }: { show: Show }) {
         {show.layers.map((l) => {
           const name = DEFAULT_LAYER_IDS.has(l.id) ? t(`layer.${l.subject}` as Key) : l.name;
           return (
-            <div class="layer" key={l.id}>
-              <span class="swatch" aria-hidden="true" />
+            <div class={`layer${l.subject === 'custom' ? ' custom' : ''}`} key={l.id}>
+              {l.subject !== 'custom' && <span class="swatch" aria-hidden="true" />}
               {l.subject === 'custom' ? (
-                <input class="input" style="flex:1;min-width:0" aria-label={t('layers.rename', { name })} value={l.name} maxLength={80} onChange={(e) => renameCustomLayer(l.id, (e.currentTarget as HTMLInputElement).value)} />
+                <input class="input name" aria-label={t('layers.rename', { name })} value={l.name} maxLength={80} onChange={(e) => renameCustomLayer(l.id, (e.currentTarget as HTMLInputElement).value)} />
               ) : (
                 <span style="flex:1">{name}</span>
               )}
               {l.subject === 'custom' && (
                 <>
-                  <button type="button" class="btn" aria-label={t('layers.up', { name })} title={t('layers.up', { name })} onClick={() => moveCustomLayer(l.id, 1)}>
+                  <button type="button" class="btn mini" aria-label={t('layers.up', { name })} title={t('layers.up', { name })} onClick={() => moveCustomLayer(l.id, 1)}>
                     ↑
                   </button>
-                  <button type="button" class="btn" aria-label={t('layers.down', { name })} title={t('layers.down', { name })} onClick={() => moveCustomLayer(l.id, -1)}>
+                  <button type="button" class="btn mini" aria-label={t('layers.down', { name })} title={t('layers.down', { name })} onClick={() => moveCustomLayer(l.id, -1)}>
                     ↓
                   </button>
-                  <button type="button" class="btn" aria-label={t('layers.remove', { name })} title={t('layers.remove', { name })} onClick={() => removeCustomLayer(l.id)}>
+                  <button type="button" class="btn mini" aria-label={t('layers.remove', { name })} title={t('layers.remove', { name })} onClick={() => removeCustomLayer(l.id)}>
                     ×
                   </button>
                 </>
               )}
+              <button type="button" class="btn mini" aria-pressed={activeLayer.value === l.id} aria-label={t('layers.active', { name })} title={t('layers.active', { name })} onClick={() => (activeLayer.value = activeLayer.value === l.id ? null : l.id)}>
+                +
+              </button>
               <label title={t('layers.show', { name })}>
                 <input type="checkbox" aria-label={t('layers.show', { name })} checked={l.visible} onChange={(e) => setLayerFlag(l.id, 'visible', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconEye />

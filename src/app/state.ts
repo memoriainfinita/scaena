@@ -290,13 +290,17 @@ export async function goHome(): Promise<void> {
  * Places a library item: where the user dropped it, or in the first free spot near the middle of the stage. An item that
  * comes with suggested channels (a drum kit, a vocal mic) also adds them to the input list, tied to it, in the same undo step.
  */
+/** Layer that receives new library items; null means each item goes to the layer of its own kind. */
+export const activeLayer = signal<string | null>(null);
+
 export function addFromLibrary(itemId: string, at?: { x: number; y: number }): string | null {
   const s = session.value;
   const item = itemById(itemId);
   if (!s || !item) return null;
   let created: PlanElement | null = null;
   s.commit((show) => {
-    const layer = show.layers.find((l) => l.subject === item.layer);
+    const chosen = activeLayer.value ? show.layers.find((l) => l.id === activeLayer.value && !l.locked) : undefined;
+    const layer = chosen ?? show.layers.find((l) => l.subject === item.layer);
     if (!layer) return show;
     const [next, el] = addElement(show, {
       type: { id: item.id, version: item.version },

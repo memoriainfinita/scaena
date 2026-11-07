@@ -6,7 +6,7 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 async function rock(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
   await expect(page.locator('g.el').first()).toBeVisible();
 }
 
@@ -44,9 +44,9 @@ test('a marquee selects what it touches and Escape lets go', async ({ page }) =>
   await page.mouse.down();
   await page.mouse.move(area.x + area.width - 4, area.y + area.height - 4, { steps: 8 });
   await page.mouse.up();
-  await expect(page.getByText('16 seleccionados')).toBeVisible();
+  await expect(page.getByText('35 seleccionados')).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByText('16 seleccionados')).toHaveCount(0);
+  await expect(page.getByText('35 seleccionados')).toHaveCount(0);
 });
 
 test('keyboard: arrows move, R turns, Ctrl+D duplicates, Delete removes', async ({ page }) => {
@@ -61,11 +61,11 @@ test('keyboard: arrows move, R turns, Ctrl+D duplicates, Delete removes', async 
   await page.keyboard.press('r');
   await expect(page.getByLabel('Giro')).toHaveValue('15');
   await page.keyboard.press('Control+d');
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   await page.keyboard.press('Delete');
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
   await page.keyboard.press('Control+z');
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
 });
 
 test('the wheel zooms about the cursor and 0 fits the plan again', async ({ page }) => {
@@ -83,20 +83,20 @@ test('the wheel zooms about the cursor and 0 fits the plan again', async ({ page
 
 test('two selected elements align to the left edge', async ({ page }) => {
   await rock(page);
-  const hits = page.locator('g.el[data-id] .hit');
-  const a = await hits.nth(0).boundingBox();
-  const b = await hits.nth(3).boundingBox();
+  const hit = (name: string) => page.locator(`g.el[aria-label="${name}"] .hit`);
+  const a = await hit('Guitarra 1').boundingBox();
+  const b = await hit('Teclado').boundingBox();
   await page.mouse.click(a!.x + a!.width / 2, a!.y + a!.height / 2);
   await page.keyboard.down('Shift');
   await page.mouse.click(b!.x + b!.width / 2, b!.y + b!.height / 2);
   await page.keyboard.up('Shift');
   await expect(page.getByText('2 seleccionados')).toBeVisible();
   await page.getByRole('button', { name: 'Alinear a la izquierda' }).click();
-  const a2 = (await hits.nth(0).boundingBox())!;
-  const b2 = (await hits.nth(3).boundingBox())!;
+  const a2 = (await hit('Guitarra 1').boundingBox())!;
+  const b2 = (await hit('Teclado').boundingBox())!;
   expect(Math.abs(a2.x - b2.x)).toBeLessThan(1.5);
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  const b3 = (await hits.nth(3).boundingBox())!;
+  const b3 = (await hit('Teclado').boundingBox())!;
   expect(Math.abs(b3.x - b!.x)).toBeLessThan(3); // the selection outline adds a stroke
 });
 
@@ -110,7 +110,7 @@ test('measure shows a distance and text places a note ready to type', async ({ p
 
   await page.getByRole('button', { name: 'Texto', exact: true }).click();
   await page.mouse.click(area.x + 300, area.y + 300);
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   const label = page.getByLabel('Etiqueta');
   await expect(label).toBeFocused();
   await label.fill('Bajar el telón');
@@ -124,10 +124,11 @@ test('a locked layer cannot be selected and a hidden one is not drawn', async ({
   const hits = page.locator('g.el[data-id] .hit');
   const n = await hits.count();
   expect(n).toBeGreaterThan(5);
-  const first = page.locator('g.el[data-id]').first();
-  await expect(first).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.locator('g.el[data-id][aria-disabled="true"]').first()).toBeVisible();
+  const all = await page.locator('g.el[data-id]').count();
   await page.getByRole('checkbox', { name: 'Mostrar Audio' }).uncheck();
-  await expect(page.locator('g.el[data-id]')).toHaveCount(0);
+  await expect.poll(() => page.locator('g.el[data-id]').count()).toBeLessThan(all - 5);
+  await expect(page.locator('g.el[data-id][aria-disabled="true"]')).toHaveCount(0);
 });
 
 test('the plan with a selection has no accessibility violations @a11y', async ({ page }) => {
@@ -147,7 +148,7 @@ test('an item dragged from the library lands where it is dropped, and the other 
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('atril');
   const item = page.getByRole('button', { name: /^Añadir Atril de conferencia al plano/ });
   await item.dragTo(page.locator('svg.plansvg'), { targetPosition: { x: area.width * 0.25, y: area.height * 0.25 } });
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   await expect(page.getByLabel('X (m)')).toBeVisible();
   const x = Number(await page.getByLabel('X (m)').inputValue());
   expect(x).toBeLessThan(4); // dropped in the left part of an 8 m stage
@@ -155,4 +156,37 @@ test('an item dragged from the library lands where it is dropped, and the other 
   await expect(page.getByRole('toolbar', { name: 'Herramientas' })).toHaveCount(0);
   await expect(page.getByRole('searchbox', { name: 'Buscar en la biblioteca' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Capas' })).toHaveCount(0);
+});
+
+test('the connection lines can be hidden and shown again', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  const lines = page.locator('svg.plansvg line[stroke="#0b6e78"]');
+  await expect(lines.first()).toBeVisible();
+  const button = page.getByRole('button', { name: 'Líneas de conexión' });
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+  await button.click();
+  await expect(lines).toHaveCount(0);
+  await expect(button).toHaveAttribute('aria-pressed', 'false');
+  await button.click();
+  await expect(lines.first()).toBeVisible();
+});
+
+test('the library lists by category with headings, and a layer made active receives new elements', async ({ page }) => {
+  await rock(page);
+  const list = page.locator('.library .list');
+  await expect(list.getByRole('heading').first()).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('guitarra');
+  await expect(list.getByRole('heading')).toHaveCount(0);
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('');
+  await page.getByLabel('Nombre de la capa nueva').fill('Extras');
+  await page.getByRole('button', { name: 'Añadir capa' }).click();
+  const name = page.getByLabel('Nombre de la capa Extras');
+  await expect(name).toBeVisible();
+  const box = (await name.boundingBox())!;
+  expect(box.width).toBeGreaterThan(120); // the name is readable, on its own line
+  await page.getByRole('button', { name: 'Nuevos elementos a la capa Extras' }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
+  await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
+  await expect(page.locator('label.field').filter({ hasText: /^Capa/ }).locator('option:checked')).toHaveText('Extras');
 });

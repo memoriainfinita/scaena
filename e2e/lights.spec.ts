@@ -13,50 +13,42 @@ async function theatre(page: Page) {
 
 test('instruments are listed with their mount, numbered, and edited in the table @a11y', async ({ page }) => {
   await theatre(page);
-  await expect(page.getByLabel('Montaje · Recorte 1', { exact: true })).toHaveValue(/m\d+/);
+  await expect(page.getByLabel('Montaje · Fresnel 1', { exact: true })).toHaveValue(/m\d+/);
   await page.getByRole('button', { name: 'Numerar instrumentos' }).click();
   const units = await page.locator('input[aria-label^="Unidad ·"]').evaluateAll((els) => els.map((e) => Number((e as HTMLInputElement).value)).sort((a, b) => a - b));
   expect(units.length).toBeGreaterThan(2);
   expect(units).toEqual(units.map((_, i) => i + 1));
-  await L(page, 'Canal · Recorte 1').fill('21');
-  await L(page, 'Canal · Recorte 1').press('Tab');
-  await expect(L(page, 'Canal · Recorte 1')).toHaveValue('21');
-  await L(page, 'Modelo · Recorte 1').selectOption({ label: 'ETC Source Four 19°' });
-  await expect(L(page, 'Potencia (W) · Recorte 1')).toHaveValue('750');
+  await L(page, 'Canal · Fresnel 1').fill('21');
+  await L(page, 'Canal · Fresnel 1').press('Tab');
+  await expect(L(page, 'Canal · Fresnel 1')).toHaveValue('21');
+  const model = await L(page, 'Modelo · Fresnel 1').inputValue();
+  await L(page, 'Modelo · Fresnel 1').selectOption({ label: 'ETC Source Four 19°' });
+  await expect(L(page, 'Potencia (W) · Fresnel 1')).toHaveValue('750');
   await expect(page.getByRole('region', { name: 'Recuento por montaje' })).toContainText('Vara 1');
   expect((await axe(page)).violations).toEqual([]);
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  await expect(L(page, 'Modelo · Recorte 1')).toHaveValue('');
+  await expect(L(page, 'Modelo · Fresnel 1')).toHaveValue(model);
 });
 
 test('mounts: a load limit flags an overloaded bar and the section draws it @a11y', async ({ page }) => {
   await theatre(page);
   await page.getByRole('button', { name: 'Montajes', exact: true }).click();
-  await L(page, 'Carga máx. (kg) · Vara 1').fill('1');
-  await L(page, 'Carga máx. (kg) · Vara 1').press('Tab');
-  await L(page, 'Altura sobre la tarima (m) · Vara 1').fill('5.5');
-  await L(page, 'Altura sobre la tarima (m) · Vara 1').press('Tab');
-  // Weights are empty until a model is picked, so the bar is not overloaded yet.
-  await expect(page.getByRole('note')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Instrumentos', exact: true }).click();
-  for (const n of [1, 2, 3]) await L(page, `Modelo · Recorte ${n}`).selectOption({ label: 'ETC Source Four 19°' });
+  await L(page, 'Carga máx. (kg) · Vara 2').fill('1');
+  await L(page, 'Carga máx. (kg) · Vara 2').press('Tab');
+  await L(page, 'Altura sobre la tarima (m) · Vara 2').fill('5.5');
+  await L(page, 'Altura sobre la tarima (m) · Vara 2').press('Tab');
   await expect(page.getByRole('note').first()).toContainText('Supera la carga máxima');
   await page.getByRole('button', { name: 'Sección', exact: true }).click();
-  await expect(page.getByRole('img', { name: /Sección lateral/ })).toContainText('Vara 1');
+  await expect(page.getByRole('img', { name: /Sección lateral/ })).toContainText('Vara 2');
   await expect(page.getByRole('img', { name: /Sección lateral/ })).toContainText('5,5 m');
   expect((await axe(page)).violations).toEqual([]);
 });
 
 test('electrical: circuits give power and amps, and phases add up @a11y', async ({ page }) => {
   await theatre(page);
-  for (const n of [1, 2, 3]) {
-    await L(page, `Modelo · Recorte ${n}`).selectOption({ label: 'ETC Source Four 19°' });
-    await L(page, `Circuito · Recorte ${n}`).fill(String(n === 3 ? 2 : 1));
-    await L(page, `Circuito · Recorte ${n}`).press('Tab');
-  }
   await page.getByRole('button', { name: 'Eléctrica', exact: true }).click();
   const circuits = page.getByRole('table', { name: 'Circuitos' });
-  await expect(circuits.getByRole('row')).toHaveCount(3); // header and two circuits
+  await expect(circuits.getByRole('row')).toHaveCount(17); // header and the sixteen circuits of the example
   await L(page, 'Fase · Circuito 1').selectOption('1');
   await expect(page.getByRole('table', { name: 'Fases' })).toContainText('L1');
   expect((await axe(page)).violations).toEqual([]);
@@ -104,7 +96,7 @@ test('work notes are added, ticked off and removed, and the new reports are offe
   await page.getByLabel('Nueva nota').fill('Reenfocar la calle 2');
   await page.getByRole('button', { name: 'Añadir', exact: true }).click();
   await expect(page.getByText('Reenfocar la calle 2')).toBeVisible();
-  await page.getByRole('checkbox', { name: /Marcar como hecha/ }).check();
+  await page.getByRole('checkbox', { name: /Marcar como hecha/ }).first().check();
   expect((await axe(page)).violations).toEqual([]);
   await page.getByRole('button', { name: 'Informes', exact: true }).click();
   for (const name of ['Recuento de equipo', 'Hoja resumen de canales', 'Notas de trabajo']) await expect(page.getByRole('button', { name })).toBeVisible();
@@ -112,8 +104,10 @@ test('work notes are added, ticked off and removed, and the new reports are offe
   await expect(page.getByRole('table')).toContainText('Reenfocar la calle 2');
   await page.getByRole('button', { name: 'Luces', exact: true }).click();
   await page.getByRole('button', { name: 'Notas', exact: true }).click();
-  await page.getByRole('button', { name: /Quitar nota/ }).click();
-  await expect(page.getByText('Aún no hay notas de trabajo.')).toBeVisible();
+  const remove = page.getByRole('button', { name: /Quitar nota/ });
+  const n = await remove.count();
+  await remove.first().click();
+  await expect(remove).toHaveCount(n - 1);
 });
 
 test('magic sheet: an instrument is moved with the keyboard and the mouse, undone and reset @a11y', async ({ page }) => {
@@ -122,7 +116,7 @@ test('magic sheet: an instrument is moved with the keyboard and the mouse, undon
   const sheet = page.getByRole('group', { name: /^Magic sheet: \d+ instrumentos/ });
   const reset = page.getByRole('button', { name: 'Restablecer disposición' });
   await expect(reset).toBeDisabled();
-  const first = sheet.getByRole('button', { name: /^Instrumento, canal/ }).first();
+  const first = sheet.getByRole('button', { name: /^Instrumento, canal/ }).last();
   const id = (await first.getAttribute('data-id'))!;
   const circle = sheet.locator(`g.mi[data-id="${id}"] circle`);
   const cx = async () => Number(await circle.getAttribute('cx'));

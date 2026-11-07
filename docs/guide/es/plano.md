@@ -4,7 +4,7 @@
 
 ![Buscar en la biblioteca](img/biblioteca.png)
 
-La biblioteca tiene unos 780 elementos dibujados como iconos de línea. Búscalos (sin importar los acentos), acota con el menú **Categoría** sobre la lista y pulsa el elemento: aparece en el primer hueco libre del escenario, seleccionado. Arrástralo para colocarlo; se ajusta a la cuadrícula (**Alt** al arrastrar la desactiva). En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el inspector puedes escribir la etiqueta, quién lo aporta (banda, sala, alquiler), notas, posición y giro.
+La biblioteca tiene unos 780 elementos dibujados como iconos de línea. Sin búsqueda sale ordenada por categorías (tus elementos primero), cada una con su título y por nombre dentro; al buscar (sin importar los acentos) salen antes los nombres que empiezan por lo escrito. Acota con el menú **Categoría** sobre la lista y pulsa el elemento: aparece en el primer hueco libre del escenario, seleccionado. Arrástralo para colocarlo; se ajusta a la cuadrícula (**Alt** al arrastrar la desactiva). En el plano el icono y el contorno fino que hay debajo, la huella real con su línea frontal, giran juntos con el elemento (las luces giran con su punto de mira); las etiquetas siguen rectas. Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. El botón **Líneas de conexión**, abajo junto a la cuadrícula, muestra u oculta los cables entre elementos; también vale para el plano del PDF y las exportaciones. En el inspector puedes escribir la etiqueta, quién lo aporta (banda, sala, alquiler), notas, posición y giro.
 
 ## Seleccionar y editar varios a la vez
 
@@ -43,7 +43,7 @@ Rueda del ratón para acercar, **Espacio** + arrastrar (o la herramienta Mano) p
 
 ## Capas propias
 
-Bajo la lista de capas, escribe un nombre y pulsa **Añadir capa** para crear una capa tuya (hasta 20). Se puede renombrar, subir o bajar (las de arriba se dibujan sobre las de abajo) y quitar; al quitarla, sus elementos vuelven a la capa de su tipo. Para pasar un elemento a una capa, elígela en el campo **Capa** del inspector.
+Bajo la lista de capas, escribe un nombre y pulsa **Añadir capa** para crear una capa tuya (hasta 20). El botón **+** de una capa hace que reciba los elementos nuevos de la biblioteca (púlsalo otra vez para volver a la capa propia de cada uno); para mover elementos que ya están en el plano, selecciónalos y cambia **Capa** en el inspector. Se puede renombrar, subir o bajar (las de arriba se dibujan sobre las de abajo) y quitar; al quitarla, sus elementos vuelven a la capa de su tipo. Para pasar un elemento a una capa, elígela en el campo **Capa** del inspector.
 
 ## Elementos propios
 

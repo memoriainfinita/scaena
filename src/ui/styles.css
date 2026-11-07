@@ -137,7 +137,11 @@ textarea.input { height: auto; padding: 8px 10px; resize: vertical; }
 .panel { padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 .panel h2 { margin: 0; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.layer { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+.layer { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; min-height: 28px; }
+.layer .name { flex: 1 1 100%; min-width: 0; }
+.layer:not(.custom) { flex-wrap: nowrap; }
+.layer > span:not(.swatch) { flex: 1 1 0; min-width: 0; }
+.btn.mini { height: 24px; min-width: 24px; padding: 0 6px; }
 .layer .swatch { width: 10px; height: 10px; border-radius: 2px; background: var(--muted); }
 .layer label { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
 .statusbar { height: 28px; padding: 0 16px; display: flex; align-items: center; gap: 20px; background: var(--panel); border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
@@ -350,3 +354,5 @@ main.canvas:focus { outline: none; }
 .vtx:focus circle { stroke: #000; stroke-width: 3; }
 .vtx.mid circle { fill: #fff; stroke: #0b6e78; }
 .vtx.mid path { stroke: #0b6e78; stroke-width: 1.5; fill: none; vector-effect: non-scaling-stroke; pointer-events: none; }
+
+.lib-head { grid-column: 1 / -1; margin: 8px 0 0; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }

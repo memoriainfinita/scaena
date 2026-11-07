@@ -6,12 +6,15 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 test('the warnings dialog lists findings in words, filters them, and goes to the thing @a11y', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Teatro con micros/ }).click();
+  // The example is complete, so take the model off one light to have a warning with its reason.
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await page.getByLabel('Modelo · Fresnel 1', { exact: true }).selectOption('');
   const bar = page.getByRole('button', { name: /^Avisos · \d+ avisos?$/ });
   await expect(bar).toBeVisible();
   await bar.click();
   const dlg = page.getByRole('dialog', { name: 'Avisos' });
   await expect(dlg).toBeVisible();
-  // The theatre package has lights with no model: a warning with its reason in text.
+  // A warning with its reason in text.
   await expect(dlg.getByText(/le falta: modelo/).first()).toBeVisible();
   expect((await axe(page)).violations).toEqual([]);
   // Filtering by severity hides the group.
@@ -24,7 +27,7 @@ test('the warnings dialog lists findings in words, filters them, and goes to the
   await expect(page.getByText('1 seleccionado', { exact: true })).toBeVisible();
 });
 
-test('an unnamed channel shows a mark in its row with the reason, and the plan shows a badge', async ({ page }) => {
+test('an unnamed channel shows a mark in its row with the reason', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await page.getByRole('button', { name: 'Entradas', exact: true }).click();
@@ -33,9 +36,6 @@ test('an unnamed channel shows a mark in its row with the reason, and the plan s
   await name.press('Tab');
   const mark = page.getByRole('img', { name: /^Aviso: Al canal 1 le falta: nombre corto/ });
   await expect(mark).toBeVisible();
-  await page.getByRole('button', { name: 'Plano', exact: true }).click();
-  // Rock has guitar amps and keys with no supplier set: tips show as badges on the plan.
-  await expect(page.locator('g.el svg, g.el rect[rx="40"]').first()).toBeAttached();
 });
 
 test('warnings never block exporting', async ({ page }) => {

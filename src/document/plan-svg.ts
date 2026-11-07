@@ -121,7 +121,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   }
 
   const visible = (id: string) => !!show.elements[id] && !!layers.get(show.elements[id]!.layerId)?.l.visible;
-  for (const c of Object.values(show.connections)) {
+  for (const c of show.view.links ? Object.values(show.connections) : []) {
     if (!visible(c.from) || !visible(c.to)) continue;
     const a = show.elements[c.from]!;
     const b = show.elements[c.to]!;
@@ -172,9 +172,7 @@ function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Sh
   let s = `<g transform="translate(${e.x} ${e.y})"${opacity}>`;
   const key = iconKeyOf(it.id);
   const icon = key && iconData(key) ? key : undefined;
-  const turns = it.category === 'light';
-  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(icon ? footprintBody(w, d) : symbolBody(it.symbol, w, d), f)}${icon && turns ? iconUse(icon, w, d) : ''}</g>`;
-  if (icon && !turns) s += `<g transform="scale(${e.flipX ? -1 : 1} 1)">${iconUse(icon, w, d, 0, 0)}</g>`;
+  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(icon ? footprintBody(w, d) : symbolBody(it.symbol, w, d), f)}${icon ? iconUse(icon, w, d) : ''}</g>`;
   if (it.symbol === 'dimension') s += `<g transform="rotate(${e.rotation})"><text x="0" y="${r(-d / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label || formatLength(w, units, lang))}</text></g>`;
   else if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
   else if (e.label) s += `<text x="0" y="${r(box.y1 - e.y + 2.6 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;

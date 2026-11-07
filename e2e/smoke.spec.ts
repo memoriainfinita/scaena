@@ -15,15 +15,16 @@ test('creates a rock show, edits it, undoes, and the editor has no violations @a
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await expect(page.getByText('17 canales')).toBeVisible();
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
 
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Inspector' })).toBeVisible();
   await page.getByRole('button', { name: 'Deshacer' }).click();
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
   await page.getByRole('button', { name: 'Rehacer' }).click();
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
 
   // Library search, with accents ignored.
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('bateria');
@@ -40,7 +41,7 @@ test('creates a rock show, edits it, undoes, and the editor has no violations @a
 
 test('show settings turn a module on and the tab appears @a11y', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: /Cantautor/ }).click();
   await expect(page.getByRole('button', { name: 'Luces', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
   const dlg = page.getByRole('dialog', { name: 'Ajustes del montaje' });
@@ -82,10 +83,11 @@ test('language and theme switch the whole interface @a11y', async ({ page }) => 
 test('keyboard shortcuts: ? opens help, Ctrl+Z undoes', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
-  await expect(page.getByText('17 elementos')).toBeVisible();
+  await expect(page.getByText('36 elementos')).toBeVisible();
   await page.keyboard.press('Control+z');
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
   await page.keyboard.press('?');
   await expect(page.getByRole('dialog', { name: 'Atajos de teclado' })).toBeVisible();
 });

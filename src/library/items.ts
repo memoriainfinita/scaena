@@ -103,11 +103,34 @@ export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...IC
 const BY_ID = new Map(ITEMS.map((i) => [i.id, i]));
 export const itemById = (id: string): LibraryItem | undefined => BY_ID.get(id) ?? customItemById(id);
 
-/** Accent-insensitive search over names and tags, in both languages. */
-export function searchItems(query: string): LibraryItem[] {
-  const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+/** The order the categories are listed in: what is on a stage first, then the room, production and the technical side. */
+export const CATEGORY_ORDER: Category[] = ['vocals', 'guitar', 'amp', 'keys', 'drums', 'strings', 'winds', 'dj', 'mic', 'desk', 'rack', 'pa', 'monitor', 'light', 'effect', 'video', 'control', 'network', 'power', 'person', 'furniture', 'scenery', 'room', 'site', 'rigging', 'machinery', 'safety', 'production'];
+const RANK = new Map(CATEGORY_ORDER.map((c, i) => [c, i]));
+const rank = (c: Category): number => RANK.get(c) ?? CATEGORY_ORDER.length;
+
+/** Own items are listed first, under their own heading; the rest by category. */
+export const isCustomItem = (i: LibraryItem): boolean => customItemById(i.id) !== undefined && !BY_ID.has(i.id);
+
+const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
+/** Accent-insensitive search over names and tags, in both languages. Without a query: own items, then by category, then by name. With one: names that start with it, then names that contain it, then tags. */
+export function searchItems(query: string, lang: 'es' | 'en' = 'es'): LibraryItem[] {
   const q = norm(query).trim();
   const all = [...customItems(), ...ITEMS];
-  if (!q) return all;
-  return all.filter((i) => [i.name.es, i.name.en, ...i.tags].some((t) => norm(t).includes(q)));
+  const byName = (a: LibraryItem, b: LibraryItem) => a.name[lang].localeCompare(b.name[lang], lang);
+  const byCategory = (a: LibraryItem, b: LibraryItem) => Number(isCustomItem(b)) - Number(isCustomItem(a)) || rank(a.category) - rank(b.category) || byName(a, b);
+  if (!q) return all.sort(byCategory);
+  const score = (i: LibraryItem): number => {
+    const names = [i.name[lang], i.name[lang === 'es' ? 'en' : 'es']].map(norm);
+    if (names[0]!.startsWith(q)) return 0;
+    if (names[0]!.split(/[\s/-]+/).some((w) => w.startsWith(q))) return 1;
+    if (names[0]!.includes(q)) return 2;
+    if (names[1]!.includes(q)) return 3;
+    return i.tags.some((t) => norm(t).includes(q)) ? 4 : -1;
+  };
+  return all
+    .map((i) => [i, score(i)] as const)
+    .filter(([, sc]) => sc >= 0)
+    .sort(([a, x], [b, y]) => x - y || byCategory(a, b))
+    .map(([i]) => i);
 }

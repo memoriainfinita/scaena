@@ -131,6 +131,10 @@ export function setLayerDim(layerId: string, dim: number): void {
   session.value?.commit((show) => ({ ...show, layers: show.layers.map((l) => (l.id === layerId ? { ...l, dim } : l)) }));
 }
 
+export function setLinks(on: boolean): void {
+  session.value?.commit((show) => ({ ...show, view: { ...show.view, links: on } }));
+}
+
 export function setGrid(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, grid: on } }));
 }

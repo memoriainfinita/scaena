@@ -3,13 +3,14 @@ import { buildDaySheet } from '../document/daysheet.ts';
 import { effectiveSections } from '../document/sections.ts';
 import { buildDocument, contractRows, hospitalityRows } from '../document/typst-source.ts';
 import { prodStrings } from '../document/strings.ts';
+import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { RULES } from '../validate/rules.ts';
 import { addSlot, addSong, formatDuration, isClock, moveSong, parseDuration, removeSlot, removeSong, setlistTotal, sortedSlots, toMinutes, updateSlot, updateSong } from './production.ts';
 import type { Show } from './schema.ts';
 
-const rock = (): Show => showFromPackage(packageById('rock')!, 'Mi banda', 'es');
+const rock = (): Show => bare(showFromPackage(packageById('rock')!, 'Mi banda', 'es'));
 
 describe('durations', () => {
   test('clock, minutes and seconds all read as seconds, and nonsense is null', () => {

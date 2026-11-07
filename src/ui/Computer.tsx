@@ -4,12 +4,20 @@ import { addComputerOutput, addProgram, dropConnection, removeComputerOutput, re
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms, suggestPrograms } from '../library/programs.ts';
-import { connectionsOf, SIGNALS } from '../model/connections.ts';
+import { connectionsOf, DEFAULT_CONNECTOR, SIGNALS, type SignalType } from '../model/connections.ts';
 import type { Computer, PlanElement, Show } from '../model/schema.ts';
 
 const FUNCTIONS = ['sound', 'video', 'lights', 'network'] as const;
 const OSES = ['windows', 'macos', 'linux', 'other'] as const;
 const CONNECTORS = ['hdmi', 'displayport', 'usbAudio', 'dante', 'dmx', 'midi', 'other'] as const;
+
+/** The connectors offered for each kind of cable; the field still takes anything. */
+const CABLES: Record<SignalType, string[]> = {
+  audio: ['XLR', 'Jack', 'TRS', 'Speakon', 'Cat6', 'Dante', 'AES50', 'USB', 'MIDI'],
+  video: ['HDMI', 'SDI', 'DisplayPort', 'USB-C', 'NDI'],
+  lightControl: ['DMX', 'DMX 5 pin', 'Art-Net', 'sACN'],
+  network: ['Ethernet', 'Cat6', 'Fibre'],
+};
 
 export const elementName = (el: PlanElement | undefined): string => (el ? el.label || itemById(el.type.id)?.name[lang.value] || el.type.id : '');
 
@@ -144,7 +152,22 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
           <div class="conn" key={c.id}>
             <strong>{t('connections.with', { signal: t(`signal.${c.signal}` as Key), name })}</strong>
             <div class="sub">
-              <input class="input" aria-label={`${t('connections.connector')} · ${name}`} value={c.connector} maxLength={40} onChange={(e) => setConnection(c.id, { connector: (e.currentTarget as HTMLInputElement).value })} />
+              <select
+                class="input"
+                aria-label={`${t('connections.signal')} · ${name}`}
+                value={c.signal}
+                onChange={(e) => {
+                  const signal = (e.currentTarget as HTMLSelectElement).value as SignalType;
+                  setConnection(c.id, { signal, connector: c.connector === '' || c.connector === DEFAULT_CONNECTOR[c.signal] ? DEFAULT_CONNECTOR[signal] : c.connector });
+                }}
+              >
+                {SIGNALS.map((s) => (
+                  <option key={s} value={s}>
+                    {t(`signal.${s}` as Key)}
+                  </option>
+                ))}
+              </select>
+              <input class="input" list={`cables-${c.signal}`} aria-label={`${t('connections.connector')} · ${name}`} value={c.connector} maxLength={40} onChange={(e) => setConnection(c.id, { connector: (e.currentTarget as HTMLInputElement).value })} />
               <input
                 class="input mono"
                 type="number"
@@ -165,6 +188,13 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
           </div>
         );
       })}
+      {SIGNALS.map((s) => (
+        <datalist key={s} id={`cables-${s}`}>
+          {CABLES[s].map((x) => (
+            <option key={x} value={x} />
+          ))}
+        </datalist>
+      ))}
     </div>
   );
 }

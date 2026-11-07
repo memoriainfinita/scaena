@@ -9,6 +9,11 @@ const EN: Record<string, string> = {
   Atril: 'Lectern', 'Mesa de ponentes': "Speakers' table", Diadema: 'Headset', Pantalla: 'Screen', Proyector: 'Projector', 'Portátil de presentación': 'Presentation laptop', Actor: 'Actor',
   'Pata izquierda': 'Left leg', 'Pata derecha': 'Right leg', 'Telón de fondo': 'Back curtain', 'Ordenador de sonido': 'Sound computer', Recorte: 'Ellipsoidal', Fresnel: 'Fresnel',
   'Mesa de vídeo': 'Video mixer', 'Ordenador de vídeo': 'Video computer', Micro: 'Mic', Stagebox: 'Stagebox', Reserva: 'Spare', Efectos: 'Effects', Ordenador: 'Computer',
+  // The fuller examples: instruments with their amps, lights by where they hang, racks, video and network
+  'Tarima de batería': 'Drum riser', 'Ampli de bajo': 'Bass amp', 'Ampli guitarra': 'Guitar amp', 'DI bajo': 'Bass DI', 'DI teclado': 'Keys DI', 'DI contrabajo': 'Double bass DI', 'DI guitarra': 'Guitar DI',
+  Wash: 'Wash', Suelo: 'Floor', Distribución: 'Power distro', 'Toma 16 A derecha': 'Outlet 16 A right', 'Toma 16 A izquierda': 'Outlet 16 A left', Público: 'Audience', Hazer: 'Hazer', Móvil: 'Mover',
+  'Pantalla LED': 'LED wall', 'Portátil de visuales': 'Visuals laptop', Cámara: 'Camera', 'Rack inalámbrico': 'Wireless rack', 'Recorte FOH': 'Ellipsoidal FOH', 'Recorte vara 2': 'Ellipsoidal bar 2',
+  Ciclorama: 'Cyc', PC: 'PC', 'Servidor de vídeo': 'Video server', 'Conmutador de red': 'Network switch', 'Control de luces': 'Lighting control', Emisión: 'Streaming',
   // Channel names (drums and others)
   'OH I': 'OH L', 'OH D': 'OH R', Tom: 'Tom', 'DJ L': 'DJ L', 'DJ R': 'DJ R', 'Salida de mesa DJ': 'DJ desk output', 'Micro de mesa': 'Table mic', 'Salida del portátil': 'Laptop output',
   Bombo: 'Kick', Caja: 'Snare', Charles: 'Hi-hat', 'Tom suelo': 'Floor tom', 'Bajo DI': 'Bass DI', 'Bajo ampli': 'Bass amp', 'Teclado L': 'Keys L', 'Teclado R': 'Keys R', 'Piano L': 'Piano L', 'Piano R': 'Piano R',

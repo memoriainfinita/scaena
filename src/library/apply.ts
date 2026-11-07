@@ -2,12 +2,17 @@ import { addConnection } from '../model/connections.ts';
 import { nextId } from '../model/ids.ts';
 import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
-import { addMount, emptyLuminaire, updateLuminaire } from '../model/lights.ts';
+import { addMount, autoNumber, emptyLuminaire, setFixtureModel, updateLuminaire } from '../model/lights.ts';
+import { addRackSlot, makeRack, setRackUnits as updateRackUnits } from '../model/racks.ts';
 import type { Computer, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
 import { templateForPackage } from '../document/sections.ts';
 import { itemById } from './items.ts';
+import { audioById, fixtureById } from './models.ts';
 import { translatePackageText } from './translate.ts';
-import type { ShowPackage } from './types.ts';
+import type { Bilingual, ShowPackage } from './types.ts';
+
+const tx = (b: Bilingual | string, lang: 'es' | 'en'): string => (typeof b === 'string' ? translatePackageText(b, lang) : b[lang]);
+const translateBilingual = (b: Bilingual, lang: 'es' | 'en'): string => b[lang];
 
 
 /** Builds a show from a package: elements on their layers, channels in the package order, outputs on their wedges. */
@@ -33,6 +38,8 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
       suppliedBy: pe.suppliedBy ?? 'unset',
       computer,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
+      ...(pe.size ? { width: pe.size.w, depth: pe.size.d, height: pe.size.height ?? null } : {}),
+      notes: pe.notes ? translateBilingual(pe.notes, lang) : '',
     });
     placed.push(el);
   }
@@ -40,7 +47,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
   pkg.channels.forEach((c, i) => {
     let id: string;
     [id, show] = nextId(show, 'ch');
-    channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', patch: '', stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
+    channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', patch: c.patch ?? '', stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
   });
   const outputs: Record<string, Output> = {};
   pkg.outputs.forEach((o, i) => {
@@ -54,14 +61,41 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     const b = placed[link.to];
     if (a && b) [show] = addConnection(show, a.id, b.id, link.signal, link.connector === undefined ? undefined : translatePackageText(link.connector, lang));
   }
-  // Lights in a package hang from one bar across them, so the plot starts with a mounting position to edit.
+  // Racks, with what is mounted in them.
+  pkg.elements.forEach((pe, i) => {
+    if (!pe.rack) return;
+    show = makeRack(show, placed[i]!.id);
+    show = updateRackUnits(show, placed[i]!.id, pe.rack.units);
+    for (const [name, u] of pe.rack.slots) show = addRackSlot(show, placed[i]!.id, tx(name, lang), u);
+  });
+  // Where the lights hang: the package's own mounts, or one bar across them when it names none.
+  const mounts: Mount[] = [];
+  for (const m of pkg.mounts ?? []) {
+    let mount: Mount;
+    [show, mount] = addMount(show, { kind: m.kind, name: tx(m.name, lang), from: m.from, to: m.to, heightMm: m.heightMm, maxLoadKg: m.maxLoadKg ?? null });
+    mounts.push(mount);
+  }
   const lit = placed.filter((e) => e.luminaire);
-  if (lit.length > 0) {
+  if (!pkg.mounts && lit.length > 0) {
     const xs = lit.map((e) => e.x);
     const y = Math.round(lit.reduce((acc, e) => acc + e.y, 0) / lit.length);
     let mount: Mount;
     [show, mount] = addMount(show, { kind: 'bar', name: lang === 'en' ? 'Bar 1' : 'Vara 1', from: { x: Math.min(...xs) - 500, y }, to: { x: Math.max(...xs) + 500, y } });
-    for (const e of lit) show = updateLuminaire(show, e.id, { mountId: mount.id });
+    mounts.push(mount);
   }
+  pkg.elements.forEach((pe, i) => {
+    const e = placed[i]!;
+    if (!e.luminaire) return;
+    const l = pe.light;
+    const model = l ? fixtureById(l.modelId) : undefined;
+    if (model) show = setFixtureModel(show, e.id, model);
+    show = updateLuminaire(show, e.id, {
+      mountId: (pkg.mounts ? (l?.mount === undefined ? undefined : mounts[l.mount]?.id) : mounts[0]?.id) ?? null,
+      ...(l ? { channel: l.channel, circuit: l.circuit ?? null, dimmer: l.dimmer ?? null, color: l.color ?? '', universe: l.universe ?? null, address: l.address ?? null } : {}),
+    });
+  });
+  if (pkg.desk) show = { ...show, desk: { ...show.desk, model: audioById(pkg.desk) ? `${audioById(pkg.desk)!.brand} ${audioById(pkg.desk)!.model}` : pkg.desk } };
+  if (lit.length > 0) show = autoNumber(show);
+  if (pkg.finish) show = pkg.finish(show, placed, (b) => tx(b, lang));
   return { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null, inputs: { landscape: false, blocks: 'auto' } } };
 }

@@ -6,7 +6,7 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 async function start(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
-  await expect(page.getByText('16 elementos')).toBeVisible();
+  await expect(page.getByText('35 elementos')).toBeVisible();
 }
 
 async function addLaptop(page: Page) {

@@ -6,7 +6,7 @@ const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2a
 
 async function production(page: Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: /Montaje vacío/ }).click();
   await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
   const dlg = page.getByRole('dialog', { name: 'Ajustes del montaje' });
   await dlg.getByRole('checkbox', { name: 'Producción' }).check();
@@ -86,7 +86,7 @@ test('the day sheet downloads as a PDF', async ({ page }) => {
   await page.getByLabel('Dirección de la sala').fill('Calle Mayor 1');
   await page.getByLabel('Dirección de la sala').press('Tab');
   const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 90_000 }), page.getByRole('button', { name: 'Descargar la hoja de ruta (PDF)' }).click()]);
-  expect(dl.suggestedFilename()).toBe('Banda-de-rock-hoja-de-ruta.pdf');
+  expect(dl.suggestedFilename()).toBe('Montaje-sin-título-hoja-de-ruta.pdf');
   const pdf = readFileSync((await dl.path())!);
   expect(pdf.subarray(0, 5).toString()).toBe('%PDF-');
   mkdirSync('test-results', { recursive: true });
