@@ -99,7 +99,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - [ ] Validación PDF/UA con veraPDF: hace falta la opción `ua-1` del compilador (sin versión publicada); mientras, `scripts/check_pdf.py` en CI comprueba lo básico
 - [ ] **Revisión del usuario** de todo lo construido (pidió revisar al terminar)
 - [ ] Probar en un móvil real (el Xiaomi: avisar antes, ver la memoria de adb), en Android con Chrome y Firefox y en Safari de iOS; instalar la aplicación de verdad
-- [ ] Cirílico y griego en el PDF (paquete de alfabetos con las fuentes completas)
+- [x] Cirílico y griego en el PDF, 2026-11-07: si el documento (o un SVG del plano) tiene esos alfabetos, el compilador arranca con las fuentes de `public/typst/fonts/wide/` (5 ficheros, 1,1 MB, solo se descargan entonces y el service worker las guarda tras el primer uso); si no, las pequeñas de siempre. `scripts/fonts/subset-pdf-fonts.sh` las reconstruye. Probado con «Группа Ελληνικά» (e2e y a ojo). Sin cubrir: árabe, hebreo, CJK, devanagari
 - [x] Decididas 2026-11-07 (recomendaciones aceptadas): tipografía Inter y JetBrains Mono (app y PDF), tema oscuro en todas las vistas con el visor del PDF en blanco, paquete de rock con 17 canales. Los símbolos sobre el plano siguen sin revisar por el usuario
 - [ ] Ideas anotadas y no hechas: calendario hacia atrás desde el toque de queda con el 50 % extra de carga, plantillas de documento propias con nombre, cotas permanentes y polígono libre del escenario, dibujo de los ángulos de foco, silenciar un aviso concreto, reglas del flujo de señal, rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función
 - [x] Modelo de datos y formato `.scaena`: `docs/design/modelo-2026-10-29.md`
