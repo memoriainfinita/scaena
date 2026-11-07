@@ -7,6 +7,7 @@ import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
 import { compilePdf, fixPdf } from '../document/compile.ts';
 import { ALL_SECTIONS, effectiveSections, TEMPLATES } from '../document/sections.ts';
+import { loadShowIcons } from '../library/show-icons.ts';
 import { buildDocument, type DocWarning } from '../document/typst-source.ts';
 import { t, type Key } from '../i18n/index.ts';
 import { Paper, type Show } from '../model/schema.ts';
@@ -40,6 +41,7 @@ export function DocumentView({ show }: { show: Show }) {
       setError(null);
       try {
         const t0 = performance.now();
+        await loadShowIcons(show);
         const built = buildDocument(show, session.value?.allImages() ?? {});
         const pdf = await fixPdf(await compilePdf(built.source, built.files));
         if (mine !== token.current) return;

@@ -1,0 +1,6104 @@
+[
+{
+"key": "02-03",
+"sheet": "02",
+"name": "Wireless headset",
+"pid": "vocals.headset",
+"size": "50 x 50",
+"w": 231,
+"h": 255
+},
+{
+"key": "02-09",
+"sheet": "02",
+"name": "In-ear pack",
+"pid": "monitor.iem",
+"size": "15 x 10",
+"w": 226,
+"h": 274
+},
+{
+"key": "02-12",
+"sheet": "02",
+"name": "Chair",
+"pid": "furniture.chair",
+"size": "45 x 45",
+"w": 184,
+"h": 256
+},
+{
+"key": "03-01",
+"sheet": "03",
+"name": "Music stand",
+"pid": "furniture.music-stand",
+"size": "50 x 40",
+"w": 219,
+"h": 316
+},
+{
+"key": "03-02",
+"sheet": "03",
+"name": "Table",
+"pid": "furniture.table",
+"size": "180 x 70",
+"w": 347,
+"h": 200
+},
+{
+"key": "03-03",
+"sheet": "03",
+"name": "Flight case",
+"pid": "furniture.flightcase",
+"size": "80 x 60",
+"w": 309,
+"h": 269
+},
+{
+"key": "03-04",
+"sheet": "03",
+"name": "Lectern",
+"pid": "furniture.lectern",
+"size": "70 x 50",
+"w": 226,
+"h": 328
+},
+{
+"key": "03-07",
+"sheet": "03",
+"name": "Access",
+"pid": "room.access",
+"size": "120 x 30",
+"w": 284,
+"h": 237
+},
+{
+"key": "03-09",
+"sheet": "03",
+"name": "Lighting desk",
+"pid": "control.lightdesk",
+"size": "90 x 50",
+"w": 333,
+"h": 203
+},
+{
+"key": "03-10",
+"sheet": "03",
+"name": "Dimmer rack",
+"pid": "rack.dimmer",
+"size": "60 x 60",
+"w": 253,
+"h": 270
+},
+{
+"key": "03-11",
+"sheet": "03",
+"name": "Video switcher",
+"pid": "control.videomixer",
+"size": "50 x 35",
+"w": 341,
+"h": 216
+},
+{
+"key": "03-12",
+"sheet": "03",
+"name": "Screen",
+"pid": "video.screen",
+"size": "300 x 12",
+"w": 332,
+"h": 231
+},
+{
+"key": "04-02",
+"sheet": "04",
+"name": "Curtain or leg",
+"pid": "scenery.curtain",
+"size": "300 x 15",
+"w": 301,
+"h": 323
+},
+{
+"key": "04-03",
+"sheet": "04",
+"name": "Stairs",
+"pid": "scenery.stairs",
+"size": "100 x 120",
+"w": 316,
+"h": 298
+},
+{
+"key": "04-04",
+"sheet": "04",
+"name": "Platform",
+"pid": "scenery.platform",
+"size": "200 x 200",
+"w": 335,
+"h": 196
+},
+{
+"key": "04-06",
+"sheet": "04",
+"name": "Smoke machine",
+"pid": "effect.smoke",
+"size": "45 x 30",
+"w": 340,
+"h": 210
+},
+{
+"key": "04-07",
+"sheet": "04",
+"name": "Strobe",
+"pid": "effect.strobe",
+"size": "45 x 20",
+"w": 301,
+"h": 233
+},
+{
+"key": "04-08",
+"sheet": "04",
+"name": "Congas",
+"pid": "perc.congas",
+"size": "90 x 70",
+"w": 294,
+"h": 306
+},
+{
+"key": "04-09",
+"sheet": "04",
+"name": "Cajón",
+"pid": "perc.cajon",
+"size": "50 x 60",
+"w": 224,
+"h": 285
+},
+{
+"key": "04-10",
+"sheet": "04",
+"name": "Percussion table",
+"pid": "perc.table",
+"size": "180 x 90",
+"w": 365,
+"h": 278
+},
+{
+"key": "04-12",
+"sheet": "04",
+"name": "Pedalboard",
+"pid": "guitar.pedalboard",
+"size": "70 x 35",
+"w": 338,
+"h": 171
+},
+{
+"key": "05-01",
+"sheet": "05",
+"name": "Guitar cabinet 4×12",
+"pid": "amp.stack",
+"size": "80 x 40",
+"w": 257,
+"h": 278
+},
+{
+"key": "05-02",
+"sheet": "05",
+"name": "Synthesizer",
+"pid": "keys.synth",
+"size": "110 x 40",
+"w": 352,
+"h": 138
+},
+{
+"key": "05-03",
+"sheet": "05",
+"name": "Stage piano",
+"pid": "keys.stage-piano",
+"size": "140 x 40",
+"w": 353,
+"h": 215
+},
+{
+"key": "05-04",
+"sheet": "05",
+"name": "Organ",
+"pid": "keys.organ",
+"size": "130 x 80",
+"w": 336,
+"h": 286
+},
+{
+"key": "05-05",
+"sheet": "05",
+"name": "Handheld vocal",
+"pid": "vocals.handheld",
+"size": "70 x 70",
+"w": 219,
+"h": 279
+},
+{
+"key": "05-08",
+"sheet": "05",
+"name": "Delay tower",
+"pid": "pa.delay",
+"size": "50 x 50",
+"w": 250,
+"h": 282
+},
+{
+"key": "05-11",
+"sheet": "05",
+"name": "IEM rack",
+"pid": "rack.iem",
+"size": "55 x 60",
+"w": 310,
+"h": 269
+},
+{
+"key": "05-12",
+"sheet": "05",
+"name": "Wireless rack",
+"pid": "rack.wireless",
+"size": "55 x 60",
+"w": 314,
+"h": 334
+},
+{
+"key": "06-01",
+"sheet": "06",
+"name": "Amplifier rack",
+"pid": "rack.amps",
+"size": "60 x 80",
+"w": 277,
+"h": 347
+},
+{
+"key": "06-02",
+"sheet": "06",
+"name": "FX rack",
+"pid": "rack.fx",
+"size": "55 x 60",
+"w": 265,
+"h": 281
+},
+{
+"key": "06-03",
+"sheet": "06",
+"name": "Network switch",
+"pid": "rack.network",
+"size": "45 x 25",
+"w": 329,
+"h": 166
+},
+{
+"key": "06-04",
+"sheet": "06",
+"name": "Analog desk",
+"pid": "desk.analog",
+"size": "110 x 70",
+"w": 377,
+"h": 209
+},
+{
+"key": "06-05",
+"sheet": "06",
+"name": "Monitor desk",
+"pid": "desk.monitor",
+"size": "90 x 60",
+"w": 343,
+"h": 227
+},
+{
+"key": "06-06",
+"sheet": "06",
+"name": "DJ controller",
+"pid": "dj.controller",
+"size": "80 x 40",
+"w": 338,
+"h": 171
+},
+{
+"key": "06-07",
+"sheet": "06",
+"name": "Turntables and mixer",
+"pid": "dj.turntables",
+"size": "130 x 45",
+"w": 420,
+"h": 157
+},
+{
+"key": "06-10",
+"sheet": "06",
+"name": "Cable ramp",
+"pid": "furniture.cable-ramp",
+"size": "100 x 30",
+"w": 356,
+"h": 104
+},
+{
+"key": "06-11",
+"sheet": "06",
+"name": "Flat or set piece",
+"pid": "scenery.flat",
+"size": "200 x 10",
+"w": 349,
+"h": 301
+},
+{
+"key": "06-12",
+"sheet": "06",
+"name": "Ladder",
+"pid": "scenery.ladder",
+"size": "50 x 180",
+"w": 249,
+"h": 341
+},
+{
+"key": "07-01",
+"sheet": "07",
+"name": "Laser",
+"pid": "",
+"size": "",
+"w": 325,
+"h": 256
+},
+{
+"key": "07-02",
+"sheet": "07",
+"name": "Mirror ball",
+"pid": "",
+"size": "",
+"w": 309,
+"h": 343
+},
+{
+"key": "07-03",
+"sheet": "07",
+"name": "Smoke machine (extra)",
+"pid": "",
+"size": "",
+"w": 302,
+"h": 360
+},
+{
+"key": "07-04",
+"sheet": "07",
+"name": "LED wall",
+"pid": "",
+"size": "",
+"w": 350,
+"h": 258
+},
+{
+"key": "07-05",
+"sheet": "07",
+"name": "Monitor or TV",
+"pid": "",
+"size": "",
+"w": 323,
+"h": 213
+},
+{
+"key": "07-07",
+"sheet": "07",
+"name": "Control tablet",
+"pid": "",
+"size": "",
+"w": 312,
+"h": 205
+},
+{
+"key": "07-08",
+"sheet": "07",
+"name": "PC or media server",
+"pid": "",
+"size": "",
+"w": 361,
+"h": 263
+},
+{
+"key": "07-09",
+"sheet": "07",
+"name": "Smartphone (extra)",
+"pid": "",
+"size": "",
+"w": 167,
+"h": 280
+},
+{
+"key": "07-10",
+"sheet": "07",
+"name": "Server rack (extra)",
+"pid": "",
+"size": "",
+"w": 301,
+"h": 279
+},
+{
+"key": "07-11",
+"sheet": "07",
+"name": "Pad controller (extra)",
+"pid": "",
+"size": "",
+"w": 336,
+"h": 228
+},
+{
+"key": "07-12",
+"sheet": "07",
+"name": "LED moving head (extra)",
+"pid": "",
+"size": "",
+"w": 245,
+"h": 299
+},
+{
+"key": "08-01",
+"sheet": "08",
+"name": "Mic on tall boom stand",
+"pid": "mic.boom-tall",
+"size": "50 x 50",
+"w": 255,
+"h": 318
+},
+{
+"key": "08-02",
+"sheet": "08",
+"name": "Mic on short boom stand",
+"pid": "mic.boom-short",
+"size": "40 x 40",
+"w": 243,
+"h": 207
+},
+{
+"key": "08-03",
+"sheet": "08",
+"name": "Mic on straight stand",
+"pid": "mic.straight",
+"size": "40 x 40",
+"w": 103,
+"h": 322
+},
+{
+"key": "08-04",
+"sheet": "08",
+"name": "Gooseneck mic",
+"pid": "mic.gooseneck",
+"size": "10 x 10",
+"w": 220,
+"h": 283
+},
+{
+"key": "08-05",
+"sheet": "08",
+"name": "Stereo pair on bar",
+"pid": "mic.stereo-pair",
+"size": "60 x 40",
+"w": 314,
+"h": 276
+},
+{
+"key": "08-06",
+"sheet": "08",
+"name": "Boundary mic",
+"pid": "mic.boundary",
+"size": "20 x 20",
+"w": 268,
+"h": 166
+},
+{
+"key": "08-07",
+"sheet": "08",
+"name": "Shotgun mic on pole",
+"pid": "mic.shotgun",
+"size": "40 x 40",
+"w": 320,
+"h": 287
+},
+{
+"key": "08-08",
+"sheet": "08",
+"name": "Wireless handheld mic",
+"pid": "mic.wireless-handheld",
+"size": "10 x 10",
+"w": 190,
+"h": 290
+},
+{
+"key": "08-09",
+"sheet": "08",
+"name": "Wireless receiver",
+"pid": "rack.wireless-receiver",
+"size": "25 x 20",
+"w": 333,
+"h": 264
+},
+{
+"key": "08-10",
+"sheet": "08",
+"name": "Antenna on stand",
+"pid": "rack.antenna",
+"size": "30 x 30",
+"w": 194,
+"h": 332
+},
+{
+"key": "08-11",
+"sheet": "08",
+"name": "Speaker on tripod",
+"pid": "pa.tripod",
+"size": "60 x 60",
+"w": 175,
+"h": 334
+},
+{
+"key": "08-12",
+"sheet": "08",
+"name": "Intercom beltpack",
+"pid": "comms.beltpack",
+"size": "15 x 10",
+"w": 299,
+"h": 289
+},
+{
+"key": "09-02",
+"sheet": "09",
+"name": "Drum throne",
+"pid": "kit.throne",
+"size": "40 x 40",
+"w": 225,
+"h": 286
+},
+{
+"key": "09-03",
+"sheet": "09",
+"name": "Leslie cabinet",
+"pid": "amp.leslie",
+"size": "60 x 60",
+"w": 298,
+"h": 351
+},
+{
+"key": "09-04",
+"sheet": "09",
+"name": "Bass cabinet 8x10",
+"pid": "amp.bass-cab",
+"size": "60 x 50",
+"w": 240,
+"h": 361
+},
+{
+"key": "09-06",
+"sheet": "09",
+"name": "Keyboard stand, two tiers",
+"pid": "keys.stand-2",
+"size": "140 x 70",
+"w": 339,
+"h": 270
+},
+{
+"key": "09-07",
+"sheet": "09",
+"name": "Cymbal stand",
+"pid": "kit.cymbal-stand",
+"size": "50 x 50",
+"w": 212,
+"h": 303
+},
+{
+"key": "09-08",
+"sheet": "09",
+"name": "Tech station",
+"pid": "furniture.tech",
+"size": "150 x 80",
+"w": 357,
+"h": 285
+},
+{
+"key": "09-09",
+"sheet": "09",
+"name": "Laptop stand with controller",
+"pid": "control.laptop-stand",
+"size": "60 x 40",
+"w": 212,
+"h": 323
+},
+{
+"key": "09-10",
+"sheet": "09",
+"name": "Instrument rack",
+"pid": "stand.instrument-rack",
+"size": "120 x 40",
+"w": 339,
+"h": 320
+},
+{
+"key": "09-11",
+"sheet": "09",
+"name": "Cable reel",
+"pid": "power.cable-reel",
+"size": "50 x 50",
+"w": 287,
+"h": 294
+},
+{
+"key": "09-12",
+"sheet": "09",
+"name": "Snake reel",
+"pid": "rack.snake-reel",
+"size": "60 x 60",
+"w": 344,
+"h": 313
+},
+{
+"key": "10-10",
+"sheet": "10",
+"name": "Steel pan",
+"pid": "perc.steelpan",
+"size": "90 x 90",
+"w": 243,
+"h": 290
+},
+{
+"key": "10-11",
+"sheet": "10",
+"name": "Gong",
+"pid": "perc.gong",
+"size": "90 x 40",
+"w": 314,
+"h": 270
+},
+{
+"key": "11-01",
+"sheet": "11",
+"name": "Truss section",
+"pid": "rig.truss",
+"size": "300 x 30",
+"w": 420,
+"h": 86
+},
+{
+"key": "11-02",
+"sheet": "11",
+"name": "Light stand",
+"pid": "rig.light-stand",
+"size": "80 x 80",
+"w": 188,
+"h": 302
+},
+{
+"key": "11-03",
+"sheet": "11",
+"name": "Chain hoist",
+"pid": "rig.hoist",
+"size": "30 x 30",
+"w": 232,
+"h": 390
+},
+{
+"key": "11-04",
+"sheet": "11",
+"name": "Power distribution",
+"pid": "power.distro",
+"size": "50 x 30",
+"w": 357,
+"h": 260
+},
+{
+"key": "11-05",
+"sheet": "11",
+"name": "Generator",
+"pid": "power.generator",
+"size": "100 x 60",
+"w": 378,
+"h": 268
+},
+{
+"key": "11-06",
+"sheet": "11",
+"name": "Power strip",
+"pid": "power.strip",
+"size": "40 x 10",
+"w": 420,
+"h": 171
+},
+{
+"key": "11-07",
+"sheet": "11",
+"name": "Fire extinguisher",
+"pid": "safety.extinguisher",
+"size": "15 x 15",
+"w": 207,
+"h": 256
+},
+{
+"key": "11-08",
+"sheet": "11",
+"name": "First aid",
+"pid": "safety.first-aid",
+"size": "30 x 30",
+"w": 279,
+"h": 213
+},
+{
+"key": "11-09",
+"sheet": "11",
+"name": "Crowd barrier",
+"pid": "safety.barrier",
+"size": "200 x 50",
+"w": 420,
+"h": 189
+},
+{
+"key": "11-10",
+"sheet": "11",
+"name": "Emergency exit",
+"pid": "safety.exit",
+"size": "100 x 20",
+"w": 255,
+"h": 208
+},
+{
+"key": "11-11",
+"sheet": "11",
+"name": "Sandbag",
+"pid": "rig.sandbag",
+"size": "30 x 30",
+"w": 276,
+"h": 189
+},
+{
+"key": "11-12",
+"sheet": "11",
+"name": "Gaffer tape marks",
+"pid": "rig.marks",
+"size": "30 x 30",
+"w": 192,
+"h": 167
+},
+{
+"key": "12-01",
+"sheet": "12",
+"name": "PTZ camera on tripod",
+"pid": "video.ptz",
+"size": "60 x 60",
+"w": 200,
+"h": 358
+},
+{
+"key": "12-03",
+"sheet": "12",
+"name": "Jib crane",
+"pid": "video.jib",
+"size": "300 x 100",
+"w": 420,
+"h": 259
+},
+{
+"key": "12-04",
+"sheet": "12",
+"name": "Teleprompter",
+"pid": "video.teleprompter",
+"size": "60 x 40",
+"w": 227,
+"h": 335
+},
+{
+"key": "12-05",
+"sheet": "12",
+"name": "Intercom station",
+"pid": "comms.station",
+"size": "30 x 20",
+"w": 384,
+"h": 235
+},
+{
+"key": "12-06",
+"sheet": "12",
+"name": "Cue light",
+"pid": "comms.cue-light",
+"size": "15 x 15",
+"w": 218,
+"h": 235
+},
+{
+"key": "12-07",
+"sheet": "12",
+"name": "Stage manager desk",
+"pid": "control.sm-desk",
+"size": "120 x 70",
+"w": 420,
+"h": 213
+},
+{
+"key": "12-08",
+"sheet": "12",
+"name": "Audio recorder",
+"pid": "rack.recorder",
+"size": "45 x 30",
+"w": 420,
+"h": 206
+},
+{
+"key": "12-09",
+"sheet": "12",
+"name": "Confidence monitor",
+"pid": "video.confidence",
+"size": "60 x 30",
+"w": 288,
+"h": 277
+},
+{
+"key": "12-10",
+"sheet": "12",
+"name": "Presentation remote desk",
+"pid": "control.slides",
+"size": "60 x 40",
+"w": 349,
+"h": 278
+},
+{
+"key": "13-01",
+"sheet": "13",
+"name": "Sofa",
+"pid": "set.sofa",
+"size": "200 x 90",
+"w": 420,
+"h": 202
+},
+{
+"key": "13-02",
+"sheet": "13",
+"name": "Armchair",
+"pid": "set.armchair",
+"size": "90 x 90",
+"w": 279,
+"h": 250
+},
+{
+"key": "13-03",
+"sheet": "13",
+"name": "Bed",
+"pid": "set.bed",
+"size": "200 x 140",
+"w": 402,
+"h": 265
+},
+{
+"key": "13-04",
+"sheet": "13",
+"name": "Door flat",
+"pid": "set.door",
+"size": "100 x 15",
+"w": 206,
+"h": 290
+},
+{
+"key": "13-05",
+"sheet": "13",
+"name": "Window flat",
+"pid": "set.window",
+"size": "120 x 15",
+"w": 336,
+"h": 281
+},
+{
+"key": "13-06",
+"sheet": "13",
+"name": "Bookcase",
+"pid": "set.bookcase",
+"size": "120 x 35",
+"w": 279,
+"h": 316
+},
+{
+"key": "13-07",
+"sheet": "13",
+"name": "Bar stool",
+"pid": "set.bar-stool",
+"size": "40 x 40",
+"w": 181,
+"h": 278
+},
+{
+"key": "13-08",
+"sheet": "13",
+"name": "Desk with chair",
+"pid": "set.desk",
+"size": "140 x 70",
+"w": 420,
+"h": 330
+},
+{
+"key": "13-09",
+"sheet": "13",
+"name": "Rug",
+"pid": "set.rug",
+"size": "200 x 140",
+"w": 420,
+"h": 219
+},
+{
+"key": "13-10",
+"sheet": "13",
+"name": "Plant or tree",
+"pid": "set.plant",
+"size": "60 x 60",
+"w": 231,
+"h": 309
+},
+{
+"key": "13-11",
+"sheet": "13",
+"name": "Trunk",
+"pid": "set.trunk",
+"size": "80 x 50",
+"w": 342,
+"h": 223
+},
+{
+"key": "13-12",
+"sheet": "13",
+"name": "Banner stand",
+"pid": "set.banner",
+"size": "85 x 20",
+"w": 210,
+"h": 314
+},
+{
+"key": "14-01",
+"sheet": "14",
+"name": "Ellipsoidal (profile spot)",
+"pid": "light.ellipsoidal",
+"size": "25 x 52",
+"w": 353,
+"h": 356
+},
+{
+"key": "14-02",
+"sheet": "14",
+"name": "Fresnel",
+"pid": "light.fresnel",
+"size": "25 x 35",
+"w": 246,
+"h": 325
+},
+{
+"key": "14-03",
+"sheet": "14",
+"name": "PC",
+"pid": "light.pc",
+"size": "25 x 35",
+"w": 228,
+"h": 316
+},
+{
+"key": "14-04",
+"sheet": "14",
+"name": "PAR can",
+"pid": "light.par",
+"size": "25 x 35",
+"w": 223,
+"h": 315
+},
+{
+"key": "14-05",
+"sheet": "14",
+"name": "LED PAR",
+"pid": "light.led-par",
+"size": "24 x 24",
+"w": 224,
+"h": 234
+},
+{
+"key": "14-06",
+"sheet": "14",
+"name": "Scoop",
+"pid": "light.scoop",
+"size": "30 x 30",
+"w": 246,
+"h": 251
+},
+{
+"key": "14-07",
+"sheet": "14",
+"name": "Strip light",
+"pid": "light.strip",
+"size": "100 x 25",
+"w": 420,
+"h": 102
+},
+{
+"key": "14-08",
+"sheet": "14",
+"name": "Cyc light",
+"pid": "light.cyc",
+"size": "50 x 30",
+"w": 384,
+"h": 202
+},
+{
+"key": "14-09",
+"sheet": "14",
+"name": "Followspot",
+"pid": "light.followspot",
+"size": "45 x 120",
+"w": 362,
+"h": 403
+},
+{
+"key": "14-10",
+"sheet": "14",
+"name": "Moving head spot",
+"pid": "light.mover-spot",
+"size": "35 x 35",
+"w": 207,
+"h": 326
+},
+{
+"key": "14-11",
+"sheet": "14",
+"name": "Moving head wash",
+"pid": "light.mover-wash",
+"size": "35 x 35",
+"w": 236,
+"h": 324
+},
+{
+"key": "14-12",
+"sheet": "14",
+"name": "LED bar",
+"pid": "light.led-bar",
+"size": "100 x 10",
+"w": 420,
+"h": 88
+},
+{
+"key": "15-01",
+"sheet": "15",
+"name": "Bodypack transmitter",
+"pid": "rack.bodypack",
+"size": "10 x 7",
+"w": 190,
+"h": 358
+},
+{
+"key": "15-02",
+"sheet": "15",
+"name": "Lavalier mic",
+"pid": "mic.lavalier",
+"size": "5 x 5",
+"w": 246,
+"h": 277
+},
+{
+"key": "15-03",
+"sheet": "15",
+"name": "Headset mic",
+"pid": "mic.headset",
+"size": "15 x 15",
+"w": 338,
+"h": 291
+},
+{
+"key": "15-04",
+"sheet": "15",
+"name": "IEM transmitter",
+"pid": "rack.iem-tx",
+"size": "22 x 20",
+"w": 360,
+"h": 360
+},
+{
+"key": "15-05",
+"sheet": "15",
+"name": "Personal monitor mixer",
+"pid": "rack.personal-mixer",
+"size": "20 x 20",
+"w": 331,
+"h": 227
+},
+{
+"key": "15-06",
+"sheet": "15",
+"name": "Headphones",
+"pid": "monitor.headphones",
+"size": "20 x 20",
+"w": 262,
+"h": 275
+},
+{
+"key": "15-07",
+"sheet": "15",
+"name": "Headphone amplifier",
+"pid": "rack.headphone-amp",
+"size": "25 x 15",
+"w": 369,
+"h": 184
+},
+{
+"key": "15-08",
+"sheet": "15",
+"name": "Antenna combiner",
+"pid": "rack.antenna-combiner",
+"size": "25 x 10",
+"w": 374,
+"h": 201
+},
+{
+"key": "15-09",
+"sheet": "15",
+"name": "Click box",
+"pid": "rack.click",
+"size": "15 x 10",
+"w": 274,
+"h": 199
+},
+{
+"key": "15-10",
+"sheet": "15",
+"name": "Audio interface",
+"pid": "rack.interface",
+"size": "25 x 20",
+"w": 364,
+"h": 208
+},
+{
+"key": "15-11",
+"sheet": "15",
+"name": "Mic preamp",
+"pid": "rack.preamp",
+"size": "25 x 20",
+"w": 329,
+"h": 208
+},
+{
+"key": "15-12",
+"sheet": "15",
+"name": "Power conditioner",
+"pid": "rack.power-conditioner",
+"size": "45 x 20",
+"w": 420,
+"h": 161
+},
+{
+"key": "16-01",
+"sheet": "16",
+"name": "Large-diaphragm condenser",
+"pid": "mic.condenser",
+"size": "20 x 20",
+"w": 256,
+"h": 314
+},
+{
+"key": "16-02",
+"sheet": "16",
+"name": "Pencil condenser",
+"pid": "mic.pencil",
+"size": "15 x 15",
+"w": 54,
+"h": 285
+},
+{
+"key": "16-03",
+"sheet": "16",
+"name": "Ribbon mic",
+"pid": "mic.ribbon",
+"size": "20 x 20",
+"w": 162,
+"h": 311
+},
+{
+"key": "16-04",
+"sheet": "16",
+"name": "Instrument dynamic mic",
+"pid": "mic.dynamic",
+"size": "10 x 10",
+"w": 235,
+"h": 187
+},
+{
+"key": "16-05",
+"sheet": "16",
+"name": "Kick drum mic",
+"pid": "mic.kick",
+"size": "15 x 15",
+"w": 269,
+"h": 220
+},
+{
+"key": "16-06",
+"sheet": "16",
+"name": "Drum clip mic",
+"pid": "mic.clip",
+"size": "8 x 8",
+"w": 271,
+"h": 280
+},
+{
+"key": "16-07",
+"sheet": "16",
+"name": "Contact pickup",
+"pid": "mic.pickup",
+"size": "5 x 5",
+"w": 278,
+"h": 163
+},
+{
+"key": "16-08",
+"sheet": "16",
+"name": "USB desktop mic",
+"pid": "mic.usb",
+"size": "15 x 15",
+"w": 150,
+"h": 300
+},
+{
+"key": "16-09",
+"sheet": "16",
+"name": "Hanging choir mic",
+"pid": "mic.hanging",
+"size": "20 x 20",
+"w": 45,
+"h": 307
+},
+{
+"key": "16-10",
+"sheet": "16",
+"name": "Desktop mic stand",
+"pid": "mic.desktop",
+"size": "20 x 20",
+"w": 238,
+"h": 302
+},
+{
+"key": "16-11",
+"sheet": "16",
+"name": "Parabolic mic",
+"pid": "mic.parabolic",
+"size": "40 x 40",
+"w": 244,
+"h": 340
+},
+{
+"key": "16-12",
+"sheet": "16",
+"name": "Talkback mic",
+"pid": "mic.talkback",
+"size": "15 x 15",
+"w": 252,
+"h": 313
+},
+{
+"key": "17-01",
+"sheet": "17",
+"name": "Active DI box",
+"pid": "rack.di-active",
+"size": "13 x 9",
+"w": 293,
+"h": 196
+},
+{
+"key": "17-02",
+"sheet": "17",
+"name": "Stereo DI",
+"pid": "rack.di-stereo",
+"size": "20 x 10",
+"w": 360,
+"h": 194
+},
+{
+"key": "17-03",
+"sheet": "17",
+"name": "Reamp box",
+"pid": "rack.reamp",
+"size": "15 x 10",
+"w": 314,
+"h": 198
+},
+{
+"key": "17-04",
+"sheet": "17",
+"name": "Signal splitter",
+"pid": "rack.splitter",
+"size": "25 x 15",
+"w": 390,
+"h": 197
+},
+{
+"key": "17-05",
+"sheet": "17",
+"name": "Distortion pedal",
+"pid": "pedal.drive",
+"size": "10 x 12",
+"w": 252,
+"h": 257
+},
+{
+"key": "17-06",
+"sheet": "17",
+"name": "Wah pedal",
+"pid": "pedal.wah",
+"size": "10 x 25",
+"w": 267,
+"h": 257
+},
+{
+"key": "17-07",
+"sheet": "17",
+"name": "Volume or expression pedal",
+"pid": "pedal.volume",
+"size": "10 x 25",
+"w": 255,
+"h": 255
+},
+{
+"key": "17-08",
+"sheet": "17",
+"name": "Looper pedal",
+"pid": "pedal.looper",
+"size": "15 x 15",
+"w": 273,
+"h": 257
+},
+{
+"key": "17-09",
+"sheet": "17",
+"name": "Tuner pedal",
+"pid": "pedal.tuner",
+"size": "7 x 12",
+"w": 192,
+"h": 258
+},
+{
+"key": "17-10",
+"sheet": "17",
+"name": "Multi-effects unit",
+"pid": "pedal.multi",
+"size": "50 x 25",
+"w": 420,
+"h": 143
+},
+{
+"key": "17-11",
+"sheet": "17",
+"name": "Footswitch controller",
+"pid": "pedal.switch",
+"size": "40 x 15",
+"w": 420,
+"h": 120
+},
+{
+"key": "17-12",
+"sheet": "17",
+"name": "Large pedalboard",
+"pid": "pedal.board-large",
+"size": "100 x 40",
+"w": 420,
+"h": 77
+},
+{
+"key": "18-01",
+"sheet": "18",
+"name": "Guitar amp head",
+"pid": "amp.head",
+"size": "60 x 25",
+"w": 404,
+"h": 242
+},
+{
+"key": "18-02",
+"sheet": "18",
+"name": "Amp stack",
+"pid": "amp.stack",
+"size": "80 x 40",
+"w": 298,
+"h": 420
+},
+{
+"key": "18-03",
+"sheet": "18",
+"name": "Sampler pad",
+"pid": "perc.sampler",
+"size": "30 x 30",
+"w": 291,
+"h": 318
+},
+{
+"key": "18-04",
+"sheet": "18",
+"name": "Drum module",
+"pid": "kit.module",
+"size": "30 x 25",
+"w": 352,
+"h": 249
+},
+{
+"key": "18-05",
+"sheet": "18",
+"name": "MIDI controller",
+"pid": "keys.midi",
+"size": "50 x 25",
+"w": 420,
+"h": 210
+},
+{
+"key": "18-06",
+"sheet": "18",
+"name": "Looper station",
+"pid": "control.looper",
+"size": "40 x 30",
+"w": 391,
+"h": 276
+},
+{
+"key": "18-07",
+"sheet": "18",
+"name": "Single drum pad",
+"pid": "perc.pad",
+"size": "25 x 25",
+"w": 234,
+"h": 390
+},
+{
+"key": "18-08",
+"sheet": "18",
+"name": "Electronic percussion pad",
+"pid": "perc.octapad",
+"size": "40 x 40",
+"w": 377,
+"h": 333
+},
+{
+"key": "19-01",
+"sheet": "19",
+"name": "Floor lamp",
+"pid": "set.floor-lamp",
+"size": "40 x 40",
+"w": 187,
+"h": 356
+},
+{
+"key": "19-02",
+"sheet": "19",
+"name": "Table lamp",
+"pid": "set.table-lamp",
+"size": "30 x 30",
+"w": 211,
+"h": 271
+},
+{
+"key": "19-03",
+"sheet": "19",
+"name": "Desk lamp",
+"pid": "set.desk-lamp",
+"size": "20 x 30",
+"w": 261,
+"h": 287
+},
+{
+"key": "19-04",
+"sheet": "19",
+"name": "Chandelier",
+"pid": "set.chandelier",
+"size": "80 x 80",
+"w": 376,
+"h": 340
+},
+{
+"key": "19-05",
+"sheet": "19",
+"name": "Candelabra",
+"pid": "set.candelabra",
+"size": "30 x 30",
+"w": 213,
+"h": 286
+},
+{
+"key": "19-06",
+"sheet": "19",
+"name": "Lantern",
+"pid": "set.lantern",
+"size": "25 x 25",
+"w": 173,
+"h": 272
+},
+{
+"key": "19-07",
+"sheet": "19",
+"name": "Pendant lamp",
+"pid": "set.pendant",
+"size": "40 x 40",
+"w": 250,
+"h": 295
+},
+{
+"key": "19-08",
+"sheet": "19",
+"name": "Wall sconce",
+"pid": "set.sconce",
+"size": "20 x 15",
+"w": 230,
+"h": 196
+},
+{
+"key": "19-09",
+"sheet": "19",
+"name": "Neon sign",
+"pid": "set.neon",
+"size": "100 x 10",
+"w": 420,
+"h": 68
+},
+{
+"key": "19-10",
+"sheet": "19",
+"name": "LED uplighter",
+"pid": "light.uplighter",
+"size": "30 x 30",
+"w": 193,
+"h": 169
+},
+{
+"key": "19-11",
+"sheet": "19",
+"name": "String lights",
+"pid": "set.string-lights",
+"size": "300 x 10",
+"w": 420,
+"h": 87
+},
+{
+"key": "19-12",
+"sheet": "19",
+"name": "Work light on tripod",
+"pid": "light.work",
+"size": "40 x 40",
+"w": 234,
+"h": 332
+},
+{
+"key": "20-01",
+"sheet": "20",
+"name": "Round table",
+"pid": "furniture.round-table",
+"size": "150 x 150",
+"w": 420,
+"h": 263
+},
+{
+"key": "20-02",
+"sheet": "20",
+"name": "Coffee table",
+"pid": "furniture.coffee-table",
+"size": "100 x 60",
+"w": 376,
+"h": 183
+},
+{
+"key": "20-03",
+"sheet": "20",
+"name": "Side table",
+"pid": "furniture.side-table",
+"size": "50 x 50",
+"w": 213,
+"h": 224
+},
+{
+"key": "20-04",
+"sheet": "20",
+"name": "High cocktail table",
+"pid": "furniture.cocktail",
+"size": "60 x 60",
+"w": 205,
+"h": 267
+},
+{
+"key": "20-05",
+"sheet": "20",
+"name": "Folding chair",
+"pid": "furniture.folding-chair",
+"size": "45 x 45",
+"w": 246,
+"h": 322
+},
+{
+"key": "20-06",
+"sheet": "20",
+"name": "Ottoman",
+"pid": "furniture.ottoman",
+"size": "60 x 60",
+"w": 263,
+"h": 216
+},
+{
+"key": "20-07",
+"sheet": "20",
+"name": "Director chair",
+"pid": "furniture.director",
+"size": "55 x 55",
+"w": 243,
+"h": 311
+},
+{
+"key": "20-08",
+"sheet": "20",
+"name": "Bar counter",
+"pid": "furniture.bar",
+"size": "200 x 60",
+"w": 420,
+"h": 239
+},
+{
+"key": "20-09",
+"sheet": "20",
+"name": "Wardrobe",
+"pid": "furniture.wardrobe",
+"size": "100 x 50",
+"w": 256,
+"h": 330
+},
+{
+"key": "20-10",
+"sheet": "20",
+"name": "Fireplace",
+"pid": "set.fireplace",
+"size": "120 x 40",
+"w": 379,
+"h": 279
+},
+{
+"key": "20-11",
+"sheet": "20",
+"name": "Mirror",
+"pid": "set.mirror",
+"size": "80 x 10",
+"w": 195,
+"h": 338
+},
+{
+"key": "20-12",
+"sheet": "20",
+"name": "Folding screen",
+"pid": "set.folding-screen",
+"size": "150 x 10",
+"w": 391,
+"h": 328
+},
+{
+"key": "21-01",
+"sheet": "21",
+"name": "Merch stand",
+"pid": "site.merch",
+"size": "200 x 80",
+"w": 420,
+"h": 301
+},
+{
+"key": "21-02",
+"sheet": "21",
+"name": "Tent",
+"pid": "site.tent",
+"size": "300 x 300",
+"w": 420,
+"h": 323
+},
+{
+"key": "21-03",
+"sheet": "21",
+"name": "Accessibility platform",
+"pid": "site.wheelchair",
+"size": "300 x 200",
+"w": 420,
+"h": 202
+},
+{
+"key": "21-07",
+"sheet": "21",
+"name": "Portable toilet",
+"pid": "site.toilet",
+"size": "120 x 120",
+"w": 210,
+"h": 331
+},
+{
+"key": "21-08",
+"sheet": "21",
+"name": "Ticket booth",
+"pid": "site.ticket",
+"size": "120 x 120",
+"w": 235,
+"h": 324
+},
+{
+"key": "21-09",
+"sheet": "21",
+"name": "Food stall",
+"pid": "site.food",
+"size": "300 x 200",
+"w": 396,
+"h": 325
+},
+{
+"key": "21-10",
+"sheet": "21",
+"name": "Truck",
+"pid": "site.truck",
+"size": "250 x 700",
+"w": 395,
+"h": 213
+},
+{
+"key": "21-11",
+"sheet": "21",
+"name": "Tour bus",
+"pid": "site.bus",
+"size": "250 x 1200",
+"w": 420,
+"h": 129
+},
+{
+"key": "21-12",
+"sheet": "21",
+"name": "Trailer",
+"pid": "site.trailer",
+"size": "250 x 600",
+"w": 420,
+"h": 214
+},
+{
+"key": "22-01",
+"sheet": "22",
+"name": "PAR 64",
+"pid": "light.par64",
+"size": "30 x 40",
+"w": 279,
+"h": 364
+},
+{
+"key": "22-02",
+"sheet": "22",
+"name": "LED wash panel",
+"pid": "light.led-panel",
+"size": "40 x 15",
+"w": 371,
+"h": 187
+},
+{
+"key": "22-03",
+"sheet": "22",
+"name": "4-lite blinder",
+"pid": "light.blinder",
+"size": "50 x 20",
+"w": 284,
+"h": 334
+},
+{
+"key": "22-04",
+"sheet": "22",
+"name": "LED profile",
+"pid": "light.led-profile",
+"size": "30 x 50",
+"w": 420,
+"h": 362
+},
+{
+"key": "22-05",
+"sheet": "22",
+"name": "LED fresnel",
+"pid": "light.led-fresnel",
+"size": "25 x 30",
+"w": 279,
+"h": 261
+},
+{
+"key": "22-06",
+"sheet": "22",
+"name": "Moving beam",
+"pid": "light.mover-beam",
+"size": "35 x 35",
+"w": 211,
+"h": 288
+},
+{
+"key": "22-07",
+"sheet": "22",
+"name": "Pinspot",
+"pid": "light.pinspot",
+"size": "10 x 15",
+"w": 161,
+"h": 218
+},
+{
+"key": "22-08",
+"sheet": "22",
+"name": "UV blacklight bar",
+"pid": "light.uv",
+"size": "50 x 15",
+"w": 389,
+"h": 131
+},
+{
+"key": "22-09",
+"sheet": "22",
+"name": "Gobo projector",
+"pid": "light.gobo",
+"size": "30 x 40",
+"w": 303,
+"h": 313
+},
+{
+"key": "22-10",
+"sheet": "22",
+"name": "Ground row",
+"pid": "light.ground-row",
+"size": "100 x 40",
+"w": 420,
+"h": 122
+},
+{
+"key": "22-11",
+"sheet": "22",
+"name": "T-bar with four PARs",
+"pid": "light.tbar",
+"size": "100 x 40",
+"w": 403,
+"h": 328
+},
+{
+"key": "22-12",
+"sheet": "22",
+"name": "Lighting tree",
+"pid": "light.tree",
+"size": "40 x 40",
+"w": 174,
+"h": 420
+},
+{
+"key": "23-01",
+"sheet": "23",
+"name": "Bubble machine",
+"pid": "effect.bubble",
+"size": "40 x 30",
+"w": 377,
+"h": 311
+},
+{
+"key": "23-02",
+"sheet": "23",
+"name": "Confetti cannon",
+"pid": "effect.confetti",
+"size": "15 x 15",
+"w": 333,
+"h": 339
+},
+{
+"key": "23-03",
+"sheet": "23",
+"name": "Snow machine",
+"pid": "effect.snow",
+"size": "45 x 30",
+"w": 420,
+"h": 265
+},
+{
+"key": "23-04",
+"sheet": "23",
+"name": "Flame projector",
+"pid": "effect.flame",
+"size": "30 x 30",
+"w": 215,
+"h": 363
+},
+{
+"key": "23-05",
+"sheet": "23",
+"name": "Pyro fountain",
+"pid": "effect.pyro",
+"size": "20 x 20",
+"w": 196,
+"h": 360
+},
+{
+"key": "23-06",
+"sheet": "23",
+"name": "Wind fan",
+"pid": "effect.fan",
+"size": "60 x 40",
+"w": 343,
+"h": 333
+},
+{
+"key": "23-07",
+"sheet": "23",
+"name": "Cold spark machine",
+"pid": "effect.coldspark",
+"size": "30 x 30",
+"w": 182,
+"h": 352
+},
+{
+"key": "23-08",
+"sheet": "23",
+"name": "Low fog machine",
+"pid": "effect.lowfog",
+"size": "60 x 40",
+"w": 420,
+"h": 189
+},
+{
+"key": "23-09",
+"sheet": "23",
+"name": "Streamer cannon",
+"pid": "effect.streamer",
+"size": "15 x 15",
+"w": 420,
+"h": 223
+},
+{
+"key": "23-10",
+"sheet": "23",
+"name": "Fireworks rack",
+"pid": "effect.fireworks",
+"size": "50 x 30",
+"w": 420,
+"h": 265
+},
+{
+"key": "24-01",
+"sheet": "24",
+"name": "Guitar cabinet 1x12",
+"pid": "amp.cab-1x12",
+"size": "50 x 30",
+"w": 289,
+"h": 277
+},
+{
+"key": "24-02",
+"sheet": "24",
+"name": "Guitar cabinet 2x12",
+"pid": "amp.cab-2x12",
+"size": "70 x 30",
+"w": 385,
+"h": 281
+},
+{
+"key": "24-03",
+"sheet": "24",
+"name": "Guitar combo 2x12",
+"pid": "amp.combo-2x12",
+"size": "70 x 25",
+"w": 364,
+"h": 293
+},
+{
+"key": "24-04",
+"sheet": "24",
+"name": "Bass cabinet 4x10",
+"pid": "amp.cab-4x10",
+"size": "60 x 45",
+"w": 328,
+"h": 314
+},
+{
+"key": "24-05",
+"sheet": "24",
+"name": "Bass cabinet 2x10",
+"pid": "amp.cab-2x10",
+"size": "60 x 40",
+"w": 268,
+"h": 322
+},
+{
+"key": "24-06",
+"sheet": "24",
+"name": "Bass cabinet 1x15",
+"pid": "amp.cab-1x15",
+"size": "50 x 45",
+"w": 318,
+"h": 296
+},
+{
+"key": "24-08",
+"sheet": "24",
+"name": "Bass stack",
+"pid": "amp.bass-stack",
+"size": "60 x 45",
+"w": 323,
+"h": 346
+},
+{
+"key": "24-09",
+"sheet": "24",
+"name": "Acoustic guitar amp",
+"pid": "amp.acoustic",
+"size": "40 x 30",
+"w": 315,
+"h": 281
+},
+{
+"key": "24-10",
+"sheet": "24",
+"name": "Keyboard amp",
+"pid": "amp.keyboard",
+"size": "50 x 40",
+"w": 337,
+"h": 285
+},
+{
+"key": "24-11",
+"sheet": "24",
+"name": "Practice amp",
+"pid": "amp.practice",
+"size": "30 x 20",
+"w": 246,
+"h": 253
+},
+{
+"key": "24-12",
+"sheet": "24",
+"name": "Vintage tube combo",
+"pid": "amp.vintage",
+"size": "60 x 30",
+"w": 420,
+"h": 273
+},
+{
+"key": "25-01",
+"sheet": "25",
+"name": "Point source 12 in",
+"pid": "pa.top-12",
+"size": "40 x 35",
+"w": 197,
+"h": 284
+},
+{
+"key": "25-02",
+"sheet": "25",
+"name": "Point source 15 in",
+"pid": "pa.top-15",
+"size": "45 x 40",
+"w": 234,
+"h": 329
+},
+{
+"key": "25-03",
+"sheet": "25",
+"name": "Column array",
+"pid": "pa.column",
+"size": "25 x 25",
+"w": 120,
+"h": 330
+},
+{
+"key": "25-04",
+"sheet": "25",
+"name": "Double 18 sub",
+"pid": "pa.sub-double",
+"size": "120 x 60",
+"w": 420,
+"h": 228
+},
+{
+"key": "25-05",
+"sheet": "25",
+"name": "Cardioid sub",
+"pid": "pa.sub-cardioid",
+"size": "60 x 80",
+"w": 329,
+"h": 314
+},
+{
+"key": "25-06",
+"sheet": "25",
+"name": "Hanging array",
+"pid": "pa.array-hang",
+"size": "45 x 60",
+"w": 224,
+"h": 420
+},
+{
+"key": "25-07",
+"sheet": "25",
+"name": "Outfill",
+"pid": "pa.outfill",
+"size": "40 x 35",
+"w": 187,
+"h": 420
+},
+{
+"key": "25-08",
+"sheet": "25",
+"name": "Coaxial wedge",
+"pid": "monitor.coax",
+"size": "60 x 40",
+"w": 264,
+"h": 162
+},
+{
+"key": "25-09",
+"sheet": "25",
+"name": "Floor monitor 15 in",
+"pid": "monitor.wedge-15",
+"size": "65 x 45",
+"w": 341,
+"h": 202
+},
+{
+"key": "25-10",
+"sheet": "25",
+"name": "Drum shield",
+"pid": "furniture.drum-shield",
+"size": "200 x 15",
+"w": 420,
+"h": 236
+},
+{
+"key": "25-11",
+"sheet": "25",
+"name": "Speaker on pole",
+"pid": "pa.pole",
+"size": "50 x 50",
+"w": 234,
+"h": 384
+},
+{
+"key": "25-12",
+"sheet": "25",
+"name": "Amp isolation box",
+"pid": "amp.iso-box",
+"size": "60 x 60",
+"w": 420,
+"h": 308
+},
+{
+"key": "26-01",
+"sheet": "26",
+"name": "Wi-Fi access point",
+"pid": "net.wifi-ap",
+"size": "20 x 20",
+"w": 334,
+"h": 257
+},
+{
+"key": "26-02",
+"sheet": "26",
+"name": "Wi-Fi router",
+"pid": "net.router",
+"size": "30 x 20",
+"w": 310,
+"h": 242
+},
+{
+"key": "26-03",
+"sheet": "26",
+"name": "4G hotspot",
+"pid": "net.hotspot",
+"size": "10 x 7",
+"w": 209,
+"h": 214
+},
+{
+"key": "26-04",
+"sheet": "26",
+"name": "PoE switch",
+"pid": "net.poe",
+"size": "45 x 25",
+"w": 420,
+"h": 119
+},
+{
+"key": "26-05",
+"sheet": "26",
+"name": "Fibre converter",
+"pid": "net.fibre",
+"size": "25 x 15",
+"w": 313,
+"h": 207
+},
+{
+"key": "26-06",
+"sheet": "26",
+"name": "Patch panel",
+"pid": "net.patch",
+"size": "48 x 10",
+"w": 420,
+"h": 130
+},
+{
+"key": "26-07",
+"sheet": "26",
+"name": "Dante interface",
+"pid": "net.dante",
+"size": "45 x 25",
+"w": 420,
+"h": 141
+},
+{
+"key": "26-08",
+"sheet": "26",
+"name": "DMX splitter",
+"pid": "net.dmx-splitter",
+"size": "30 x 20",
+"w": 413,
+"h": 177
+},
+{
+"key": "26-09",
+"sheet": "26",
+"name": "Network cable drum",
+"pid": "net.cable-drum",
+"size": "40 x 40",
+"w": 351,
+"h": 388
+},
+{
+"key": "26-10",
+"sheet": "26",
+"name": "UPS",
+"pid": "power.ups",
+"size": "40 x 25",
+"w": 252,
+"h": 351
+},
+{
+"key": "26-11",
+"sheet": "26",
+"name": "Art-Net node",
+"pid": "net.artnet",
+"size": "25 x 15",
+"w": 401,
+"h": 187
+},
+{
+"key": "26-12",
+"sheet": "26",
+"name": "Timecode generator",
+"pid": "rack.timecode",
+"size": "25 x 15",
+"w": 397,
+"h": 193
+},
+{
+"key": "27-01",
+"sheet": "27",
+"name": "Double bass",
+"pid": "strings.doublebass-alone",
+"size": "60 x 60",
+"w": 188,
+"h": 420
+},
+{
+"key": "27-02",
+"sheet": "27",
+"name": "Violin",
+"pid": "strings.violin-alone",
+"size": "25 x 25",
+"w": 161,
+"h": 353
+},
+{
+"key": "27-03",
+"sheet": "27",
+"name": "Cello",
+"pid": "strings.cello-alone",
+"size": "40 x 40",
+"w": 176,
+"h": 420
+},
+{
+"key": "27-04",
+"sheet": "27",
+"name": "Harp",
+"pid": "strings.harp-alone",
+"size": "90 x 60",
+"w": 239,
+"h": 420
+},
+{
+"key": "27-05",
+"sheet": "27",
+"name": "Acoustic guitar",
+"pid": "strings.guitar-alone",
+"size": "40 x 15",
+"w": 183,
+"h": 420
+},
+{
+"key": "27-06",
+"sheet": "27",
+"name": "Electric guitar",
+"pid": "strings.eguitar-alone",
+"size": "40 x 15",
+"w": 156,
+"h": 420
+},
+{
+"key": "27-07",
+"sheet": "27",
+"name": "Bass guitar",
+"pid": "strings.bass-alone",
+"size": "45 x 15",
+"w": 148,
+"h": 420
+},
+{
+"key": "27-08",
+"sheet": "27",
+"name": "Banjo",
+"pid": "strings.banjo-alone",
+"size": "35 x 15",
+"w": 178,
+"h": 402
+},
+{
+"key": "27-09",
+"sheet": "27",
+"name": "Mandolin",
+"pid": "strings.mandolin-alone",
+"size": "30 x 12",
+"w": 165,
+"h": 366
+},
+{
+"key": "27-10",
+"sheet": "27",
+"name": "Ukulele",
+"pid": "strings.ukulele-alone",
+"size": "25 x 10",
+"w": 122,
+"h": 298
+},
+{
+"key": "27-11",
+"sheet": "27",
+"name": "Pedal steel guitar",
+"pid": "strings.pedal-steel",
+"size": "120 x 50",
+"w": 420,
+"h": 329
+},
+{
+"key": "27-12",
+"sheet": "27",
+"name": "Sitar",
+"pid": "strings.sitar",
+"size": "40 x 20",
+"w": 202,
+"h": 420
+},
+{
+"key": "28-01",
+"sheet": "28",
+"name": "Alto sax",
+"pid": "winds.sax-alone",
+"size": "30 x 20",
+"w": 190,
+"h": 420
+},
+{
+"key": "28-02",
+"sheet": "28",
+"name": "Trumpet",
+"pid": "winds.trumpet-alone",
+"size": "30 x 12",
+"w": 147,
+"h": 371
+},
+{
+"key": "28-03",
+"sheet": "28",
+"name": "Trombone",
+"pid": "winds.trombone-alone",
+"size": "70 x 20",
+"w": 164,
+"h": 420
+},
+{
+"key": "28-04",
+"sheet": "28",
+"name": "Flute",
+"pid": "winds.flute-alone",
+"size": "65 x 5",
+"w": 61,
+"h": 420
+},
+{
+"key": "28-05",
+"sheet": "28",
+"name": "Clarinet",
+"pid": "winds.clarinet-alone",
+"size": "60 x 8",
+"w": 67,
+"h": 420
+},
+{
+"key": "28-06",
+"sheet": "28",
+"name": "Tuba",
+"pid": "winds.tuba-alone",
+"size": "45 x 40",
+"w": 250,
+"h": 420
+},
+{
+"key": "28-07",
+"sheet": "28",
+"name": "French horn",
+"pid": "winds.horn-alone",
+"size": "35 x 30",
+"w": 344,
+"h": 268
+},
+{
+"key": "28-08",
+"sheet": "28",
+"name": "Harmonica",
+"pid": "winds.harmonica",
+"size": "12 x 4",
+"w": 294,
+"h": 79
+},
+{
+"key": "28-09",
+"sheet": "28",
+"name": "Oboe",
+"pid": "winds.oboe-alone",
+"size": "60 x 8",
+"w": 53,
+"h": 420
+},
+{
+"key": "28-10",
+"sheet": "28",
+"name": "Accordion",
+"pid": "keys.accordion-alone",
+"size": "40 x 20",
+"w": 359,
+"h": 300
+},
+{
+"key": "28-11",
+"sheet": "28",
+"name": "Upright piano",
+"pid": "keys.upright",
+"size": "150 x 60",
+"w": 420,
+"h": 322
+},
+{
+"key": "28-12",
+"sheet": "28",
+"name": "Electric piano",
+"pid": "keys.epiano",
+"size": "130 x 50",
+"w": 420,
+"h": 274
+},
+{
+"key": "29-01",
+"sheet": "29",
+"name": "Kick drum",
+"pid": "kit.kick",
+"size": "55 x 45",
+"w": 381,
+"h": 380
+},
+{
+"key": "29-02",
+"sheet": "29",
+"name": "Snare drum",
+"pid": "kit.snare",
+"size": "40 x 40",
+"w": 228,
+"h": 343
+},
+{
+"key": "29-03",
+"sheet": "29",
+"name": "Tom on stand",
+"pid": "kit.tom",
+"size": "35 x 35",
+"w": 198,
+"h": 354
+},
+{
+"key": "29-04",
+"sheet": "29",
+"name": "Floor tom",
+"pid": "kit.floor-tom",
+"size": "45 x 45",
+"w": 256,
+"h": 344
+},
+{
+"key": "29-05",
+"sheet": "29",
+"name": "Hi-hat",
+"pid": "kit.hihat",
+"size": "40 x 40",
+"w": 204,
+"h": 420
+},
+{
+"key": "29-06",
+"sheet": "29",
+"name": "Djembe",
+"pid": "perc.djembe",
+"size": "35 x 35",
+"w": 215,
+"h": 308
+},
+{
+"key": "29-07",
+"sheet": "29",
+"name": "Bongos",
+"pid": "perc.bongos",
+"size": "35 x 20",
+"w": 268,
+"h": 320
+},
+{
+"key": "29-08",
+"sheet": "29",
+"name": "Tambourine",
+"pid": "perc.tambourine",
+"size": "25 x 25",
+"w": 256,
+"h": 233
+},
+{
+"key": "29-09",
+"sheet": "29",
+"name": "Cowbell",
+"pid": "perc.cowbell",
+"size": "15 x 15",
+"w": 182,
+"h": 226
+},
+{
+"key": "29-10",
+"sheet": "29",
+"name": "Glockenspiel",
+"pid": "perc.glockenspiel",
+"size": "80 x 35",
+"w": 420,
+"h": 199
+},
+{
+"key": "29-11",
+"sheet": "29",
+"name": "Triangle",
+"pid": "perc.triangle",
+"size": "20 x 20",
+"w": 262,
+"h": 338
+},
+{
+"key": "29-12",
+"sheet": "29",
+"name": "Handpan",
+"pid": "perc.handpan",
+"size": "55 x 55",
+"w": 375,
+"h": 377
+},
+{
+"key": "31-01",
+"sheet": "31",
+"name": "Jazz kit 4 pieces",
+"pid": "kit.jazz",
+"size": "130 x 100",
+"w": 372,
+"h": 322
+},
+{
+"key": "31-02",
+"sheet": "31",
+"name": "Rock kit double bass",
+"pid": "kit.rock-double",
+"size": "180 x 140",
+"w": 420,
+"h": 342
+},
+{
+"key": "31-03",
+"sheet": "31",
+"name": "Big kit",
+"pid": "kit.big",
+"size": "220 x 170",
+"w": 420,
+"h": 286
+},
+{
+"key": "31-04",
+"sheet": "31",
+"name": "Hybrid kit",
+"pid": "kit.hybrid",
+"size": "160 x 130",
+"w": 420,
+"h": 301
+},
+{
+"key": "31-05",
+"sheet": "31",
+"name": "Cocktail kit",
+"pid": "kit.cocktail",
+"size": "80 x 70",
+"w": 258,
+"h": 285
+},
+{
+"key": "31-06",
+"sheet": "31",
+"name": "Kit with percussion rack",
+"pid": "kit.perc-rack",
+"size": "200 x 140",
+"w": 420,
+"h": 217
+},
+{
+"key": "31-07",
+"sheet": "31",
+"name": "Minimal kit",
+"pid": "kit.minimal",
+"size": "90 x 70",
+"w": 211,
+"h": 268
+},
+{
+"key": "31-08",
+"sheet": "31",
+"name": "Concert bass drum",
+"pid": "perc.concert-bass",
+"size": "80 x 40",
+"w": 224,
+"h": 265
+},
+{
+"key": "31-10",
+"sheet": "31",
+"name": "Tabla",
+"pid": "perc.tabla",
+"size": "35 x 35",
+"w": 214,
+"h": 150
+},
+{
+"key": "31-11",
+"sheet": "31",
+"name": "Double bass pedal",
+"pid": "kit.pedal",
+"size": "15 x 30",
+"w": 230,
+"h": 205
+},
+{
+"key": "31-12",
+"sheet": "31",
+"name": "Drum rug",
+"pid": "kit.rug",
+"size": "200 x 160",
+"w": 308,
+"h": 236
+},
+{
+"key": "32-01",
+"sheet": "32",
+"name": "Trap door",
+"pid": "mach.trap",
+"size": "100 x 100",
+"w": 371,
+"h": 329
+},
+{
+"key": "32-02",
+"sheet": "32",
+"name": "Scissor lift",
+"pid": "mach.scissor",
+"size": "120 x 80",
+"w": 249,
+"h": 350
+},
+{
+"key": "32-03",
+"sheet": "32",
+"name": "Boom lift",
+"pid": "mach.boom",
+"size": "150 x 100",
+"w": 397,
+"h": 331
+},
+{
+"key": "32-04",
+"sheet": "32",
+"name": "Forklift",
+"pid": "mach.forklift",
+"size": "120 x 250",
+"w": 364,
+"h": 340
+},
+{
+"key": "32-05",
+"sheet": "32",
+"name": "Revolving stage",
+"pid": "mach.revolve",
+"size": "500 x 500",
+"w": 393,
+"h": 215
+},
+{
+"key": "32-06",
+"sheet": "32",
+"name": "Wagon on casters",
+"pid": "mach.wagon",
+"size": "200 x 200",
+"w": 348,
+"h": 195
+},
+{
+"key": "32-07",
+"sheet": "32",
+"name": "Winch",
+"pid": "mach.winch",
+"size": "50 x 40",
+"w": 264,
+"h": 250
+},
+{
+"key": "32-08",
+"sheet": "32",
+"name": "Fly pipe",
+"pid": "mach.batten",
+"size": "500 x 10",
+"w": 420,
+"h": 189
+},
+{
+"key": "32-09",
+"sheet": "32",
+"name": "Stage elevator",
+"pid": "mach.elevator",
+"size": "300 x 300",
+"w": 403,
+"h": 307
+},
+{
+"key": "32-10",
+"sheet": "32",
+"name": "Hoist controller",
+"pid": "mach.hoist-ctrl",
+"size": "60 x 40",
+"w": 307,
+"h": 325
+},
+{
+"key": "32-11",
+"sheet": "32",
+"name": "Pallet jack",
+"pid": "mach.pallet",
+"size": "60 x 150",
+"w": 345,
+"h": 290
+},
+{
+"key": "32-12",
+"sheet": "32",
+"name": "Case dolly",
+"pid": "mach.dolly",
+"size": "80 x 60",
+"w": 336,
+"h": 294
+},
+{
+"key": "33-01",
+"sheet": "33",
+"name": "Ceiling projector",
+"pid": "video.proj-ceiling",
+"size": "45 x 35",
+"w": 281,
+"h": 281
+},
+{
+"key": "33-02",
+"sheet": "33",
+"name": "Projector on stand",
+"pid": "video.proj-stand",
+"size": "45 x 35",
+"w": 176,
+"h": 285
+},
+{
+"key": "33-03",
+"sheet": "33",
+"name": "Large-venue projector",
+"pid": "video.proj-large",
+"size": "80 x 60",
+"w": 420,
+"h": 216
+},
+{
+"key": "33-04",
+"sheet": "33",
+"name": "Short-throw projector",
+"pid": "video.proj-short",
+"size": "35 x 30",
+"w": 306,
+"h": 258
+},
+{
+"key": "33-05",
+"sheet": "33",
+"name": "Rear-projection screen",
+"pid": "video.rear",
+"size": "300 x 10",
+"w": 390,
+"h": 307
+},
+{
+"key": "33-06",
+"sheet": "33",
+"name": "Fast-fold screen",
+"pid": "video.fastfold",
+"size": "400 x 20",
+"w": 387,
+"h": 304
+},
+{
+"key": "33-07",
+"sheet": "33",
+"name": "Tripod screen",
+"pid": "video.tripod-screen",
+"size": "180 x 15",
+"w": 257,
+"h": 303
+},
+{
+"key": "33-08",
+"sheet": "33",
+"name": "Roller screen",
+"pid": "video.roller",
+"size": "400 x 10",
+"w": 399,
+"h": 258
+},
+{
+"key": "33-09",
+"sheet": "33",
+"name": "LED processor",
+"pid": "video.led-proc",
+"size": "45 x 20",
+"w": 420,
+"h": 76
+},
+{
+"key": "33-10",
+"sheet": "33",
+"name": "Gauze",
+"pid": "video.gauze",
+"size": "500 x 5",
+"w": 420,
+"h": 286
+},
+{
+"key": "33-11",
+"sheet": "33",
+"name": "Projection mapping",
+"pid": "video.mapping",
+"size": "100 x 100",
+"w": 420,
+"h": 299
+},
+{
+"key": "34-01",
+"sheet": "34",
+"name": "Soprano sax",
+"pid": "winds.sax-soprano",
+"size": "45 x 10",
+"w": 65,
+"h": 420
+},
+{
+"key": "34-02",
+"sheet": "34",
+"name": "Tenor sax",
+"pid": "winds.sax-tenor",
+"size": "45 x 25",
+"w": 207,
+"h": 420
+},
+{
+"key": "34-03",
+"sheet": "34",
+"name": "Baritone sax",
+"pid": "winds.sax-bari",
+"size": "50 x 35",
+"w": 242,
+"h": 420
+},
+{
+"key": "34-04",
+"sheet": "34",
+"name": "Bass clarinet",
+"pid": "winds.bass-clarinet",
+"size": "40 x 20",
+"w": 117,
+"h": 420
+},
+{
+"key": "34-05",
+"sheet": "34",
+"name": "Piccolo",
+"pid": "winds.piccolo",
+"size": "35 x 4",
+"w": 235,
+"h": 233
+},
+{
+"key": "34-06",
+"sheet": "34",
+"name": "Bassoon",
+"pid": "winds.bassoon",
+"size": "30 x 20",
+"w": 145,
+"h": 420
+},
+{
+"key": "34-07",
+"sheet": "34",
+"name": "Flugelhorn",
+"pid": "winds.flugelhorn",
+"size": "30 x 15",
+"w": 188,
+"h": 335
+},
+{
+"key": "34-08",
+"sheet": "34",
+"name": "Euphonium",
+"pid": "winds.euphonium",
+"size": "35 x 35",
+"w": 203,
+"h": 374
+},
+{
+"key": "34-09",
+"sheet": "34",
+"name": "Sousaphone",
+"pid": "winds.sousaphone",
+"size": "60 x 60",
+"w": 306,
+"h": 420
+},
+{
+"key": "34-10",
+"sheet": "34",
+"name": "Recorder",
+"pid": "winds.recorder",
+"size": "35 x 5",
+"w": 51,
+"h": 375
+},
+{
+"key": "34-11",
+"sheet": "34",
+"name": "Bagpipes",
+"pid": "winds.bagpipes",
+"size": "60 x 40",
+"w": 274,
+"h": 420
+},
+{
+"key": "34-12",
+"sheet": "34",
+"name": "Didgeridoo",
+"pid": "winds.didgeridoo",
+"size": "130 x 10",
+"w": 214,
+"h": 420
+},
+{
+"key": "35-01",
+"sheet": "35",
+"name": "Baby grand",
+"pid": "keys.baby-grand",
+"size": "150 x 160",
+"w": 338,
+"h": 336
+},
+{
+"key": "35-02",
+"sheet": "35",
+"name": "Concert grand",
+"pid": "keys.concert-grand",
+"size": "160 x 275",
+"w": 420,
+"h": 239
+},
+{
+"key": "35-03",
+"sheet": "35",
+"name": "Piano with bench",
+"pid": "keys.grand-bench",
+"size": "150 x 230",
+"w": 373,
+"h": 402
+},
+{
+"key": "35-04",
+"sheet": "35",
+"name": "Rhodes electric piano",
+"pid": "keys.rhodes",
+"size": "110 x 45",
+"w": 403,
+"h": 250
+},
+{
+"key": "35-05",
+"sheet": "35",
+"name": "Harpsichord",
+"pid": "keys.harpsichord",
+"size": "100 x 230",
+"w": 420,
+"h": 202
+},
+{
+"key": "35-06",
+"sheet": "35",
+"name": "Hammond organ",
+"pid": "keys.hammond",
+"size": "120 x 70",
+"w": 420,
+"h": 225
+},
+{
+"key": "35-08",
+"sheet": "35",
+"name": "Organ console",
+"pid": "keys.organ-console",
+"size": "150 x 100",
+"w": 396,
+"h": 332
+},
+{
+"key": "35-09",
+"sheet": "35",
+"name": "Celesta",
+"pid": "keys.celesta",
+"size": "100 x 60",
+"w": 233,
+"h": 281
+},
+{
+"key": "35-10",
+"sheet": "35",
+"name": "Clavinet",
+"pid": "keys.clavinet",
+"size": "100 x 40",
+"w": 308,
+"h": 173
+},
+{
+"key": "35-11",
+"sheet": "35",
+"name": "Piano bench",
+"pid": "furniture.piano-bench",
+"size": "90 x 40",
+"w": 252,
+"h": 142
+},
+{
+"key": "35-12",
+"sheet": "35",
+"name": "Three-keyboard rig",
+"pid": "keys.rig-3",
+"size": "140 x 90",
+"w": 346,
+"h": 330
+},
+{
+"key": "36-01",
+"sheet": "36",
+"name": "Production desk",
+"pid": "prod.desk",
+"size": "180 x 80",
+"w": 420,
+"h": 228
+},
+{
+"key": "36-02",
+"sheet": "36",
+"name": "Production office",
+"pid": "prod.office",
+"size": "80 x 60",
+"w": 314,
+"h": 303
+},
+{
+"key": "36-03",
+"sheet": "36",
+"name": "Catering table",
+"pid": "prod.catering",
+"size": "200 x 80",
+"w": 420,
+"h": 191
+},
+{
+"key": "36-04",
+"sheet": "36",
+"name": "Water station",
+"pid": "prod.water",
+"size": "60 x 40",
+"w": 204,
+"h": 339
+},
+{
+"key": "36-05",
+"sheet": "36",
+"name": "Dressing room mirror",
+"pid": "prod.mirror",
+"size": "100 x 30",
+"w": 329,
+"h": 339
+},
+{
+"key": "36-07",
+"sheet": "36",
+"name": "Quick-change tent",
+"pid": "prod.quick-change",
+"size": "120 x 120",
+"w": 305,
+"h": 375
+},
+{
+"key": "36-08",
+"sheet": "36",
+"name": "Props table",
+"pid": "prod.props",
+"size": "180 x 70",
+"w": 420,
+"h": 187
+},
+{
+"key": "36-09",
+"sheet": "36",
+"name": "Guest list table",
+"pid": "prod.guests",
+"size": "150 x 60",
+"w": 420,
+"h": 196
+},
+{
+"key": "36-10",
+"sheet": "36",
+"name": "Rope barrier",
+"pid": "prod.rope",
+"size": "100 x 10",
+"w": 368,
+"h": 236
+},
+{
+"key": "36-12",
+"sheet": "36",
+"name": "Toolbox",
+"pid": "prod.toolbox",
+"size": "50 x 30",
+"w": 280,
+"h": 146
+},
+{
+"key": "37-04",
+"sheet": "37",
+"name": "Doumbek",
+"pid": "perc.doumbek",
+"size": "30 x 30",
+"w": 194,
+"h": 306
+},
+{
+"key": "37-05",
+"sheet": "37",
+"name": "Tubular bells",
+"pid": "perc.tubular",
+"size": "150 x 60",
+"w": 203,
+"h": 420
+},
+{
+"key": "37-06",
+"sheet": "37",
+"name": "Xylophone",
+"pid": "perc.xylophone",
+"size": "130 x 60",
+"w": 420,
+"h": 150
+},
+{
+"key": "37-07",
+"sheet": "37",
+"name": "Maracas",
+"pid": "perc.maracas",
+"size": "15 x 15",
+"w": 221,
+"h": 250
+},
+{
+"key": "37-08",
+"sheet": "37",
+"name": "Wind chimes",
+"pid": "perc.chimes",
+"size": "30 x 30",
+"w": 195,
+"h": 318
+},
+{
+"key": "37-09",
+"sheet": "37",
+"name": "Wood block",
+"pid": "perc.woodblock",
+"size": "20 x 15",
+"w": 262,
+"h": 214
+},
+{
+"key": "37-10",
+"sheet": "37",
+"name": "Kalimba",
+"pid": "perc.kalimba",
+"size": "15 x 15",
+"w": 225,
+"h": 232
+},
+{
+"key": "37-11",
+"sheet": "37",
+"name": "Guiro",
+"pid": "perc.guiro",
+"size": "35 x 10",
+"w": 231,
+"h": 262
+},
+{
+"key": "37-12",
+"sheet": "37",
+"name": "Agogo bells",
+"pid": "perc.agogo",
+"size": "20 x 15",
+"w": 222,
+"h": 212
+},
+{
+"key": "38-01",
+"sheet": "38",
+"name": "Oud",
+"pid": "strings.oud",
+"size": "55 x 35",
+"w": 227,
+"h": 420
+},
+{
+"key": "38-04",
+"sheet": "38",
+"name": "Koto",
+"pid": "strings.koto",
+"size": "180 x 30",
+"w": 420,
+"h": 205
+},
+{
+"key": "38-05",
+"sheet": "38",
+"name": "Erhu",
+"pid": "strings.erhu",
+"size": "80 x 15",
+"w": 158,
+"h": 420
+},
+{
+"key": "38-07",
+"sheet": "38",
+"name": "Kora",
+"pid": "strings.kora",
+"size": "70 x 35",
+"w": 176,
+"h": 420
+},
+{
+"key": "38-08",
+"sheet": "38",
+"name": "Charango",
+"pid": "strings.charango",
+"size": "35 x 15",
+"w": 131,
+"h": 420
+},
+{
+"key": "38-09",
+"sheet": "38",
+"name": "Lute",
+"pid": "strings.lute",
+"size": "60 x 35",
+"w": 218,
+"h": 420
+},
+{
+"key": "38-10",
+"sheet": "38",
+"name": "Zither",
+"pid": "strings.zither",
+"size": "60 x 30",
+"w": 261,
+"h": 420
+},
+{
+"key": "38-11",
+"sheet": "38",
+"name": "Hurdy-gurdy",
+"pid": "strings.hurdy",
+"size": "60 x 25",
+"w": 420,
+"h": 207
+},
+{
+"key": "38-12",
+"sheet": "38",
+"name": "Cavaquinho",
+"pid": "strings.cavaquinho",
+"size": "35 x 15",
+"w": 164,
+"h": 420
+},
+{
+"key": "39-01",
+"sheet": "39",
+"name": "Orchestra chair",
+"pid": "orch.chair",
+"size": "45 x 45",
+"w": 220,
+"h": 306
+},
+{
+"key": "39-02",
+"sheet": "39",
+"name": "Double-desk stand",
+"pid": "orch.stand-2",
+"size": "70 x 40",
+"w": 284,
+"h": 318
+},
+{
+"key": "39-03",
+"sheet": "39",
+"name": "Conductor podium",
+"pid": "orch.podium",
+"size": "100 x 100",
+"w": 330,
+"h": 328
+},
+{
+"key": "39-04",
+"sheet": "39",
+"name": "Conductor score stand",
+"pid": "orch.score-stand",
+"size": "70 x 40",
+"w": 204,
+"h": 338
+},
+{
+"key": "39-06",
+"sheet": "39",
+"name": "Bass stool",
+"pid": "orch.bass-stool",
+"size": "40 x 40",
+"w": 181,
+"h": 328
+},
+{
+"key": "39-07",
+"sheet": "39",
+"name": "Percussion trolley",
+"pid": "orch.perc-trolley",
+"size": "100 x 50",
+"w": 420,
+"h": 337
+},
+{
+"key": "39-08",
+"sheet": "39",
+"name": "Choir riser tier",
+"pid": "orch.riser-tier",
+"size": "200 x 60",
+"w": 420,
+"h": 204
+},
+{
+"key": "39-09",
+"sheet": "39",
+"name": "Acoustic shell panel",
+"pid": "orch.shell",
+"size": "200 x 15",
+"w": 420,
+"h": 352
+},
+{
+"key": "39-10",
+"sheet": "39",
+"name": "Stand light",
+"pid": "orch.stand-light",
+"size": "10 x 10",
+"w": 331,
+"h": 233
+},
+{
+"key": "39-11",
+"sheet": "39",
+"name": "Brass stand rack",
+"pid": "orch.brass-rack",
+"size": "60 x 40",
+"w": 420,
+"h": 284
+},
+{
+"key": "40-01",
+"sheet": "40",
+"name": "Portable mixer",
+"pid": "desk.portable",
+"size": "35 x 30",
+"w": 283,
+"h": 273
+},
+{
+"key": "40-02",
+"sheet": "40",
+"name": "Powered mixer",
+"pid": "desk.powered",
+"size": "45 x 40",
+"w": 382,
+"h": 330
+},
+{
+"key": "40-03",
+"sheet": "40",
+"name": "Large-format console",
+"pid": "desk.large",
+"size": "200 x 90",
+"w": 420,
+"h": 158
+},
+{
+"key": "40-04",
+"sheet": "40",
+"name": "Compressor",
+"pid": "rack.compressor",
+"size": "48 x 10",
+"w": 420,
+"h": 54
+},
+{
+"key": "40-05",
+"sheet": "40",
+"name": "Digital stage box",
+"pid": "rack.stagebox-digital",
+"size": "45 x 30",
+"w": 420,
+"h": 204
+},
+{
+"key": "40-06",
+"sheet": "40",
+"name": "Graphic EQ",
+"pid": "rack.geq",
+"size": "48 x 15",
+"w": 420,
+"h": 54
+},
+{
+"key": "40-07",
+"sheet": "40",
+"name": "Effects processor",
+"pid": "rack.fx-unit",
+"size": "48 x 10",
+"w": 420,
+"h": 48
+},
+{
+"key": "40-08",
+"sheet": "40",
+"name": "Speaker processor",
+"pid": "rack.speaker-proc",
+"size": "48 x 10",
+"w": 420,
+"h": 48
+},
+{
+"key": "40-09",
+"sheet": "40",
+"name": "Power amp",
+"pid": "rack.power-amp",
+"size": "48 x 40",
+"w": 420,
+"h": 185
+},
+{
+"key": "40-10",
+"sheet": "40",
+"name": "Cue box",
+"pid": "rack.cue-box",
+"size": "20 x 15",
+"w": 299,
+"h": 157
+},
+{
+"key": "41-01",
+"sheet": "41",
+"name": "Lighting console, large",
+"pid": "control.lx-large",
+"size": "150 x 80",
+"w": 420,
+"h": 181
+},
+{
+"key": "41-02",
+"sheet": "41",
+"name": "Fader wing",
+"pid": "control.lx-wing",
+"size": "60 x 40",
+"w": 317,
+"h": 172
+},
+{
+"key": "41-03",
+"sheet": "41",
+"name": "DMX controller",
+"pid": "control.dmx",
+"size": "40 x 25",
+"w": 249,
+"h": 168
+},
+{
+"key": "41-04",
+"sheet": "41",
+"name": "Dimmer pack",
+"pid": "control.dimmer-pack",
+"size": "40 x 30",
+"w": 306,
+"h": 252
+},
+{
+"key": "41-05",
+"sheet": "41",
+"name": "Crank-up tower",
+"pid": "rig.crank",
+"size": "60 x 60",
+"w": 295,
+"h": 399
+},
+{
+"key": "41-06",
+"sheet": "41",
+"name": "Ground support tower",
+"pid": "rig.ground-tower",
+"size": "100 x 100",
+"w": 356,
+"h": 420
+},
+{
+"key": "41-07",
+"sheet": "41",
+"name": "Lighting boom",
+"pid": "rig.boom",
+"size": "40 x 40",
+"w": 200,
+"h": 419
+},
+{
+"key": "41-08",
+"sheet": "41",
+"name": "Stage roof section",
+"pid": "rig.roof",
+"size": "300 x 300",
+"w": 402,
+"h": 394
+},
+{
+"key": "41-09",
+"sheet": "41",
+"name": "Handrail",
+"pid": "rig.handrail",
+"size": "200 x 10",
+"w": 420,
+"h": 170
+},
+{
+"key": "41-10",
+"sheet": "41",
+"name": "Stage skirt",
+"pid": "rig.skirt",
+"size": "300 x 5",
+"w": 420,
+"h": 124
+},
+{
+"key": "41-11",
+"sheet": "41",
+"name": "Box truss",
+"pid": "rig.truss-box",
+"size": "300 x 300",
+"w": 270,
+"h": 264
+},
+{
+"key": "41-12",
+"sheet": "41",
+"name": "Truss corner",
+"pid": "rig.truss-corner",
+"size": "60 x 60",
+"w": 215,
+"h": 230
+},
+{
+"key": "42-01",
+"sheet": "42",
+"name": "Shoulder camera",
+"pid": "video.shoulder",
+"size": "30 x 60",
+"w": 399,
+"h": 226
+},
+{
+"key": "42-02",
+"sheet": "42",
+"name": "Steadicam",
+"pid": "video.steadicam",
+"size": "80 x 60",
+"w": 337,
+"h": 340
+},
+{
+"key": "42-03",
+"sheet": "42",
+"name": "Drone",
+"pid": "video.drone",
+"size": "35 x 35",
+"w": 420,
+"h": 230
+},
+{
+"key": "42-04",
+"sheet": "42",
+"name": "Action camera",
+"pid": "video.action",
+"size": "6 x 6",
+"w": 223,
+"h": 240
+},
+{
+"key": "42-05",
+"sheet": "42",
+"name": "Camera slider",
+"pid": "video.slider",
+"size": "100 x 20",
+"w": 420,
+"h": 164
+},
+{
+"key": "42-06",
+"sheet": "42",
+"name": "Streaming PC",
+"pid": "video.stream-pc",
+"size": "40 x 40",
+"w": 420,
+"h": 258
+},
+{
+"key": "42-07",
+"sheet": "42",
+"name": "Capture box",
+"pid": "video.capture",
+"size": "20 x 15",
+"w": 335,
+"h": 166
+},
+{
+"key": "42-08",
+"sheet": "42",
+"name": "Monitor cart",
+"pid": "video.cart",
+"size": "60 x 60",
+"w": 401,
+"h": 388
+},
+{
+"key": "42-09",
+"sheet": "42",
+"name": "Satellite dish",
+"pid": "video.dish",
+"size": "120 x 120",
+"w": 334,
+"h": 412
+},
+{
+"key": "42-10",
+"sheet": "42",
+"name": "Wireless video transmitter",
+"pid": "video.wireless",
+"size": "15 x 10",
+"w": 141,
+"h": 310
+},
+{
+"key": "42-11",
+"sheet": "42",
+"name": "Tally light",
+"pid": "video.tally",
+"size": "10 x 10",
+"w": 118,
+"h": 203
+},
+{
+"key": "42-12",
+"sheet": "42",
+"name": "Camera dolly",
+"pid": "video.dolly",
+"size": "60 x 60",
+"w": 365,
+"h": 383
+},
+{
+"key": "43-01",
+"sheet": "43",
+"name": "Stage ramp",
+"pid": "set.ramp",
+"size": "100 x 300",
+"w": 420,
+"h": 249
+},
+{
+"key": "43-02",
+"sheet": "43",
+"name": "Balcony",
+"pid": "set.balcony",
+"size": "300 x 100",
+"w": 420,
+"h": 265
+},
+{
+"key": "43-03",
+"sheet": "43",
+"name": "Column",
+"pid": "set.column",
+"size": "40 x 40",
+"w": 123,
+"h": 334
+},
+{
+"key": "43-04",
+"sheet": "43",
+"name": "Archway",
+"pid": "set.arch",
+"size": "200 x 30",
+"w": 331,
+"h": 346
+},
+{
+"key": "43-05",
+"sheet": "43",
+"name": "Tree",
+"pid": "set.tree",
+"size": "100 x 100",
+"w": 409,
+"h": 386
+},
+{
+"key": "43-06",
+"sheet": "43",
+"name": "Rock",
+"pid": "set.rock",
+"size": "100 x 80",
+"w": 415,
+"h": 240
+},
+{
+"key": "43-07",
+"sheet": "43",
+"name": "Picket fence",
+"pid": "set.fence",
+"size": "200 x 10",
+"w": 420,
+"h": 178
+},
+{
+"key": "43-08",
+"sheet": "43",
+"name": "Street lamp",
+"pid": "set.street-lamp",
+"size": "30 x 30",
+"w": 95,
+"h": 375
+},
+{
+"key": "43-09",
+"sheet": "43",
+"name": "Prop car",
+"pid": "set.car",
+"size": "180 x 400",
+"w": 420,
+"h": 229
+},
+{
+"key": "43-10",
+"sheet": "43",
+"name": "Bush",
+"pid": "set.bush",
+"size": "60 x 60",
+"w": 231,
+"h": 185
+},
+{
+"key": "43-11",
+"sheet": "43",
+"name": "Signpost",
+"pid": "set.signpost",
+"size": "30 x 30",
+"w": 203,
+"h": 255
+},
+{
+"key": "43-12",
+"sheet": "43",
+"name": "Bridge",
+"pid": "set.bridge",
+"size": "300 x 100",
+"w": 420,
+"h": 187
+},
+{
+"key": "44-04",
+"sheet": "44",
+"name": "Stage door",
+"pid": "venue.stage-door",
+"size": "100 x 20",
+"w": 177,
+"h": 273
+},
+{
+"key": "44-05",
+"sheet": "44",
+"name": "Fence panel",
+"pid": "venue.fence",
+"size": "250 x 5",
+"w": 420,
+"h": 228
+},
+{
+"key": "44-06",
+"sheet": "44",
+"name": "Gate",
+"pid": "venue.gate",
+"size": "300 x 10",
+"w": 419,
+"h": 239
+},
+{
+"key": "44-07",
+"sheet": "44",
+"name": "Trash bin",
+"pid": "venue.bin",
+"size": "50 x 50",
+"w": 177,
+"h": 222
+},
+{
+"key": "44-09",
+"sheet": "44",
+"name": "Flag pole",
+"pid": "venue.flag",
+"size": "20 x 20",
+"w": 150,
+"h": 272
+},
+{
+"key": "44-11",
+"sheet": "44",
+"name": "Bike rack",
+"pid": "venue.bike",
+"size": "200 x 40",
+"w": 420,
+"h": 95
+},
+{
+"key": "44b-01",
+"sheet": "44b",
+"name": "Seat row",
+"pid": "venue.seats",
+"size": "300 x 45",
+"w": 382,
+"h": 169
+},
+{
+"key": "44b-02",
+"sheet": "44b",
+"name": "Orchestra pit",
+"pid": "venue.pit",
+"size": "600 x 200",
+"w": 420,
+"h": 168
+},
+{
+"key": "44b-03",
+"sheet": "44b",
+"name": "Loading dock",
+"pid": "venue.dock",
+"size": "300 x 100",
+"w": 293,
+"h": 336
+},
+{
+"key": "44b-05",
+"sheet": "44b",
+"name": "Fence panel",
+"pid": "venue.fence",
+"size": "250 x 5",
+"w": 392,
+"h": 236
+},
+{
+"key": "44b-08",
+"sheet": "44b",
+"name": "Info desk",
+"pid": "venue.info",
+"size": "120 x 60",
+"w": 314,
+"h": 279
+},
+{
+"key": "44b-10",
+"sheet": "44b",
+"name": "Light tower mast",
+"pid": "venue.mast",
+"size": "100 x 100",
+"w": 299,
+"h": 301
+},
+{
+"key": "44b-12",
+"sheet": "44b",
+"name": "Utility cart",
+"pid": "venue.cart",
+"size": "120 x 70",
+"w": 328,
+"h": 235
+},
+{
+"key": "45-01",
+"sheet": "45",
+"name": "AED",
+"pid": "safety.aed",
+"size": "30 x 30",
+"w": 328,
+"h": 348
+},
+{
+"key": "45-02",
+"sheet": "45",
+"name": "Fire blanket",
+"pid": "safety.blanket",
+"size": "20 x 20",
+"w": 203,
+"h": 338
+},
+{
+"key": "45-03",
+"sheet": "45",
+"name": "Fire alarm",
+"pid": "safety.alarm",
+"size": "15 x 15",
+"w": 236,
+"h": 275
+},
+{
+"key": "45-04",
+"sheet": "45",
+"name": "Hearing protection",
+"pid": "safety.hearing",
+"size": "40 x 40",
+"w": 279,
+"h": 334
+},
+{
+"key": "45-05",
+"sheet": "45",
+"name": "Assembly point",
+"pid": "safety.assembly",
+"size": "40 x 40",
+"w": 293,
+"h": 335
+},
+{
+"key": "45-06",
+"sheet": "45",
+"name": "Emergency light",
+"pid": "safety.emergency-light",
+"size": "30 x 15",
+"w": 303,
+"h": 265
+},
+{
+"key": "45-07",
+"sheet": "45",
+"name": "Traffic cone",
+"pid": "safety.cone",
+"size": "30 x 30",
+"w": 238,
+"h": 302
+},
+{
+"key": "45-08",
+"sheet": "45",
+"name": "Caution tape",
+"pid": "safety.tape",
+"size": "100 x 5",
+"w": 420,
+"h": 120
+},
+{
+"key": "45-09",
+"sheet": "45",
+"name": "Wet floor sign",
+"pid": "safety.wet",
+"size": "30 x 30",
+"w": 320,
+"h": 337
+},
+{
+"key": "45-10",
+"sheet": "45",
+"name": "No smoking",
+"pid": "safety.no-smoking",
+"size": "30 x 30",
+"w": 271,
+"h": 250
+},
+{
+"key": "45-11",
+"sheet": "45",
+"name": "Restricted area",
+"pid": "safety.restricted",
+"size": "30 x 30",
+"w": 280,
+"h": 251
+},
+{
+"key": "45-12",
+"sheet": "45",
+"name": "Exit sign",
+"pid": "safety.exit-sign",
+"size": "40 x 10",
+"w": 420,
+"h": 128
+},
+{
+"key": "46-01",
+"sheet": "46",
+"name": "Modular synth",
+"pid": "synth.modular",
+"size": "120 x 40",
+"w": 420,
+"h": 211
+},
+{
+"key": "46-02",
+"sheet": "46",
+"name": "Drum machine",
+"pid": "synth.drum-machine",
+"size": "35 x 30",
+"w": 277,
+"h": 265
+},
+{
+"key": "46-03",
+"sheet": "46",
+"name": "Groovebox",
+"pid": "synth.groovebox",
+"size": "30 x 25",
+"w": 254,
+"h": 229
+},
+{
+"key": "46-04",
+"sheet": "46",
+"name": "CDJ player",
+"pid": "dj.cdj",
+"size": "35 x 45",
+"w": 291,
+"h": 326
+},
+{
+"key": "46-05",
+"sheet": "46",
+"name": "DJ mixer",
+"pid": "dj.mixer",
+"size": "35 x 40",
+"w": 350,
+"h": 323
+},
+{
+"key": "46-06",
+"sheet": "46",
+"name": "Vocoder keyboard",
+"pid": "synth.vocoder",
+"size": "80 x 30",
+"w": 420,
+"h": 225
+},
+{
+"key": "46-07",
+"sheet": "46",
+"name": "Theremin",
+"pid": "synth.theremin",
+"size": "60 x 60",
+"w": 420,
+"h": 333
+},
+{
+"key": "46-08",
+"sheet": "46",
+"name": "Desktop synth",
+"pid": "synth.desktop",
+"size": "30 x 20",
+"w": 312,
+"h": 200
+},
+{
+"key": "46-09",
+"sheet": "46",
+"name": "Sequencer",
+"pid": "synth.sequencer",
+"size": "30 x 20",
+"w": 287,
+"h": 181
+},
+{
+"key": "46-10",
+"sheet": "46",
+"name": "Vinyl crate",
+"pid": "dj.crate",
+"size": "35 x 35",
+"w": 283,
+"h": 279
+},
+{
+"key": "46-11",
+"sheet": "46",
+"name": "Vocal harmoniser",
+"pid": "rack.harmoniser",
+"size": "25 x 15",
+"w": 271,
+"h": 160
+},
+{
+"key": "46-12",
+"sheet": "46",
+"name": "Guitar loop station",
+"pid": "pedal.loop-station",
+"size": "30 x 15",
+"w": 262,
+"h": 215
+},
+{
+"key": "47-02",
+"sheet": "47",
+"name": "Panel table",
+"pid": "conf.panel",
+"size": "300 x 70",
+"w": 420,
+"h": 140
+},
+{
+"key": "47-03",
+"sheet": "47",
+"name": "Rostrum",
+"pid": "conf.rostrum",
+"size": "70 x 50",
+"w": 204,
+"h": 277
+},
+{
+"key": "47-04",
+"sheet": "47",
+"name": "Backdrop banner",
+"pid": "conf.banner",
+"size": "400 x 20",
+"w": 420,
+"h": 181
+},
+{
+"key": "47-06",
+"sheet": "47",
+"name": "Flag",
+"pid": "conf.flag",
+"size": "40 x 40",
+"w": 76,
+"h": 277
+},
+{
+"key": "47-07",
+"sheet": "47",
+"name": "Trophy table",
+"pid": "conf.trophy",
+"size": "150 x 60",
+"w": 349,
+"h": 213
+},
+{
+"key": "47-08",
+"sheet": "47",
+"name": "Red carpet",
+"pid": "conf.carpet",
+"size": "500 x 150",
+"w": 420,
+"h": 158
+},
+{
+"key": "47-09",
+"sheet": "47",
+"name": "Ceremony chairs",
+"pid": "conf.chairs",
+"size": "200 x 45",
+"w": 420,
+"h": 135
+},
+{
+"key": "47-10",
+"sheet": "47",
+"name": "Interpretation booth",
+"pid": "conf.booth",
+"size": "200 x 150",
+"w": 420,
+"h": 198
+},
+{
+"key": "47-11",
+"sheet": "47",
+"name": "Interpreter receiver",
+"pid": "conf.receiver",
+"size": "10 x 7",
+"w": 261,
+"h": 233
+},
+{
+"key": "47-12",
+"sheet": "47",
+"name": "Captioning screen",
+"pid": "conf.captions",
+"size": "100 x 15",
+"w": 413,
+"h": 260
+},
+{
+"key": "47b-01",
+"sheet": "47b",
+"name": "Conference table",
+"pid": "conf.table",
+"size": "240 x 80",
+"w": 420,
+"h": 153
+},
+{
+"key": "47b-02",
+"sheet": "47b",
+"name": "Panel table",
+"pid": "conf.panel",
+"size": "300 x 70",
+"w": 420,
+"h": 155
+},
+{
+"key": "47b-05",
+"sheet": "47b",
+"name": "Step-and-repeat",
+"pid": "conf.step-repeat",
+"size": "300 x 20",
+"w": 408,
+"h": 297
+},
+{
+"key": "48-01",
+"sheet": "48",
+"name": "Double-cut electric",
+"pid": "strings.guitar-dc",
+"size": "40 x 15",
+"w": 158,
+"h": 420
+},
+{
+"key": "48-02",
+"sheet": "48",
+"name": "Single-cut slab electric",
+"pid": "strings.guitar-tele",
+"size": "40 x 15",
+"w": 156,
+"h": 420
+},
+{
+"key": "48-03",
+"sheet": "48",
+"name": "Carved single-cut",
+"pid": "strings.guitar-lp",
+"size": "40 x 15",
+"w": 158,
+"h": 420
+},
+{
+"key": "48-04",
+"sheet": "48",
+"name": "Archtop jazz guitar",
+"pid": "strings.guitar-archtop",
+"size": "45 x 18",
+"w": 197,
+"h": 420
+},
+{
+"key": "48-05",
+"sheet": "48",
+"name": "Semi-hollow guitar",
+"pid": "strings.guitar-semi",
+"size": "42 x 17",
+"w": 191,
+"h": 420
+},
+{
+"key": "48-06",
+"sheet": "48",
+"name": "V-shaped guitar",
+"pid": "strings.guitar-v",
+"size": "45 x 20",
+"w": 198,
+"h": 420
+},
+{
+"key": "48-07",
+"sheet": "48",
+"name": "Double-neck guitar",
+"pid": "strings.guitar-double",
+"size": "45 x 20",
+"w": 207,
+"h": 420
+},
+{
+"key": "48-08",
+"sheet": "48",
+"name": "Classical guitar",
+"pid": "strings.guitar-classical",
+"size": "40 x 15",
+"w": 170,
+"h": 420
+},
+{
+"key": "48-09",
+"sheet": "48",
+"name": "12-string guitar",
+"pid": "strings.guitar-12",
+"size": "40 x 15",
+"w": 190,
+"h": 420
+},
+{
+"key": "48-10",
+"sheet": "48",
+"name": "Resonator guitar",
+"pid": "strings.guitar-reso",
+"size": "40 x 15",
+"w": 189,
+"h": 420
+},
+{
+"key": "48-11",
+"sheet": "48",
+"name": "Lap steel",
+"pid": "strings.lap-steel",
+"size": "60 x 15",
+"w": 127,
+"h": 420
+},
+{
+"key": "48-12",
+"sheet": "48",
+"name": "Flamenco guitar",
+"pid": "strings.guitar-flamenco",
+"size": "40 x 15",
+"w": 186,
+"h": 420
+},
+{
+"key": "49-01",
+"sheet": "49",
+"name": "Precision-style bass",
+"pid": "strings.bass-p",
+"size": "45 x 15",
+"w": 148,
+"h": 420
+},
+{
+"key": "49-02",
+"sheet": "49",
+"name": "Jazz-style bass",
+"pid": "strings.bass-j",
+"size": "45 x 15",
+"w": 149,
+"h": 420
+},
+{
+"key": "49-03",
+"sheet": "49",
+"name": "5-string bass",
+"pid": "strings.bass-5",
+"size": "48 x 16",
+"w": 148,
+"h": 420
+},
+{
+"key": "49-04",
+"sheet": "49",
+"name": "Headless bass",
+"pid": "strings.bass-headless",
+"size": "40 x 15",
+"w": 139,
+"h": 420
+},
+{
+"key": "49-05",
+"sheet": "49",
+"name": "Acoustic bass guitar",
+"pid": "strings.bass-acoustic",
+"size": "50 x 20",
+"w": 185,
+"h": 420
+},
+{
+"key": "49-06",
+"sheet": "49",
+"name": "Electric upright bass",
+"pid": "strings.bass-eub",
+"size": "50 x 25",
+"w": 175,
+"h": 420
+},
+{
+"key": "49-07",
+"sheet": "49",
+"name": "Bass VI",
+"pid": "strings.bass-vi",
+"size": "42 x 15",
+"w": 148,
+"h": 420
+},
+{
+"key": "49-08",
+"sheet": "49",
+"name": "Bass ukulele",
+"pid": "strings.bass-uke",
+"size": "30 x 15",
+"w": 162,
+"h": 387
+},
+{
+"key": "49-09",
+"sheet": "49",
+"name": "Chapman stick",
+"pid": "strings.stick",
+"size": "90 x 10",
+"w": 69,
+"h": 420
+},
+{
+"key": "49-10",
+"sheet": "49",
+"name": "Fretless bass",
+"pid": "strings.bass-fretless",
+"size": "45 x 15",
+"w": 145,
+"h": 420
+},
+{
+"key": "51-01",
+"sheet": "51",
+"name": "Guitar hard case",
+"pid": "guitar.case",
+"size": "110 x 40",
+"w": 420,
+"h": 154
+},
+{
+"key": "51-02",
+"sheet": "51",
+"name": "Bass hard case",
+"pid": "guitar.case-bass",
+"size": "125 x 40",
+"w": 420,
+"h": 139
+},
+{
+"key": "51-03",
+"sheet": "51",
+"name": "Gig bag",
+"pid": "guitar.gigbag",
+"size": "110 x 40",
+"w": 420,
+"h": 178
+},
+{
+"key": "51-04",
+"sheet": "51",
+"name": "Single guitar stand",
+"pid": "stand.guitar-single",
+"size": "30 x 30",
+"w": 193,
+"h": 420
+},
+{
+"key": "51-05",
+"sheet": "51",
+"name": "A-frame stand",
+"pid": "stand.guitar-a",
+"size": "40 x 40",
+"w": 211,
+"h": 420
+},
+{
+"key": "51-06",
+"sheet": "51",
+"name": "Wall hanger",
+"pid": "stand.guitar-hanger",
+"size": "15 x 10",
+"w": 162,
+"h": 420
+},
+{
+"key": "51-07",
+"sheet": "51",
+"name": "Guitar footstool",
+"pid": "stand.footstool",
+"size": "30 x 20",
+"w": 338,
+"h": 330
+},
+{
+"key": "52-01",
+"sheet": "52",
+"name": "Duduk",
+"pid": "winds.duduk",
+"size": "35 x 5",
+"w": 200,
+"h": 420
+},
+{
+"key": "52-02",
+"sheet": "52",
+"name": "Shakuhachi",
+"pid": "winds.shakuhachi",
+"size": "55 x 6",
+"w": 216,
+"h": 420
+},
+{
+"key": "52-03",
+"sheet": "52",
+"name": "Panpipes",
+"pid": "winds.panpipes",
+"size": "30 x 8",
+"w": 293,
+"h": 298
+},
+{
+"key": "52-04",
+"sheet": "52",
+"name": "Quena",
+"pid": "winds.quena",
+"size": "40 x 5",
+"w": 167,
+"h": 420
+},
+{
+"key": "52-05",
+"sheet": "52",
+"name": "Ocarina",
+"pid": "winds.ocarina",
+"size": "15 x 10",
+"w": 274,
+"h": 230
+},
+{
+"key": "52-06",
+"sheet": "52",
+"name": "Bansuri",
+"pid": "winds.bansuri",
+"size": "60 x 5",
+"w": 269,
+"h": 420
+},
+{
+"key": "52-07",
+"sheet": "52",
+"name": "Tin whistle",
+"pid": "winds.whistle",
+"size": "30 x 3",
+"w": 116,
+"h": 420
+},
+{
+"key": "52-08",
+"sheet": "52",
+"name": "Uilleann pipes",
+"pid": "winds.uilleann",
+"size": "60 x 30",
+"w": 394,
+"h": 420
+},
+{
+"key": "52-09",
+"sheet": "52",
+"name": "Zurna",
+"pid": "winds.zurna",
+"size": "45 x 10",
+"w": 157,
+"h": 420
+},
+{
+"key": "52-10",
+"sheet": "52",
+"name": "Sheng",
+"pid": "winds.sheng",
+"size": "30 x 20",
+"w": 225,
+"h": 420
+},
+{
+"key": "52-11",
+"sheet": "52",
+"name": "Suona",
+"pid": "winds.suona",
+"size": "50 x 12",
+"w": 170,
+"h": 420
+},
+{
+"key": "52-12",
+"sheet": "52",
+"name": "Ney",
+"pid": "winds.ney",
+"size": "65 x 4",
+"w": 157,
+"h": 420
+},
+{
+"key": "53-01",
+"sheet": "53",
+"name": "Bendir",
+"pid": "perc.bendir",
+"size": "40 x 40",
+"w": 294,
+"h": 352
+},
+{
+"key": "53-02",
+"sheet": "53",
+"name": "Darbuka",
+"pid": "perc.darbuka",
+"size": "30 x 30",
+"w": 234,
+"h": 338
+},
+{
+"key": "53-03",
+"sheet": "53",
+"name": "Dhol",
+"pid": "perc.dhol",
+"size": "35 x 55",
+"w": 385,
+"h": 361
+},
+{
+"key": "53-04",
+"sheet": "53",
+"name": "Mridangam",
+"pid": "perc.mridangam",
+"size": "25 x 60",
+"w": 420,
+"h": 229
+},
+{
+"key": "53-05",
+"sheet": "53",
+"name": "Pandeiro",
+"pid": "perc.pandeiro",
+"size": "25 x 25",
+"w": 326,
+"h": 228
+},
+{
+"key": "53-06",
+"sheet": "53",
+"name": "Berimbau",
+"pid": "perc.berimbau",
+"size": "120 x 20",
+"w": 180,
+"h": 361
+},
+{
+"key": "53-07",
+"sheet": "53",
+"name": "Shekere",
+"pid": "perc.shekere",
+"size": "30 x 30",
+"w": 252,
+"h": 298
+},
+{
+"key": "53-08",
+"sheet": "53",
+"name": "Talking drum",
+"pid": "perc.talking",
+"size": "30 x 30",
+"w": 373,
+"h": 264
+},
+{
+"key": "53-09",
+"sheet": "53",
+"name": "Udu",
+"pid": "perc.udu",
+"size": "40 x 40",
+"w": 288,
+"h": 324
+},
+{
+"key": "53-10",
+"sheet": "53",
+"name": "Cajon",
+"pid": "perc.cajon-alone",
+"size": "30 x 30",
+"w": 264,
+"h": 305
+},
+{
+"key": "53-11",
+"sheet": "53",
+"name": "Cuica",
+"pid": "perc.cuica",
+"size": "25 x 25",
+"w": 268,
+"h": 310
+},
+{
+"key": "53-12",
+"sheet": "53",
+"name": "Daf",
+"pid": "perc.daf",
+"size": "45 x 45",
+"w": 361,
+"h": 346
+},
+{
+"key": "54-03",
+"sheet": "54",
+"name": "Tanpura",
+"pid": "strings.tanpura",
+"size": "130 x 40",
+"w": 181,
+"h": 374
+},
+{
+"key": "54-08",
+"sheet": "54",
+"name": "Saz",
+"pid": "strings.saz",
+"size": "100 x 25",
+"w": 420,
+"h": 131
+},
+{
+"key": "54-09",
+"sheet": "54",
+"name": "Nyckelharpa",
+"pid": "strings.nyckelharpa",
+"size": "70 x 25",
+"w": 420,
+"h": 110
+},
+{
+"key": "54-11",
+"sheet": "54",
+"name": "Harmonium",
+"pid": "keys.harmonium",
+"size": "90 x 40",
+"w": 420,
+"h": 221
+},
+{
+"key": "54-12",
+"sheet": "54",
+"name": "Arpa llanera",
+"pid": "strings.arpa-llanera",
+"size": "120 x 50",
+"w": 298,
+"h": 420
+},
+{
+"key": "54b-01",
+"sheet": "54b",
+"name": "Sarod",
+"pid": "strings.sarod",
+"size": "110 x 30",
+"w": 298,
+"h": 420
+},
+{
+"key": "54b-02",
+"sheet": "54b",
+"name": "Veena",
+"pid": "strings.veena",
+"size": "120 x 30",
+"w": 386,
+"h": 400
+},
+{
+"key": "54b-04",
+"sheet": "54b",
+"name": "Santoor",
+"pid": "strings.santoor",
+"size": "90 x 40",
+"w": 322,
+"h": 247
+},
+{
+"key": "54b-05",
+"sheet": "54b",
+"name": "Shamisen",
+"pid": "strings.shamisen",
+"size": "95 x 20",
+"w": 154,
+"h": 416
+},
+{
+"key": "54b-06",
+"sheet": "54b",
+"name": "Pipa",
+"pid": "strings.pipa",
+"size": "90 x 30",
+"w": 165,
+"h": 420
+},
+{
+"key": "54b-07",
+"sheet": "54b",
+"name": "Guzheng",
+"pid": "strings.guzheng",
+"size": "165 x 40",
+"w": 420,
+"h": 139
+},
+{
+"key": "54b-10",
+"sheet": "54b",
+"name": "Cimbalom",
+"pid": "strings.cimbalom",
+"size": "120 x 70",
+"w": 420,
+"h": 246
+},
+{
+"key": "54b-11",
+"sheet": "54b",
+"name": "Harmonium",
+"pid": "keys.harmonium",
+"size": "90 x 40",
+"w": 374,
+"h": 317
+},
+{
+"key": "55-01",
+"sheet": "55",
+"name": "Gong ageng",
+"pid": "gamelan.gong",
+"size": "100 x 40",
+"w": 420,
+"h": 366
+},
+{
+"key": "55-02",
+"sheet": "55",
+"name": "Saron",
+"pid": "gamelan.saron",
+"size": "90 x 40",
+"w": 420,
+"h": 166
+},
+{
+"key": "55-03",
+"sheet": "55",
+"name": "Bonang",
+"pid": "gamelan.bonang",
+"size": "100 x 60",
+"w": 420,
+"h": 189
+},
+{
+"key": "55-04",
+"sheet": "55",
+"name": "Kenong",
+"pid": "gamelan.kenong",
+"size": "60 x 60",
+"w": 420,
+"h": 179
+},
+{
+"key": "55-05",
+"sheet": "55",
+"name": "Angklung",
+"pid": "gamelan.angklung",
+"size": "30 x 30",
+"w": 237,
+"h": 270
+},
+{
+"key": "55-07",
+"sheet": "55",
+"name": "Singing bowl",
+"pid": "gamelan.bowl",
+"size": "25 x 25",
+"w": 287,
+"h": 210
+},
+{
+"key": "55-08",
+"sheet": "55",
+"name": "Temple blocks",
+"pid": "gamelan.temple",
+"size": "80 x 30",
+"w": 419,
+"h": 154
+},
+{
+"key": "55-09",
+"sheet": "55",
+"name": "Tibetan long horn",
+"pid": "gamelan.dungchen",
+"size": "250 x 30",
+"w": 420,
+"h": 107
+},
+{
+"key": "55b-02",
+"sheet": "55b",
+"name": "Saron",
+"pid": "gamelan.saron",
+"size": "90 x 40",
+"w": 420,
+"h": 220
+},
+{
+"key": "55b-04",
+"sheet": "55b",
+"name": "Kenong",
+"pid": "gamelan.kenong",
+"size": "60 x 60",
+"w": 219,
+"h": 60
+},
+{
+"key": "55b-06",
+"sheet": "55b",
+"name": "Kulintang",
+"pid": "gamelan.kulintang",
+"size": "120 x 40",
+"w": 235,
+"h": 250
+},
+{
+"key": "55b-08",
+"sheet": "55b",
+"name": "Temple blocks",
+"pid": "gamelan.temple",
+"size": "80 x 30",
+"w": 314,
+"h": 205
+},
+{
+"key": "55b-09",
+"sheet": "55b",
+"name": "Tibetan long horn",
+"pid": "gamelan.dungchen",
+"size": "250 x 30",
+"w": 420,
+"h": 157
+},
+{
+"key": "55b-10",
+"sheet": "55b",
+"name": "Dizi",
+"pid": "winds.dizi",
+"size": "65 x 4",
+"w": 420,
+"h": 164
+},
+{
+"key": "55b-11",
+"sheet": "55b",
+"name": "Tibetan long horn (extra)",
+"pid": "wind.tibetan-horn-extra",
+"size": "",
+"w": 420,
+"h": 47
+},
+{
+"key": "56-01",
+"sheet": "56",
+"name": "Double bassist",
+"pid": "person2.doublebass",
+"size": "60 x 60",
+"w": 211,
+"h": 350
+},
+{
+"key": "56-02",
+"sheet": "56",
+"name": "Violinist",
+"pid": "person2.violin",
+"size": "70 x 70",
+"w": 212,
+"h": 335
+},
+{
+"key": "56-03",
+"sheet": "56",
+"name": "Cellist",
+"pid": "person2.cello",
+"size": "70 x 90",
+"w": 213,
+"h": 334
+},
+{
+"key": "56-04",
+"sheet": "56",
+"name": "Harpist",
+"pid": "person2.harp",
+"size": "90 x 100",
+"w": 276,
+"h": 348
+},
+{
+"key": "56-05",
+"sheet": "56",
+"name": "Electric guitarist",
+"pid": "person2.eguitar",
+"size": "90 x 90",
+"w": 255,
+"h": 333
+},
+{
+"key": "56-06",
+"sheet": "56",
+"name": "Saxophonist",
+"pid": "person2.sax",
+"size": "60 x 70",
+"w": 162,
+"h": 327
+},
+{
+"key": "56-07",
+"sheet": "56",
+"name": "Trumpeter",
+"pid": "person2.trumpet",
+"size": "50 x 70",
+"w": 197,
+"h": 323
+},
+{
+"key": "56-08",
+"sheet": "56",
+"name": "Trombonist",
+"pid": "person2.trombone",
+"size": "60 x 90",
+"w": 296,
+"h": 323
+},
+{
+"key": "56-09",
+"sheet": "56",
+"name": "Flutist",
+"pid": "person2.flute",
+"size": "60 x 60",
+"w": 171,
+"h": 292
+},
+{
+"key": "56-10",
+"sheet": "56",
+"name": "Clarinetist",
+"pid": "person2.clarinet",
+"size": "60 x 60",
+"w": 148,
+"h": 295
+},
+{
+"key": "56-11",
+"sheet": "56",
+"name": "Tuba player",
+"pid": "person2.tuba",
+"size": "70 x 70",
+"w": 222,
+"h": 307
+},
+{
+"key": "56-12",
+"sheet": "56",
+"name": "French horn player",
+"pid": "person2.horn",
+"size": "60 x 60",
+"w": 230,
+"h": 297
+},
+{
+"key": "57-01",
+"sheet": "57",
+"name": "Oboist or bassoonist",
+"pid": "person2.oboe",
+"size": "50 x 50",
+"w": 145,
+"h": 302
+},
+{
+"key": "57-02",
+"sheet": "57",
+"name": "Timpanist",
+"pid": "person2.timpani",
+"size": "150 x 120",
+"w": 367,
+"h": 305
+},
+{
+"key": "57-03",
+"sheet": "57",
+"name": "Marimba player",
+"pid": "person2.marimba",
+"size": "200 x 80",
+"w": 382,
+"h": 300
+},
+{
+"key": "57-04",
+"sheet": "57",
+"name": "Vibraphone player",
+"pid": "person2.vibraphone",
+"size": "150 x 70",
+"w": 305,
+"h": 300
+},
+{
+"key": "57-05",
+"sheet": "57",
+"name": "Accordionist",
+"pid": "person2.accordion",
+"size": "60 x 60",
+"w": 209,
+"h": 317
+},
+{
+"key": "57-06",
+"sheet": "57",
+"name": "Keytar player",
+"pid": "person2.keytar",
+"size": "60 x 60",
+"w": 201,
+"h": 314
+},
+{
+"key": "57-07",
+"sheet": "57",
+"name": "Pianist",
+"pid": "person2.piano",
+"size": "150 x 200",
+"w": 420,
+"h": 285
+},
+{
+"key": "57-08",
+"sheet": "57",
+"name": "Keyboardist",
+"pid": "person2.keys",
+"size": "140 x 90",
+"w": 316,
+"h": 335
+},
+{
+"key": "57-09",
+"sheet": "57",
+"name": "Organist",
+"pid": "person2.organ",
+"size": "130 x 80",
+"w": 321,
+"h": 300
+},
+{
+"key": "57-10",
+"sheet": "57",
+"name": "Conga player",
+"pid": "person2.congas",
+"size": "90 x 70",
+"w": 274,
+"h": 308
+},
+{
+"key": "57-11",
+"sheet": "57",
+"name": "Conductor",
+"pid": "person2.conductor",
+"size": "80 x 80",
+"w": 251,
+"h": 340
+},
+{
+"key": "57-12",
+"sheet": "57",
+"name": "DJ",
+"pid": "person2.dj",
+"size": "180 x 70",
+"w": 373,
+"h": 317
+},
+{
+"key": "58-01",
+"sheet": "58",
+"name": "Standing person",
+"pid": "person2.standing",
+"size": "50 x 50",
+"w": 136,
+"h": 420
+},
+{
+"key": "58-02",
+"sheet": "58",
+"name": "Seated person",
+"pid": "person2.seated",
+"size": "60 x 60",
+"w": 216,
+"h": 404
+},
+{
+"key": "58-03",
+"sheet": "58",
+"name": "Presenter",
+"pid": "person2.presenter",
+"size": "60 x 60",
+"w": 229,
+"h": 420
+},
+{
+"key": "58-04",
+"sheet": "58",
+"name": "Lead singer",
+"pid": "person2.singer",
+"size": "70 x 70",
+"w": 171,
+"h": 420
+},
+{
+"key": "58-05",
+"sheet": "58",
+"name": "Choir singer",
+"pid": "person2.choir",
+"size": "40 x 40",
+"w": 169,
+"h": 420
+},
+{
+"key": "58-06",
+"sheet": "58",
+"name": "Speaker at a lectern",
+"pid": "person2.lectern",
+"size": "70 x 50",
+"w": 243,
+"h": 420
+},
+{
+"key": "58-07",
+"sheet": "58",
+"name": "Person with a laptop",
+"pid": "person2.laptop",
+"size": "60 x 60",
+"w": 256,
+"h": 420
+},
+{
+"key": "58-08",
+"sheet": "58",
+"name": "Percussionist standing",
+"pid": "person2.perc",
+"size": "70 x 70",
+"w": 244,
+"h": 420
+},
+{
+"key": "59-01",
+"sheet": "59",
+"name": "Singer-songwriter standing",
+"pid": "person3.guitar-singer",
+"size": "60 x 60",
+"w": 221,
+"h": 329
+},
+{
+"key": "59-02",
+"sheet": "59",
+"name": "Classical guitarist seated",
+"pid": "person3.classical-guitar",
+"size": "60 x 60",
+"w": 220,
+"h": 304
+},
+{
+"key": "59-03",
+"sheet": "59",
+"name": "Flamenco guitarist",
+"pid": "person3.flamenco",
+"size": "60 x 60",
+"w": 251,
+"h": 315
+},
+{
+"key": "59-04",
+"sheet": "59",
+"name": "Pedal steel player",
+"pid": "person3.pedal-steel",
+"size": "120 x 70",
+"w": 290,
+"h": 316
+},
+{
+"key": "59-05",
+"sheet": "59",
+"name": "Lap steel player",
+"pid": "person3.lap-steel",
+"size": "60 x 60",
+"w": 227,
+"h": 306
+},
+{
+"key": "59-06",
+"sheet": "59",
+"name": "Electric upright bassist",
+"pid": "person3.upright-bass",
+"size": "70 x 70",
+"w": 142,
+"h": 335
+},
+{
+"key": "59-07",
+"sheet": "59",
+"name": "Slap bassist",
+"pid": "person3.slap",
+"size": "90 x 90",
+"w": 279,
+"h": 321
+},
+{
+"key": "59-08",
+"sheet": "59",
+"name": "Seated bassist",
+"pid": "person3.bass-seated",
+"size": "70 x 70",
+"w": 263,
+"h": 298
+},
+{
+"key": "59-09",
+"sheet": "59",
+"name": "Ukulele player",
+"pid": "person3.ukulele",
+"size": "50 x 50",
+"w": 143,
+"h": 312
+},
+{
+"key": "59-10",
+"sheet": "59",
+"name": "Mandolin player",
+"pid": "person3.mandolin",
+"size": "50 x 50",
+"w": 152,
+"h": 313
+},
+{
+"key": "59-11",
+"sheet": "59",
+"name": "Banjo player standing",
+"pid": "person3.banjo-standing",
+"size": "60 x 60",
+"w": 211,
+"h": 319
+},
+{
+"key": "59-12",
+"sheet": "59",
+"name": "Two guitarists",
+"pid": "person3.guitar-duo",
+"size": "120 x 70",
+"w": 398,
+"h": 322
+},
+{
+"key": "60-01",
+"sheet": "60",
+"name": "Backing vocalist",
+"pid": "person3.backing",
+"size": "50 x 50",
+"w": 147,
+"h": 338
+},
+{
+"key": "60-02",
+"sheet": "60",
+"name": "Dancer",
+"pid": "person3.dancer",
+"size": "80 x 80",
+"w": 277,
+"h": 332
+},
+{
+"key": "60-03",
+"sheet": "60",
+"name": "Actor",
+"pid": "person3.actor",
+"size": "60 x 60",
+"w": 296,
+"h": 336
+},
+{
+"key": "60-04",
+"sheet": "60",
+"name": "Wheelchair user",
+"pid": "person3.wheelchair",
+"size": "70 x 110",
+"w": 244,
+"h": 315
+},
+{
+"key": "60-05",
+"sheet": "60",
+"name": "Child",
+"pid": "person3.child",
+"size": "35 x 35",
+"w": 88,
+"h": 248
+},
+{
+"key": "60-06",
+"sheet": "60",
+"name": "Kneeling person",
+"pid": "person3.kneeling",
+"size": "60 x 60",
+"w": 197,
+"h": 285
+},
+{
+"key": "60-07",
+"sheet": "60",
+"name": "Sound engineer",
+"pid": "person3.engineer",
+"size": "90 x 70",
+"w": 392,
+"h": 297
+},
+{
+"key": "60-08",
+"sheet": "60",
+"name": "Light technician",
+"pid": "person3.lx",
+"size": "60 x 60",
+"w": 138,
+"h": 310
+},
+{
+"key": "60-09",
+"sheet": "60",
+"name": "Stage manager",
+"pid": "person3.sm",
+"size": "60 x 60",
+"w": 140,
+"h": 342
+},
+{
+"key": "60-10",
+"sheet": "60",
+"name": "Guitar tech",
+"pid": "person3.tech",
+"size": "60 x 60",
+"w": 269,
+"h": 287
+},
+{
+"key": "60-11",
+"sheet": "60",
+"name": "Seated on stool",
+"pid": "person3.stool",
+"size": "50 x 50",
+"w": 162,
+"h": 330
+},
+{
+"key": "60-12",
+"sheet": "60",
+"name": "Drummer",
+"pid": "person3.drummer",
+"size": "60 x 60",
+"w": 377,
+"h": 329
+},
+{
+"key": "61-01",
+"sheet": "61",
+"name": "Stagehand",
+"pid": "person3.crew",
+"size": "50 x 50",
+"w": 160,
+"h": 374
+},
+{
+"key": "61-02",
+"sheet": "61",
+"name": "Security",
+"pid": "person3.security",
+"size": "50 x 50",
+"w": 132,
+"h": 376
+},
+{
+"key": "61-03",
+"sheet": "61",
+"name": "Marching drummer",
+"pid": "person3.marching",
+"size": "50 x 50",
+"w": 172,
+"h": 378
+},
+{
+"key": "61-04",
+"sheet": "61",
+"name": "Camera operator",
+"pid": "person3.camera-op",
+"size": "80 x 80",
+"w": 253,
+"h": 371
+},
+{
+"key": "61-05",
+"sheet": "61",
+"name": "Sign language interpreter",
+"pid": "person3.interpreter",
+"size": "60 x 60",
+"w": 144,
+"h": 364
+},
+{
+"key": "61-06",
+"sheet": "61",
+"name": "Steadicam operator",
+"pid": "person3.steadicam",
+"size": "80 x 60",
+"w": 187,
+"h": 331
+},
+{
+"key": "61-07",
+"sheet": "61",
+"name": "Stage manager at desk",
+"pid": "person3.sm-desk",
+"size": "120 x 70",
+"w": 344,
+"h": 285
+},
+{
+"key": "61-08",
+"sheet": "61",
+"name": "FOH engineer at console",
+"pid": "person3.foh",
+"size": "150 x 80",
+"w": 420,
+"h": 241
+},
+{
+"key": "61-09",
+"sheet": "61",
+"name": "Audience",
+"pid": "person3.audience",
+"size": "800 x 600",
+"w": 420,
+"h": 229
+},
+{
+"key": "61-10",
+"sheet": "61",
+"name": "Choir on risers",
+"pid": "person3.choir-risers",
+"size": "400 x 200",
+"w": 420,
+"h": 284
+},
+{
+"key": "61-11",
+"sheet": "61",
+"name": "Photographer",
+"pid": "person3.photographer",
+"size": "60 x 60",
+"w": 190,
+"h": 247
+},
+{
+"key": "61-12",
+"sheet": "61",
+"name": "Bartender",
+"pid": "person3.bartender",
+"size": "60 x 60",
+"w": 291,
+"h": 275
+},
+{
+"key": "62-01",
+"sheet": "62",
+"name": "Usher",
+"pid": "person3.usher",
+"size": "50 x 50",
+"w": 159,
+"h": 315
+},
+{
+"key": "62-02",
+"sheet": "62",
+"name": "Paramedic",
+"pid": "person3.paramedic",
+"size": "60 x 60",
+"w": 167,
+"h": 324
+},
+{
+"key": "62-03",
+"sheet": "62",
+"name": "Firefighter on duty",
+"pid": "person3.firefighter",
+"size": "60 x 60",
+"w": 151,
+"h": 326
+},
+{
+"key": "62-04",
+"sheet": "62",
+"name": "Police officer",
+"pid": "person3.police",
+"size": "50 x 50",
+"w": 138,
+"h": 325
+},
+{
+"key": "62-05",
+"sheet": "62",
+"name": "Safety marshal",
+"pid": "person3.marshal",
+"size": "50 x 50",
+"w": 133,
+"h": 317
+},
+{
+"key": "62-06",
+"sheet": "62",
+"name": "Waiter",
+"pid": "person3.waiter",
+"size": "50 x 50",
+"w": 179,
+"h": 321
+},
+{
+"key": "62-07",
+"sheet": "62",
+"name": "Merch seller",
+"pid": "person3.merch",
+"size": "50 x 50",
+"w": 264,
+"h": 299
+},
+{
+"key": "62-08",
+"sheet": "62",
+"name": "Host or MC",
+"pid": "person3.mc",
+"size": "60 x 60",
+"w": 223,
+"h": 324
+},
+{
+"key": "62-09",
+"sheet": "62",
+"name": "Comedian",
+"pid": "person3.comedian",
+"size": "60 x 60",
+"w": 234,
+"h": 324
+},
+{
+"key": "62-10",
+"sheet": "62",
+"name": "Magician",
+"pid": "person3.magician",
+"size": "60 x 60",
+"w": 261,
+"h": 328
+},
+{
+"key": "62-11",
+"sheet": "62",
+"name": "Reporter",
+"pid": "person3.reporter",
+"size": "60 x 60",
+"w": 119,
+"h": 326
+},
+{
+"key": "62-12",
+"sheet": "62",
+"name": "Rigger",
+"pid": "person3.rigger",
+"size": "60 x 60",
+"w": 183,
+"h": 333
+},
+{
+"key": "63-01",
+"sheet": "63",
+"name": "Dancing pair",
+"pid": "person3.dance-pair",
+"size": "100 x 80",
+"w": 280,
+"h": 285
+},
+{
+"key": "63-02",
+"sheet": "63",
+"name": "Two actors",
+"pid": "person3.actors-2",
+"size": "120 x 70",
+"w": 321,
+"h": 284
+},
+{
+"key": "63-03",
+"sheet": "63",
+"name": "String quartet",
+"pid": "person3.string-quartet",
+"size": "250 x 180",
+"w": 420,
+"h": 161
+},
+{
+"key": "63-04",
+"sheet": "63",
+"name": "Brass section",
+"pid": "person3.brass-section",
+"size": "300 x 100",
+"w": 420,
+"h": 194
+},
+{
+"key": "63-05",
+"sheet": "63",
+"name": "Rock band",
+"pid": "person3.rock-band",
+"size": "400 x 250",
+"w": 420,
+"h": 172
+},
+{
+"key": "63-06",
+"sheet": "63",
+"name": "Vocal quartet",
+"pid": "person3.vocal-quartet",
+"size": "200 x 80",
+"w": 420,
+"h": 152
+},
+{
+"key": "63-07",
+"sheet": "63",
+"name": "Concert crowd",
+"pid": "person3.crowd-cheering",
+"size": "800 x 600",
+"w": 420,
+"h": 114
+},
+{
+"key": "63-08",
+"sheet": "63",
+"name": "Seated audience",
+"pid": "person3.audience-seated",
+"size": "800 x 600",
+"w": 420,
+"h": 127
+},
+{
+"key": "64-01",
+"sheet": "64",
+"name": "Bass amp",
+"pid": "amp.bass",
+"size": "80 x 45",
+"w": 293,
+"h": 400
+},
+{
+"key": "64-02",
+"sheet": "64",
+"name": "Bass amp head",
+"pid": "amp.bass-head",
+"size": "50 x 25",
+"w": 391,
+"h": 201
+},
+{
+"key": "64-03",
+"sheet": "64",
+"name": "DI box",
+"pid": "rack.di",
+"size": "13 x 9",
+"w": 289,
+"h": 198
+},
+{
+"key": "64-04",
+"sheet": "64",
+"name": "Front fill",
+"pid": "pa.front-fill",
+"size": "40 x 30",
+"w": 319,
+"h": 216
+},
+{
+"key": "64-05",
+"sheet": "64",
+"name": "Side fill",
+"pid": "monitor.sidefill",
+"size": "70 x 60",
+"w": 245,
+"h": 420
+},
+{
+"key": "64-06",
+"sheet": "64",
+"name": "Drum fill",
+"pid": "monitor.drumfill",
+"size": "70 x 60",
+"w": 208,
+"h": 420
+},
+{
+"key": "64-07",
+"sheet": "64",
+"name": "Wedge monitor",
+"pid": "monitor.wedge",
+"size": "60 x 40",
+"w": 397,
+"h": 237
+},
+{
+"key": "64-08",
+"sheet": "64",
+"name": "Hazer",
+"pid": "effect.haze",
+"size": "45 x 30",
+"w": 353,
+"h": 308
+},
+{
+"key": "65-01",
+"sheet": "65",
+"name": "Headband headset mic",
+"pid": "mic.headband",
+"size": "20 x 20",
+"w": 264,
+"h": 297
+},
+{
+"key": "65-02",
+"sheet": "65",
+"name": "Ear-hook headset mic",
+"pid": "mic.earset",
+"size": "15 x 10",
+"w": 233,
+"h": 222
+},
+{
+"key": "65-03",
+"sheet": "65",
+"name": "Hairline hidden mic",
+"pid": "mic.hairline",
+"size": "10 x 5",
+"w": 121,
+"h": 253
+},
+{
+"key": "65-04",
+"sheet": "65",
+"name": "Guitar stand",
+"pid": "stand.guitar",
+"size": "40 x 40",
+"w": 362,
+"h": 407
+},
+{
+"key": "65-05",
+"sheet": "65",
+"name": "Laptop",
+"pid": "control.laptop",
+"size": "40 x 30",
+"w": 332,
+"h": 277
+},
+{
+"key": "65-06",
+"sheet": "65",
+"name": "Projector",
+"pid": "video.projector",
+"size": "45 x 35",
+"w": 353,
+"h": 189
+},
+{
+"key": "65-07",
+"sheet": "65",
+"name": "Curved LED screen",
+"pid": "video.led-curve",
+"size": "400 x 60",
+"w": 420,
+"h": 91
+},
+{
+"key": "65-08",
+"sheet": "65",
+"name": "Radio charger",
+"pid": "prod.radios",
+"size": "30 x 20",
+"w": 385,
+"h": 262
+},
+{
+"key": "65-09",
+"sheet": "65",
+"name": "Harp bench",
+"pid": "orch.harp-bench",
+"size": "70 x 35",
+"w": 420,
+"h": 212
+},
+{
+"key": "65-10",
+"sheet": "65",
+"name": "Cello case",
+"pid": "orch.cello-case",
+"size": "40 x 130",
+"w": 420,
+"h": 167
+},
+{
+"key": "65h-01",
+"sheet": "65h",
+"name": "Headband headset mic (alternative)",
+"pid": "mic.headband",
+"size": "",
+"w": 420,
+"h": 286
+},
+{
+"key": "65s-01",
+"sheet": "65s",
+"name": "Guitar stand, empty, three places",
+"pid": "stand.guitar",
+"size": "",
+"w": 420,
+"h": 353
+},
+{
+"key": "66-01",
+"sheet": "66",
+"name": "Toy piano",
+"pid": "keys.toy",
+"size": "40 x 30",
+"w": 273,
+"h": 295
+},
+{
+"key": "66-02",
+"sheet": "66",
+"name": "Wardrobe rack",
+"pid": "prod.wardrobe",
+"size": "150 x 50",
+"w": 420,
+"h": 343
+},
+{
+"key": "66-03",
+"sheet": "66",
+"name": "Timbales",
+"pid": "perc.timbales",
+"size": "80 x 60",
+"w": 338,
+"h": 392
+},
+{
+"key": "66-04",
+"sheet": "66",
+"name": "Surdo",
+"pid": "perc.surdo",
+"size": "45 x 45",
+"w": 329,
+"h": 317
+},
+{
+"key": "66-05",
+"sheet": "66",
+"name": "Taiko",
+"pid": "perc.taiko",
+"size": "60 x 60",
+"w": 291,
+"h": 420
+},
+{
+"key": "66-06",
+"sheet": "66",
+"name": "Bouzouki",
+"pid": "strings.bouzouki",
+"size": "45 x 25",
+"w": 170,
+"h": 420
+},
+{
+"key": "66-07",
+"sheet": "66",
+"name": "Balalaika",
+"pid": "strings.balalaika",
+"size": "65 x 25",
+"w": 249,
+"h": 420
+},
+{
+"key": "66-08",
+"sheet": "66",
+"name": "Bandoneon",
+"pid": "keys.bandoneon",
+"size": "30 x 25",
+"w": 369,
+"h": 253
+},
+{
+"key": "66-09",
+"sheet": "66",
+"name": "Line array hung (extra)",
+"pid": "pa.array-hung",
+"size": "",
+"w": 191,
+"h": 420
+}
+]

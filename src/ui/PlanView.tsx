@@ -15,6 +15,7 @@ import { addFromLibrary, dialog, selection, session } from '../app/state.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
+import { footprintBody, iconData, iconKeyOf, iconUse, iconsVersion, loadIcons } from '../library/icons.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
@@ -29,11 +30,12 @@ const gesture = signal(false);
 export const LOD_MIN = 150;
 
 const symCache = new Map<string, string>();
-function symbolMarkup(key: string, w: number, d: number): string {
-  const k = `${key}|${w}|${d}`;
+/** Icons use a thin footprint instead of the drawn top view; the icon itself is drawn apart (see PlanEl). */
+function symbolMarkup(key: string, w: number, d: number, icon: boolean): string {
+  const k = `${key}|${w}|${d}|${icon ? 'i' : ''}`;
   let v = symCache.get(k);
   if (v === undefined) {
-    v = symbolBody(key, w, d);
+    v = icon ? footprintBody(w, d) : symbolBody(key, w, d);
     if (symCache.size > 3000) symCache.clear();
     symCache.set(k, v);
   }
@@ -61,6 +63,10 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   const { w, d } = elementSize(el);
   const isText = it.symbol === 'textbox';
   const isDim = it.symbol === 'dimension';
+  void iconsVersion.value; // redraw when the sheet of this element's icon arrives
+  const iconKey = iconKeyOf(it.id);
+  const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
+  const turns = it.category === 'light'; // lights turn with their aim; everything else stays upright
   const units = isDim ? session.value!.show.value.units : 'metric';
   const name = el.label || it.name[lang.value];
   const box = elementBox(el, { w, d });
@@ -89,8 +95,9 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
       <g transform={`rotate(${el.rotation}) scale(${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})`}>
         <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="transparent" vector-effect="non-scaling-stroke" {...frame} />
         <rect class="simple" width={w} height={d} fill="#c9cfd4" />
-        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d) }} />
+        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d, !!icon) + (icon && turns ? iconUse(icon, w, d) : '') }} />
       </g>
+      {icon && !turns && <g class="detail" transform={el.flipX ? 'scale(-1 1)' : undefined} dangerouslySetInnerHTML={{ __html: iconUse(icon, w, d, 0, 0) }} />}
       {isText && (
         <g class="detail" transform={`rotate(${el.rotation})`}>
           <text x={-w / 2 + 80} y={d * 0.28} font-size={d * 0.62} fill="#000" font-family="Inter Variable, sans-serif" style="white-space:pre">
@@ -901,6 +908,10 @@ export function PlanView({ show }: { show: Show }) {
     return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} />;
   };
   lod.current = rows.length > LOD_MIN;
+  const iconKeys = [...new Set(rows.map((e) => iconKeyOf(e.type.id)).filter((k): k is string => !!k))].join(',');
+  useEffect(() => {
+    if (iconKeys) void loadIcons(iconKeys.split(','));
+  }, [iconKeys]);
   const resting = (dragSet ? rows.filter((e) => !dragSet.has(e.id)) : rows).map(mk);
   const moving = dragSet ? rows.filter((e) => dragSet.has(e.id)).map(mk) : [];
 

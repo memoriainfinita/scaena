@@ -1,10 +1,11 @@
 import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { itemById, searchItems } from '../library/items.ts';
+import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
 import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
@@ -152,6 +153,10 @@ function Library() {
   const [query, setQuery] = useState('');
   const items = useMemo(() => searchItems(query), [query]);
   const l = lang.value;
+  void iconsVersion.value; // redraw the thumbnails as sheets arrive
+  useEffect(() => {
+    void loadAllIcons();
+  }, []);
   return (
     <aside class={`library${sheet.value === 'library' ? ' open' : ''}`} aria-label={t('library.title')}>
       <button type="button" class="sheet-close" onClick={() => (sheet.value = null)}>
@@ -170,7 +175,7 @@ function Library() {
             e.dataTransfer?.setData(LIBRARY_DRAG, i.id);
             if (e.dataTransfer) e.dataTransfer.effectAllowed = 'copy';
           }} onClick={() => addFromLibrary(i.id)}>
-            <span class="sym" aria-hidden="true" dangerouslySetInnerHTML={{ __html: symbolSvg(i.symbol, i.size.w, i.size.d, '') }} />
+            <span class="sym" aria-hidden="true" dangerouslySetInnerHTML={{ __html: (iconKeyOf(i.id) && iconThumb(iconKeyOf(i.id)!, '')) || symbolSvg(i.symbol, i.size.w, i.size.d, '') }} />
             <span>{i.name[l]}</span>
           </button>
         ))}

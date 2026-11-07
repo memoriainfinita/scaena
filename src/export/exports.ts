@@ -1,6 +1,7 @@
 // The files the app can hand to the user. Each function builds the bytes; `saveFile` is what puts them in the downloads.
 import { fixPdf, compilePdf } from '../document/compile.ts';
 import { planSvg } from '../document/plan-svg.ts';
+import { loadShowIcons } from '../library/show-icons.ts';
 import { buildDaySheet } from '../document/daysheet.ts';
 import { buildDocument, lit, PAPERS } from '../document/typst-source.ts';
 import { docStrings } from '../document/strings.ts';
@@ -44,6 +45,7 @@ export function planDxfFile(show: Show): OutFile {
 
 /** The plan as a PNG, drawn through the browser's own SVG renderer (the loaded fonts are not available there). */
 export async function planPngFile(show: Show, images: Record<string, Uint8Array>, widthPx = 3000): Promise<OutFile> {
+  await loadShowIcons(show);
   const svgFile = planSvgFile(show, images);
   const url = URL.createObjectURL(new Blob([svgFile.bytes as BlobPart], { type: 'image/svg+xml' }));
   try {
@@ -68,6 +70,7 @@ export async function planPngFile(show: Show, images: Record<string, Uint8Array>
 }
 
 async function pdfOf(show: Show, images: Record<string, Uint8Array>): Promise<Uint8Array> {
+  await loadShowIcons(show);
   const built = buildDocument(show, images);
   return fixPdf(await compilePdf(built.source, built.files));
 }
