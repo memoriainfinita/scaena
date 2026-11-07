@@ -1596,3 +1596,125 @@ List to paste:
 11 interpretation receiver with a headset (10 x 7 cm)
 12 live captioning screen (100 x 15 cm)
 ```
+
+## Sheet 48 (Guitars alone II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Double-cut electric | `strings.guitar-dc` | 40 x 15 |
+| 2 | Single-cut slab electric | `strings.guitar-tele` | 40 x 15 |
+| 3 | Carved single-cut | `strings.guitar-lp` | 40 x 15 |
+| 4 | Archtop jazz guitar | `strings.guitar-archtop` | 45 x 18 |
+| 5 | Semi-hollow guitar | `strings.guitar-semi` | 42 x 17 |
+| 6 | V-shaped guitar | `strings.guitar-v` | 45 x 20 |
+| 7 | Double-neck guitar | `strings.guitar-double` | 45 x 20 |
+| 8 | Classical guitar | `strings.guitar-classical` | 40 x 15 |
+| 9 | 12-string guitar | `strings.guitar-12` | 40 x 15 |
+| 10 | Resonator guitar | `strings.guitar-reso` | 40 x 15 |
+| 11 | Lap steel | `strings.lap-steel` | 60 x 15 |
+| 12 | Flamenco guitar | `strings.guitar-flamenco` | 40 x 15 |
+
+List to paste:
+
+```text
+1 double-cutaway solid-body electric guitar alone, no player (40 x 15 cm)
+2 single-cutaway slab electric guitar alone, no player (40 x 15 cm)
+3 carved-top single-cutaway electric guitar alone, no player (40 x 15 cm)
+4 archtop hollow-body jazz guitar with f-holes alone, no player (45 x 18 cm)
+5 semi-hollow electric guitar with f-holes alone, no player (42 x 17 cm)
+6 V-shaped electric guitar alone, no player (45 x 20 cm)
+7 double-neck electric guitar alone, no player (45 x 20 cm)
+8 classical nylon-string guitar alone with a wide neck, no player (40 x 15 cm)
+9 twelve-string acoustic guitar alone, no player (40 x 15 cm)
+10 resonator guitar alone with a metal round cone, no player (40 x 15 cm)
+11 lap steel guitar alone, no player (60 x 15 cm)
+12 flamenco guitar alone with a golpeador plate, no player (40 x 15 cm)
+```
+
+## Sheet 49 (Basses alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Precision-style bass | `strings.bass-p` | 45 x 15 |
+| 2 | Jazz-style bass | `strings.bass-j` | 45 x 15 |
+| 3 | 5-string bass | `strings.bass-5` | 48 x 16 |
+| 4 | Headless bass | `strings.bass-headless` | 40 x 15 |
+| 5 | Acoustic bass guitar | `strings.bass-acoustic` | 50 x 20 |
+| 6 | Electric upright bass | `strings.bass-eub` | 50 x 25 |
+| 7 | Bass VI | `strings.bass-vi` | 42 x 15 |
+| 8 | Bass ukulele | `strings.bass-uke` | 30 x 15 |
+| 9 | Chapman stick | `strings.stick` | 90 x 10 |
+| 10 | Fretless bass | `strings.bass-fretless` | 45 x 15 |
+
+List to paste:
+
+```text
+1 precision style electric bass alone, no player (45 x 15 cm)
+2 offset-body jazz style electric bass alone, no player (45 x 15 cm)
+3 five-string electric bass alone, no player (48 x 16 cm)
+4 headless modern electric bass alone, no player (40 x 15 cm)
+5 acoustic bass guitar alone, no player (50 x 20 cm)
+6 electric upright bass with a slim body and a stand, no player (50 x 25 cm)
+7 six-string baritone bass guitar alone, no player (42 x 15 cm)
+8 bass ukulele alone, no player (30 x 15 cm)
+9 chapman stick alone, a long flat wide-fretboard instrument, no player (90 x 10 cm)
+10 fretless electric bass alone, no player (45 x 15 cm)
+```
+
+## Sheet 50 (Guitarists and bassists II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Singer-songwriter standing | `person.guitar-singer` | 60 x 60 |
+| 2 | Classical guitarist seated | `person.classical-guitar` | 60 x 60 |
+| 3 | Flamenco guitarist | `person.flamenco` | 60 x 60 |
+| 4 | Pedal steel player | `person.pedal-steel` | 120 x 70 |
+| 5 | Lap steel player | `person.lap-steel` | 60 x 60 |
+| 6 | Electric upright bassist | `person.upright-bass` | 70 x 70 |
+| 7 | Slap bassist | `person.slap` | 90 x 90 |
+| 8 | Seated bassist | `person.bass-seated` | 70 x 70 |
+| 9 | Ukulele player | `person.ukulele` | 50 x 50 |
+| 10 | Mandolin player | `person.mandolin` | 50 x 50 |
+| 11 | Banjo player standing | `person.banjo-standing` | 60 x 60 |
+| 12 | Two guitarists | `person.guitar-duo` | 120 x 70 |
+
+List to paste:
+
+```text
+1 person standing with an acoustic guitar on a strap, singing (60 x 60 cm)
+2 person seated on a chair with a classical guitar and a footstool (60 x 60 cm)
+3 person seated crossing legs playing a flamenco guitar (60 x 60 cm)
+4 person seated at a pedal steel guitar (120 x 70 cm)
+5 person seated with a lap steel guitar on the lap (60 x 60 cm)
+6 person standing playing an electric upright bass (70 x 70 cm)
+7 person standing playing a bass guitar with a slapping gesture (90 x 90 cm)
+8 person seated on a stool playing a bass guitar (70 x 70 cm)
+9 person standing playing a ukulele (50 x 50 cm)
+10 person standing playing a mandolin (50 x 50 cm)
+11 person standing playing a banjo on a strap (60 x 60 cm)
+12 two people standing side by side playing guitars (120 x 70 cm)
+```
+
+## Sheet 51 (Guitar accessories)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Guitar hard case | `guitar.case` | 110 x 40 |
+| 2 | Bass hard case | `guitar.case-bass` | 125 x 40 |
+| 3 | Gig bag | `guitar.gigbag` | 110 x 40 |
+| 4 | Single guitar stand | `stand.guitar-single` | 30 x 30 |
+| 5 | A-frame stand | `stand.guitar-a` | 40 x 40 |
+| 6 | Wall hanger | `stand.guitar-hanger` | 15 x 10 |
+| 7 | Guitar footstool | `stand.footstool` | 30 x 20 |
+
+List to paste:
+
+```text
+1 electric guitar hard case lying flat with latches (110 x 40 cm)
+2 bass guitar hard case lying flat with latches (125 x 40 cm)
+3 guitar gig bag with a pocket (110 x 40 cm)
+4 single guitar stand holding one electric guitar (30 x 30 cm)
+5 a-frame guitar stand holding one acoustic guitar (40 x 40 cm)
+6 wall mounted guitar hanger holding one guitar (15 x 10 cm)
+7 adjustable guitar footstool (30 x 20 cm)
+```
