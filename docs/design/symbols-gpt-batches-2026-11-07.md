@@ -716,3 +716,309 @@ List to paste:
 11 tour bus seen from above (250 x 1200 cm)
 12 trailer seen from above (250 x 600 cm)
 ```
+
+## Received sheets (files in `assets/symbol-sheets/`, not in git)
+
+The sheets of 1 to 21 came back as `sheet-NN.png` (renamed from their GPT names). `sheet-01b.png` is a second version of sheet 1 with slimmer figures. Sheets 14 and 21 and a few others have an irregular layout (not 4 x 3), so they are cut by connected shapes, not by a grid.
+
+## Sheet 22 (Luminaires II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | PAR 64 | `light.par64` | 30 x 40 |
+| 2 | LED wash panel | `light.led-panel` | 40 x 15 |
+| 3 | 4-lite blinder | `light.blinder` | 50 x 20 |
+| 4 | LED profile | `light.led-profile` | 30 x 50 |
+| 5 | LED fresnel | `light.led-fresnel` | 25 x 30 |
+| 6 | Moving beam | `light.mover-beam` | 35 x 35 |
+| 7 | Pinspot | `light.pinspot` | 10 x 15 |
+| 8 | UV blacklight bar | `light.uv` | 50 x 15 |
+| 9 | Gobo projector | `light.gobo` | 30 x 40 |
+| 10 | Ground row | `light.ground-row` | 100 x 40 |
+| 11 | T-bar with four PARs | `light.tbar` | 100 x 40 |
+| 12 | Lighting tree | `light.tree` | 40 x 40 |
+
+List to paste:
+
+```text
+1 large PAR 64 can with a round lens and a U-shaped yoke (30 x 40 cm)
+2 flat rectangular LED wash panel with a grid of small LEDs (40 x 15 cm)
+3 four-lamp audience blinder, a flat box with four round lamps (50 x 20 cm)
+4 LED profile spot with a long barrel, a fan vent and a yoke (30 x 50 cm)
+5 LED fresnel with a short barrel, ridged lens and a heat sink on the back (25 x 30 cm)
+6 moving head beam: a slim round head with a small lens in a U-shaped arm on a base (35 x 35 cm)
+7 tiny pinspot with a small lens and a clamp (10 x 15 cm)
+8 UV blacklight bar with violet tubes (50 x 15 cm)
+9 gobo projector with a long lens barrel (30 x 40 cm)
+10 ground row cyc light with several compartments in a long low box (100 x 40 cm)
+11 T-bar light stand with four PAR cans (100 x 40 cm)
+12 vertical lighting boom with three side lights (40 x 40 cm)
+```
+
+## Sheet 23 (Effects)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Bubble machine | `effect.bubble` | 40 x 30 |
+| 2 | Confetti cannon | `effect.confetti` | 15 x 15 |
+| 3 | Snow machine | `effect.snow` | 45 x 30 |
+| 4 | Flame projector | `effect.flame` | 30 x 30 |
+| 5 | Pyro fountain | `effect.pyro` | 20 x 20 |
+| 6 | Wind fan | `effect.fan` | 60 x 40 |
+| 7 | Cold spark machine | `effect.coldspark` | 30 x 30 |
+| 8 | Low fog machine | `effect.lowfog` | 60 x 40 |
+| 9 | Streamer cannon | `effect.streamer` | 15 x 15 |
+| 10 | Fireworks rack | `effect.fireworks` | 50 x 30 |
+
+List to paste:
+
+```text
+1 bubble machine blowing bubbles (40 x 30 cm)
+2 confetti cannon shooting confetti (15 x 15 cm)
+3 snow machine with falling snowflakes (45 x 30 cm)
+4 flame projector shooting a flame (30 x 30 cm)
+5 pyro fountain showing sparks (20 x 20 cm)
+6 large stage fan on a stand (60 x 40 cm)
+7 cold spark machine shooting sparks (30 x 30 cm)
+8 low fog machine with a fog cloud near the floor (60 x 40 cm)
+9 streamer cannon shooting ribbons (15 x 15 cm)
+10 rack of firework tubes with a burst above (50 x 30 cm)
+```
+
+## Sheet 24 (Amplifiers and cabinets)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Guitar cabinet 1x12 | `amp.cab-1x12` | 50 x 30 |
+| 2 | Guitar cabinet 2x12 | `amp.cab-2x12` | 70 x 30 |
+| 3 | Guitar combo 2x12 | `amp.combo-2x12` | 70 x 25 |
+| 4 | Bass cabinet 4x10 | `amp.cab-4x10` | 60 x 45 |
+| 5 | Bass cabinet 2x10 | `amp.cab-2x10` | 60 x 40 |
+| 6 | Bass cabinet 1x15 | `amp.cab-1x15` | 50 x 45 |
+| 7 | Bass amp head | `amp.bass-head` | 50 x 25 |
+| 8 | Bass stack | `amp.bass-stack` | 60 x 45 |
+| 9 | Acoustic guitar amp | `amp.acoustic` | 40 x 30 |
+| 10 | Keyboard amp | `amp.keyboard` | 50 x 40 |
+| 11 | Practice amp | `amp.practice` | 30 x 20 |
+| 12 | Vintage tube combo | `amp.vintage` | 60 x 30 |
+
+List to paste:
+
+```text
+1 guitar speaker cabinet with one round speaker (50 x 30 cm)
+2 guitar speaker cabinet with two round speakers (70 x 30 cm)
+3 guitar combo amplifier with two round speakers and a row of knobs on top (70 x 25 cm)
+4 bass speaker cabinet with four round speakers (60 x 45 cm)
+5 bass speaker cabinet with two round speakers (60 x 40 cm)
+6 bass speaker cabinet with one large round speaker (50 x 45 cm)
+7 bass amplifier head with knobs and a display (50 x 25 cm)
+8 bass amp head on top of a bass cabinet (60 x 45 cm)
+9 acoustic guitar amplifier, a small combo with a curved top (40 x 30 cm)
+10 keyboard amplifier, a combo with a horn on top (50 x 40 cm)
+11 small practice amplifier (30 x 20 cm)
+12 vintage tube combo amplifier with a woven grille cloth and a handle (60 x 30 cm)
+```
+
+## Sheet 25 (PA and monitors)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Point source 12 in | `pa.top-12` | 40 x 35 |
+| 2 | Point source 15 in | `pa.top-15` | 45 x 40 |
+| 3 | Column array | `pa.column` | 25 x 25 |
+| 4 | Double 18 sub | `pa.sub-double` | 120 x 60 |
+| 5 | Cardioid sub | `pa.sub-cardioid` | 60 x 80 |
+| 6 | Hanging array | `pa.array-hang` | 45 x 60 |
+| 7 | Outfill | `pa.outfill` | 40 x 35 |
+| 8 | Coaxial wedge | `monitor.coax` | 60 x 40 |
+| 9 | Floor monitor 15 in | `monitor.wedge-15` | 65 x 45 |
+| 10 | Drum shield | `furniture.drum-shield` | 200 x 15 |
+| 11 | Speaker on pole | `pa.pole` | 50 x 50 |
+| 12 | Amp isolation box | `amp.iso-box` | 60 x 60 |
+
+List to paste:
+
+```text
+1 trapezoid two-way speaker with a round woofer and a horn (40 x 35 cm)
+2 large two-way speaker with a big round woofer and a horn (45 x 40 cm)
+3 tall column array speaker with a row of small drivers (25 x 25 cm)
+4 subwoofer cabinet with two large round speakers (120 x 60 cm)
+5 deep cardioid subwoofer cabinet with a round speaker and a vent (60 x 80 cm)
+6 cluster of line array cabinets hanging in a curve (45 x 60 cm)
+7 small speaker on a pole (40 x 35 cm)
+8 floor wedge monitor with a coaxial speaker (60 x 40 cm)
+9 large floor wedge monitor with a big round speaker (65 x 45 cm)
+10 curved clear acrylic drum shield panel on feet (200 x 15 cm)
+11 speaker on a pole mounted on a subwoofer (50 x 50 cm)
+12 amp isolation cabinet with a lid and a handle (60 x 60 cm)
+```
+
+## Sheet 26 (Network and data)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Wi-Fi access point | `net.wifi-ap` | 20 x 20 |
+| 2 | Wi-Fi router | `net.router` | 30 x 20 |
+| 3 | 4G hotspot | `net.hotspot` | 10 x 7 |
+| 4 | PoE switch | `net.poe` | 45 x 25 |
+| 5 | Fibre converter | `net.fibre` | 25 x 15 |
+| 6 | Patch panel | `net.patch` | 48 x 10 |
+| 7 | Dante interface | `net.dante` | 45 x 25 |
+| 8 | Network cable drum | `net.cable-drum` | 40 x 40 |
+| 9 | UPS | `power.ups` | 40 x 25 |
+| 10 | DMX splitter | `net.dmx-splitter` | 30 x 20 |
+| 11 | Art-Net node | `net.artnet` | 25 x 15 |
+| 12 | Timecode generator | `rack.timecode` | 25 x 15 |
+
+List to paste:
+
+```text
+1 ceiling wi-fi access point with signal waves (20 x 20 cm)
+2 wireless router with two antennas (30 x 20 cm)
+3 pocket 4G hotspot with signal waves (10 x 7 cm)
+4 rack network switch with a row of ethernet ports (45 x 25 cm)
+5 fibre media converter with a fibre connector (25 x 15 cm)
+6 patch panel with two rows of ports (48 x 10 cm)
+7 audio network interface with many ports and a display (45 x 25 cm)
+8 ethernet cable drum (40 x 40 cm)
+9 uninterruptible power supply with a battery symbol (40 x 25 cm)
+10 dmx splitter box with several outputs (30 x 20 cm)
+11 art-net dmx node with ethernet and dmx ports (25 x 15 cm)
+12 timecode generator with a clock display (25 x 15 cm)
+```
+
+## Sheet 27 (Instruments alone: strings)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Double bass | `strings.doublebass-alone` | 60 x 60 |
+| 2 | Violin | `strings.violin-alone` | 25 x 25 |
+| 3 | Cello | `strings.cello-alone` | 40 x 40 |
+| 4 | Harp | `strings.harp-alone` | 90 x 60 |
+| 5 | Acoustic guitar | `strings.guitar-alone` | 40 x 15 |
+| 6 | Electric guitar | `strings.eguitar-alone` | 40 x 15 |
+| 7 | Bass guitar | `strings.bass-alone` | 45 x 15 |
+| 8 | Banjo | `strings.banjo-alone` | 35 x 15 |
+| 9 | Mandolin | `strings.mandolin-alone` | 30 x 12 |
+| 10 | Ukulele | `strings.ukulele-alone` | 25 x 10 |
+| 11 | Pedal steel guitar | `strings.pedal-steel` | 120 x 50 |
+| 12 | Sitar | `strings.sitar` | 40 x 20 |
+
+List to paste:
+
+```text
+1 double bass alone, upright, no player (60 x 60 cm)
+2 violin alone with its bow, no player (25 x 25 cm)
+3 cello alone with its bow, no player (40 x 40 cm)
+4 concert harp alone, no player (90 x 60 cm)
+5 acoustic guitar alone, no player (40 x 15 cm)
+6 electric guitar alone, no player (40 x 15 cm)
+7 electric bass guitar alone, no player (45 x 15 cm)
+8 banjo alone, no player (35 x 15 cm)
+9 mandolin alone, no player (30 x 12 cm)
+10 ukulele alone, no player (25 x 10 cm)
+11 pedal steel guitar on legs with pedals, no player (120 x 50 cm)
+12 sitar alone, no player (40 x 20 cm)
+```
+
+## Sheet 28 (Instruments alone: winds and keys)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Alto sax | `winds.sax-alone` | 30 x 20 |
+| 2 | Trumpet | `winds.trumpet-alone` | 30 x 12 |
+| 3 | Trombone | `winds.trombone-alone` | 70 x 20 |
+| 4 | Flute | `winds.flute-alone` | 65 x 5 |
+| 5 | Clarinet | `winds.clarinet-alone` | 60 x 8 |
+| 6 | Tuba | `winds.tuba-alone` | 45 x 40 |
+| 7 | French horn | `winds.horn-alone` | 35 x 30 |
+| 8 | Oboe | `winds.oboe-alone` | 60 x 8 |
+| 9 | Accordion | `keys.accordion-alone` | 40 x 20 |
+| 10 | Harmonica | `winds.harmonica` | 12 x 4 |
+| 11 | Upright piano | `keys.upright` | 150 x 60 |
+| 12 | Electric piano | `keys.epiano` | 130 x 50 |
+
+List to paste:
+
+```text
+1 alto saxophone alone, no player (30 x 20 cm)
+2 trumpet alone, no player (30 x 12 cm)
+3 trombone alone, no player (70 x 20 cm)
+4 flute alone, no player (65 x 5 cm)
+5 clarinet alone, no player (60 x 8 cm)
+6 tuba alone, no player (45 x 40 cm)
+7 french horn alone, no player (35 x 30 cm)
+8 oboe alone, no player (60 x 8 cm)
+9 accordion alone, no player (40 x 20 cm)
+10 harmonica alone, no player (12 x 4 cm)
+11 upright piano seen from the front, no player (150 x 60 cm)
+12 electric piano with a stand, no player (130 x 50 cm)
+```
+
+## Sheet 29 (Percussion alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Kick drum | `kit.kick` | 55 x 45 |
+| 2 | Snare drum | `kit.snare` | 40 x 40 |
+| 3 | Tom on stand | `kit.tom` | 35 x 35 |
+| 4 | Floor tom | `kit.floor-tom` | 45 x 45 |
+| 5 | Hi-hat | `kit.hihat` | 40 x 40 |
+| 6 | Djembe | `perc.djembe` | 35 x 35 |
+| 7 | Bongos | `perc.bongos` | 35 x 20 |
+| 8 | Tambourine | `perc.tambourine` | 25 x 25 |
+| 9 | Cowbell | `perc.cowbell` | 15 x 15 |
+| 10 | Glockenspiel | `perc.glockenspiel` | 80 x 35 |
+| 11 | Triangle | `perc.triangle` | 20 x 20 |
+| 12 | Handpan | `perc.handpan` | 55 x 55 |
+
+List to paste:
+
+```text
+1 bass drum on its side with a beater pedal (55 x 45 cm)
+2 snare drum on a stand (40 x 40 cm)
+3 rack tom drum on a stand (35 x 35 cm)
+4 floor tom with three legs (45 x 45 cm)
+5 hi-hat on a stand with a pedal (40 x 40 cm)
+6 djembe drum (35 x 35 cm)
+7 bongo drums on a stand (35 x 20 cm)
+8 tambourine (25 x 25 cm)
+9 cowbell on a mount (15 x 15 cm)
+10 glockenspiel with metal bars (80 x 35 cm)
+11 triangle hanging from a stand (20 x 20 cm)
+12 handpan on a stand (55 x 55 cm)
+```
+
+## Sheet 30 (People II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Backing vocalist | `person.backing` | 50 x 50 |
+| 2 | Dancer | `person.dancer` | 80 x 80 |
+| 3 | Actor | `person.actor` | 60 x 60 |
+| 4 | Wheelchair user | `person.wheelchair` | 70 x 110 |
+| 5 | Child | `person.child` | 35 x 35 |
+| 6 | Kneeling person | `person.kneeling` | 60 x 60 |
+| 7 | Sound engineer | `person.engineer` | 90 x 70 |
+| 8 | Light technician | `person.lx` | 60 x 60 |
+| 9 | Stage manager | `person.sm` | 60 x 60 |
+| 10 | Guitar tech | `person.tech` | 60 x 60 |
+| 11 | Seated on stool | `person.stool` | 50 x 50 |
+| 12 | Drummer | `person.drummer` | 60 x 60 |
+
+List to paste:
+
+```text
+1 person standing singing with a hand to one ear (50 x 50 cm)
+2 dancer in a dynamic pose (80 x 80 cm)
+3 actor standing with arms open (60 x 60 cm)
+4 person in a wheelchair (70 x 110 cm)
+5 small child standing (35 x 35 cm)
+6 person kneeling (60 x 60 cm)
+7 person seated at a mixing desk (90 x 70 cm)
+8 person standing with a headset and a clipboard (60 x 60 cm)
+9 person with a headset and a clipboard (60 x 60 cm)
+10 person kneeling beside a guitar (60 x 60 cm)
+11 person seated on a high stool (50 x 50 cm)
+12 drummer seated with both arms raised holding sticks (60 x 60 cm)
+```
