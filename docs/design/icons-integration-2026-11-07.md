@@ -50,5 +50,5 @@ The icons in the viewers reviewed by the user: round-head and drawn-face figures
 
 ## Open points for the user
 
-- Some icons may look like trade dress: Stratocaster-like and Telecaster-like headstocks, Precision- and Jazz-style basses, Leslie, Hammond and Rhodes keyboards. `symbols.ts` says "no brand shapes". They are listed here for the user to decide; none has been removed.
+- Trade dress: the user reviewed the icons on 2026-11-07 and found none that shows a brand, only shapes based on real instruments (Stratocaster-like, Telecaster-like, Precision-like, Leslie, Hammond, Rhodes styles). Nothing removed; the `symbols.ts` rule of no brand shapes stays.
 - The icon for `effect.co2` is missing (the CO2 jet was never drawn); that item keeps its top-view symbol.
