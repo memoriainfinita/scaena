@@ -101,7 +101,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - [ ] **Revisión del usuario** de todo lo construido (pidió revisar al terminar)
 - [ ] Probar en un móvil real (el Xiaomi: avisar antes, ver la memoria de adb), en Android con Chrome y Firefox y en Safari de iOS; instalar la aplicación de verdad
 - [ ] Cirílico y griego en el PDF (paquete de alfabetos con las fuentes completas)
-- [ ] Decisiones del usuario aún abiertas: tipografía (Inter y JetBrains Mono, como dijo la decisión 7, o IBM Plex, como el lienzo), Luces y Documento en oscuro en el lienzo, el paquete de rock con 17 canales frente a «unos 20», y los símbolos aún no vistos por él sobre el plano
+- [x] Decididas 2026-11-07 (recomendaciones aceptadas): tipografía Inter y JetBrains Mono (app y PDF), tema oscuro en todas las vistas con el visor del PDF en blanco, paquete de rock con 17 canales. Los símbolos sobre el plano siguen sin revisar por el usuario
 - [ ] Ideas anotadas y no hechas: calendario hacia atrás desde el toque de queda con el 50 % extra de carga, plantillas de documento propias con nombre, cotas permanentes y polígono libre del escenario, dibujo de los ángulos de foco, silenciar un aviso concreto, reglas del flujo de señal, rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función
 - [x] Modelo de datos y formato `.scaena`: `docs/design/modelo-2026-10-29.md`
 - [x] Lienzo de diseño en artifact: 17 pantallas, aprobado por el usuario el 2026-11-05 (falta Luces y Documento en oscuro)

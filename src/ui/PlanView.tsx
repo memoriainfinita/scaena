@@ -471,6 +471,21 @@ export function PlanView({ show }: { show: Show }) {
   const pointers = useRef(new Map<number, Pt>());
   const pinch = useRef<{ d0: number; cam: Camera; c0: Pt; w0: Pt } | null>(null);
 
+  // The camera the app set itself by fitting; while it is still the camera in use, a new size fits again.
+  const autoCam = useRef<Camera | null>(null);
+  // Room taken at the bottom by the zoom bar and the Library / Inspector buttons, so the plan is not fitted under them.
+  const bottomInset = (): number => {
+    const node = wrap.current;
+    if (!node) return 0;
+    const r = node.getBoundingClientRect();
+    let bottom = 0;
+    for (const el of document.querySelectorAll('.planbar.bottom, .fabs')) {
+      const b = el.getBoundingClientRect();
+      if (b.width > 0 && b.height > 0 && b.top < r.bottom && b.bottom > r.top && b.left < r.right && b.right > r.left) bottom = Math.max(bottom, r.bottom - b.top);
+    }
+    return Math.min(bottom, r.height * 0.5);
+  };
+
   const fit = () => {
     const { w, h } = size.peek();
     if (w <= 0) return;
@@ -478,7 +493,8 @@ export function PlanView({ show }: { show: Show }) {
     const bg = showRef.current.stage.background;
     const dims = bg ? pngSize(session.value?.imageBytes(bg.file) ?? new Uint8Array()) : null;
     if (bg && dims) box = unionBox([box, { x0: bg.x, y0: bg.y, x1: bg.x + dims.w * bg.scale, y1: bg.y + dims.h * bg.scale }])!;
-    cam.value = fitCamera(box, w, h);
+    cam.value = fitCamera(box, w, h, 32, { top: 0, left: 0, right: 0, bottom: bottomInset() });
+    autoCam.current = cam.peek();
   };
 
   // A new background asks for the view to fit the plan and the image.
@@ -492,10 +508,12 @@ export function PlanView({ show }: { show: Show }) {
     const ro = new ResizeObserver(() => {
       const r = node.getBoundingClientRect();
       size.value = { w: r.width, h: r.height };
-      if (!fitted.current && r.width > 0) {
+      if (r.width <= 0) return;
+      if (!fitted.current) {
         fitted.current = true;
-        cam.value = fitCamera(planBox(showRef.current), r.width, r.height);
-      }
+        fit();
+      } else if (cam.peek() === autoCam.current) fit(); // turned the phone, resized the window: still the fitted view
+
     });
     ro.observe(node);
     return () => ro.disconnect();

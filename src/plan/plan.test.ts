@@ -58,6 +58,13 @@ describe('geometry', () => {
     expect(c.y).toBeCloseTo((600 - 500) / 2, 6);
   });
 
+  test('fit keeps the box clear of the room that controls take', () => {
+    const c = fitCamera({ x0: 0, y0: 0, x1: 10000, y1: 5000 }, 1000, 600, 0, { top: 0, right: 0, bottom: 200, left: 0 });
+    expect(c.k).toBeCloseTo(0.08, 6); // 400 px of free height for 5000 mm
+    expect(c.y + 5000 * c.k).toBeLessThanOrEqual(400 + 1e-6); // the bottom of the box stays above the controls
+    expect(c.x + 10000 * c.k / 2).toBeCloseTo(500, 6);
+  });
+
   test('lengths read in metres or feet', () => {
     expect(formatLength(2500, 'metric', 'en')).toBe('2.50 m');
     expect(formatLength(3048, 'imperial', 'en')).toBe('10′ 0″');

@@ -91,7 +91,7 @@ textarea.input { height: auto; padding: 8px 10px; resize: vertical; }
 /* ---- editor ---- */
 .editor { height: 100%; display: flex; flex-direction: column; }
 .topbar { height: 48px; padding: 0 16px; display: flex; align-items: center; gap: 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
-.topbar .name { width: 260px; font-weight: 500; font-size: 14px; background: transparent; border-color: transparent; }
+.topbar .name { width: 260px; text-overflow: ellipsis; font-weight: 500; font-size: 14px; background: transparent; border-color: transparent; }
 .topbar .name:hover, .topbar .name:focus { border-color: var(--line); }
 .sep { width: 1px; height: 22px; background: var(--line); }
 .grow { flex: 1; }
@@ -283,8 +283,10 @@ td.plain { padding: 4px 8px; }
   .planbar.top { left: 8px; right: 8px; transform: none; max-width: none; }
   .planbar.bottom { bottom: 60px; }
   .planbar.left { top: 62px; }
-  .docview { flex-direction: column; }
-  .doccontrols { flex: 0 0 auto; max-height: 46%; border-right: 0; border-bottom: 1px solid var(--line); }
+  /* One column that scrolls as a whole: settings at their full height, then a preview as tall as the screen. */
+  .docview { flex-direction: column; overflow-y: auto; }
+  .doccontrols { flex: 0 0 auto; max-height: none; overflow: visible; border-right: 0; border-bottom: 1px solid var(--line); }
+  .docpages { flex: 0 0 auto; height: calc(100dvh - 190px); min-height: 360px; }
   .listbar, .subtabs { padding-left: 10px; padding-right: 10px; }
   .scroll { padding: 12px 8px; }
   .form { padding: 12px; }
@@ -306,8 +308,9 @@ td.plain { padding: 4px 8px; }
   .fabs { left: 84px; right: 10px; bottom: 32px; }
   .planbar.bottom { bottom: 30px; }
   .planbar.left { top: 8px; }
-  .docview { flex-direction: row; }
-  .doccontrols { flex: 0 0 40%; max-height: none; border-right: 1px solid var(--line); border-bottom: 0; }
+  .docview { flex-direction: row; overflow: hidden; }
+  .doccontrols { flex: 0 0 40%; max-height: none; overflow: auto; border-right: 1px solid var(--line); border-bottom: 0; }
+  .docpages { flex: 1; height: auto; min-height: 0; }
 }
 
 /* Chrome draws checkboxes at 13 px: a size and spacing that meet the 24 px target rule (WCAG 2.2, 2.5.8). */
