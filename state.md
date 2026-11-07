@@ -70,7 +70,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 
 - [ ] Escenario de forma libre: sin líneas de referencia y solo se edita por texto, no arrastrando puntos. Sección lateral: no dibuja la boca del proscenio (el modelo no guarda su altura)
 - [ ] **Símbolos**: el usuario revisa los 111 en `test-results/symbols-review.html` (se regenera con el script del scratchpad `make-review.mjs`; conviene moverlo a `scripts/`) y marca Bien, Mejorar o Rehacer; después se rehacen los marcados en SVG. Alternativa que mencionó: imágenes de GPT
-- [ ] Textos de documentación: `docs/design/`, `docs/research/` e `investigacion.md` siguen en español (solo guía, README, CONTRIBUTING, CHANGELOG y `docs/publishing.md` están en inglés); decidir si se traducen
+- [x] Decidido 2026-11-07: `docs/design/`, `docs/research/` e `investigacion.md` se quedan en español; toda documentación nueva va en inglés
 - [ ] Capturas de la guía (`docs/guide/img`) están en la interfaz en español; las del README ya están hechas y commiteadas (2026-11-07, `node scripts/readme-shots.mjs` las regenera)
 - [x] Pasada completa 2026-11-07: 287 unitarias, 125 e2e en Firefox y 87 en Chrome (`pnpm e2e:chrome`) pasan; en Chrome una comprobación de la hoja mágica pedía «visible» a una línea sin alto y ahora pide «presente»
 - [ ] Símbolos: la página de revisión se regenera con `node scripts/symbols-review.mjs` (Playwright borra `test-results/`; copiar fuera antes de abrirla)
