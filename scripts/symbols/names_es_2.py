@@ -1,0 +1,65 @@
+ES2 = {
+    # set dressing
+    'Sofa': 'Sofá', 'Armchair': 'Sillón', 'Bed': 'Cama', 'Door flat': 'Bastidor con puerta', 'Window flat': 'Bastidor con ventana', 'Bookcase': 'Estantería', 'Desk with chair': 'Escritorio con silla',
+    'Rug': 'Alfombra', 'Plant or tree': 'Planta o árbol', 'Trunk': 'Baúl', 'Banner stand': 'Soporte de lona', 'Floor lamp': 'Lámpara de pie', 'Table lamp': 'Lámpara de mesa',
+    'Desk lamp': 'Flexo', 'Chandelier': 'Lámpara de araña', 'Candelabra': 'Candelabro', 'Lantern': 'Farol', 'Pendant lamp': 'Lámpara colgante', 'Wall sconce': 'Aplique de pared',
+    'Neon sign': 'Cartel de neón', 'String lights': 'Guirnalda de luces', 'Fireplace': 'Chimenea', 'Mirror': 'Espejo', 'Folding screen': 'Biombo', 'Stage ramp': 'Rampa de escenario',
+    'Balcony': 'Balcón', 'Column': 'Columna', 'Archway': 'Arco', 'Tree': 'Árbol', 'Rock': 'Roca', 'Picket fence': 'Valla de madera', 'Street lamp': 'Farola', 'Prop car': 'Coche de escena',
+    'Bush': 'Arbusto', 'Signpost': 'Poste indicador', 'Bridge': 'Puente',
+    # monitors, pedals, keys
+    'Headphones': 'Auriculares', 'Coaxial wedge': 'Cuña coaxial', 'Floor monitor 15 in': 'Monitor de suelo de 15 pulgadas',
+    'Distortion pedal': 'Pedal de distorsión', 'Wah pedal': 'Pedal wah', 'Volume or expression pedal': 'Pedal de volumen o expresión', 'Looper pedal': 'Pedal looper', 'Tuner pedal': 'Pedal afinador',
+    'Multi-effects unit': 'Multiefectos', 'Footswitch controller': 'Controlador de pedales', 'Large pedalboard': 'Pedalera grande', 'Guitar loop station': 'Estación de loops de guitarra',
+    'MIDI controller': 'Controlador MIDI', 'Accordion': 'Acordeón', 'Upright piano': 'Piano vertical', 'Electric piano': 'Piano eléctrico', 'Baby grand': 'Piano de cola pequeño',
+    'Piano with bench': 'Piano de cola con banco', 'Rhodes electric piano': 'Piano eléctrico tipo Rhodes', 'Harpsichord': 'Clavecín', 'Hammond organ': 'Órgano Hammond',
+    'Organ console': 'Consola de órgano', 'Celesta': 'Celesta', 'Clavinet': 'Clavinet', 'Three-keyboard rig': 'Montaje de tres teclados', 'Harmonium': 'Armonio', 'Toy piano': 'Piano de juguete',
+    'Bandoneon': 'Bandoneón',
+    # lights, site, effects
+    'LED uplighter': 'Foco LED de suelo', 'Work light on tripod': 'Luz de trabajo en trípode', 'PAR 64': 'PAR 64', 'LED wash panel': 'Panel LED wash', 'LED fresnel': 'Fresnel LED',
+    'Pinspot': 'Pinspot', 'UV blacklight bar': 'Barra de luz negra UV', 'Gobo projector': 'Proyector de gobos', 'Ground row': 'Fila de suelo', 'T-bar with four PARs': 'Barra en T con cuatro PAR',
+    'Lighting tree': 'Árbol de luces', 'Merch stand': 'Puesto de merchandising', 'Tent': 'Carpa', 'Accessibility platform': 'Plataforma de accesibilidad', 'Portable toilet': 'Baño portátil',
+    'Ticket booth': 'Taquilla', 'Food stall': 'Puesto de comida', 'Truck': 'Camión', 'Tour bus': 'Autobús de gira', 'Trailer': 'Remolque',
+    'Bubble machine': 'Máquina de burbujas', 'Confetti cannon': 'Cañón de confeti', 'Snow machine': 'Máquina de nieve', 'Flame projector': 'Proyector de llamas', 'Pyro fountain': 'Fuente pirotécnica',
+    'Wind fan': 'Ventilador de viento', 'Cold spark machine': 'Máquina de chispas frías', 'Low fog machine': 'Máquina de niebla baja', 'Streamer cannon': 'Cañón de serpentinas', 'Fireworks rack': 'Rack de fuegos artificiales',
+    'Smoke machine': 'Máquina de humo', 'Smartphone': 'Teléfono móvil', 'Pad controller': 'Controlador de pads', 'LED moving head': 'Cabeza móvil LED',
+    # network
+    'Wi-Fi access point': 'Punto de acceso Wi-Fi', 'Wi-Fi router': 'Router Wi-Fi', '4G hotspot': 'Punto de acceso 4G', 'PoE switch': 'Switch PoE', 'Fibre converter': 'Conversor de fibra',
+    'Patch panel': 'Panel de parcheo', 'Dante interface': 'Interfaz Dante', 'DMX splitter': 'Splitter DMX', 'Network cable drum': 'Enrollacables de red', 'Art-Net node': 'Nodo Art-Net',
+    # strings
+    'Electric guitar': 'Guitarra eléctrica', 'Bass guitar': 'Bajo eléctrico', 'Banjo': 'Banjo', 'Mandolin': 'Mandolina', 'Ukulele': 'Ukelele', 'Pedal steel guitar': 'Pedal steel',
+    'Sitar': 'Sitar', 'Oud': 'Laúd árabe (oud)', 'Koto': 'Koto', 'Erhu': 'Erhu', 'Kora': 'Kora', 'Charango': 'Charango', 'Lute': 'Laúd', 'Zither': 'Cítara', 'Hurdy-gurdy': 'Zanfona',
+    'Cavaquinho': 'Cavaquinho', 'Double-cut electric': 'Guitarra eléctrica de doble corte', 'Single-cut slab electric': 'Guitarra eléctrica de cuerpo macizo', 'Carved single-cut': 'Guitarra eléctrica tallada de un corte',
+    'Archtop jazz guitar': 'Guitarra jazz archtop', 'Semi-hollow guitar': 'Guitarra semihueca', 'V-shaped guitar': 'Guitarra en V', 'Double-neck guitar': 'Guitarra de doble mástil',
+    'Classical guitar': 'Guitarra clásica', '12-string guitar': 'Guitarra de 12 cuerdas', 'Resonator guitar': 'Guitarra resonadora', 'Lap steel': 'Lap steel', 'Flamenco guitar': 'Guitarra flamenca',
+    'Precision-style bass': 'Bajo tipo Precision', 'Jazz-style bass': 'Bajo tipo Jazz', '5-string bass': 'Bajo de 5 cuerdas', 'Headless bass': 'Bajo sin cabeza', 'Acoustic bass guitar': 'Bajo acústico',
+    'Electric upright bass': 'Contrabajo eléctrico', 'Bass VI': 'Bass VI', 'Bass ukulele': 'Ukelele bajo', 'Chapman stick': 'Chapman Stick', 'Fretless bass': 'Bajo fretless',
+    'Tanpura': 'Tanpura', 'Saz': 'Saz', 'Nyckelharpa': 'Nyckelharpa', 'Arpa llanera': 'Arpa llanera', 'Sarod': 'Sarod', 'Veena': 'Veena', 'Santoor': 'Santoor', 'Shamisen': 'Shamisen',
+    'Pipa': 'Pipa', 'Guzheng': 'Guzheng', 'Cimbalom': 'Cimbalom', 'Bouzouki': 'Bouzouki', 'Balalaika': 'Balalaika',
+    # winds
+    'Clarinet': 'Clarinete', 'Tuba': 'Tuba', 'French horn': 'Trompa', 'Harmonica': 'Armónica', 'Oboe': 'Oboe', 'Soprano sax': 'Saxofón soprano', 'Tenor sax': 'Saxofón tenor',
+    'Baritone sax': 'Saxofón barítono', 'Bass clarinet': 'Clarinete bajo', 'Piccolo': 'Flautín', 'Bassoon': 'Fagot', 'Flugelhorn': 'Fliscorno', 'Euphonium': 'Bombardino',
+    'Sousaphone': 'Sousafón', 'Recorder': 'Flauta de pico', 'Bagpipes': 'Gaita', 'Didgeridoo': 'Didgeridoo', 'Duduk': 'Duduk', 'Shakuhachi': 'Shakuhachi', 'Panpipes': 'Zampoña',
+    'Quena': 'Quena', 'Ocarina': 'Ocarina', 'Bansuri': 'Bansuri', 'Tin whistle': 'Tin whistle', 'Uilleann pipes': 'Gaita irlandesa (uilleann)', 'Zurna': 'Zurna', 'Sheng': 'Sheng',
+    'Suona': 'Suona', 'Ney': 'Ney', 'Dizi': 'Dizi',
+    # machinery, production, orchestra
+    'Trap door': 'Trampilla', 'Scissor lift': 'Plataforma de tijera', 'Boom lift': 'Plataforma elevadora de brazo', 'Forklift': 'Carretilla elevadora', 'Revolving stage': 'Escenario giratorio',
+    'Wagon on casters': 'Carro con ruedas', 'Winch': 'Torno', 'Fly pipe': 'Vara', 'Stage elevator': 'Elevador de escenario', 'Hoist controller': 'Controlador de polipastos',
+    'Pallet jack': 'Transpaleta', 'Case dolly': 'Carro para flightcases', 'Production desk': 'Mesa de producción', 'Production office': 'Oficina de producción', 'Catering table': 'Mesa de catering',
+    'Water station': 'Punto de agua', 'Dressing room mirror': 'Espejo de camerino', 'Quick-change tent': 'Carpa de cambio rápido', 'Props table': 'Mesa de atrezo', 'Guest list table': 'Mesa de lista de invitados',
+    'Rope barrier': 'Valla de cuerda', 'Toolbox': 'Caja de herramientas', 'Radio charger': 'Cargador de walkies', 'Wardrobe rack': 'Perchero de vestuario',
+    'Orchestra chair': 'Silla de orquesta', 'Double-desk stand': 'Atril doble', 'Conductor podium': 'Podio de director', 'Conductor score stand': 'Atril de director', 'Bass stool': 'Taburete de contrabajo',
+    'Percussion trolley': 'Carro de percusión', 'Choir riser tier': 'Grada de coro', 'Acoustic shell panel': 'Panel de concha acústica', 'Stand light': 'Luz de atril', 'Brass stand rack': 'Soporte de metales',
+    'Harp bench': 'Banco de arpa', 'Cello case': 'Funda de violonchelo', 'Portable mixer': 'Mezclador portátil', 'Powered mixer': 'Mezclador amplificado',
+    # venue
+    'Stage door': 'Puerta de escenario', 'Fence panel': 'Panel de vallado', 'Gate': 'Puerta de vallado', 'Trash bin': 'Papelera', 'Flag pole': 'Mástil de bandera', 'Bike rack': 'Aparcamiento de bicis',
+    'Seat row': 'Fila de asientos', 'Orchestra pit': 'Foso de orquesta', 'Loading dock': 'Muelle de carga', 'Info desk': 'Punto de información', 'Light tower mast': 'Torre de luz', 'Utility cart': 'Carro de servicio',
+    # synth, dj, conference
+    'Modular synth': 'Sintetizador modular', 'Drum machine': 'Caja de ritmos', 'Groovebox': 'Groovebox', 'Vocoder keyboard': 'Teclado vocoder', 'Theremin': 'Theremín', 'Desktop synth': 'Sintetizador de sobremesa',
+    'Sequencer': 'Secuenciador', 'CDJ player': 'Reproductor CDJ', 'DJ mixer': 'Mezclador de DJ', 'Vinyl crate': 'Caja de vinilos', 'Panel table': 'Mesa de panel', 'Rostrum': 'Atril de ponente',
+    'Backdrop banner': 'Telón de fondo', 'Flag': 'Bandera', 'Trophy table': 'Mesa de trofeos', 'Red carpet': 'Alfombra roja', 'Ceremony chairs': 'Sillas de ceremonia', 'Interpretation booth': 'Cabina de interpretación',
+    'Interpreter receiver': 'Receptor de interpretación', 'Captioning screen': 'Pantalla de subtítulos', 'Conference table': 'Mesa de conferencia', 'Step-and-repeat': 'Photocall',
+    'Guitar hard case': 'Estuche rígido de guitarra', 'Bass hard case': 'Estuche rígido de bajo', 'Gig bag': 'Funda blanda',
+    # gamelan
+    'Gong ageng': 'Gong ageng', 'Saron': 'Saron', 'Bonang': 'Bonang', 'Kenong': 'Kenong', 'Angklung': 'Angklung', 'Singing bowl': 'Cuenco tibetano', 'Temple blocks': 'Bloques de templo',
+    'Tibetan long horn': 'Trompeta larga tibetana', 'Kulintang': 'Kulintang',
+}

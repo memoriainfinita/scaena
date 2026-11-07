@@ -66,7 +66,7 @@ test('a new light from the library is an instrument, and the plan draws the bar'
   await theatre(page);
   await page.getByRole('button', { name: 'Plano', exact: true }).click();
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('fresnel');
-  await page.getByRole('button', { name: /Añadir Fresnel/ }).click();
+  await page.getByRole('button', { name: 'Añadir Fresnel al plano' }).click();
   await expect(page.getByRole('heading', { name: 'Instrumento' })).toBeVisible();
   await expect(page.locator('svg.plansvg')).toContainText('Vara 1');
   await page.getByRole('button', { name: 'Luces', exact: true }).click();

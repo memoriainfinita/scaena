@@ -1,0 +1,18 @@
+ES3 = {
+    'Double bassist': 'Contrabajista', 'Violinist': 'Violinista', 'Cellist': 'Violonchelista', 'Harpist': 'Arpista', 'Trumpeter': 'Trompetista', 'Trombonist': 'Trombonista',
+    'Flutist': 'Flautista', 'Clarinetist': 'Clarinetista', 'Tuba player': 'Tubista', 'French horn player': 'Trompista', 'Oboist or bassoonist': 'Oboísta o fagotista',
+    'Timpanist': 'Timbalero de orquesta', 'Marimba player': 'Marimbista', 'Vibraphone player': 'Vibrafonista', 'Accordionist': 'Acordeonista', 'Keytar player': 'Teclista con keytar',
+    'Pianist': 'Pianista', 'Keyboardist': 'Teclista', 'Organist': 'Organista', 'Conga player': 'Conguero', 'Conductor': 'Director de orquesta', 'Lead singer': 'Cantante principal',
+    'Choir singer': 'Corista', 'Speaker at a lectern': 'Orador en atril', 'Person with a laptop': 'Persona con portátil', 'Percussionist standing': 'Percusionista de pie',
+    'Singer-songwriter standing': 'Cantautor de pie', 'Classical guitarist seated': 'Guitarrista clásico sentado', 'Flamenco guitarist': 'Guitarrista flamenco', 'Pedal steel player': 'Pedal steel',
+    'Lap steel player': 'Lap steel (músico)', 'Electric upright bassist': 'Contrabajista eléctrico', 'Seated bassist': 'Bajista sentado', 'Ukulele player': 'Ukelelista', 'Mandolin player': 'Mandolinista',
+    'Banjo player standing': 'Banjista de pie', 'Two guitarists': 'Dos guitarristas', 'Backing vocalist': 'Corista de apoyo', 'Dancer': 'Bailarín', 'Actor': 'Actor', 'Wheelchair user': 'Persona en silla de ruedas',
+    'Child': 'Niño', 'Kneeling person': 'Persona arrodillada', 'Sound engineer': 'Técnico de sonido', 'Light technician': 'Técnico de luces', 'Stage manager': 'Regidor', 'Guitar tech': 'Técnico de guitarras',
+    'Seated on stool': 'Sentado en taburete', 'Drummer': 'Batería (músico)', 'Stagehand': 'Tramoyista', 'Security': 'Seguridad', 'Marching drummer': 'Tambor de marcha', 'Camera operator': 'Operador de cámara',
+    'Sign language interpreter': 'Intérprete de lengua de signos', 'Steadicam operator': 'Operador de steadicam', 'Stage manager at desk': 'Regidor en mesa', 'Photographer': 'Fotógrafo', 'Bartender': 'Camarero de barra',
+    'Usher': 'Acomodador', 'Paramedic': 'Sanitario', 'Firefighter on duty': 'Bombero de guardia', 'Police officer': 'Policía', 'Safety marshal': 'Responsable de seguridad', 'Waiter': 'Camarero',
+    'Merch seller': 'Vendedor de merchandising', 'Host or MC': 'Presentador o maestro de ceremonias', 'Comedian': 'Humorista', 'Magician': 'Mago', 'Reporter': 'Reportero', 'Rigger': 'Rigger',
+    'Dancing pair': 'Pareja de baile', 'Two actors': 'Dos actores', 'String quartet': 'Cuarteto de cuerda', 'Brass section': 'Sección de metales', 'Rock band': 'Banda de rock', 'Vocal quartet': 'Cuarteto vocal',
+    'Concert crowd': 'Público de concierto', 'Seated audience': 'Público sentado', 'Tibetan long horn (extra)': 'Trompeta larga tibetana (otra)',
+    'Standing person': 'Persona de pie',
+}
