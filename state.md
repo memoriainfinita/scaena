@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-05
+last_updated: 2026-11-07
 ---
 
 # scaena — state
@@ -69,13 +69,12 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 ## TODO
 
 - [x] Escenario de forma libre hecho 2026-11-07 (`docs/design/stage-freeform-2026-11-07.md`): puntos arrastrables y con flechas sobre el plano, líneas de referencia y proscenio también en forma libre, altura de la boca dibujada en la sección lateral. Sin comprobar que el polígono no se cruce
-- [ ] **Símbolos**: el usuario revisa los 111 en `test-results/symbols-review.html` (se regenera con el script del scratchpad `make-review.mjs`; conviene moverlo a `scripts/`) y marca Bien, Mejorar o Rehacer; después se rehacen los marcados en SVG. Alternativa que mencionó: imágenes de GPT
+- [ ] **Iconos** (`docs/design/icons-integration-2026-11-07.md`): 678 iconos de línea trazados de las hojas de GPT, ya revisados por el usuario (quitadas las personas con cabeza redonda o con cara, resueltos los duplicados, rehechos 23). Los 106 elementos que tenían símbolo dibujado muestran su icono (vertical, sobre una huella fina que gira; las luces giran con el punto de mira); falta convertir el resto de iconos en elementos de la biblioteca, por lotes y por categoría (`scripts/symbols/`, `assets/symbol-manifest.json`). El usuario decide después qué iconos parecen marcas registradas (lista en el documento)
 - [x] Decidido 2026-11-07: `docs/design/`, `docs/research/` e `investigacion.md` se quedan en español; toda documentación nueva va en inglés
 - [ ] Capturas de la guía (`docs/guide/img`) están en la interfaz en español; las del README ya están hechas y commiteadas (2026-11-07, `node scripts/readme-shots.mjs` las regenera)
 - [x] Pasada completa 2026-11-07: 287 unitarias, 125 e2e en Firefox y 87 en Chrome (`pnpm e2e:chrome`) pasan; en Chrome una comprobación de la hoja mágica pedía «visible» a una línea sin alto y ahora pide «presente»
 - [x] Móvil real 2026-11-07 (Xiaomi 24094RAD4G, Chrome, app servida por `adb reverse` y controlada por CDP): plano, Entradas y Documento sin desbordar, PDF compilado en 3,2 s, toque real selecciona y abre la barra de acciones, zoom con dos dedos, recarga sin red desde el service worker. Sin probar: Firefox y Safari del móvil, instalar como PWA, giro a horizontal en el aparato Segunda tanda (misma fecha): instalable en Chrome sin errores (manifest standalone, icono maskable; no instalada a propósito); Firefox 158 del móvil muestra inicio, plano, Entradas y Documento con PDF
 - [x] Hallazgos del móvil real corregidos 2026-11-07 y verificados en el Xiaomi: el plano se reencuadra al girar mientras la cámara sea la del encuadre automático; el encuadre descuenta la barra de zoom y los botones; Documento en vertical es una columna que se desplaza entera (visor de alto casi completo); el título lleva puntos suspensivos. Límite conocido: con 275 px de alto (horizontal en el Xiaomi) el plano cabe sobre los controles pero queda pequeño
-- [ ] Símbolos: la página de revisión (`symbols-review.html` en la raíz, fuera de git; `node scripts/symbols-review.mjs symbols-review.html` la regenera) espera que el usuario marque los 111
 
 - [x] Investigar apps y recursos similares: `docs/investigacion.md`
 - [x] Recorrer ridermaker.com por dentro: en `docs/investigacion.md`

@@ -8,6 +8,7 @@ import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { CustomItemDialog } from './CustomItem.tsx';
 import { BackgroundDialog } from './Background.tsx';
 import { RevisionsDialog } from './Revisions.tsx';
+import { loadShowIcons } from '../library/show-icons.ts';
 import { csvZipFile, baseName, daySheetFile, planDxfFile, planPdfFile, planPngFile, planSvgFile, riderPdfFile, saveFile, type OutFile } from '../export/exports.ts';
 import { saveAsTemplate } from '../app/library-actions.ts';
 import { inputsAsText } from '../reports/reports.ts';
@@ -272,7 +273,10 @@ function ExportDialog({ onClose }: { onClose: () => void }) {
     { key: 'pdf', label: 'export.pdf', tip: 'export.pdf.tip', job: () => riderPdfFile(show(), s.allImages()) },
     { key: 'daysheet', label: 'export.daysheet', tip: 'export.daysheet.tip', job: () => daySheetFile(show()) },
     { key: 'planpdf', label: 'export.planpdf', job: () => planPdfFile(show(), s.allImages()) },
-    { key: 'svg', label: 'export.svg', job: () => planSvgFile(show(), s.allImages()) },
+    { key: 'svg', label: 'export.svg', job: async () => {
+      await loadShowIcons(show());
+      return planSvgFile(show(), s.allImages());
+    } },
     { key: 'dxf', label: 'export.dxf', tip: 'export.dxf.tip', job: () => planDxfFile(show()) },
     { key: 'png', label: 'export.png', job: () => planPngFile(show(), s.allImages()) },
     { key: 'csv', label: 'export.csv', tip: 'export.csv.tip', job: () => csvZipFile(show()) },

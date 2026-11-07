@@ -4,6 +4,7 @@ import type { Lang } from '../i18n/index.ts';
 import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
+import { footprintBody, iconData, iconDefs, iconKeyOf, iconUse } from '../library/icons.ts';
 import type { Connection, PlanElement, Show } from '../model/schema.ts';
 import { stageFrame } from '../model/stage.ts';
 import { elementBox, elementSize, formatLength, planBox, prosceniumWalls, unionBox, type Box } from '../plan/geometry.ts';
@@ -148,13 +149,16 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     const sc = Math.min(side / it.size.w, side / it.size.d);
     const w = it.size.w * sc;
     const d = it.size.d * sc;
-    out.push(`<g transform="translate(${r(cx + (side - w) / 2)} ${r(cy + (side - d) / 2)}) scale(${r(sc * 1000) / 1000})">${printStrokes(symbolBody(it.symbol, it.size.w, it.size.d), f / sc)}</g>`);
+    const lk = iconKeyOf(it.id);
+    const licon = lk && iconData(lk) ? lk : undefined;
+    out.push(`<g transform="translate(${r(cx + (side - w) / 2)} ${r(cy + (side - d) / 2)}) scale(${r(sc * 1000) / 1000})">${printStrokes(licon ? footprintBody(it.size.w, it.size.d) : symbolBody(it.symbol, it.size.w, it.size.d), f / sc)}${licon ? iconUse(licon, it.size.w, it.size.d) : ''}</g>`);
     out.push(`<text x="${r(cx + side + 1.5 / k)}" y="${r(cy + side / 2 + 0.8 / k)}" font-size="${r(2.2 / k)}" fill="#000" font-family="Inter">${esc(it.name[opts.lang])}</text>`);
   });
 
   const height = worldH + extra;
   const width = Math.max(worldW, used.length > 0 ? (cols * cellW) / k : 0);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${r(box.x0)} ${r(box.y0)} ${r(width)} ${r(height)}" width="${r(width)}" height="${r(height)}">${out.join('')}</svg>`;
+  const defs = iconDefs(els.map((e) => iconKeyOf(e.type.id)).concat(used.map((id) => iconKeyOf(id))).filter((x): x is string => !!x));
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${r(box.x0)} ${r(box.y0)} ${r(width)} ${r(height)}" width="${r(width)}" height="${r(height)}">${defs}${out.join('')}</svg>`;
   return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };
 }
 
@@ -166,7 +170,11 @@ function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Sh
   const isText = it.symbol === 'textbox';
   const opacity = dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : '';
   let s = `<g transform="translate(${e.x} ${e.y})"${opacity}>`;
-  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(symbolBody(it.symbol, w, d), f)}</g>`;
+  const key = iconKeyOf(it.id);
+  const icon = key && iconData(key) ? key : undefined;
+  const turns = it.category === 'light';
+  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(icon ? footprintBody(w, d) : symbolBody(it.symbol, w, d), f)}${icon && turns ? iconUse(icon, w, d) : ''}</g>`;
+  if (icon && !turns) s += `<g transform="scale(${e.flipX ? -1 : 1} 1)">${iconUse(icon, w, d, 0, 0)}</g>`;
   if (it.symbol === 'dimension') s += `<g transform="rotate(${e.rotation})"><text x="0" y="${r(-d / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label || formatLength(w, units, lang))}</text></g>`;
   else if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
   else if (e.label) s += `<text x="0" y="${r(box.y1 - e.y + 2.6 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
