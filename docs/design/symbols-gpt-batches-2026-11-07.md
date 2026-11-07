@@ -450,3 +450,39 @@ List to paste:
 11 travel trunk (80 x 50 cm)
 12 roll-up banner stand (85 x 20 cm)
 ```
+
+## Sheet 14 (Luminaires)
+
+Replaces the RP-2 outlines, which did not read. Add this line to the style block for this sheet only: *Each light is seen from the side with its lens pointing to the right, so the direction it aims in is clear, with the yoke or clamp visible.*
+
+| # | Item | id | Size (cm) |
+|---|---|---|---|
+| 1 | Ellipsoidal (profile spot) | `light.ellipsoidal` | 25 x 52 |
+| 2 | Fresnel | `light.fresnel` | 25 x 35 |
+| 3 | PC | `light.pc` | 25 x 35 |
+| 4 | PAR can | `light.par` | 25 x 35 |
+| 5 | LED PAR | `light.led-par` | 24 x 24 |
+| 6 | Scoop | `light.scoop` | 30 x 30 |
+| 7 | Strip light | `light.strip` | 100 x 25 |
+| 8 | Cyc light | `light.cyc` | 50 x 30 |
+| 9 | Followspot | `light.followspot` | 45 x 120 |
+| 10 | Moving head spot | `light.mover-spot` | 35 x 35 |
+| 11 | Moving head wash | `light.mover-wash` | 35 x 35 |
+| 12 | LED bar | `light.led-bar` | 100 x 10 |
+
+List to paste:
+
+```text
+1 ellipsoidal profile spot with a long barrel, shutter slot and yoke (25 x 52 cm)
+2 fresnel spotlight with a short barrel and a ridged round lens (25 x 35 cm)
+3 plano-convex spotlight with a short barrel and a smooth round lens (25 x 35 cm)
+4 PAR can: a short cylinder with a round lens and a U-shaped yoke (25 x 35 cm)
+5 compact LED par with a round face of small LED circles (24 x 24 cm)
+6 scoop floodlight: a deep open bowl with a bulb (30 x 30 cm)
+7 long strip light (batten) with several compartments (100 x 25 cm)
+8 asymmetric cyclorama floodlight, a wide box with a slanted front (50 x 30 cm)
+9 followspot on a tall stand with a long barrel and a handle (45 x 120 cm)
+10 moving head spot: a round head held in a U-shaped arm on a base (35 x 35 cm)
+11 moving head wash: a wide round head with a lens, held in a U-shaped arm on a base (35 x 35 cm)
+12 LED bar with a row of round LEDs (100 x 10 cm)
+```
