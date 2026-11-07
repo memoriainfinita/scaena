@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { packShow } from '../model/archive.ts';
 import { newShow } from '../model/new.ts';
 import { addDimension } from './plan-actions.ts';
-import { addFromLibrary, applyShowSettings, openFileBytes, renameShow, selection, session, setElementField, setLayerFlag, setLibrary, startEmpty, startError, startFromPackage } from './state.ts';
+import { addFromLibrary, applyShowSettings, openFileBytes, renameShow, selection, session, setElementField, setElementType, setLayerFlag, setLibrary, startEmpty, startError, startFromPackage } from './state.ts';
 
 beforeEach(() => {
   setLibrary(null);
@@ -170,5 +170,19 @@ describe('files', () => {
     openFileBytes(packShow(future as never));
     expect(session.value).toBeNull();
     expect(startError.value).toBe('newer');
+  });
+});
+
+describe('swapping the kind of an element', () => {
+  test('keeps what was set up on it and refuses another category', () => {
+    startEmpty('x');
+    const a = addFromLibrary('mic.boom-tall')!;
+    setElementField(a, { label: 'Voz solista', notes: 'con cable largo' });
+    setElementType([a], 'mic.boom-short');
+    const el = session.value!.show.value.elements[a]!;
+    expect(el.type.id).toBe('mic.boom-short');
+    expect([el.label, el.notes]).toEqual(['Voz solista', 'con cable largo']);
+    setElementType([a], 'furniture.chair');
+    expect(session.value!.show.value.elements[a]!.type.id).toBe('mic.boom-short');
   });
 });

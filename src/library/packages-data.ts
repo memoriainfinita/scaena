@@ -1,6 +1,6 @@
 // Helpers the example packages use for everything that is not on the plan: contacts, day schedule, set list,
-// hospitality, contract, venue facts, electrical and work notes. People, venues and phone numbers are made up:
-// the numbers are the 600 000 xxx block and the addresses end in .example, which nobody owns.
+// hospitality, contract, venue facts, electrical and work notes. Venues and everything else are made up, never real:
+// contacts are placeholders (generic name, 000 number, an address on example.com).
 import { nextId } from '../model/ids.ts';
 import { addSong, addSlot } from '../model/production.ts';
 import { addWorkNote, setCircuitPhase, setDimmerMax, setPhaseBreaker } from '../model/lights.ts';
@@ -10,13 +10,14 @@ import type { Bilingual } from './types.ts';
 export type Tx = (b: Bilingual) => string;
 export const bi = (es: string, en: string): Bilingual => ({ es, en });
 
-/** [role, name, phone, email]: the name is not translated, the role is. */
-export type PersonRow = [Bilingual, string, string, string];
+/** [role, name, phone, email]: the examples carry placeholders, not people: nobody's name, number or address. */
+export type PersonRow = [Bilingual, Bilingual | string, string, string];
+export const PERSON: [Bilingual, string, string] = [bi('Nombre y apellidos', 'Full name'), '000 000 000', 'correo@ejemplo.com'];
 
 export function addContacts(show: Show, tx: Tx, rows: PersonRow[]): Show {
   for (const [role, name, phone, email] of rows) {
     const [id, s] = nextId(show, 'ct');
-    const c: Show['contacts'][number] = { id, role: tx(role), name, phone, email, hidden: [] };
+    const c: Show['contacts'][number] = { id, role: tx(role), name: typeof name === 'string' ? name : tx(name), phone, email, hidden: [] };
     show = { ...s, contacts: [...s.contacts, c] };
   }
   return show;

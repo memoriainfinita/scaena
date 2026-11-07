@@ -49,6 +49,16 @@ export function moveLayer(show: Show, id: string, dir: 1 | -1): Show {
   return { ...show, layers };
 }
 
+/** Puts a custom layer at a position of the list (the other layers keep their order). */
+export function moveLayerTo(show: Show, id: string, to: number): Show {
+  const i = show.layers.findIndex((x) => x.id === id);
+  if (i < 0 || !isCustom(show.layers[i]!) || to < 0 || to >= show.layers.length || to === i) return show;
+  const layers = [...show.layers];
+  const [l] = layers.splice(i, 1);
+  layers.splice(to, 0, l!);
+  return { ...show, layers };
+}
+
 export function setElementsLayer(show: Show, ids: string[], layerId: string): Show {
   if (!show.layers.some((l) => l.id === layerId)) return show;
   const elements = { ...show.elements };

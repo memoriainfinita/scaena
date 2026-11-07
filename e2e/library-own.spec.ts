@@ -25,8 +25,9 @@ test('your own layers: add, move an element to it, rename and remove @a11y', asy
 
   await page.getByLabel('Nombre de la capa Vestuario').fill('Atrezo');
   await expect(page.getByLabel('Nombre de la capa Atrezo')).toBeVisible();
-  await page.getByRole('button', { name: 'Subir Atrezo' }).click();
-  await page.getByRole('button', { name: 'Bajar Atrezo' }).click();
+  await page.getByRole('button', { name: /^Los elementos nuevos van a Atrezo/ }).focus();
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowDown');
 
   await page.getByRole('button', { name: 'Quitar Atrezo' }).click();
   await expect(page.getByLabel('Nombre de la capa Atrezo')).toHaveCount(0);
