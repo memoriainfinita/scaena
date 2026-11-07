@@ -73,6 +73,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - [x] Decidido 2026-11-07: `docs/design/`, `docs/research/` e `investigacion.md` se quedan en español; toda documentación nueva va en inglés
 - [ ] Capturas de la guía (`docs/guide/img`) están en la interfaz en español; las del README ya están hechas y commiteadas (2026-11-07, `node scripts/readme-shots.mjs` las regenera)
 - [x] Pasada completa 2026-11-07: 287 unitarias, 125 e2e en Firefox y 87 en Chrome (`pnpm e2e:chrome`) pasan; en Chrome una comprobación de la hoja mágica pedía «visible» a una línea sin alto y ahora pide «presente»
+- [x] Móvil real 2026-11-07 (Xiaomi 24094RAD4G, Chrome, app servida por `adb reverse` y controlada por CDP): plano, Entradas y Documento sin desbordar, PDF compilado en 3,2 s, toque real selecciona y abre la barra de acciones, zoom con dos dedos, recarga sin red desde el service worker. Sin probar: Firefox y Safari del móvil, instalar como PWA, giro a horizontal en el aparato
 - [ ] Símbolos: la página de revisión se regenera con `node scripts/symbols-review.mjs` (Playwright borra `test-results/`; copiar fuera antes de abrirla)
 
 - [x] Investigar apps y recursos similares: `docs/investigacion.md`
