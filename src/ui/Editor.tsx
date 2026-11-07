@@ -1,3 +1,4 @@
+import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
@@ -262,6 +263,9 @@ function Inspector({ show }: { show: Show }) {
           <h2>{t('inspector.title')}</h2>
           <strong>{t('inspector.none')}</strong>
           <span class="muted">{t('inspector.none.text')}</span>
+          <button type="button" class="btn" aria-pressed={stageEdit.value} title={t('stage.edit.tip')} onClick={() => (stageEdit.value ? stopStageEdit() : startStageEdit())}>
+            {stageEdit.value ? t('stage.editDone') : t('stage.edit')}
+          </button>
         </div>
       )}
       <div class="panel" style="flex:1">

@@ -68,7 +68,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 
 ## TODO
 
-- [ ] Escenario de forma libre: sin líneas de referencia y solo se edita por texto, no arrastrando puntos. Sección lateral: no dibuja la boca del proscenio (el modelo no guarda su altura)
+- [x] Escenario de forma libre hecho 2026-11-07 (`docs/design/stage-freeform-2026-11-07.md`): puntos arrastrables y con flechas sobre el plano, líneas de referencia y proscenio también en forma libre, altura de la boca dibujada en la sección lateral. Sin comprobar que el polígono no se cruce
 - [ ] **Símbolos**: el usuario revisa los 111 en `test-results/symbols-review.html` (se regenera con el script del scratchpad `make-review.mjs`; conviene moverlo a `scripts/`) y marca Bien, Mejorar o Rehacer; después se rehacen los marcados en SVG. Alternativa que mencionó: imágenes de GPT
 - [x] Decidido 2026-11-07: `docs/design/`, `docs/research/` e `investigacion.md` se quedan en español; toda documentación nueva va en inglés
 - [ ] Capturas de la guía (`docs/guide/img`) están en la interfaz en español; las del README ya están hechas y commiteadas (2026-11-07, `node scripts/readme-shots.mjs` las regenera)

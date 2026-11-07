@@ -551,11 +551,12 @@ function WorkNotes({ show }: { show: Show }) {
 function Section({ show }: { show: Show }) {
   const sh = show.stage.shape;
   const depth = sh.kind === 'rect' ? sh.depth : Math.max(...sh.points.map((p) => p.y));
+  const opening = show.stage.referenceLines.proscenium ? (show.stage.prosceniumHeight ?? 0) : 0; // height of the proscenium opening above the deck
   const mounts = mountList(show);
   const lum = luminaires(show);
   const deck = show.stage.height; // mount heights are measured from the stage deck
   const raised = levels(show);
-  const top = deck + Math.max(4000, ...mounts.map((m) => m.heightMm), ...raised.map((l) => l.heightMm)) + 800;
+  const top = deck + Math.max(4000, opening, ...mounts.map((m) => m.heightMm), ...raised.map((l) => l.heightMm)) + 800;
   const W = 900;
   const H = 360;
   const pad = 50;
@@ -583,6 +584,15 @@ function Section({ show }: { show: Show }) {
             </text>
           </g>
         ))}
+        {opening > 0 && (
+          <g>
+            <line x1={X(depth)} y1={Z(deck + opening)} x2={X(depth)} y2={Z(top)} class="fl main" />
+            <line x1={X(depth) - 12} y1={Z(deck + opening)} x2={X(depth) + 12} y2={Z(deck + opening)} class="fl main" />
+            <text x={X(depth) - 8} y={Z(deck + opening) - 6} text-anchor="end" class="fltext">
+              {t('section.proscenium')} · {formatNumber(opening / 1000, lang.value, 1)} m
+            </text>
+          </g>
+        )}
         <text x={pad - 20} y={Z(0) + 18} class="fltext">
           {t('section.floor')}
         </text>

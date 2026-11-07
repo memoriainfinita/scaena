@@ -5,6 +5,7 @@ import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import type { Connection, PlanElement, Show } from '../model/schema.ts';
+import { stageFrame } from '../model/stage.ts';
 import { elementBox, elementSize, formatLength, planBox, prosceniumWalls, unionBox, type Box } from '../plan/geometry.ts';
 import { docStrings } from './strings.ts';
 
@@ -105,10 +106,11 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     const bytes = images[bg.file]!;
     out.push(`<image href="data:image/png;base64,${toBase64(bytes)}" x="${bg.x}" y="${bg.y}" width="${r(bgInfo.dims.w * bg.scale)}" height="${r(bgInfo.dims.h * bg.scale)}" opacity="${bg.opacity}" preserveAspectRatio="none"/>`);
   }
-  if (stage.kind === 'rect') {
-    if (show.stage.referenceLines.plaster) out.push(`<line x1="-300" y1="${stage.depth}" x2="${stage.width + 300}" y2="${stage.depth}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
-    if (show.stage.referenceLines.proscenium) for (const [a, b] of prosceniumWalls(stage.width, stage.prosceniumWidth)) out.push(`<line x1="${a}" y1="${stage.depth}" x2="${b}" y2="${stage.depth}" stroke="#000" stroke-width="${r(0.8 / k)}"/>`);
-    if (show.stage.referenceLines.center) out.push(`<line x1="${stage.width / 2}" y1="0" x2="${stage.width / 2}" y2="${stage.depth + 300}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
+  {
+    const f = stageFrame(show);
+    if (show.stage.referenceLines.plaster) out.push(`<line x1="${f.x0 - 300}" y1="${f.downstage}" x2="${f.x1 + 300}" y2="${f.downstage}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
+    if (show.stage.referenceLines.proscenium) for (const [a, b] of prosceniumWalls(f.width, f.opening)) out.push(`<line x1="${f.x0 + a}" y1="${f.downstage}" x2="${f.x0 + b}" y2="${f.downstage}" stroke="#000" stroke-width="${r(0.8 / k)}"/>`);
+    if (show.stage.referenceLines.center) out.push(`<line x1="${f.centre}" y1="${f.upstage}" x2="${f.centre}" y2="${f.downstage + 300}" stroke="#000" stroke-width="${r(0.2 / k)}" stroke-dasharray="${r(2.5 / k)} ${r(1 / k)} ${r(0.4 / k)} ${r(1 / k)}"/>`);
   }
 
   for (const m of Object.values(show.mounts)) {
