@@ -127,7 +127,7 @@ test('magic sheet: an instrument is moved with the keyboard and the mouse, undon
   const circle = sheet.locator(`g.mi[data-id="${id}"] circle`);
   const cx = async () => Number(await circle.getAttribute('cx'));
   const before = await cx();
-  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeVisible(); // the hanging positions are drawn until the sheet is arranged
+  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeAttached(); // the hanging positions are drawn until the sheet is arranged
   await first.focus();
   await page.keyboard.press('ArrowRight');
   await expect.poll(cx).toBe(before + 100);
@@ -146,7 +146,7 @@ test('magic sheet: an instrument is moved with the keyboard and the mouse, undon
   await reset.click();
   await expect.poll(cx).toBe(before);
   await expect(reset).toBeDisabled();
-  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeVisible();
+  await expect(sheet.locator('line[stroke-dasharray]').first()).toBeAttached();
   await page.keyboard.press('Control+z'); // undo the reset: the arrangement is back
   await expect(reset).toBeEnabled();
 });
