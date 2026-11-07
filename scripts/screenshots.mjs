@@ -66,8 +66,8 @@ try {
   await page.getByRole('button', { name: 'Numerar instrumentos' }).click();
   await shot(page, 'luces-instrumentos');
   await page.getByRole('button', { name: 'Montajes', exact: true }).click();
-  await page.getByLabel('Altura (m) · Vara 1', { exact: true }).fill('5.5');
-  await page.getByLabel('Altura (m) · Vara 1', { exact: true }).press('Tab');
+  await page.getByLabel('Altura sobre la tarima (m) · Vara 1', { exact: true }).fill('5.5');
+  await page.getByLabel('Altura sobre la tarima (m) · Vara 1', { exact: true }).press('Tab');
   await shot(page, 'luces-montajes');
   await page.getByRole('button', { name: 'Eléctrica', exact: true }).click();
   await shot(page, 'luces-electrica');

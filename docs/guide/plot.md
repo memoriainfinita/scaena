@@ -2,7 +2,7 @@
 
 ![Library search](img/biblioteca.png)
 
-Search the library (accents ignored) and click an element: it appears in the first free spot, selected. Drag it into place; it snaps to the grid (**Alt** while dragging turns snapping off). The inspector holds the label, who supplies it (band, venue, rental), notes, position and rotation.
+The library holds about 780 elements drawn as line icons. Search it (accents ignored) and narrow it with the **Category** menu above the list, then click an element: it appears in the first free spot, selected. Drag it into place; it snaps to the grid (**Alt** while dragging turns snapping off). On the plan the icon stays upright while the thin outline under it, the real footprint with its front line, turns with the element (lights turn with their aim). Zoomed far out, only the grey footprint shows. Left-handed instruments are drawn by mirroring the element. The inspector holds the label, who supplies it (band, venue, rental), notes, position and rotation.
 
 ![Selection and action bar](img/seleccion.png)
 
