@@ -1952,3 +1952,113 @@ List to paste:
 7 person seated with a laptop on the knees (60 x 60 cm)
 8 percussionist standing with a hand drum and a tambourine (70 x 70 cm)
 ```
+
+## Faceless figures: what has to be redone to match
+
+Sheets 56 to 58 came back as faceless line art and that is the style to keep. The figures left in other styles are redone in sheets 59 to 61, with this style block:
+
+```text
+Style: faceless black line-art figures for a live-event stage plot. Clean, confident, even outlines on a pure white background, no fills, no grey, no shading, no hatching, no text. Each person is whole, with natural proportions, simple modern clothes, a plain blank face with no features, and clearly visible hands. Seen from the front or slightly from the side. Same line weight and same figure size across the sheet.
+```
+
+## Sheet 59 (Faceless people with instruments II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Singer-songwriter standing | `person3.guitar-singer` | 60 x 60 |
+| 2 | Classical guitarist seated | `person3.classical-guitar` | 60 x 60 |
+| 3 | Flamenco guitarist | `person3.flamenco` | 60 x 60 |
+| 4 | Pedal steel player | `person3.pedal-steel` | 120 x 70 |
+| 5 | Lap steel player | `person3.lap-steel` | 60 x 60 |
+| 6 | Electric upright bassist | `person3.upright-bass` | 70 x 70 |
+| 7 | Slap bassist | `person3.slap` | 90 x 90 |
+| 8 | Seated bassist | `person3.bass-seated` | 70 x 70 |
+| 9 | Ukulele player | `person3.ukulele` | 50 x 50 |
+| 10 | Mandolin player | `person3.mandolin` | 50 x 50 |
+| 11 | Banjo player standing | `person3.banjo-standing` | 60 x 60 |
+| 12 | Two guitarists | `person3.guitar-duo` | 120 x 70 |
+
+List to paste:
+
+```text
+1 person standing singing at a microphone and playing an acoustic guitar on a strap (60 x 60 cm)
+2 person seated on a chair with a classical guitar and a footstool (60 x 60 cm)
+3 person seated with legs crossed playing a flamenco guitar (60 x 60 cm)
+4 person seated at a pedal steel guitar (120 x 70 cm)
+5 person seated with a lap steel guitar on the lap (60 x 60 cm)
+6 person standing playing an electric upright bass (70 x 70 cm)
+7 person standing playing a bass guitar with a slapping gesture (90 x 90 cm)
+8 person seated on a stool playing a bass guitar (70 x 70 cm)
+9 person standing playing a ukulele (50 x 50 cm)
+10 person standing playing a mandolin (50 x 50 cm)
+11 person standing playing a banjo on a strap (60 x 60 cm)
+12 two people standing side by side playing guitars (120 x 70 cm)
+```
+
+## Sheet 60 (Faceless people on and around the stage)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Backing vocalist | `person3.backing` | 50 x 50 |
+| 2 | Dancer | `person3.dancer` | 80 x 80 |
+| 3 | Actor | `person3.actor` | 60 x 60 |
+| 4 | Wheelchair user | `person3.wheelchair` | 70 x 110 |
+| 5 | Child | `person3.child` | 35 x 35 |
+| 6 | Kneeling person | `person3.kneeling` | 60 x 60 |
+| 7 | Sound engineer | `person3.engineer` | 90 x 70 |
+| 8 | Light technician | `person3.lx` | 60 x 60 |
+| 9 | Stage manager | `person3.sm` | 60 x 60 |
+| 10 | Guitar tech | `person3.tech` | 60 x 60 |
+| 11 | Seated on stool | `person3.stool` | 50 x 50 |
+| 12 | Drummer | `person3.drummer` | 60 x 60 |
+
+List to paste:
+
+```text
+1 person standing singing with one hand to the ear (50 x 50 cm)
+2 dancer in a dynamic pose (80 x 80 cm)
+3 actor standing with arms open (60 x 60 cm)
+4 person in a wheelchair (70 x 110 cm)
+5 small child standing (35 x 35 cm)
+6 person kneeling (60 x 60 cm)
+7 person seated at a mixing desk (90 x 70 cm)
+8 person standing with a headset and a clipboard (60 x 60 cm)
+9 person with a headset and a clipboard (60 x 60 cm)
+10 person kneeling beside a guitar (60 x 60 cm)
+11 person seated on a high stool (50 x 50 cm)
+12 drummer seated with both arms raised holding sticks (60 x 60 cm)
+```
+
+## Sheet 61 (Faceless crew, audience and groups)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Sign language interpreter | `person3.interpreter` | 60 x 60 |
+| 2 | Stagehand | `person3.crew` | 50 x 50 |
+| 3 | Security | `person3.security` | 50 x 50 |
+| 4 | Marching drummer | `person3.marching` | 50 x 50 |
+| 5 | Camera operator | `person3.camera-op` | 80 x 80 |
+| 6 | Steadicam operator | `person3.steadicam` | 80 x 60 |
+| 7 | Stage manager at desk | `person3.sm-desk` | 120 x 70 |
+| 8 | FOH engineer at console | `person3.foh` | 150 x 80 |
+| 9 | Audience | `person3.audience` | 800 x 600 |
+| 10 | Choir on risers | `person3.choir-risers` | 400 x 200 |
+| 11 | Photographer | `person3.photographer` | 60 x 60 |
+| 12 | Bartender | `person3.bartender` | 60 x 60 |
+
+List to paste:
+
+```text
+1 sign language interpreter standing with both hands raised (60 x 60 cm)
+2 stagehand standing with a coil of cable over the shoulder (50 x 50 cm)
+3 security guard standing with arms folded (50 x 50 cm)
+4 marching drummer standing with a snare drum on a sling (50 x 50 cm)
+5 camera operator with a video camera on a tripod (80 x 80 cm)
+6 camera operator wearing a steadicam rig (80 x 60 cm)
+7 person with a headset seated at a desk with a monitor (120 x 70 cm)
+8 person seated behind a large mixing console (150 x 80 cm)
+9 crowd of people seen from behind, three rows (800 x 600 cm)
+10 choir of about eight people on three-step risers holding folders (400 x 200 cm)
+11 photographer kneeling with a camera at the eye (60 x 60 cm)
+12 bartender standing behind a bar counter shaking a cocktail (60 x 60 cm)
+```
