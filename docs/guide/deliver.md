@@ -2,7 +2,7 @@
 
 ![Export menu](img/exportar.png)
 
-**Export** gives: the `.scaena` file (everything, with images), the rider PDF, the day sheet PDF, the plot as PDF, SVG (sized in paper millimetres) or PNG, a zip of CSV files (they open cleanly in Excel; cells that could run as formulas are defused), the input list copied as text, and **Save as my own template**.
+**Export** gives: the `.scaena` file (everything, with images), the rider PDF, the day sheet PDF, the plot as PDF, SVG (sized in paper millimetres), DXF (for CAD programs: millimetres, one DXF layer per plot layer, symbols as lines and circles, labels as text) or PNG, a zip of CSV files (they open cleanly in Excel; cells that could run as formulas are defused), the input list copied as text, and **Save as my own template**.
 
 ![Revisions](img/revisiones.png)
 

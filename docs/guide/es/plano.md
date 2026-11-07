@@ -28,7 +28,8 @@ La herramienta **Medir** da la distancia entre dos puntos (en metros, o en pies 
 Con la herramienta **Fondo PDF o DXF** importas el plano de la sala. El PDF se convierte en imagen en tu navegador y el DXF se dibuja en líneas; hasta 25 MB. Luego:
 
 1. **Calibrar la escala:** pulsa dos puntos del plano que estén a una distancia conocida y escribe esa distancia. El fondo se reescala alrededor del primer punto.
-2. Ajusta la **opacidad** y, si quieres, **bloquéalo**.
+2. **Mover con el ratón:** arrastra el fondo por el plano y pulsa **Terminar**. Es un solo paso de deshacer y no funciona mientras el fondo esté bloqueado (también puedes escribir su posición X e Y).
+3. Ajusta la **opacidad** y, si quieres, **bloquéalo**.
 
 El fondo se guarda dentro del archivo del montaje.
 

@@ -92,3 +92,26 @@ test('the day sheet downloads as a PDF', async ({ page }) => {
   mkdirSync('test-results', { recursive: true });
   writeFileSync('test-results/hoja-de-ruta.pdf', pdf);
 });
+
+test('the day is worked out from the curfew and put in the schedule @a11y', async ({ page }) => {
+  await production(page);
+  await page.getByRole('button', { name: 'Horario del día' }).click();
+  await page.getByText('Calcular desde el toque de queda').click();
+  const preview = page.getByRole('table', { name: 'Horas calculadas' });
+  await expect(preview).toContainText('15:30');
+  await expect(preview).toContainText('Carga');
+  await expect(preview).toContainText('23:00');
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByLabel('Margen extra de carga y descarga (%)').fill('0');
+  await expect(preview).toContainText('19:00');
+  await page.getByLabel('Toque de queda (hh:mm)').fill('05:00');
+  await expect(page.getByRole('note').filter({ hasText: 'No se puede calcular' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Aplicar al horario' })).toBeDisabled();
+  await page.getByLabel('Toque de queda (hh:mm)').fill('23:00');
+  await page.getByRole('button', { name: 'Aplicar al horario' }).click();
+  await expect(page.getByText('Horario actualizado.')).toBeVisible();
+  await expect(page.getByLabel('Hora · 1', { exact: true })).toHaveValue('17:00');
+  await expect(page.getByLabel('Qué · 1', { exact: true })).toHaveValue('Carga');
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  await expect(page.getByLabel('Hora · 1', { exact: true })).toHaveCount(0);
+});

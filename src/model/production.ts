@@ -79,3 +79,76 @@ export function sortedSlots(show: Show, kind: Slot['kind']): Slot[] {
     .sort((a, b) => (a.m ?? Infinity) - (b.m ?? Infinity) || a.i - b.i)
     .map((r) => r.x);
 }
+
+// ---- backward calendar ----
+
+export interface BackwardInput {
+  /** The hour the venue must be empty by, as a clock time. */
+  curfew: string;
+  /** Minutes the show lasts. */
+  showMin: number;
+  /** Minutes the load-out takes before padding. */
+  loadOutMin: number;
+  /** Minutes of the changeover between the opener and the show; 0 leaves it out. */
+  changeoverMin: number;
+  /** Minutes from doors to the start of the show. */
+  doorsLeadMin: number;
+  /** Minutes of soundcheck, which ends when the doors open. */
+  soundcheckMin: number;
+  /** Minutes the load-in takes before padding. */
+  loadInMin: number;
+  /** Extra time added to the load-in and the load-out, in percent. */
+  extraPct: number;
+}
+
+export interface BackwardRow {
+  milestone: Milestone;
+  /** Minutes since midnight. */
+  minutes: number;
+}
+
+export const DEFAULT_BACKWARD: Omit<BackwardInput, 'curfew'> = { showMin: 90, loadOutMin: 60, changeoverMin: 0, doorsLeadMin: 30, soundcheckMin: 60, loadInMin: 120, extraPct: 50 };
+
+export const clock = (minutes: number): string => `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
+
+/**
+ * Works from the curfew back to the first call: the load-out (padded) ends at the curfew, the show ends when it starts,
+ * the doors open a little before the show, the soundcheck ends when they open and the load-in (padded) ends when it starts.
+ * Null when the curfew is not a clock time, a duration is not a whole number of minutes, or the first call would be before midnight.
+ */
+export function planBackwards(input: BackwardInput): BackwardRow[] | null {
+  const end = toMinutes(input.curfew);
+  if (end === null) return null;
+  const durations = [input.showMin, input.loadOutMin, input.changeoverMin, input.doorsLeadMin, input.soundcheckMin, input.loadInMin];
+  if (durations.some((d) => !Number.isInteger(d) || d < 0) || !Number.isFinite(input.extraPct) || input.extraPct < 0) return null;
+  const pad = (m: number) => Math.round(m * (1 + input.extraPct / 100));
+  const rows: BackwardRow[] = [{ milestone: 'curfew', minutes: end }];
+  let t = end - pad(input.loadOutMin);
+  rows.push({ milestone: 'loadOut', minutes: t });
+  t -= input.showMin;
+  rows.push({ milestone: 'show', minutes: t });
+  if (input.changeoverMin > 0) {
+    t -= input.changeoverMin;
+    rows.push({ milestone: 'changeover', minutes: t });
+    t += input.changeoverMin;
+  }
+  t -= input.doorsLeadMin;
+  rows.push({ milestone: 'doors', minutes: t });
+  t -= input.soundcheckMin;
+  rows.push({ milestone: 'soundcheck', minutes: t });
+  t -= pad(input.loadInMin);
+  rows.push({ milestone: 'loadIn', minutes: t });
+  if (t < 0) return null;
+  return rows.sort((a, b) => a.minutes - b.minutes);
+}
+
+/** Puts the calculated times in the day schedule: a slot already named like the milestone gets the new time, the others are added. */
+export function applyBackwards(show: Show, rows: BackwardRow[], names: Record<Milestone, string>): Show {
+  let out = show;
+  for (const r of rows) {
+    const same = out.schedule.find((x) => x.kind === 'day' && x.what.trim().toLowerCase() === names[r.milestone].toLowerCase());
+    if (same) out = updateSlot(out, same.id, { time: clock(r.minutes) });
+    else out = addSlot(out, 'day', names[r.milestone], clock(r.minutes))[0];
+  }
+  return out;
+}

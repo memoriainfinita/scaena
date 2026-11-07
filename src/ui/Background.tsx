@@ -142,6 +142,17 @@ export function BackgroundDialog({ onClose }: { onClose: () => void }) {
               >
                 {t('bg.calibrate')}
               </button>
+              <button
+                type="button"
+                class="btn"
+                disabled={bg.locked}
+                onClick={() => {
+                  tool.value = 'bgmove';
+                  onClose();
+                }}
+              >
+                {t('bg.move')}
+              </button>
               <button type="button" class="btn" onClick={() => removeBackground()}>
                 {t('bg.remove')}
               </button>

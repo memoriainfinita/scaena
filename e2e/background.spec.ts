@@ -95,3 +95,34 @@ test('opacity, removal and undo; the image travels in the .scaena and survives a
   await page.reload();
   await expect(page.locator('svg.plansvg image')).toHaveCount(1, { timeout: 10000 });
 });
+
+test('the background can be dragged with the mouse until it is done, as one undo step', async ({ page }) => {
+  await start(page);
+  await importFile(page, 'sala.pdf');
+  const img = page.locator('svg.plansvg image');
+  const x0 = Number(await img.getAttribute('x'));
+  const y0 = Number(await img.getAttribute('y'));
+  await page.getByRole('button', { name: 'Fondo PDF o DXF' }).click();
+  await page.getByRole('button', { name: 'Mover con el ratón' }).click();
+  await expect(page.getByText('Arrastra para mover el plano de fondo')).toBeVisible();
+  const area = (await page.locator('svg.plansvg').boundingBox())!;
+  await page.mouse.move(area.x + 400, area.y + 300);
+  await page.mouse.down();
+  await page.mouse.move(area.x + 500, area.y + 360, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => Number(await img.getAttribute('x'))).toBeGreaterThan(x0);
+  await expect.poll(async () => Number(await img.getAttribute('y'))).toBeGreaterThan(y0);
+  await page.getByRole('button', { name: 'Terminar' }).click();
+  await expect(page.getByText('Arrastra para mover el plano de fondo')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  await expect.poll(async () => Number(await img.getAttribute('x'))).toBe(x0);
+  await expect.poll(async () => Number(await img.getAttribute('y'))).toBe(y0);
+});
+
+test('a locked background cannot be moved with the mouse', async ({ page }) => {
+  await start(page);
+  await importFile(page, 'sala.pdf');
+  await page.getByRole('button', { name: 'Fondo PDF o DXF' }).click();
+  await page.getByLabel('Bloqueado').check();
+  await expect(page.getByRole('button', { name: 'Mover con el ratón' })).toBeDisabled();
+});

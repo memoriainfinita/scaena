@@ -14,7 +14,7 @@ Search the library (accents ignored) and click an element: it appears in the fir
 
 ![Background](img/fondo.png)
 
-**PDF or DXF background** imports the venue plan (up to 25 MB; a PDF becomes an image in your browser, a DXF is drawn as lines). **Calibrate the scale** by clicking two points a known distance apart and typing that distance; set the opacity and lock it. It is saved inside the show file.
+**PDF or DXF background** imports the venue plan (up to 25 MB; a PDF becomes an image in your browser, a DXF is drawn as lines). **Calibrate the scale** by clicking two points a known distance apart and typing that distance; set the opacity and lock it. It is saved inside the show file. **Move with the mouse** lets you drag the background across the plot and then press **Done**; it is one undo step and is not available while the background is locked.
 
 Wheel to zoom, **Space** + drag or the Hand tool to pan, **0** to fit. On a phone: two fingers.
 

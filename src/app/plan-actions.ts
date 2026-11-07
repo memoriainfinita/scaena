@@ -6,7 +6,7 @@ import { addLayer, moveLayer, removeLayer, renameLayer, setElementsLayer } from 
 import type { PlanElement, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
-export type ToolId = 'select' | 'pan' | 'connect' | 'text' | 'measure' | 'background';
+export type ToolId = 'select' | 'pan' | 'connect' | 'text' | 'measure' | 'background' | 'bgmove';
 export const tool = signal<ToolId>('select');
 
 /** True when the element's layer is shown and not locked: those are the ones the user can touch. */

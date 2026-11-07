@@ -1,10 +1,10 @@
 // The production view: the setlist, the schedules of the day and of the build, hospitality, contract and the event facts.
 import { useState } from 'preact/hooks';
-import { addSlotRow, addSongRow, moveSongRow, prodTab, removeSlotRow, removeSongRow, setContract, setEvent, setHospitality, setSlot, setSong, setSongLength, type ProdTab } from '../app/production-actions.ts';
+import { addSlotRow, addSongRow, applyBackwardPlan, moveSongRow, prodTab, removeSlotRow, removeSongRow, setContract, setEvent, setHospitality, setSlot, setSong, setSongLength, type ProdTab } from '../app/production-actions.ts';
 import { daySheetFile, saveFile } from '../export/exports.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { prodStrings } from '../document/strings.ts';
-import { formatDuration, isClock, MILESTONES, setlistTotal, sortedSlots } from '../model/production.ts';
+import { clock, DEFAULT_BACKWARD, formatDuration, isClock, MILESTONES, planBackwards, setlistTotal, sortedSlots, type BackwardInput } from '../model/production.ts';
 import type { Show } from '../model/schema.ts';
 
 const TABS: ProdTab[] = ['setlist', 'schedule', 'build', 'hospitality', 'contract', 'event'];
@@ -125,6 +125,7 @@ function Schedule({ show, kind }: { show: Show; kind: 'day' | 'build' }) {
           ))}
         </div>
       )}
+      {kind === 'day' && <BackwardPlanner show={show} />}
       {rows.length === 0 ? (
         <p class="muted pad">{t('prod.schedule.empty')}</p>
       ) : (
@@ -166,6 +167,80 @@ function Schedule({ show, kind }: { show: Show; kind: 'day' | 'build' }) {
         </table>
       )}
     </>
+  );
+}
+
+/** Works the day out from the curfew back to the first call, and puts the times in the schedule when asked. */
+function BackwardPlanner({ show }: { show: Show }) {
+  const P = prodStrings(lang.value);
+  const songs = Math.round(setlistTotal(show) / 60);
+  const [curfew, setCurfew] = useState('23:00');
+  const [v, setV] = useState<Record<Exclude<keyof BackwardInput, 'curfew'>, string>>({
+    showMin: String(songs > 0 ? songs : DEFAULT_BACKWARD.showMin),
+    loadOutMin: String(DEFAULT_BACKWARD.loadOutMin),
+    changeoverMin: String(DEFAULT_BACKWARD.changeoverMin),
+    doorsLeadMin: String(DEFAULT_BACKWARD.doorsLeadMin),
+    soundcheckMin: String(DEFAULT_BACKWARD.soundcheckMin),
+    loadInMin: String(DEFAULT_BACKWARD.loadInMin),
+    extraPct: String(DEFAULT_BACKWARD.extraPct),
+  });
+  const [done, setDone] = useState(false);
+  const input: BackwardInput = { curfew, showMin: Number(v.showMin), loadOutMin: Number(v.loadOutMin), changeoverMin: Number(v.changeoverMin), doorsLeadMin: Number(v.doorsLeadMin), soundcheckMin: Number(v.soundcheckMin), loadInMin: Number(v.loadInMin), extraPct: Number(v.extraPct) };
+  const rows = planBackwards(input);
+  const field = (key: keyof typeof v, label: Key) => (
+    <label class="field">
+      {t(label)}
+      <input class="input mono" type="number" min="0" step="5" value={v[key]} onInput={(e) => (setDone(false), setV({ ...v, [key]: (e.currentTarget as HTMLInputElement).value }))} />
+    </label>
+  );
+  return (
+    <details class="docdata">
+      <summary>{t('prod.back.title')}</summary>
+      <div class="stackS">
+        <label class="field">
+          {t('prod.back.curfew')}
+          <input class="input mono" style="max-width:110px" value={curfew} maxLength={5} aria-invalid={!isClock(curfew)} onInput={(e) => (setDone(false), setCurfew((e.currentTarget as HTMLInputElement).value))} />
+        </label>
+        <div class="grid2">
+          {field('showMin', 'prod.back.show')}
+          {field('loadOutMin', 'prod.back.loadOut')}
+          {field('changeoverMin', 'prod.back.changeover')}
+          {field('doorsLeadMin', 'prod.back.doors')}
+          {field('soundcheckMin', 'prod.back.soundcheck')}
+          {field('loadInMin', 'prod.back.loadIn')}
+          {field('extraPct', 'prod.back.extra')}
+        </div>
+        {rows ? (
+          <table class="list" aria-label={t('prod.back.preview')}>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.milestone}>
+                  <td class="mono">{clock(r.minutes)}</td>
+                  <td>{P.milestones[r.milestone]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <span class="warn" role="note">
+            <span aria-hidden="true">⚠ </span>
+            {t('prod.back.none')}
+          </span>
+        )}
+        <button
+          type="button"
+          class="btn primary"
+          disabled={!rows}
+          onClick={() => {
+            if (rows) applyBackwardPlan(rows, P.milestones);
+            setDone(true);
+          }}
+        >
+          {t('prod.back.apply')}
+        </button>
+        {done && <span role="status">{t('prod.back.applied')}</span>}
+      </div>
+    </details>
   );
 }
 
