@@ -59,12 +59,24 @@ export const snap = (v: number, step: number): number => (step > 0 ? Math.round(
 export const clampK = (k: number): number => Math.min(MAX_K, Math.max(MIN_K, k));
 
 /** A camera that shows `box` centred inside a viewport of `width` by `height` pixels, with a margin. */
-export function fitCamera(box: Box, width: number, height: number, margin = 32): Camera {
+export function fitCamera(box: Box, width: number, height: number, margin = 32, inset: Inset = NO_INSET): Camera {
   const bw = Math.max(1, box.x1 - box.x0);
   const bh = Math.max(1, box.y1 - box.y0);
-  const k = clampK(Math.min(Math.max(1, width - 2 * margin) / bw, Math.max(1, height - 2 * margin) / bh));
-  return { k, x: (width - bw * k) / 2 - box.x0 * k, y: (height - bh * k) / 2 - box.y0 * k };
+  // The plan is fitted in the part of the area that floating controls leave free.
+  const fw = Math.max(1, width - inset.left - inset.right);
+  const fh = Math.max(1, height - inset.top - inset.bottom);
+  const k = clampK(Math.min(Math.max(1, fw - 2 * margin) / bw, Math.max(1, fh - 2 * margin) / bh));
+  return { k, x: inset.left + (fw - bw * k) / 2 - box.x0 * k, y: inset.top + (fh - bh * k) / 2 - box.y0 * k };
 }
+
+/** Space at each edge of the drawing area taken by floating controls, in pixels. */
+export interface Inset {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+export const NO_INSET: Inset = { top: 0, right: 0, bottom: 0, left: 0 };
 
 /** Zoom by `factor` keeping the world point under the screen point (sx, sy) fixed. */
 export function zoomAt(c: Camera, sx: number, sy: number, factor: number): Camera {
