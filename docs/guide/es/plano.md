@@ -4,7 +4,7 @@
 
 ![Buscar en la biblioteca](../img/biblioteca.png)
 
-Busca en la biblioteca (sin importar los acentos) y pulsa el elemento: aparece en el primer hueco libre del escenario, seleccionado. Arrástralo para colocarlo; se ajusta a la cuadrícula (**Alt** al arrastrar la desactiva). En el inspector puedes escribir la etiqueta, quién lo aporta (banda, sala, alquiler), notas, posición y giro.
+La biblioteca tiene unos 780 elementos dibujados como iconos de línea. Búscalos (sin importar los acentos), acota con el menú **Categoría** sobre la lista y pulsa el elemento: aparece en el primer hueco libre del escenario, seleccionado. Arrástralo para colocarlo; se ajusta a la cuadrícula (**Alt** al arrastrar la desactiva). En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el inspector puedes escribir la etiqueta, quién lo aporta (banda, sala, alquiler), notas, posición y giro.
 
 ## Seleccionar y editar varios a la vez
 

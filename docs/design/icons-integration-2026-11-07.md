@@ -35,15 +35,17 @@ The icons in the viewers reviewed by the user: round-head and drawn-face figures
 
 - Existing ids map by hand where the icon was renamed or redone (people: `person.standing` to sheet 58, `guitar.electric` to 56-05, and so on). The table is in `scripts/symbols/item-map.json`.
 - New ids follow the proposed ids of the sheet lists. `person2.*` and `person3.*` were working prefixes of the GPT iteration: the final prefix is `person.`, with the role after it. Where two variants of a concept were both kept, the second gets the suffix `-2`.
-- New categories are needed beyond the current union: `safety`, `site`, `production`, `machinery`, `conference`, `rigging`, `network`, `world` (instruments), `orchestral`, `pedals`, `comms`. Each needs its Spanish and English label and its place in the library panel.
-- `size.h` comes from a per-category default and the items are marked `estimate: true`. Sizes `w` by `d` are the centimetres of the sheet lists. Spanish names are written by Claude and are for the user to review.
+- New categories added to the union: `mic`, `safety`, `site`, `production`, `machinery`, `rigging`, `network`. The rest of the planned groups (conference, world, orchestral, pedals, comms) reuse existing categories (`site`, `drums`/`strings`, `guitar`, `control`). Each category has an `es`/`en` label (`library.cat.*`) and the library panel has a category selector. `safety`, `site`, `production`, `machinery`, `rigging` and `network` count as supplied by the standard in the unmarked-supplier rule.
+- `size.h` comes from a per-category default (in `build-items.py`). Sizes `w` by `d` are the centimetres of the sheet lists; eight icons without a list entry have sizes set by hand there. Spanish names are in `scripts/symbols/names_es_1..3.py` (written by Claude, for the user to review). Generated items use `symbol: 'generic'` as a fallback; the icon is what is drawn.
+- Ids: normalized proposed id; `person2.*`/`person3.*` become `person.*`; collisions get `-2`, `-3` and a `(2)` in the name. Musicians use layer `audio`, other people `stage`.
+- `scripts/symbols/build-items.py` regenerates `items-icons.ts` and `icon-map.ts` from the manifest and `item-map.json`; run `build-manifest.py` and `build-icons.py` first when icons change.
 - Items without a real footprint (flat signs, stickers) use their drawn size.
 
 ## Order of work
 
 1. Pipeline in the repository (done): scripts, traces, selection, manifest.
 2. Vertical slice: the 111 existing items. Render path in the plan, the PDF and the library panel, with tests.
-3. The rest of the catalogue in batches by category, each with its tests and commit.
+3. The rest of the catalogue (done: 572 generated items, category selector). Pending checks: full e2e in Firefox and Chrome, offline PDF with icons, performance with about 780 items, DXF.
 4. Optional PNG images for library and user items (resize to 512 px, re-encode to strip metadata, size caps); the DXF keeps drawing only the box and the label.
 
 ## Open points for the user
