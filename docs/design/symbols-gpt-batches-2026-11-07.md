@@ -1,10 +1,73 @@
 # Icon sheets for GPT (2026-11-07)
 
-The icons of the library are asked from GPT in sheets of 12 (4 columns x 3 rows), always with the same **style block** pasted first so every sheet looks alike. A sheet is cut, traced to SVG and matched back to the library items by its order. Style decided 2026-11-07 after a style test (solid black with bold white detail, front or three-quarter view).
+The icons of the library are asked from GPT in sheets of 12 (4 columns x 3 rows), always with the same **style block** pasted first so every sheet looks alike. A sheet is cut, traced to SVG and matched back to the library items by its order. Style decided 2026-11-07 after a style test (solid black with bold white detail, front or three-quarter view). See "Styles that worked" below for the three styles in use and what failed.
 
 Left as drawn, not asked from GPT: the 15 luminaires (RP-2 convention) and the 3 power items. Text note and Dimension are not objects. Drawn in the style test and accepted: 5-piece drum kit, Guitar amp, Keyboard, Vocal mic with stand, PA speaker, Mixing desk, Rack, Stage box, Riser, Subwoofer, PA line array.
 
-## Style block
+## Styles that worked (read this before asking for more)
+
+Three prompts have been used with GPT. All three are kept verbatim in this document so any later sheet can be asked the same way. Whatever comes back is traced as **line drawings** (outlines kept as outlines): solid silhouettes were tried and rejected because they stop being understood.
+
+| Style | Use it for | Where the exact text is | Result |
+|---|---|---|---|
+| **A. Pictogram** | Objects and equipment: sheets 1 to 21 and the later object sheets | "Style block" below, with the "Sheet prompt" template | Accepted for objects. GPT often adds more detail than asked and the result is a detailed line drawing; the user likes those too, so both outcomes are fine |
+| **B. Line-art people** | First attempt at people: sheets 56 to 58 | "Line-art people" section | Accepted, but the faces are drawn |
+| **D. Detailed line art (GPT's own description)** | **The general style from now on**, objects and people: the look GPT converged to by itself in sheets 22 to 63 | "Style block D" below | Described by GPT from the accepted sheets on 2026-11-07. **Tested the same day** by pasting the block, then the list of sheet 12 (10 items, one per line with size in cm, no sheet template): it gave `sheet-12b.png`, detailed line art with no text on it, clearly better than the blocky first sheet 12 with "CUE" and "STAGE MANAGER" written on the icons. The operator came with a drawn face (no faceless clause was added) |
+| **C. Faceless line-art people** | **All people**, groups and crew: sheets 59 to 63 | "Faceless figures" section | **The style to keep for people** |
+
+How it happened: sheets 1 to 21 were asked with style A and came back blocky. From then on GPT drifted by itself towards detailed line art, and that is what the user liked, so the wording of sheets 22 to 55 is not a prompt that was written; it is GPT's drift. To capture it, GPT was shown accepted sheets and asked to describe the style it sees. Its description is style block D below. Use D for new sheets (add the faceless clause from style C for people), and check on the first new sheet that it reproduces the look.
+
+What failed, so it is not asked again:
+
+- **Solid black people with a round head** (sheets 1, 1b, 2, 10): not understood and not liked. People are asked only with style C.
+- **RP-2 outline convention for luminaires**: did not read. Lights are asked as real objects seen from the side with the lens pointing right (extra line in sheet 14).
+- **Silhouettes** made from the outer outline: lose all detail; discarded.
+- **Dotted or mesh grilles** (the wedge monitor): GPT draws them as noise; ask for two or three plain rings.
+- **Variants discarded or kept as alternatives:** 35b discarded (35 preferred); 01b, 44b, 47b, 54b, 55b are alternative versions; 63b is a full re-draw of sheet 63 of which only the rock band was used (the first had an error in the drawing).
+
+Removed from the review viewer on 2026-11-07 (70 icons, the files stay in `assets/symbol-sheets/`): every person with a round solid head (all of sheets 1 and 1b; the seated person, presenter, wind player and DJ booth of sheet 2; sheet 10 except steel pan and gong; the audience area and FOH position of sheet 3; the choir of sheet 5) and every person with a drawn face (all of sheets 30 and 50; interpreter, stagehand and security of sheet 21; marching snare of sheet 31; camera with operator of sheet 12b). Their roles are redone faceless in sheets 56 to 63. Kept although they show a small person inside: merch stand, ticket booth and food stall (sheet 21), and the solid camera operator of sheet 12.
+
+How to ask for a sheet (what worked):
+
+1. Paste the style block, then the sheet prompt with the list, **one item per line with its size in cm**. GPT keeps relative proportions well when sizes are given.
+2. Twelve icons per sheet (4 x 3). GPT does not respect the grid on many sheets; that does not matter, because sheets are cut by connected shapes, not by a grid. What does matter: icons must **not touch each other**. If GPT draws a group touching, ask again or accept a manual cut.
+3. Reading order is not always respected. After cutting, every sheet is checked by eye against its list and a permutation is recorded when GPT swapped items (sheets 19, 26, 28, 33, 35, 38, 40, 61).
+4. If a sheet drifts from the style, regenerate that sheet with the same text; the user did this several times and it worked.
+5. Ask for more than the list needs (extras are welcome, e.g. sheet 7 came with five bonus icons).
+6. Things GPT misunderstood and need a clearer wording: monitor wedges (say "a low wedge with a slanted face"); the CO2 jet is still missing.
+7. People always with style C, sized "50 x 50" or "60 x 60 cm" for one person; groups with their real width.
+
+## Style block D (detailed line art, written by GPT from the accepted sheets)
+
+Paste this instead of style A for new sheets. It says "faces minimally detailed"; for people the user wants **no facial features at all**, so for people append: *Faces are completely blank, with no eyes, nose, mouth or expression, only the head outline and hair.*
+
+```text
+Create clean, detailed black-and-white line-art illustrations in a consistent technical coloring-book / hand-inked editorial illustration style. Use bold, smooth, clearly defined black outer contours with medium-weight internal lines, maintaining consistent line weight throughout each illustration while allowing subtle variation between primary silhouettes and secondary details. Keep all forms predominantly white and unfilled, using black selectively for small solid areas, dark hardware, and essential visual accents. Use restrained fine-line hatching, parallel strokes, stippling, and occasional crosshatching to suggest texture, depth, curvature, and material differences; avoid gradients, soft shadows, color, and large areas of solid black. Give every object a high but controlled level of detail, including recognizable construction, structural components, joints, fasteners, surface features, and functional details without becoming photorealistic or excessively intricate. Use a clear, slightly elevated three-quarter or frontal perspective, with recognizable depth, visible structural relationships, and consistent geometry. Maintain realistic, believable proportions and anatomy rather than exaggerating shapes or simplifying them into symbols. When depicting people, use clean illustrated anatomy, natural body proportions, clearly separated limbs, carefully articulated hands and fingers, and expressive but understated poses. Faces should remain minimally detailed, generally using simple facial outlines and profiles without elaborate eyes, facial expressions, or portrait-level features. Clothing should have recognizable silhouettes, collars, cuffs, seams, folds, buttons, belts, and other defining details, rendered with controlled contour lines. Use a pure white or near-white, completely uncluttered background with no scenery, environmental context, decorative framing, labels, captions, or unnecessary graphic elements. Keep each illustration isolated, fully visible, centered, and separated from neighboring illustrations, with no cropping and consistent visual scale. The overall result should resemble professionally inked instructional illustrations: precise, readable, consistent, detailed, and suitable for a unified library of stage-plot symbols. Avoid flat pictograms, solid-black silhouettes, cartoon exaggeration, sketchy or rough strokes, inconsistent outlines, photorealism, 3D rendering, gradients, colored fills, heavy shadows, unnecessary backgrounds, and decorative visual effects.
+```
+
+## Style block E (candidate: described by the GPT conversation that drew the sheets)
+
+The same question was put to the GPT conversation that generated the accepted sheets (not to a fresh one). Its answer differs from D: it describes **clean vector pictograms** with blank faces and **no hatching, no textures, no halftones**, whereas D asks for hatching, stippling and crosshatching. D, tested on sheet 12, gave the hatched look (`sheet-12b`). **E was tested on the same sheet 12 list and rejected as the general style:** it came back as flat solid-black pictograms again, close to the blocky first sheet 12, and it also reinterpreted items (the stage manager desk became a seated person, the presentation desk a presenter standing at a lectern, the cue light box two plain discs). Keep D for objects. What E does well is the blank faces, which D needs as an extra clause. Not saved in `assets/symbol-sheets/`.
+
+```text
+Create a clean black-and-white vector-style illustration for a professional live-event and stage-plot icon library.
+
+Visual style: Detailed, simplified technical pictograms with a hand-drawn vector aesthetic. Pure black outlines and selective solid black fills on a pure white background. Bold, smooth, consistent linework with rounded corners and clearly defined silhouettes. Medium level of detail: include the distinctive features that make each person, object or piece of equipment immediately recognisable, without unnecessary decoration.
+
+People and characters: Draw anatomically proportioned human figures in natural, recognisable poses. Use varied hairstyles, clothing and body proportions to provide visual diversity. Keep faces completely blank and featureless, without eyes, nose or mouth. Avoid exaggerated cartoon proportions. Show complete bodies, including both feet and footwear, whenever the composition allows. Use gender diversity without relying on stereotypes.
+
+Objects and equipment: Preserve realistic proportions, construction and characteristic components. Include essential mechanical details such as controls, handles, cables, keys, strings, knobs, supports and structural elements.
+
+Linework: Strong black outer contours, with clearly visible interior lines. Consistent stroke thickness throughout. Avoid fine hairlines and excessive detail.
+
+Composition: Arrange multiple icons in a clean, evenly spaced grid on a pure white background. Centre each subject within its allocated area, maintain generous white margins and consistent visual scale, and prevent overlapping or cropping.
+
+Rendering restrictions: No colour, no grey, no gradients, no shadows, no textures, no halftones, no realistic photography, no background scenery, no text, no labels, no numbers and no decorative elements. Maintain a consistent visual language across the entire icon library.
+
+Overall result: A professional, cohesive collection of black-and-white stage-plot pictograms, combining the clarity of technical signage with the character and detail of clean editorial vector illustration.
+```
+
+## Style block (style A, pictogram: the blocky start, now superseded by D for objects)
 
 ```text
 Style: flat black-and-white pictograms for a live-music stage plot. Solid black shapes with bold white interior lines for detail, at a medium level of detail: the features that make each object recognisable (drum heads and cymbals, knobs and handle on an amp, faders on a desk, cone and grille on a speaker), but no more than about 10 interior details per icon. Every interior line is at least 2% of the icon's width thick; no hairlines, no shading, no gradients, no grey, no texture, no dots or mesh patterns (a grille is two or three plain concentric rings), no text. Rounded corners. Clear front or three-quarter view from slightly above, with a distinctive silhouette for every object. People: the head is a plain solid black circle with no hairline, face, neck or hood, separated from the shoulders by a thin white gap.
@@ -1851,7 +1914,7 @@ List to paste:
 10 dizi alone, a chinese bamboo flute, no player (65 x 4 cm)
 ```
 
-## Line-art people (replace the solid black figures)
+## Line-art people (style B: replace the solid black figures)
 
 The solid black figures with a round head (sheets 1, 1b, 2 and 10) are not liked. Sheets 56 to 58 ask for the same roles in the line-art style that worked in sheets 30 and 50. Use this style block for these three sheets instead of the pictogram one:
 
@@ -1953,7 +2016,7 @@ List to paste:
 8 percussionist standing with a hand drum and a tambourine (70 x 70 cm)
 ```
 
-## Faceless figures: what has to be redone to match
+## Faceless figures (style C: the style to keep for people)
 
 Sheets 56 to 58 came back as faceless line art and that is the style to keep. The figures left in other styles are redone in sheets 59 to 61, with this style block:
 
@@ -2121,4 +2184,90 @@ List to paste (with the faceless style block above):
 6 four singers standing in a row (200 x 80 cm)
 7 crowd seen from behind with hands raised, three rows (800 x 600 cm)
 8 seated audience seen from behind in three rows (800 x 600 cm)
+```
+
+## Redo list (style D)
+
+Icons the user did not like, asked again with style block D (paste the block first, then the list). Each sheet replaces the icons named in brackets; the three microphone items are new. Sheets 64 to 66.
+
+## Sheet 64 (Redo: amps, PA and monitors)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Bass amp (replaces 02-05) | `amp.bass` | 80 x 45 |
+| 2 | Bass amp head (replaces 24-07) | `amp.bass-head` | 50 x 25 |
+| 3 | DI box (replaces 02-10) | `rack.di` | 13 x 9 |
+| 4 | Front fill (replaces 05-07) | `pa.front-fill` | 40 x 30 |
+| 5 | Side fill (replaces 05-09) | `monitor.sidefill` | 70 x 60 |
+| 6 | Drum fill (replaces 05-10) | `monitor.drumfill` | 70 x 60 |
+| 7 | Wedge monitor (replaces 02-08) | `monitor.wedge` | 60 x 40 |
+| 8 | Hazer (replaces 04-05) | `effect.haze` | 45 x 30 |
+
+List to paste (with style block D above):
+
+```text
+1 bass combo amplifier, a tall cabinet with a large speaker and a control panel with knobs on top (80 x 45 cm)
+2 bass amplifier head, a flat rack-style box with knobs, a display and a handle (50 x 25 cm)
+3 direct injection box, a small metal box with a jack input, an XLR output and a switch (13 x 9 cm)
+4 small front fill speaker, a compact black cabinet with one speaker cone, lying on the stage edge (40 x 30 cm)
+5 side fill, a large two-way speaker cabinet standing on a short stand and tilted slightly, for stage sides (70 x 60 cm)
+6 drum fill, a large speaker cabinet with a sub on a stand, aimed at the drummer (70 x 60 cm)
+7 stage wedge monitor, a low trapezoid speaker cabinet with a slanted face and a round speaker cone (60 x 40 cm)
+8 hazer machine, a rectangular box with a fluid tank, a nozzle and a handle (45 x 30 cm)
+```
+
+## Sheet 65 (Redo: microphones and stage kit)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Headband headset mic | `mic.headband` | 20 x 20 |
+| 2 | Ear-hook headset mic | `mic.earset` | 15 x 10 |
+| 3 | Hairline hidden mic | `mic.hairline` | 10 x 5 |
+| 4 | Guitar stand (replaces 09-01) | `stand.guitar` | 40 x 40 |
+| 5 | Laptop (replaces 03-08) | `control.laptop` | 40 x 30 |
+| 6 | Projector (replaces 04-01) | `video.projector` | 45 x 35 |
+| 7 | Curved LED screen (replaces 33-12) | `video.led-curve` | 400 x 60 |
+| 8 | Radio charger (replaces 36-11) | `prod.radios` | 30 x 20 |
+| 9 | Harp bench (replaces 39-05) | `orch.harp-bench` | 70 x 35 |
+| 10 | Cello case (replaces 39-12) | `orch.cello-case` | 40 x 130 |
+
+List to paste (with style block D above):
+
+```text
+1 headset microphone alone, no head: a rigid headband that goes over the head with a thin boom to the mouth and a small capsule (20 x 20 cm)
+2 earset microphone alone, no head: a thin ear hook with a slim boom and a tiny capsule at the end (15 x 10 cm)
+3 miniature hidden microphone: a tiny capsule on a very thin cable with a small clip, drawn large to be recognisable (10 x 5 cm)
+4 guitar stand holding two guitars (40 x 40 cm)
+5 open laptop computer seen from slightly above (40 x 30 cm)
+6 video projector, a compact rectangular box with a large round lens and a vent (45 x 35 cm)
+7 curved LED video wall seen from above as a long curved strip of panels (400 x 60 cm)
+8 bank of walkie-talkies charging in a rack (30 x 20 cm)
+9 wide padded harp bench (70 x 35 cm)
+10 cello case lying flat (40 x 130 cm)
+```
+
+## Sheet 66 (Redo: percussion, strings and others)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Toy piano (replaces 35-07) | `keys.toy` | 40 x 30 |
+| 2 | Wardrobe rack (replaces 36-06) | `prod.wardrobe` | 150 x 50 |
+| 3 | Timbales (replaces 37-01) | `perc.timbales` | 80 x 60 |
+| 4 | Surdo (replaces 37-02) | `perc.surdo` | 45 x 45 |
+| 5 | Taiko (replaces 37-03) | `perc.taiko` | 60 x 60 |
+| 6 | Bouzouki (replaces 38-02) | `strings.bouzouki` | 45 x 25 |
+| 7 | Balalaika (replaces 38-03) | `strings.balalaika` | 65 x 25 |
+| 8 | Bandoneon (replaces 38-06) | `keys.bandoneon` | 30 x 25 |
+
+List to paste (with style block D above):
+
+```text
+1 toy piano small and simple (40 x 30 cm)
+2 rolling wardrobe rack with hanging costumes (150 x 50 cm)
+3 timbales, two shallow metal drums on a stand with a cowbell (80 x 60 cm)
+4 large surdo drum with a strap (45 x 45 cm)
+5 large taiko drum on a stand with two sticks (60 x 60 cm)
+6 bouzouki alone, no player (45 x 25 cm)
+7 balalaika alone with a triangular body, no player (65 x 25 cm)
+8 bandoneon alone, a square-ended concertina, no player (30 x 25 cm)
 ```
