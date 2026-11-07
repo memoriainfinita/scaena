@@ -26,6 +26,8 @@ Potencia y amperios por circuito a la tensión de la región, el máximo de cada
 
 Una vista lateral del escenario: de fondo a público en horizontal y la altura en vertical. Cada montaje está a su altura con sus instrumentos. Un montaje sin altura se dibuja en el suelo y se dice. La sección dibuja la tarima del escenario (su altura se fija en **Ajustes del montaje → Escenario**) y cada tarima o plataforma del plano con su propia altura; la altura de un montaje se mide desde la tarima. Selecciona una tarima o plataforma para poner su **altura sobre la tarima** en el inspector.
 
+Si das al proscenio una **altura de la boca** (Ajustes del montaje → Escenario), la boca se dibuja en el borde del público con su altura; desactiva la línea de referencia del proscenio para ocultarla.
+
 ## Magic sheet
 
 Cada instrumento es un círculo con su canal (y su color) donde cuelga, para que quien lleva la mesa encuentre un canal por su sitio. Parte de las posiciones del plano, pero tiene su propia disposición: arrastra un instrumento, o enfócalo y usa las flechas (100 mm; **Mayús** 500 mm; **Alt** 20 mm) para ponerlo donde lo quiera el operador. Moverlos aquí nunca los mueve en el plano. Con la hoja ya ordenada dejan de dibujarse las posiciones de colgado; **Restablecer disposición** vuelve a las posiciones del plano. El PDF usa la misma disposición.

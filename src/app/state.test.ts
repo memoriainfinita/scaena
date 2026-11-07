@@ -96,7 +96,9 @@ describe('editing', () => {
     expect(show.stage.referenceLines.center).toBe(false);
     applyShowSettings({ ...base, stagePolygonM: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 4 }] });
     show = session.value!.show.value;
-    expect(show.stage.shape).toEqual({ kind: 'polygon', points: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 4000 }] });
+    expect(show.stage.shape).toEqual({ kind: 'polygon', points: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 4000 }], prosceniumWidth: 5000 }); // the opening carries over to the free-form plan
+    applyShowSettings({ ...base, stagePolygonM: [{ x: 0, y: 0 }, { x: 3, y: 0 }, { x: 3, y: 4 }] });
+    expect(session.value!.show.value.stage.shape).toMatchObject({ prosceniumWidth: 3000 }); // and is trimmed to the width of the plan
     applyShowSettings({ ...base, stagePolygonM: null });
     expect(session.value!.show.value.stage.shape.kind).toBe('rect');
   });

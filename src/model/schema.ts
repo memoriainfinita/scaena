@@ -159,9 +159,11 @@ export const Electrical = v.object({
 export const Stage = v.object({
   shape: v.variant('kind', [
     v.object({ kind: v.literal('rect'), width: v.pipe(v.number(), v.minValue(1)), depth: v.pipe(v.number(), v.minValue(1)), prosceniumWidth: v.optional(v.nullable(v.number()), null) }),
-    v.object({ kind: v.literal('polygon'), points: v.pipe(v.array(Point), v.minLength(3)) }),
+    v.object({ kind: v.literal('polygon'), points: v.pipe(v.array(Point), v.minLength(3)), prosceniumWidth: v.optional(v.nullable(v.number()), null) }),
   ]),
   height: v.optional(mm, 0),
+  /** Height of the proscenium opening above the deck, for the side section. */
+  prosceniumHeight: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
   referenceLines: v.optional(v.object({ center: v.optional(v.boolean(), true), plaster: v.optional(v.boolean(), true), proscenium: v.optional(v.boolean(), true) }), {}),
   background: v.optional(
     v.nullable(v.object({ file: v.string(), x: mm, y: mm, scale: v.pipe(v.number(), v.minValue(0.000001)), opacity: v.optional(v.pipe(v.number(), v.minValue(0), v.maxValue(1)), 0.4), locked: v.optional(v.boolean(), true) })),

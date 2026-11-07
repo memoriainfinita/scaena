@@ -343,3 +343,10 @@ main.canvas:focus { outline: none; }
 .racklist { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .racklist li { display: flex; align-items: center; gap: 6px; }
 .racku { width: 42px; text-align: right; color: var(--muted); font-size: 12px; }
+.vtx { cursor: grab; }
+.vtx circle { fill: #0b6e78; stroke: #fff; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.vtx text { fill: #fff; pointer-events: none; font-family: var(--font); font-weight: 600; }
+.vtx:focus { outline: none; }
+.vtx:focus circle { stroke: #000; stroke-width: 3; }
+.vtx.mid circle { fill: #fff; stroke: #0b6e78; }
+.vtx.mid path { stroke: #0b6e78; stroke-width: 1.5; fill: none; vector-effect: non-scaling-stroke; pointer-events: none; }

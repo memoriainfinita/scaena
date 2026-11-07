@@ -178,3 +178,18 @@ test('the section draws the stage deck and the raised areas, and mounts are meas
   await expect(section).toContainText('1,7 m'); // the riser's top: deck 1.2 m plus 0.5 m
   expect((await axe(page)).violations).toEqual([]);
 });
+
+test('the section draws the proscenium opening at the downstage edge, with its height', async ({ page }) => {
+  await theatre(page);
+  await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
+  const dlg = page.getByRole('dialog', { name: 'Ajustes del montaje' });
+  await dlg.getByLabel('Altura de la boca (m)').fill('5');
+  await dlg.getByRole('button', { name: 'Aplicar' }).click();
+  await page.getByRole('button', { name: 'Sección', exact: true }).click();
+  await expect(page.getByRole('img', { name: /Sección lateral/ })).toContainText('Boca del proscenio · 5,0 m');
+  // Switching the proscenium line off takes the opening out of the section too.
+  await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
+  await dlg.getByRole('checkbox', { name: 'Boca del proscenio' }).uncheck();
+  await dlg.getByRole('button', { name: 'Aplicar' }).click();
+  await expect(page.getByRole('img', { name: /Sección lateral/ })).not.toContainText('Boca del proscenio');
+});

@@ -18,6 +18,8 @@ import { symbolBody } from '../library/symbols.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
+import { stageFrame, stagePoints } from '../model/stage.ts';
+import { addStagePointAfter, deleteStagePoint, moveStagePointTo, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
@@ -133,20 +135,93 @@ function BackgroundImage({ show }: { show: Show }) {
   return <image href={url} x={bg.x + (off?.dx ?? 0)} y={bg.y + (off?.dy ?? 0)} width={size.w * bg.scale} height={size.h * bg.scale} opacity={bg.opacity * (1 - (layer?.dim ?? 0) * 0.7)} preserveAspectRatio="none" aria-hidden="true" pointer-events="none" />;
 }
 
+/** The point being dragged and where it is now, so the stage follows the pointer before the change is made. */
+const vertexDrag = signal<{ index: number; x: number; y: number } | null>(null);
+
 function Stage({ show }: { show: Show }) {
-  const sh = show.stage.shape;
+  const drag = vertexDrag.value;
+  const live = drag && show.stage.shape.kind === 'polygon' ? { ...show, stage: { ...show.stage, shape: { ...show.stage.shape, points: show.stage.shape.points.map((p, i) => (i === drag.index ? { x: drag.x, y: drag.y } : p)) } } } : show;
+  const sh = live.stage.shape;
   const ref = show.stage.referenceLines;
+  const f = stageFrame(live);
   const common = { fill: '#f1f1ee', stroke: '#000', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke' } as const;
   return (
     <g aria-hidden="true">
       {sh.kind === 'rect' ? <rect x={0} y={0} width={sh.width} height={sh.depth} {...common} /> : <polygon points={sh.points.map((p) => `${p.x},${p.y}`).join(' ')} {...common} />}
-      {sh.kind === 'rect' && (
-        <>
-          {ref.plaster && <line x1={-300} y1={sh.depth} x2={sh.width + 300} y2={sh.depth} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
-          {ref.proscenium && prosceniumWalls(sh.width, sh.prosceniumWidth).map(([a, b]) => <line key={a} x1={a} y1={sh.depth} x2={b} y2={sh.depth} stroke="#000" stroke-width="4" vector-effect="non-scaling-stroke" />)}
-          {ref.center && <line x1={sh.width / 2} y1={0} x2={sh.width / 2} y2={sh.depth + 300} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
-        </>
-      )}
+      {ref.plaster && <line x1={f.x0 - 300} y1={f.downstage} x2={f.x1 + 300} y2={f.downstage} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
+      {ref.proscenium && prosceniumWalls(f.width, f.opening).map(([a, b]) => <line key={a} x1={f.x0 + a} y1={f.downstage} x2={f.x0 + b} y2={f.downstage} stroke="#000" stroke-width="4" vector-effect="non-scaling-stroke" />)}
+      {ref.center && <line x1={f.centre} y1={f.upstage} x2={f.centre} y2={f.downstage + 300} stroke="#000" stroke-width="1" stroke-dasharray="14 6 2 6" vector-effect="non-scaling-stroke" />}
+    </g>
+  );
+}
+
+/** Handles on the points of a free-form stage: drag or use the arrows to move one, Delete to remove it, and the small ones to add a point on a side. */
+function StageHandles({ show, cam }: { show: Show; cam: Signal<Camera> }) {
+  if (!stageEdit.value || show.stage.shape.kind !== 'polygon') return null;
+  const drag = vertexDrag.value;
+  const pts = stagePoints(show).map((p, i) => (drag && drag.index === i ? { x: drag.x, y: drag.y } : p));
+  const k = cam.value.k;
+  const r = 14 / k; // handles keep their size on screen at any zoom, and at least 24 px across
+  const keyStep = (e: KeyboardEvent): number => (e.shiftKey ? 10 : 1) * (show.view.grid ? show.view.gridMm : 100);
+  return (
+    <g>
+      {pts.map((a, i) => {
+        const b = pts[(i + 1) % pts.length]!;
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2;
+        return (
+          <g
+            key={`m${i}`}
+            data-mid={i}
+            role="button"
+            tabindex={0}
+            class="vtx mid"
+            aria-label={t('stage.addPoint', { n: i + 1 })}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                addStagePointAfter(i);
+              }
+            }}
+          >
+            <circle cx={mx} cy={my} r={r * 0.86} />
+            <path d={`M${mx - r * 0.45} ${my}h${r * 0.9}M${mx} ${my - r * 0.45}v${r * 0.9}`} />
+          </g>
+        );
+      })}
+      {pts.map((p, i) => (
+        <g
+          key={`v${i}`}
+          data-vtx={i}
+          role="button"
+          tabindex={0}
+          class="vtx"
+          aria-label={t('stage.point', { n: i + 1, x: formatLength(p.x, show.units, lang.value), y: formatLength(p.y, show.units, lang.value) })}
+          onKeyDown={(e) => {
+            const s = keyStep(e);
+            const move = (dx: number, dy: number) => {
+              e.preventDefault();
+              e.stopPropagation();
+              moveStagePointTo(i, p.x + dx, p.y + dy);
+            };
+            if (e.key === 'ArrowLeft') move(-s, 0);
+            else if (e.key === 'ArrowRight') move(s, 0);
+            else if (e.key === 'ArrowUp') move(0, -s);
+            else if (e.key === 'ArrowDown') move(0, s);
+            else if (e.key === 'Delete' || e.key === 'Backspace') {
+              e.preventDefault();
+              e.stopPropagation();
+              deleteStagePoint(i);
+            }
+          }}
+        >
+          <circle cx={p.x} cy={p.y} r={r} />
+          <text x={p.x} y={p.y} dy="0.34em" text-anchor="middle" font-size={r * 1.15}>
+            {i + 1}
+          </text>
+        </g>
+      ))}
     </g>
   );
 }
@@ -422,7 +497,8 @@ type Interaction =
   | { kind: 'pan'; sx: number; sy: number; cam: Camera; tap?: boolean; moved?: boolean }
   | { kind: 'drag'; ids: string[]; hitId: string; p0: Pt; w0: Pt; sx: number; sy: number; moved: boolean; shift: boolean; wasMulti: boolean }
   | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] }
-  | { kind: 'bgdrag'; w0: Pt; x0: number; y0: number };
+  | { kind: 'bgdrag'; w0: Pt; x0: number; y0: number }
+  | { kind: 'vertex'; index: number };
 
 /** How far the background has been dragged while the mouse is still down; written to the show on release. */
 const bgDrag = signal<{ dx: number; dy: number } | null>(null);
@@ -565,6 +641,7 @@ export function PlanView({ show }: { show: Show }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (isTyping(e.target) || dialog.value) return;
+      if ((e.target as Element | null)?.closest?.('[data-vtx], [data-mid]') && e.key !== 'Escape') return;
       const mod = e.ctrlKey || e.metaKey;
       const key = e.key.toLowerCase();
       const v = showRef.current.view;
@@ -598,6 +675,7 @@ export function PlanView({ show }: { show: Show }) {
         tool.value = 'select';
         measure.value = null;
         linkFrom.value = null;
+        stopStageEdit();
         handled = false; // dialogs and menus still get their Escape
       } else handled = false;
       if (handled) e.preventDefault();
@@ -665,6 +743,18 @@ export function PlanView({ show }: { show: Show }) {
         tool.value = 'select';
         focusLabel();
       }
+    } else if (mode === 'select' && stageEdit.peek() && (e.target as Element).closest('[data-vtx], [data-mid]')) {
+      const hit = (e.target as Element).closest('[data-vtx], [data-mid]')!;
+      if (hit.hasAttribute('data-mid')) addStagePointAfter(Number(hit.getAttribute('data-mid')));
+      else {
+        const index = Number(hit.getAttribute('data-vtx'));
+        const pt = stagePoints(s)[index];
+        if (pt) {
+          capture(svg, e.pointerId);
+          vertexDrag.value = { index, x: pt.x, y: pt.y };
+          act.current = { kind: 'vertex', index };
+        }
+      }
     } else if (mode === 'select') {
       const id = (e.target as Element).closest('[data-id]')?.getAttribute('data-id');
       const el = id ? s.elements[id] : undefined;
@@ -719,7 +809,11 @@ export function PlanView({ show }: { show: Show }) {
       if (Math.hypot(p.x - a.sx, p.y - a.sy) >= 4) a.moved = true;
       cam.value = { ...a.cam, x: a.cam.x + p.x - a.sx, y: a.cam.y + p.y - a.sy };
     }
-    else if (a.kind === 'bgdrag') {
+    else if (a.kind === 'vertex') {
+      const w = world(e);
+      const st = e.altKey ? 0 : gridStep();
+      vertexDrag.value = { index: a.index, x: snap(w.x, st), y: snap(w.y, st) };
+    } else if (a.kind === 'bgdrag') {
       const w = world(e);
       bgDrag.value = { dx: Math.round(w.x - a.w0.x), dy: Math.round(w.y - a.w0.y) };
     } else if (a.kind === 'drag') {
@@ -756,7 +850,11 @@ export function PlanView({ show }: { show: Show }) {
     if (!a) return;
     const s = showRef.current;
     if (a.kind === 'pan' && a.tap && !a.moved && !cancelled) selection.value = [];
-    if (a.kind === 'bgdrag') {
+    if (a.kind === 'vertex') {
+      const d = vertexDrag.peek();
+      vertexDrag.value = null;
+      if (d && !cancelled) moveStagePointTo(d.index, d.x, d.y);
+    } else if (a.kind === 'bgdrag') {
       const d = bgDrag.peek();
       bgDrag.value = null;
       if (d && !cancelled && (d.dx !== 0 || d.dy !== 0)) updateBackground({ x: a.x0 + d.dx, y: a.y0 + d.dy });
@@ -853,6 +951,7 @@ export function PlanView({ show }: { show: Show }) {
             {moving}
           </g>
           <FocusOverlay show={show} ids={selection.value} world={world} />
+          <StageHandles show={show} cam={cam} />
         </g>
         <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>

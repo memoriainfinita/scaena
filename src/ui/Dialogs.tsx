@@ -100,7 +100,8 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const [stageH, setStageH] = useState(show.stage.height / 1000);
   const [freeForm, setFreeForm] = useState(shape.kind === 'polygon');
   const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${q.x / 1000}; ${q.y / 1000}`).join('\n'));
-  const [proscenium, setProscenium] = useState(shape.kind === 'rect' && shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
+  const [proscenium, setProscenium] = useState(shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
+  const [proscH, setProscH] = useState(show.stage.prosceniumHeight !== null ? String(show.stage.prosceniumHeight / 1000) : '');
   const [refs, setRefs] = useState(show.stage.referenceLines);
   const [gridMm, setGridMm] = useState(show.view.gridMm);
   const polygon = parsePolygon(polyText);
@@ -108,7 +109,7 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const toggle = (m: Module) => setModules((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]));
   const apply = () => {
     const prosc = Number(proscenium.replace(',', '.'));
-    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stageHeightM: stageH, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, referenceLines: refs, gridMm });
+    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stageHeightM: stageH, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, prosceniumHeightM: proscH.trim() !== '' && Number(proscH.replace(',', '.')) > 0 ? Number(proscH.replace(',', '.')) : null, referenceLines: refs, gridMm });
     onClose();
   };
   return (
@@ -159,12 +160,18 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
               {t('settings.stage.depth')}
               <input class="input mono" type="number" min="1" step="0.1" value={dpt} onChange={(e) => setD(Math.max(1, Number((e.currentTarget as HTMLInputElement).value) || 1))} />
             </label>
-            <label class="field">
-              {t('settings.stage.proscenium')}
-              <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscenium} onInput={(e) => setProscenium((e.currentTarget as HTMLInputElement).value)} />
-            </label>
           </div>
         )}
+        <div class="grid2">
+          <label class="field">
+            {t('settings.stage.proscenium')}
+            <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscenium} onInput={(e) => setProscenium((e.currentTarget as HTMLInputElement).value)} />
+          </label>
+          <label class="field">
+            {t('settings.stage.prosceniumHeight')}
+            <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscH} onInput={(e) => setProscH((e.currentTarget as HTMLInputElement).value)} />
+          </label>
+        </div>
         <label class="field">
           {t('settings.stage.height')}
           <input class="input mono" type="number" min="0" step="0.1" value={stageH} onChange={(e) => setStageH(Math.max(0, Number((e.currentTarget as HTMLInputElement).value) || 0))} />
@@ -172,7 +179,7 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
         <div class="mods" role="group" aria-label={t('settings.refs')}>
           {(['center', 'plaster', 'proscenium'] as const).map((k) => (
             <label class="mod" key={k}>
-              <input type="checkbox" checked={refs[k]} onChange={() => setRefs({ ...refs, [k]: !refs[k] })} disabled={freeForm} />
+              <input type="checkbox" checked={refs[k]} onChange={() => setRefs({ ...refs, [k]: !refs[k] })} />
               {t(`settings.refs.${k}` as Key)}
             </label>
           ))}

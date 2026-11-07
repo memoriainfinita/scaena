@@ -350,19 +350,24 @@ export interface ShowSettings {
   stageHeightM?: number;
   /** Free-form floor plan in metres; when it has three or more points the stage becomes a polygon, else a rectangle. */
   stagePolygonM?: { x: number; y: number }[] | null;
-  /** Width of the proscenium opening in metres, or null for none (rectangular stage only). */
+  /** Width of the proscenium opening in metres, or null for none. */
   prosceniumM?: number | null;
+  /** Height of the proscenium opening above the deck in metres, or null when not set; drawn in the side section. */
+  prosceniumHeightM?: number | null;
   referenceLines?: Show['stage']['referenceLines'];
   gridMm?: number;
 }
 
 function stageShape(shape: Show['stage']['shape'], p: ShowSettings): Show['stage']['shape'] {
   const poly = p.stagePolygonM;
-  if (poly && poly.length >= 3) return { kind: 'polygon', points: poly.map((q) => ({ x: Math.round(q.x * 1000), y: Math.round(q.y * 1000) })) };
+  const opening = (width: number): number | null => (p.prosceniumM === undefined ? (shape.prosceniumWidth === null ? null : Math.min(width, shape.prosceniumWidth)) : p.prosceniumM === null ? null : Math.min(width, Math.round(p.prosceniumM * 1000)));
+  if (poly && poly.length >= 3) {
+    const points = poly.map((q) => ({ x: Math.round(q.x * 1000), y: Math.round(q.y * 1000) }));
+    return { kind: 'polygon', points, prosceniumWidth: opening(Math.max(...points.map((q) => q.x)) - Math.min(...points.map((q) => q.x))) };
+  }
   const width = Math.round(p.stageWidthM * 1000);
   const depth = Math.round(p.stageDepthM * 1000);
-  const proscenium = p.prosceniumM === undefined ? (shape.kind === 'rect' ? shape.prosceniumWidth : null) : p.prosceniumM === null ? null : Math.min(width, Math.round(p.prosceniumM * 1000));
-  return { kind: 'rect', width, depth, prosceniumWidth: proscenium };
+  return { kind: 'rect', width, depth, prosceniumWidth: opening(width) };
 }
 
 export function applyShowSettings(p: ShowSettings): void {
@@ -380,6 +385,7 @@ export function applyShowSettings(p: ShowSettings): void {
         ...show.stage,
         shape: stageShape(shape, p),
         height: p.stageHeightM === undefined ? show.stage.height : Math.max(0, Math.round(p.stageHeightM * 1000)),
+        prosceniumHeight: p.prosceniumHeightM === undefined ? show.stage.prosceniumHeight : p.prosceniumHeightM === null ? null : Math.max(0, Math.round(p.prosceniumHeightM * 1000)),
         referenceLines: p.referenceLines ?? show.stage.referenceLines,
       },
       view: p.gridMm ? { ...show.view, gridMm: Math.max(10, Math.round(p.gridMm)) } : show.view,
