@@ -1022,3 +1022,105 @@ List to paste:
 11 person seated on a high stool (50 x 50 cm)
 12 drummer seated with both arms raised holding sticks (60 x 60 cm)
 ```
+
+## Sheet 31 (Drum kits)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Jazz kit 4 pieces | `kit.jazz` | 130 x 100 |
+| 2 | Rock kit double bass | `kit.rock-double` | 180 x 140 |
+| 3 | Big kit | `kit.big` | 220 x 170 |
+| 4 | Hybrid kit | `kit.hybrid` | 160 x 130 |
+| 5 | Cocktail kit | `kit.cocktail` | 80 x 70 |
+| 6 | Kit with percussion rack | `kit.perc-rack` | 200 x 140 |
+| 7 | Minimal kit | `kit.minimal` | 90 x 70 |
+| 8 | Concert bass drum | `perc.concert-bass` | 80 x 40 |
+| 9 | Marching snare | `person.marching` | 50 x 50 |
+| 10 | Tabla | `perc.tabla` | 35 x 35 |
+| 11 | Double bass pedal | `kit.pedal` | 15 x 30 |
+| 12 | Drum rug | `kit.rug` | 200 x 160 |
+
+List to paste:
+
+```text
+1 jazz drum kit with kick, snare, one tom, one floor tom, hi-hat and two cymbals, seen from above (130 x 100 cm)
+2 large rock drum kit with two kick drums, several toms and many cymbals, seen from above (180 x 140 cm)
+3 very large drum kit with two kicks, many toms, many cymbals and a gong, seen from above (220 x 170 cm)
+4 drum kit mixing acoustic drums with electronic pads and a sampler, seen from above (160 x 130 cm)
+5 small cocktail drum kit with a kick standing upright, snare, tom and hi-hat, seen from above (80 x 70 cm)
+6 drum kit with a side rack of cowbell, tambourine and chimes, seen from above (200 x 140 cm)
+7 minimal drum kit with kick, snare and hi-hat only, seen from above (90 x 70 cm)
+8 concert bass drum hanging in a frame (80 x 40 cm)
+9 marching drummer standing with a snare drum on a sling (50 x 50 cm)
+10 pair of tabla drums on round pads (35 x 35 cm)
+11 double bass drum pedal (15 x 30 cm)
+12 rectangular drum rug with a border (200 x 160 cm)
+```
+
+## Sheet 32 (Stage machinery)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Trap door | `mach.trap` | 100 x 100 |
+| 2 | Scissor lift | `mach.scissor` | 120 x 80 |
+| 3 | Boom lift | `mach.boom` | 150 x 100 |
+| 4 | Forklift | `mach.forklift` | 120 x 250 |
+| 5 | Revolving stage | `mach.revolve` | 500 x 500 |
+| 6 | Wagon on casters | `mach.wagon` | 200 x 200 |
+| 7 | Winch | `mach.winch` | 50 x 40 |
+| 8 | Fly pipe | `mach.batten` | 500 x 10 |
+| 9 | Stage elevator | `mach.elevator` | 300 x 300 |
+| 10 | Hoist controller | `mach.hoist-ctrl` | 60 x 40 |
+| 11 | Pallet jack | `mach.pallet` | 60 x 150 |
+| 12 | Case dolly | `mach.dolly` | 80 x 60 |
+
+List to paste:
+
+```text
+1 stage trap door open with a ladder going down (100 x 100 cm)
+2 scissor lift raised, seen from the side (120 x 80 cm)
+3 aerial boom lift with a basket (150 x 100 cm)
+4 forklift with raised forks (120 x 250 cm)
+5 circular revolving stage with a rotation arrow (500 x 500 cm)
+6 stage wagon platform on four casters (200 x 200 cm)
+7 winch with a drum and cable (50 x 40 cm)
+8 fly pipe batten hanging on two cables (500 x 10 cm)
+9 stage elevator platform with up and down arrows (300 x 300 cm)
+10 chain hoist controller case with switches and a cable (60 x 40 cm)
+11 hand pallet jack (60 x 150 cm)
+12 dolly with four wheels under a road case (80 x 60 cm)
+```
+
+## Sheet 33 (Projection and video walls)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Ceiling projector | `video.proj-ceiling` | 45 x 35 |
+| 2 | Projector on stand | `video.proj-stand` | 45 x 35 |
+| 3 | Large-venue projector | `video.proj-large` | 80 x 60 |
+| 4 | Short-throw projector | `video.proj-short` | 35 x 30 |
+| 5 | Rear-projection screen | `video.rear` | 300 x 10 |
+| 6 | Fast-fold screen | `video.fastfold` | 400 x 20 |
+| 7 | Tripod screen | `video.tripod-screen` | 180 x 15 |
+| 8 | Roller screen | `video.roller` | 400 x 10 |
+| 9 | Gauze | `video.gauze` | 500 x 5 |
+| 10 | Projection mapping | `video.mapping` | 100 x 100 |
+| 11 | LED processor | `video.led-proc` | 45 x 20 |
+| 12 | Curved LED screen | `video.led-curve` | 400 x 60 |
+
+List to paste:
+
+```text
+1 projector hanging upside down from a ceiling mount (45 x 35 cm)
+2 projector on a tall stand (45 x 35 cm)
+3 large venue projector with a big lens and handles (80 x 60 cm)
+4 short-throw projector with a mirror arm (35 x 30 cm)
+5 rear-projection screen in a frame with a beam arriving from behind (300 x 10 cm)
+6 fast-fold projection screen on a frame with legs (400 x 20 cm)
+7 tripod projection screen (180 x 15 cm)
+8 motorised roller projection screen, half lowered (400 x 10 cm)
+9 thin gauze scrim hanging with a light beam through it (500 x 5 cm)
+10 cube with projector beams landing on its faces (100 x 100 cm)
+11 led video processor with many ports (45 x 20 cm)
+12 curved LED video wall seen from above (400 x 60 cm)
+```
