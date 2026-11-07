@@ -1124,3 +1124,105 @@ List to paste:
 11 led video processor with many ports (45 x 20 cm)
 12 curved LED video wall seen from above (400 x 60 cm)
 ```
+
+## Sheet 34 (Winds II, instruments alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Soprano sax | `winds.sax-soprano` | 45 x 10 |
+| 2 | Tenor sax | `winds.sax-tenor` | 45 x 25 |
+| 3 | Baritone sax | `winds.sax-bari` | 50 x 35 |
+| 4 | Bass clarinet | `winds.bass-clarinet` | 40 x 20 |
+| 5 | Piccolo | `winds.piccolo` | 35 x 4 |
+| 6 | Bassoon | `winds.bassoon` | 30 x 20 |
+| 7 | Flugelhorn | `winds.flugelhorn` | 30 x 15 |
+| 8 | Euphonium | `winds.euphonium` | 35 x 35 |
+| 9 | Sousaphone | `winds.sousaphone` | 60 x 60 |
+| 10 | Recorder | `winds.recorder` | 35 x 5 |
+| 11 | Bagpipes | `winds.bagpipes` | 60 x 40 |
+| 12 | Didgeridoo | `winds.didgeridoo` | 130 x 10 |
+
+List to paste:
+
+```text
+1 soprano saxophone alone, straight, no player (45 x 10 cm)
+2 tenor saxophone alone, no player (45 x 25 cm)
+3 baritone saxophone alone with its loop at the top, no player (50 x 35 cm)
+4 bass clarinet alone with a curved neck and bell, no player (40 x 20 cm)
+5 piccolo alone, no player (35 x 4 cm)
+6 bassoon alone with its bocal, no player (30 x 20 cm)
+7 flugelhorn alone, no player (30 x 15 cm)
+8 euphonium alone, no player (35 x 35 cm)
+9 sousaphone alone with its big round bell, no player (60 x 60 cm)
+10 recorder alone, no player (35 x 5 cm)
+11 bagpipes alone with bag and drones, no player (60 x 40 cm)
+12 didgeridoo alone, no player (130 x 10 cm)
+```
+
+## Sheet 35 (Pianos and keys II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Baby grand | `keys.baby-grand` | 150 x 160 |
+| 2 | Concert grand | `keys.concert-grand` | 160 x 275 |
+| 3 | Piano with bench | `keys.grand-bench` | 150 x 230 |
+| 4 | Rhodes electric piano | `keys.rhodes` | 110 x 45 |
+| 5 | Harpsichord | `keys.harpsichord` | 100 x 230 |
+| 6 | Hammond organ | `keys.hammond` | 120 x 70 |
+| 7 | Organ console | `keys.organ-console` | 150 x 100 |
+| 8 | Celesta | `keys.celesta` | 100 x 60 |
+| 9 | Clavinet | `keys.clavinet` | 100 x 40 |
+| 10 | Toy piano | `keys.toy` | 40 x 30 |
+| 11 | Piano bench | `furniture.piano-bench` | 90 x 40 |
+| 12 | Three-keyboard rig | `keys.rig-3` | 140 x 90 |
+
+List to paste:
+
+```text
+1 baby grand piano seen from above with its lid up (150 x 160 cm)
+2 concert grand piano seen from above, long, with the lid propped open (160 x 275 cm)
+3 grand piano seen from above with its bench in front (150 x 230 cm)
+4 rhodes style electric piano with a flat top and legs (110 x 45 cm)
+5 harpsichord seen from above, long and narrow (100 x 230 cm)
+6 hammond organ with two keyboards and drawbars (120 x 70 cm)
+7 church organ console with three keyboards, stops and a pedalboard (150 x 100 cm)
+8 celesta small upright keyboard instrument (100 x 60 cm)
+9 clavinet keyboard with a slanted top (100 x 40 cm)
+10 toy piano small and simple (40 x 30 cm)
+11 piano bench with a padded seat (90 x 40 cm)
+12 three keyboards stacked on a stand (140 x 90 cm)
+```
+
+## Sheet 36 (Production and backstage)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Production desk | `prod.desk` | 180 x 80 |
+| 2 | Production office | `prod.office` | 80 x 60 |
+| 3 | Catering table | `prod.catering` | 200 x 80 |
+| 4 | Water station | `prod.water` | 60 x 40 |
+| 5 | Dressing room mirror | `prod.mirror` | 100 x 30 |
+| 6 | Wardrobe rack | `prod.wardrobe` | 150 x 50 |
+| 7 | Quick-change tent | `prod.quick-change` | 120 x 120 |
+| 8 | Props table | `prod.props` | 180 x 70 |
+| 9 | Guest list table | `prod.guests` | 150 x 60 |
+| 10 | Rope barrier | `prod.rope` | 100 x 10 |
+| 11 | Radio charger | `prod.radios` | 30 x 20 |
+| 12 | Toolbox | `prod.toolbox` | 50 x 30 |
+
+List to paste:
+
+```text
+1 production desk with a laptop, a phone and papers (180 x 80 cm)
+2 production office table with a printer and a laptop (80 x 60 cm)
+3 catering table with trays and bottles (200 x 80 cm)
+4 water station with a cooler and cups (60 x 40 cm)
+5 dressing room mirror with round bulbs around it on a table (100 x 30 cm)
+6 rolling wardrobe rack with hanging costumes (150 x 50 cm)
+7 small quick-change tent with a curtain (120 x 120 cm)
+8 props table with a hat, a mask and a lantern (180 x 70 cm)
+9 guest list table with a clipboard and a lanyard (150 x 60 cm)
+10 two stanchions with a rope between them (100 x 10 cm)
+11 bank of walkie-talkies charging in a rack (30 x 20 cm)
+12 toolbox with a handle (50 x 30 cm)
+```
