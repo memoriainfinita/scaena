@@ -4,7 +4,7 @@
 // hospitality, contacts and notes), each with what that kind of show really has. Stage coordinates are in
 // millimetres: x from the left, y from the back wall (0) to the front edge; the default stage is 8000 by 5000.
 // Every cable is drawn between the two elements it joins, so the plan can show or hide the lines.
-import { addContacts, addNotes, addSchedule, addSetlist, bi, setElectrical } from './packages-data.ts';
+import { addContacts, PERSON, addNotes, addSchedule, addSetlist, bi, setElectrical } from './packages-data.ts';
 import type { PackageChannel, PackageElement, PackageLink, PackageMount, ShowPackage } from './types.ts';
 
 type Extra = Partial<PackageElement>;
@@ -119,10 +119,10 @@ const rock = (): ShowPackage => {
     finish: (show, placed, tx) => {
       show = { ...show, titleBlock: { ...show.titleBlock, production: tx(bi('Banda de ejemplo, gira de otoño', 'Example band, autumn tour')), venue: tx(bi('Sala de ejemplo', 'Example club')) } };
       show = addContacts(show, tx, [
-        [bi('Jefe de producción', 'Production manager'), 'Marta Ruiz', '+34 600 000 101', 'marta.ruiz@banda-ejemplo.example'],
-        [bi('Técnico de sonido', 'Sound engineer'), 'Daniel Soto', '+34 600 000 102', 'daniel.soto@banda-ejemplo.example'],
-        [bi('Técnico de luces', 'Lighting technician'), 'Lucía Vega', '+34 600 000 103', 'lucia.vega@banda-ejemplo.example'],
-        [bi('Jefe de sala', 'House manager'), 'Pablo Núñez', '+34 600 000 104', 'sala@sala-ejemplo.example'],
+        [bi('Jefe de producción', 'Production manager'), ...PERSON],
+        [bi('Técnico de sonido', 'Sound engineer'), ...PERSON],
+        [bi('Técnico de luces', 'Lighting technician'), ...PERSON],
+        [bi('Jefe de sala', 'House manager'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['build', '15:00', bi('Carga', 'Load-in')],
@@ -214,8 +214,8 @@ const jazz = (): ShowPackage => {
     mounts: [mount('truss', 'Truss trasero', 'Rear truss', [1000, 400], [7000, 400], 4500, 200), mount('pipe', 'Frente de sala', 'Front of house', [2000, 6200], [6000, 6200], 4500, 100)],
     finish: (show, placed, tx) => {
       show = addContacts(show, tx, [
-        [bi('Líder del grupo', 'Band leader'), 'Elena Prado', '+34 600 000 111', 'elena.prado@cuarteto-ejemplo.example'],
-        [bi('Programador de la sala', 'Venue booker'), 'Iván Casas', '+34 600 000 112', 'programacion@club-ejemplo.example'],
+        [bi('Líder del grupo', 'Band leader'), ...PERSON],
+        [bi('Programador de la sala', 'Venue booker'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['day', '18:30', bi('Montaje y prueba de sonido', 'Setup and soundcheck')],
@@ -273,7 +273,7 @@ const singer = (): ShowPackage => {
     outputs: [{ kind: 'wedge', element: wedge }, { kind: 'main', element: paL }, { kind: 'main', element: paR }],
     links: b.links,
     finish: (show, placed, tx) => {
-      show = addContacts(show, tx, [[bi('Artista', 'Artist'), 'Sara Molina', '+34 600 000 121', 'sara.molina@duo-ejemplo.example']]);
+      show = addContacts(show, tx, [[bi('Artista', 'Artist'), ...PERSON]]);
       show = addSchedule(show, tx, [['day', '19:00', bi('Montaje y prueba de sonido', 'Setup and soundcheck')], ['day', '21:00', bi('Concierto', 'Show')]]);
       show = addSetlist(show, tx, [[bi('Canción 1', 'Song 1'), 200], [bi('Canción 2', 'Song 2'), 230, bi('Con segunda voz', 'With second vocal')], [bi('Canción 3', 'Song 3'), 250]]);
       show = { ...show, hospitality: { ...show.hospitality, meals: 2, supplies: tx(bi('Agua', 'Water')) } };
@@ -329,8 +329,8 @@ const dj = (): ShowPackage => {
     mounts: [mount('truss', 'Truss', 'Truss', [1000, 1800], [7000, 1800], 4500, 400), mount('floor', 'Suelo izquierda', 'Floor left', [1400, 2700], [1400, 2900], 0), mount('floor', 'Suelo derecha', 'Floor right', [6600, 2700], [6600, 2900], 0)],
     finish: (show, placed, tx) => {
       show = addContacts(show, tx, [
-        [bi('DJ', 'DJ'), 'Álex Roca', '+34 600 000 131', 'alex.roca@dj-ejemplo.example'],
-        [bi('Técnico de la sala', 'Venue technician'), 'Nuria Gil', '+34 600 000 132', 'tecnica@club-ejemplo.example'],
+        [bi('DJ', 'DJ'), ...PERSON],
+        [bi('Técnico de la sala', 'Venue technician'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['build', '18:00', bi('Carga y montaje del truss', 'Load-in and truss build')],
@@ -404,9 +404,9 @@ const conference = (): ShowPackage => {
     finish: (show, placed, tx) => {
       show = { ...show, titleBlock: { ...show.titleBlock, production: tx(bi('Jornada de ejemplo', 'Example conference')), venue: tx(bi('Palacio de congresos de ejemplo', 'Example conference centre')) } };
       show = addContacts(show, tx, [
-        [bi('Organización', 'Organiser'), 'Carmen Alba', '+34 600 000 141', 'organizacion@jornada-ejemplo.example'],
-        [bi('Técnico audiovisual', 'AV technician'), 'Hugo Mena', '+34 600 000 142', 'hugo.mena@av-ejemplo.example'],
-        [bi('Jefe de sala', 'House manager'), 'Rosa Lara', '+34 600 000 143', 'sala@congresos-ejemplo.example'],
+        [bi('Organización', 'Organiser'), ...PERSON],
+        [bi('Técnico audiovisual', 'AV technician'), ...PERSON],
+        [bi('Jefe de sala', 'House manager'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['build', '07:30', bi('Carga', 'Load-in')],
@@ -491,10 +491,10 @@ const theatre = (): ShowPackage => {
     finish: (show, placed, tx) => {
       show = { ...show, titleBlock: { ...show.titleBlock, production: tx(bi('Obra de ejemplo', 'Example play')), venue: tx(bi('Teatro de ejemplo', 'Example theatre')) } };
       show = addContacts(show, tx, [
-        [bi('Regidora', 'Stage manager'), 'Irene Pardo', '+34 600 000 151', 'irene.pardo@compania-ejemplo.example'],
-        [bi('Técnico de luces', 'Lighting technician'), 'Sergio Ibáñez', '+34 600 000 152', 'sergio.ibanez@compania-ejemplo.example'],
-        [bi('Técnica de sonido', 'Sound technician'), 'Laura Beltrán', '+34 600 000 153', 'laura.beltran@compania-ejemplo.example'],
-        [bi('Jefe de sala', 'House manager'), 'Tomás Rey', '+34 600 000 154', 'sala@teatro-ejemplo.example'],
+        [bi('Regidora', 'Stage manager'), ...PERSON],
+        [bi('Técnico de luces', 'Lighting technician'), ...PERSON],
+        [bi('Técnica de sonido', 'Sound technician'), ...PERSON],
+        [bi('Jefe de sala', 'House manager'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['build', '08:00', bi('Carga y montaje de escenografía', 'Load-in and scenery build')],
@@ -572,8 +572,8 @@ const av = (): ShowPackage => {
     links: b.links,
     finish: (show, placed, tx) => {
       show = addContacts(show, tx, [
-        [bi('Productor', 'Producer'), 'Julia Ferrer', '+34 600 000 161', 'julia.ferrer@evento-ejemplo.example'],
-        [bi('Técnico de vídeo', 'Video technician'), 'Marcos Olmo', '+34 600 000 162', 'marcos.olmo@evento-ejemplo.example'],
+        [bi('Productor', 'Producer'), ...PERSON],
+        [bi('Técnico de vídeo', 'Video technician'), ...PERSON],
       ]);
       show = addSchedule(show, tx, [
         ['build', '08:00', bi('Montaje de pantalla y proyector', 'Screen and projector build')],

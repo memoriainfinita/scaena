@@ -1,8 +1,8 @@
 import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
-import { createLayer, moveCustomLayer, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
-import { activeLayer, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
+import { createLayer, moveCustomLayer, moveCustomLayerTo, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
+import { activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { CATEGORY_ORDER, ITEMS, isCustomItem, itemById, searchItems } from '../library/items.ts';
 import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
@@ -165,7 +165,8 @@ function Library() {
     void loadAllIcons();
   }, []);
   return (
-    <aside class={`library${sheet.value === 'library' ? ' open' : ''}`} aria-label={t('library.title')}>
+    <aside class={`library${sheet.value === 'library' ? ' open' : ''}`} aria-label={t('library.title')} style={`--pane-w:${libraryPane.width.value}px`}>
+      <PaneSplit pane={libraryPane} side="right" />
       <button type="button" class="sheet-close" onClick={() => (sheet.value = null)}>
         {t('sheet.close')}
       </button>
@@ -232,12 +233,51 @@ function MainView({ show }: { show: Show }) {
 
 const DEFAULT_LAYER_IDS = new Set(['l-stage', 'l-audio', 'l-lights', 'l-electrical', 'l-control', 'l-notes', 'l-background']);
 
+/** The edge of a side panel: drag it, or focus it and use the arrow keys (Shift for bigger steps). */
+function PaneSplit({ pane, side }: { pane: Pane; side: 'left' | 'right' }) {
+  const grow = side === 'left' ? -1 : 1; // the inspector grows when its edge goes left, the library when its edge goes right
+  return (
+    <div
+      class={`split ${side}`}
+      role="separator"
+      aria-orientation="vertical"
+      aria-label={t(side === 'left' ? 'inspector.resize' : 'library.resize')}
+      aria-valuemin={pane.min}
+      aria-valuemax={pane.max}
+      aria-valuenow={pane.width.value}
+      tabIndex={0}
+      title={t(side === 'left' ? 'inspector.resize' : 'library.resize')}
+      onPointerDown={(e) => {
+        const bar = e.currentTarget as HTMLElement;
+        bar.setPointerCapture(e.pointerId);
+        const x0 = e.clientX;
+        const w0 = pane.width.value;
+        const move = (m: PointerEvent) => pane.set(w0 + grow * (m.clientX - x0));
+        const up = () => {
+          bar.removeEventListener('pointermove', move);
+          bar.removeEventListener('pointerup', up);
+        };
+        bar.addEventListener('pointermove', move);
+        bar.addEventListener('pointerup', up);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          const dir = e.key === 'ArrowRight' ? 1 : -1;
+          pane.set(pane.width.value + dir * grow * (e.shiftKey ? 40 : 10));
+        }
+      }}
+    />
+  );
+}
+
 function Inspector({ show }: { show: Show }) {
   const sel = selection.value[0];
   const el = sel ? show.elements[sel] : undefined;
   const it = el ? itemById(el.type.id) : undefined;
   return (
-    <aside class={`inspector${sheet.value === 'inspector' ? ' open' : ''}`} aria-label={t('inspector.title')}>
+    <aside class={`inspector${sheet.value === 'inspector' ? ' open' : ''}`} aria-label={t('inspector.title')} style={`--pane-w:${inspectorPane.width.value}px`}>
+      <PaneSplit pane={inspectorPane} side="left" />
       <button type="button" class="sheet-close" onClick={() => (sheet.value = null)}>
         {t('sheet.close')}
       </button>
@@ -246,6 +286,18 @@ function Inspector({ show }: { show: Show }) {
           <div class="panel">
             <h2>{t('inspector.title')}</h2>
             <strong style="font-size:15px">{it.name[lang.value]}</strong>
+            <label class="field">
+              {t('inspector.type')}
+              <select class="input" value={it.id} onChange={(e) => setElementType(selection.value, (e.currentTarget as HTMLSelectElement).value)}>
+                {searchItems('', lang.value)
+                  .filter((i) => i.category === it.category)
+                  .map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.name[lang.value]}
+                    </option>
+                  ))}
+              </select>
+            </label>
             <label class="field">
               {t('inspector.label')}
               <input class="input" data-label-field value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
@@ -304,32 +356,49 @@ function Inspector({ show }: { show: Show }) {
       )}
       <div class="panel" style="flex:1">
         <h2>{t('layers.title')}</h2>
-        {show.layers.map((l) => {
+        {show.layers.map((l, at) => {
           const name = DEFAULT_LAYER_IDS.has(l.id) ? t(`layer.${l.subject}` as Key) : l.name;
+          const custom = l.subject === 'custom';
+          const active = activeLayer.value === l.id;
+          const pick = () => (activeLayer.value = active ? null : l.id);
           return (
-            <div class={`layer${l.subject === 'custom' ? ' custom' : ''}`} key={l.id}>
-              {l.subject !== 'custom' && <span class="swatch" aria-hidden="true" />}
-              {l.subject === 'custom' ? (
-                <input class="input name" aria-label={t('layers.rename', { name })} value={l.name} maxLength={80} onChange={(e) => renameCustomLayer(l.id, (e.currentTarget as HTMLInputElement).value)} />
-              ) : (
-                <span style="flex:1">{name}</span>
-              )}
-              {l.subject === 'custom' && (
-                <>
-                  <button type="button" class="btn mini" aria-label={t('layers.up', { name })} title={t('layers.up', { name })} onClick={() => moveCustomLayer(l.id, 1)}>
-                    ↑
-                  </button>
-                  <button type="button" class="btn mini" aria-label={t('layers.down', { name })} title={t('layers.down', { name })} onClick={() => moveCustomLayer(l.id, -1)}>
-                    ↓
-                  </button>
-                  <button type="button" class="btn mini" aria-label={t('layers.remove', { name })} title={t('layers.remove', { name })} onClick={() => removeCustomLayer(l.id)}>
-                    ×
-                  </button>
-                </>
-              )}
-              <button type="button" class="btn mini" aria-pressed={activeLayer.value === l.id} aria-label={t('layers.active', { name })} title={t('layers.active', { name })} onClick={() => (activeLayer.value = activeLayer.value === l.id ? null : l.id)}>
-                +
+            <div
+              class={`layer${custom ? ' custom' : ''}${active ? ' active' : ''}`}
+              key={l.id}
+              onDragOver={custom || dragLayer.value ? (e) => dragLayer.value && e.preventDefault() : undefined}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragLayer.value) moveCustomLayerTo(dragLayer.value, at);
+                dragLayer.value = null;
+              }}
+            >
+              <button
+                type="button"
+                class={custom ? 'grip' : 'swatch'}
+                aria-pressed={active}
+                aria-label={t('layers.active', { name })}
+                title={custom ? t('layers.grip', { name }) : t('layers.active', { name })}
+                draggable={custom}
+                onDragStart={custom ? (e) => {
+                  dragLayer.value = l.id;
+                  if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+                } : undefined}
+                onDragEnd={() => (dragLayer.value = null)}
+                onClick={pick}
+                onKeyDown={custom ? (e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    moveCustomLayer(l.id, e.key === 'ArrowUp' ? -1 : 1);
+                  }
+                } : undefined}
+              >
+                {custom ? '⠿' : ''}
               </button>
+              {custom ? (
+                <input class="input name" aria-label={t('layers.rename', { name })} title={name} value={l.name} maxLength={80} onChange={(e) => renameCustomLayer(l.id, (e.currentTarget as HTMLInputElement).value)} />
+              ) : (
+                <span onClick={pick}>{name}</span>
+              )}
               <label title={t('layers.show', { name })}>
                 <input type="checkbox" aria-label={t('layers.show', { name })} checked={l.visible} onChange={(e) => setLayerFlag(l.id, 'visible', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconEye />
@@ -342,6 +411,11 @@ function Inspector({ show }: { show: Show }) {
                 <input type="checkbox" aria-label={t('layers.lock', { name })} checked={l.locked} onChange={(e) => setLayerFlag(l.id, 'locked', (e.currentTarget as HTMLInputElement).checked)} />
                 <IconLock />
               </label>
+              {custom && (
+                <button type="button" class="btn mini" aria-label={t('layers.remove', { name })} title={t('layers.remove', { name })} onClick={() => removeCustomLayer(l.id)}>
+                  ×
+                </button>
+              )}
             </div>
           );
         })}

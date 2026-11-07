@@ -291,6 +291,42 @@ export async function goHome(): Promise<void> {
  * comes with suggested channels (a drum kit, a vocal mic) also adds them to the input list, tied to it, in the same undo step.
  */
 /** Layer that receives new library items; null means each item goes to the layer of its own kind. */
+/** Width in pixels of a side panel on wide screens: dragged from its edge, remembered in this browser. */
+export interface Pane {
+  width: { value: number };
+  min: number;
+  max: number;
+  set: (w: number) => void;
+}
+function pane(key: string, def: number, min: number, max: number): Pane {
+  const read = (): number => {
+    try {
+      const n = Number(localStorage.getItem(key));
+      return Number.isFinite(n) && n >= min && n <= max ? n : def;
+    } catch {
+      return def;
+    }
+  };
+  const width = signal<number>(read());
+  return {
+    width,
+    min,
+    max,
+    set(w) {
+      width.value = Math.round(Math.min(max, Math.max(min, w)));
+      try {
+        localStorage.setItem(key, String(width.value));
+      } catch {
+        /* the width is only a convenience */
+      }
+    },
+  };
+}
+export const inspectorPane = pane('scaena.inspectorWidth2', 360, 280, 600);
+export const libraryPane = pane('scaena.libraryWidth', 280, 200, 480);
+
+/** Custom layer being dragged in the layers list. */
+export const dragLayer = signal<string | null>(null);
 export const activeLayer = signal<string | null>(null);
 
 export function addFromLibrary(itemId: string, at?: { x: number; y: number }): string | null {
@@ -331,6 +367,21 @@ function snapPoint(show: Show, p: { x: number; y: number }): { x: number; y: num
 
 export function setElementField(id: string, patch: Partial<Omit<PlanElement, 'id'>>): void {
   session.value?.commit((show) => updateElement(show, id, patch));
+}
+
+/** Swaps the kind of the selected elements for another item of the same category; label, place, channels, cables, lights, computer and notes stay as they are. */
+export function setElementType(ids: string[], itemId: string): void {
+  const item = itemById(itemId);
+  if (!item) return;
+  session.value?.commit((show) => {
+    const elements = { ...show.elements };
+    for (const id of ids) {
+      const el = elements[id];
+      const old = el && itemById(el.type.id);
+      if (el && old && old.category === item.category) elements[id] = { ...el, type: { id: item.id, version: item.version } };
+    }
+    return { ...show, elements };
+  });
 }
 
 export function setLayerFlag(layerId: string, flag: 'visible' | 'locked', value: boolean): void {

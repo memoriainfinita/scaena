@@ -2,7 +2,7 @@
 import { signal } from '@preact/signals';
 import { elementBox } from '../plan/geometry.ts';
 import { addElement, alignElements, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, moveElements, removeElements, rotateElements, ungroupElements, type AlignMode } from '../model/ops.ts';
-import { addLayer, moveLayer, removeLayer, renameLayer, setElementsLayer } from '../model/layers.ts';
+import { addLayer, moveLayer, moveLayerTo, removeLayer, renameLayer, setElementsLayer } from '../model/layers.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
@@ -124,6 +124,7 @@ export function createLayer(name: string): boolean {
 }
 export const renameCustomLayer = (id: string, name: string): void => session.value?.commit((show) => renameLayer(show, id, name));
 export const removeCustomLayer = (id: string): void => session.value?.commit((show) => removeLayer(show, id));
+export const moveCustomLayerTo = (id: string, to: number): void => session.value?.commit((show) => moveLayerTo(show, id, to));
 export const moveCustomLayer = (id: string, dir: 1 | -1): void => session.value?.commit((show) => moveLayer(show, id, dir));
 export const moveToLayer = (ids: string[], layerId: string): void => session.value?.commit((show) => setElementsLayer(show, ids, layerId));
 

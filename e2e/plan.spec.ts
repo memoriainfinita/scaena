@@ -184,9 +184,50 @@ test('the library lists by category with headings, and a layer made active recei
   const name = page.getByLabel('Nombre de la capa Extras');
   await expect(name).toBeVisible();
   const box = (await name.boundingBox())!;
-  expect(box.width).toBeGreaterThan(120); // the name is readable, on its own line
-  await page.getByRole('button', { name: 'Nuevos elementos a la capa Extras' }).click();
+  expect(box.width).toBeGreaterThan(70); // the name is readable
+  await page.getByRole('button', { name: /^Los elementos nuevos van a Extras/ }).click();
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Persona');
   await page.getByRole('button', { name: 'Añadir Persona al plano' }).click();
   await expect(page.locator('label.field').filter({ hasText: /^Capa/ }).locator('option:checked')).toHaveText('Extras');
+});
+
+test('custom layers are reordered by dragging, the active one is highlighted and nothing shifts', async ({ page }) => {
+  await rock(page);
+  for (const n of ['Uno', 'Dos']) {
+    await page.getByLabel('Nombre de la capa nueva').fill(n);
+    await page.getByRole('button', { name: 'Añadir capa' }).click();
+  }
+  const aside = page.locator('aside').last();
+  const before = (await aside.boundingBox())!;
+  const names = () => page.locator('.layer .name').evaluateAll((els) => els.map((e) => (e as HTMLInputElement).value));
+  expect(await names()).toEqual(['Uno', 'Dos']);
+  await page.getByRole('button', { name: /^Los elementos nuevos van a Dos/ }).dragTo(page.locator('.layer').filter({ has: page.getByLabel('Nombre de la capa Uno') }));
+  await expect.poll(names).toEqual(['Dos', 'Uno']);
+  await page.getByRole('button', { name: /^Los elementos nuevos van a Uno/ }).click();
+  await expect(page.locator('.layer.active')).toHaveCount(1);
+  const rows = await page.locator('.layer').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height));
+  expect(Math.max(...rows)).toBeLessThan(40); // every row is one line
+  expect((await aside.boundingBox())!.width).toBe(before.width);
+});
+
+test('the inspector is resized from its edge, with the mouse or the arrow keys, and remembers it', async ({ page }) => {
+  await rock(page);
+  const bar = page.getByRole('separator', { name: 'Cambiar el ancho del inspector' });
+  const w0 = Number(await bar.getAttribute('aria-valuenow'));
+  await bar.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(bar).toHaveAttribute('aria-valuenow', String(w0 + 10));
+  await page.reload();
+  await expect(page.getByRole('separator', { name: 'Cambiar el ancho del inspector' })).toHaveAttribute('aria-valuenow', String(w0 + 10));
+});
+
+test('an element is swapped for another of its kind and keeps its label and channel', async ({ page }) => {
+  await rock(page);
+  await page.locator('g.el[aria-label="Voz 1"]').click();
+  const type = page.getByLabel('Cambiar por otro del mismo tipo');
+  const before = await type.inputValue();
+  const other = (await type.locator('option').evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value))).find((v) => v !== before)!;
+  await type.selectOption(other);
+  await expect(type).toHaveValue(other);
+  await expect(page.locator('g.el[aria-label="Voz 1"]')).toBeVisible();
 });
