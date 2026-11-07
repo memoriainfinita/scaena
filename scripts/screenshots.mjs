@@ -62,11 +62,6 @@ try {
   page = await fresh();
   await pick(page, new RegExp(L('Teatro con micros', 'Theatre with headset')));
   await page.getByRole('button', { name: L('Luces', 'Lights'), exact: true }).click();
-  for (const n of [1, 2, 3]) {
-    await page.getByLabel(`${L('Modelo', 'Model')} · ${L('Recorte', 'Ellipsoidal')} ${n}`, { exact: true }).selectOption({ label: 'ETC Source Four 19°' });
-    await page.getByLabel(`${L('Circuito', 'Circuit')} · ${L('Recorte', 'Ellipsoidal')} ${n}`, { exact: true }).fill(String(n === 3 ? 2 : 1));
-    await page.getByLabel(`${L('Circuito', 'Circuit')} · ${L('Recorte', 'Ellipsoidal')} ${n}`, { exact: true }).press('Tab');
-  }
   await page.getByRole('button', { name: L('Numerar instrumentos', 'Number the instruments') }).click();
   await shot(page, 'luces-instrumentos');
   await page.getByRole('button', { name: L('Montajes', 'Mounts'), exact: true }).click();
@@ -93,13 +88,6 @@ try {
   await page.getByRole('button', { name: L('Aplicar', 'Apply') }).click();
   await page.getByRole('button', { name: L('Producción', 'Production'), exact: true }).click();
   await page.getByRole('button', { name: L('Horario del día', 'Day schedule') }).click();
-  for (const [what, time] of [[L('Carga', 'Load-in'), '14:00'], [L('Prueba de sonido', 'Soundcheck'), '17:00'], [L('Puertas', 'Doors'), '20:00'], ['Show', '21:00']]) {
-    await page.getByRole('button', { name: `+ ${what}` }).click();
-    // A new row has no time yet, so it sorts last.
-    const n = await page.getByLabel(new RegExp('^' + L('Hora', 'Time') + ' · \\d+$')).count();
-    await page.getByLabel(`${L('Hora', 'Time')} · ${n}`, { exact: true }).fill(time);
-    await page.getByLabel(`${L('Hora', 'Time')} · ${n}`, { exact: true }).press('Tab');
-  }
   await shot(page, 'produccion-horario');
   await page.getByRole('button', { name: L('Hospitalidad', 'Hospitality'), exact: true }).click();
   await page.getByLabel(L('Camerinos', 'Dressing rooms'), { exact: true }).fill('2');

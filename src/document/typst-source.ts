@@ -242,6 +242,9 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
     } else if (s === 'racks') {
       const rows = buildReport(show, 'racks').rows;
       parts.push(heading(D.racks) + c.table(D.racks, [{ fr: 1.2 }, { mm: 16 }, { fr: 2 }, { mm: 20 }], [D.element, 'U', D.model, D.count], rows) + '\n');
+    } else if (s === 'cables') {
+      const rows = buildReport(show, 'cables').rows;
+      parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows) + '\n');
     } else if (s === 'magic') {
       const sheet = magicSheet(show, show.lang);
       if (sheet) {

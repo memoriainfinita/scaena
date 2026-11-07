@@ -13,7 +13,7 @@ for (const theme of ['light', 'dark'] as const) {
     await page.getByRole('combobox', { name: /^Tema/ }).selectOption(theme);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: /Banda de rock/ }).click();
-    await expect(page.getByText('16 elementos')).toBeVisible();
+    await expect(page.getByText('35 elementos')).toBeVisible();
     await page.keyboard.press('Control+a');
     await page.mouse.move(700, 400);
     await page.screenshot({ path: `docs/design/img/paso-${step}-plano-${theme}.png` });
@@ -44,6 +44,7 @@ test('computer and connection', async ({ page }) => {
   await page.getByRole('button', { name: 'Añadir programa' }).click();
   await page.getByLabel('Sistema operativo').selectOption('windows');
   await search.fill('proyector');
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('Proyector');
   await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
   await page.getByRole('button', { name: 'Cable o conexión' }).click();
   const els = page.locator('g.el[data-id] .hit');

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { addMount, magicPosition, resetMagicLayout, riggingPlan, setMagicPosition, updateLuminaire } from '../model/lights.ts';
@@ -8,11 +9,16 @@ import { buildReport } from '../reports/reports.ts';
 import { magicSheet } from './magic-svg.ts';
 import { buildDocument } from './typst-source.ts';
 
-const theatre = () => showFromPackage(packageById('theatre')!, 'Teatro', 'es');
+/** The package's lights come with a model and a channel; these tests start from bare ones. */
+const theatre = () => {
+  let show = bare(showFromPackage(packageById('theatre')!, 'Teatro', 'es'));
+  for (const e of Object.values(show.elements)) if (e.luminaire) show = updateLuminaire(show, e.id, { modelId: null, channel: null, circuit: null });
+  return show;
+};
 
 describe('magic sheet', () => {
   test('there is none without instruments', () => {
-    expect(magicSheet(showFromPackage(packageById('rock')!, 'Rock', 'es'))).toBeNull();
+    expect(magicSheet(showFromPackage(packageById('singer')!, 'Cantautor', 'es'))).toBeNull();
   });
   test('every instrument is a circle with its channel, and a missing channel shows a dash', () => {
     let show = theatre();

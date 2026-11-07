@@ -1,4 +1,5 @@
 // Library: what can be placed on the plan. Data lives in the repository, under the same license as the code.
+import type { PlanElement, Show } from '../model/schema.ts';
 
 export type Category = 'drums' | 'guitar' | 'amp' | 'keys' | 'strings' | 'winds' | 'vocals' | 'pa' | 'monitor' | 'desk' | 'rack' | 'dj' | 'person' | 'furniture' | 'room' | 'control' | 'video' | 'light' | 'effect' | 'scenery' | 'power' | 'mic' | 'safety' | 'site' | 'production' | 'machinery' | 'rigging' | 'network';
 
@@ -101,6 +102,13 @@ export interface PackageElement {
   label?: string;
   suppliedBy?: 'band' | 'venue' | 'rental' | 'unset';
   /** Computers: what they do and run. */
+  /** Lights: fixture model, the numbers that identify it and where it hangs (index into the package's mounts). */
+  light?: { modelId: string; channel: number; circuit?: number; dimmer?: number; mount?: number; color?: string; universe?: number; address?: number };
+  /** Risers, platforms and the like: size and height when they differ from the library's. */
+  size?: { w: number; d: number; height?: number };
+  /** A rack: its height in units and what is mounted in it, from the top. */
+  rack?: { units: number; slots: [Bilingual, number][] };
+  notes?: Bilingual;
   computer?: { functions: ('sound' | 'video' | 'lights' | 'network')[]; os: 'windows' | 'macos' | 'linux' | 'other'; programs: { name: string; use: string }[] };
 }
 
@@ -111,6 +119,8 @@ export interface PackageChannel {
   phantom: boolean;
   /** Index into the package's elements, when the channel belongs to one. */
   element?: number;
+  /** Where it plugs in, for example "SB 1". */
+  patch?: string;
 }
 
 /** A cable drawn on the plan between two of the package's elements (indexes into `elements`). */
@@ -119,6 +129,16 @@ export interface PackageLink {
   to: number;
   signal: 'audio' | 'video' | 'lightControl' | 'network';
   connector?: string;
+}
+
+/** Where lights hang or stand: a bar, pipe, truss, side boom, or the floor. */
+export interface PackageMount {
+  kind: 'bar' | 'pipe' | 'truss' | 'boom' | 'floor';
+  name: Bilingual;
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  heightMm: number;
+  maxLoadKg?: number;
 }
 
 export interface ShowPackage {
@@ -131,4 +151,9 @@ export interface ShowPackage {
   /** Number of wedge monitors (placed by the package among the elements) and in-ears. */
   outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number }[];
   links?: PackageLink[];
+  mounts?: PackageMount[];
+  /** The mixing desk the example uses (a library audio model id). */
+  desk?: string;
+  /** Everything that is not on the plan: contacts, schedule, hospitality, electrical, notes. Texts come as both languages. */
+  finish?: (show: Show, placed: PlanElement[], tx: (b: Bilingual) => string) => Show;
 }

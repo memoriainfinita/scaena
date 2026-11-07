@@ -2,7 +2,7 @@
 
 ![Library search](img/biblioteca.png)
 
-The library holds about 780 elements drawn as line icons. Search it (accents ignored) and narrow it with the **Category** menu above the list, then click an element: it appears in the first free spot, selected. Drag it into place; it snaps to the grid (**Alt** while dragging turns snapping off). On the plan the icon stays upright while the thin outline under it, the real footprint with its front line, turns with the element (lights turn with their aim). Zoomed far out, only the grey footprint shows. Left-handed instruments are drawn by mirroring the element. The inspector holds the label, who supplies it (band, venue, rental), notes, position and rotation.
+The library holds about 780 elements drawn as line icons. With no search it is listed by category (your own elements first), each with its heading, and by name inside each; when you search (accents ignored), names that start with your words come first. Narrow it with the **Category** menu above the list, then click an element: it appears in the first free spot, selected. Drag it into place; it snaps to the grid (**Alt** while dragging turns snapping off). On the plan the icon and the thin outline under it, the real footprint with its front line, turn together with the element (lights turn with their aim); labels stay upright. Zoomed far out, only the grey footprint shows. Left-handed instruments are drawn by mirroring the element. The **Connection lines** button at the bottom, next to the grid, shows or hides the cables between elements; it also applies to the plan in the PDF and the exports. The inspector holds the label, who supplies it (band, venue, rental), notes, position and rotation.
 
 ![Selection and action bar](img/seleccion.png)
 
@@ -24,7 +24,7 @@ In **Show settings → Stage**: width and depth, an optional **proscenium width*
 
 ## Your own layers
 
-Below the layer list, type a name and press **Add layer** to make a layer of your own (up to 20). It can be renamed, moved up or down (higher layers are drawn over lower ones) and removed; removing it sends its elements back to the layer of their kind. To put an element on a layer, pick it in the inspector's **Layer** field.
+Below the layer list, type a name and press **Add layer** to make a layer of your own (up to 20). The **+** button on a layer makes it the one that receives new library items (press it again to go back to each item's own layer); to move elements already on the plan, select them and change **Layer** in the inspector. It can be renamed, moved up or down (higher layers are drawn over lower ones) and removed; removing it sends its elements back to the layer of their kind. To put an element on a layer, pick it in the inspector's **Layer** field.
 
 ## Your own elements
 

@@ -5,7 +5,7 @@ import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
-import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLinks, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -66,7 +66,6 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   void iconsVersion.value; // redraw when the sheet of this element's icon arrives
   const iconKey = iconKeyOf(it.id);
   const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
-  const turns = it.category === 'light'; // lights turn with their aim; everything else stays upright
   const units = isDim ? session.value!.show.value.units : 'metric';
   const name = el.label || it.name[lang.value];
   const box = elementBox(el, { w, d });
@@ -95,9 +94,8 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
       <g transform={`rotate(${el.rotation}) scale(${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})`}>
         <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="transparent" vector-effect="non-scaling-stroke" {...frame} />
         <rect class="simple" width={w} height={d} fill="#c9cfd4" />
-        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d, !!icon) + (icon && turns ? iconUse(icon, w, d) : '') }} />
+        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d, !!icon) + (icon ? iconUse(icon, w, d) : '') }} />
       </g>
-      {icon && !turns && <g class="detail" transform={el.flipX ? 'scale(-1 1)' : undefined} dangerouslySetInnerHTML={{ __html: iconUse(icon, w, d, 0, 0) }} />}
       {isText && (
         <g class="detail" transform={`rotate(${el.rotation})`}>
           <text x={-w / 2 + 80} y={d * 0.28} font-size={d * 0.62} fill="#000" font-family="Inter Variable, sans-serif" style="white-space:pre">
@@ -446,6 +444,7 @@ const ICONS: Record<string, string> = {
   zoomOut: 'M3 9h12',
   fit: 'M3 7V3h4M11 3h4v4M15 11v4h-4M7 15H3v-4',
   grid: 'M3 3h12v12H3zM9 3v12M3 9h12',
+  links: 'M3 14L15 4M3 14h0M15 4h0',
   dim: 'M9 3a6 6 0 1 0 0 12z',
 };
 
@@ -956,7 +955,7 @@ export function PlanView({ show }: { show: Show }) {
           <Stage show={show} />
           <BackgroundImage show={show} />
           <Mounts show={show} />
-          <Connections show={show} hidden={dragSet ?? new Set()} />
+          {show.view.links && <Connections show={show} hidden={dragSet ?? new Set()} />}
           <g>{resting}</g>
           <g class="moving" transform={dragT}>
             {moving}
@@ -1033,6 +1032,7 @@ export function PlanView({ show }: { show: Show }) {
         <Btn icon="zoomIn" label={`${t('plan.zoomIn')} (+)`} onClick={() => zoomBy(1.25)} />
         <Btn icon="fit" label={`${t('plan.fit')} (0)`} onClick={fit} />
         <Btn icon="grid" label={t('plan.grid')} pressed={show.view.grid} onClick={() => setGrid(!show.view.grid)} />
+        <Btn icon="links" label={t('plan.links')} pressed={show.view.links} onClick={() => setLinks(!show.view.links)} />
         <ScaleBar cam={cam} units={show.units} />
       </div>
     </div>

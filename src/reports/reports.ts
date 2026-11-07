@@ -9,11 +9,11 @@ import { circuitLoads, dimmerLoads, luminaires, riggingPlan } from '../model/lig
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 
-export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'inputs', 'outputs'] as const;
+export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
 
 /** The module a report belongs to: it is offered only when that module is on. */
-export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', inputs: 'audio', outputs: 'audio' };
+export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio' | 'any'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', cables: 'any', inputs: 'audio', outputs: 'audio' };
 
 export interface ReportTable {
   id: ReportId;
@@ -26,7 +26,7 @@ const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemByI
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
 export function availableReports(show: Show): ReportId[] {
-  return REPORT_IDS.filter((id) => show.modules.includes(REPORT_MODULE[id]) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0));
+  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0));
 }
 
 export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): ReportTable {
@@ -127,6 +127,13 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       rows.push([name(e, lang), '', D.total, `${rackUsed(e.rack!)} / ${e.rack!.units}`]);
     }
     return { id, header: [D.element, 'U', D.model, D.count], rows };
+  }
+  if (id === 'cables') {
+    const order = ['audio', 'video', 'lightControl', 'network'];
+    const rows = Object.values(show.connections)
+      .sort((a, b) => order.indexOf(a.signal) - order.indexOf(b.signal) || a.connector.localeCompare(b.connector, 'en') || a.id.localeCompare(b.id, 'en', { numeric: true }))
+      .map((c, i) => [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, c.lengthMm === null ? '' : num(c.lengthMm / 1000, 1)]);
+    return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows };
   }
   if (id === 'worknotes') {
     const rows = show.workNotes.map((n) => [n.text, n.done ? D.yes : D.no, n.refId && show.elements[n.refId] ? name(show.elements[n.refId], lang) : '']);

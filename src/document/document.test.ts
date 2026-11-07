@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { addChannel } from '../model/audio.ts';
@@ -10,8 +11,8 @@ import { ALL_SECTIONS, effectiveSections, TEMPLATE_SECTIONS, templateForPackage 
 import { buildDocument, lit, txt } from './typst-source.ts';
 import { DocSection } from '../model/schema.ts';
 
-const rock = () => showFromPackage(packageById('rock')!, 'Mi banda', 'es');
-const theatre = () => showFromPackage(packageById('theatre')!, 'Teatro', 'es');
+const rock = () => bare(showFromPackage(packageById('rock')!, 'Mi banda', 'es'));
+const theatre = () => bare(showFromPackage(packageById('theatre')!, 'Teatro', 'es'));
 
 describe('sections', () => {
   test('the schema and the module agree on the list', () => {
@@ -22,8 +23,9 @@ describe('sections', () => {
     expect(templateForPackage('rock')).toBe('concert');
     expect(templateForPackage('theatre')).toBe('theatre');
     expect(templateForPackage('conference')).toBe('av');
-    const show = rock();
-    expect(effectiveSections(show)).toEqual(TEMPLATE_SECTIONS.concert);
+    const show = { ...rock(), modules: ['audio' as const, 'document' as const] };
+    expect(effectiveSections(show)).toEqual(expect.arrayContaining([...TEMPLATE_SECTIONS.concert, 'cables']));
+    expect(effectiveSections({ ...show, connections: {} })).toEqual(TEMPLATE_SECTIONS.concert);
     const [withPc] = addElement(show, { type: { id: 'control.laptop', version: 1 }, x: 0, y: 0, layerId: 'l-control', computer: { functions: ['sound'], os: 'other', programs: [], license: '', dongle: false, outputs: [] } });
     expect(effectiveSections(withPc)).toContain('computers');
   });

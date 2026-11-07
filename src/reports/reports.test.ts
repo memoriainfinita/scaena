@@ -4,6 +4,7 @@ import { compareWithCurrent, restoreRevision, saveCurrentRevision } from '../app
 import { addFromLibrary, openStored, selection, session, setElementField, setLibrary, startFromPackage } from '../app/state.ts';
 import { deleteStored, duplicateStored, refreshLibrary, saveAsTemplate, shows, startFromTemplate, templates } from '../app/library-actions.ts';
 import { openLibrary } from '../app/storage.ts';
+import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { diffShows } from '../model/diff.ts';
@@ -11,14 +12,28 @@ import { addWorkNote, removeWorkNote, updateLuminaire, updateWorkNote } from '..
 import { availableReports, buildReport, inputsAsText, REPORT_IDS, toCsv, toTsv } from './reports.ts';
 import type { Show } from '../model/schema.ts';
 
-const theatre = () => showFromPackage(packageById('theatre')!, 'Teatro', 'es');
-const rock = () => showFromPackage(packageById('rock')!, 'Rock', 'es');
+/** The package's lights come with a model and a channel; these tests start from bare ones. */
+const theatre = () => {
+  let show = bare(showFromPackage(packageById('theatre')!, 'Teatro', 'es'));
+  for (const e of Object.values(show.elements)) if (e.luminaire) show = updateLuminaire(show, e.id, { modelId: null, channel: null, circuit: null });
+  return show;
+};
+const rock = () => bare(showFromPackage(packageById('rock')!, 'Rock', 'es'));
 
 describe('reports', () => {
   test('which reports are offered follows the modules', () => {
-    expect(availableReports(rock())).toEqual(['inputs', 'outputs']);
+    expect(availableReports({ ...rock(), modules: ['audio', 'document'] })).toEqual(['cables', 'inputs', 'outputs']);
     expect(availableReports(theatre())).toEqual(expect.arrayContaining(['hookup', 'inputs']));
-    expect(availableReports({ ...rock(), modules: ['document'] })).toEqual([]);
+    expect(availableReports({ ...rock(), modules: ['document'] })).toEqual(['cables']);
+    expect(availableReports({ ...rock(), modules: ['document'], connections: {} })).toEqual([]);
+  });
+
+  test('the cable list is offered only with cables and sorts them by signal and connector', () => {
+    expect(availableReports(bare(showFromPackage(packageById('singer')!, 'es'))).includes('cables')).toBe(true);
+    expect(availableReports(theatre()).includes('cables')).toBe(buildReport(theatre(), 'cables').rows.length > 0);
+    const rows = buildReport(showFromPackage(packageById('rock')!, 'es'), 'cables').rows;
+    expect(rows.length).toBeGreaterThan(10);
+    expect(rows[0]).toHaveLength(6);
   });
 
   test('every report has a header as wide as its rows', () => {

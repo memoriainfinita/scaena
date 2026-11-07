@@ -21,6 +21,8 @@ export function addConnection(show: Show, from: string, to: string, signal: Sign
 export function updateConnection(show: Show, id: string, patch: Partial<Omit<Connection, 'id' | 'from' | 'to'>>): Show {
   const c = show.connections[id];
   if (!c) return show;
+  // A second cable of the same kind between the same two elements is refused, as when adding one.
+  if (patch.signal && patch.signal !== c.signal && Object.values(show.connections).some((o) => o.id !== id && o.signal === patch.signal && ((o.from === c.from && o.to === c.to) || (o.from === c.to && o.to === c.from)))) return show;
   return { ...show, connections: { ...show.connections, [id]: { ...c, ...patch } } };
 }
 

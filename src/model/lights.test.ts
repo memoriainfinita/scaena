@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { packageById } from '../library/packages.ts';
+import { PACKAGES, packageById } from '../library/packages.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { addMount, autoNumber, beamDegrees, defaultFocus, circuitLoads, dimmerLoads, emptyLuminaire, luminaires, mountStats, phaseLoads, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, updateLuminaire, updateMount } from './lights.ts';
 import { newShow } from './new.ts';
@@ -135,17 +135,21 @@ describe('load', () => {
 });
 
 describe('packages with lights', () => {
-  test('the theatre package hangs its lights from one bar', () => {
+  test('the theatre package hangs its lights from its bars, booms and the floor, each one on a mount', () => {
     const show = showFromPackage(packageById('theatre')!, 't', 'es');
     const lit = luminaires(show);
-    expect(lit.length).toBeGreaterThan(0);
-    const bars = Object.values(show.mounts);
-    expect(bars).toHaveLength(1);
-    expect(lit.every((e) => e.luminaire!.mountId === bars[0]!.id)).toBe(true);
-    expect(bars[0]!.name).toBe('Vara 1');
+    expect(lit.length).toBeGreaterThan(10);
+    const mounts = Object.values(show.mounts);
+    expect(new Set(mounts.map((m) => m.kind))).toEqual(new Set(['bar', 'pipe', 'boom', 'floor']));
+    expect(lit.every((e) => e.luminaire!.mountId && show.mounts[e.luminaire!.mountId])).toBe(true);
+    expect(mounts.map((m) => m.name)).toContain('Vara 1');
+  });
+  test('the examples put lights on every kind of mount between them', () => {
+    const kinds = new Set(PACKAGES.flatMap((p) => Object.values(showFromPackage(p, 't', 'es').mounts).map((m) => m.kind)));
+    expect(kinds).toEqual(new Set(['bar', 'pipe', 'truss', 'boom', 'floor']));
   });
   test('a package without lights has no mounts', () => {
-    expect(showFromPackage(packageById('rock')!, 't', 'es').mounts).toEqual({});
+    expect(showFromPackage(packageById('singer')!, 't', 'es').mounts).toEqual({});
   });
 });
 

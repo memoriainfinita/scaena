@@ -66,4 +66,12 @@ describe('program catalog', () => {
     expect(suggestPrograms([]).length).toBe(PROGRAMS.length);
     expect(suggestPrograms(['lights']).some((p) => p.name === 'QLC+')).toBe(true);
   });
+
+  test('a signal change that would duplicate another cable between the pair is refused', () => {
+    const [show, a, b] = two();
+    const [s1, c1] = addConnection(show, a, b, 'video');
+    const [s2] = addConnection(s1, a, b, 'network');
+    const next = updateConnection(s2, c1!.id, { signal: 'network' });
+    expect(next.connections[c1!.id]!.signal).toBe('video');
+  });
 });
