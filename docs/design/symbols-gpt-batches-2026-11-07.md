@@ -1850,3 +1850,105 @@ List to paste:
 9 long tibetan horn lying on a stand (250 x 30 cm)
 10 dizi alone, a chinese bamboo flute, no player (65 x 4 cm)
 ```
+
+## Line-art people (replace the solid black figures)
+
+The solid black figures with a round head (sheets 1, 1b, 2 and 10) are not liked. Sheets 56 to 58 ask for the same roles in the line-art style that worked in sheets 30 and 50. Use this style block for these three sheets instead of the pictogram one:
+
+```text
+Style: clean black ink line-art illustration of people for a live-event stage plot, like a technical engraving: confident medium-thick outlines, small areas of solid black for dark clothes and hair, light hatching only for shadows, natural realistic proportions, friendly diverse adults, no colour, no grey wash, no text, no background. Every person is shown whole, standing or seated, seen from the front or slightly from the side, with the instrument or object clearly visible.
+```
+
+## Sheet 56 (People with instruments, line art I)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Double bassist | `person2.doublebass` | 60 x 60 |
+| 2 | Violinist | `person2.violin` | 70 x 70 |
+| 3 | Cellist | `person2.cello` | 70 x 90 |
+| 4 | Harpist | `person2.harp` | 90 x 100 |
+| 5 | Electric guitarist | `person2.eguitar` | 90 x 90 |
+| 6 | Saxophonist | `person2.sax` | 60 x 70 |
+| 7 | Trumpeter | `person2.trumpet` | 50 x 70 |
+| 8 | Trombonist | `person2.trombone` | 60 x 90 |
+| 9 | Flutist | `person2.flute` | 60 x 60 |
+| 10 | Clarinetist | `person2.clarinet` | 60 x 60 |
+| 11 | Tuba player | `person2.tuba` | 70 x 70 |
+| 12 | French horn player | `person2.horn` | 60 x 60 |
+
+List to paste:
+
+```text
+1 musician standing playing an upright double bass (60 x 60 cm)
+2 musician standing playing a violin with a bow (70 x 70 cm)
+3 musician seated playing a cello (70 x 90 cm)
+4 musician seated playing a concert harp (90 x 100 cm)
+5 rock guitarist standing playing an electric guitar (90 x 90 cm)
+6 musician standing playing a saxophone (60 x 70 cm)
+7 musician standing playing a trumpet (50 x 70 cm)
+8 musician standing playing a trombone with the slide extended (60 x 90 cm)
+9 musician standing playing a transverse flute (60 x 60 cm)
+10 musician standing playing a clarinet (60 x 60 cm)
+11 musician seated playing a tuba (70 x 70 cm)
+12 musician seated playing a french horn (60 x 60 cm)
+```
+
+## Sheet 57 (People with instruments, line art II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Oboist or bassoonist | `person2.oboe` | 50 x 50 |
+| 2 | Timpanist | `person2.timpani` | 150 x 120 |
+| 3 | Marimba player | `person2.marimba` | 200 x 80 |
+| 4 | Vibraphone player | `person2.vibraphone` | 150 x 70 |
+| 5 | Accordionist | `person2.accordion` | 60 x 60 |
+| 6 | Keytar player | `person2.keytar` | 60 x 60 |
+| 7 | Pianist | `person2.piano` | 150 x 200 |
+| 8 | Keyboardist | `person2.keys` | 140 x 90 |
+| 9 | Organist | `person2.organ` | 130 x 80 |
+| 10 | Conga player | `person2.congas` | 90 x 70 |
+| 11 | Conductor | `person2.conductor` | 80 x 80 |
+| 12 | DJ | `person2.dj` | 180 x 70 |
+
+List to paste:
+
+```text
+1 musician standing playing an oboe (50 x 50 cm)
+2 musician standing behind four timpani holding mallets (150 x 120 cm)
+3 musician standing playing a marimba with four mallets (200 x 80 cm)
+4 musician standing playing a vibraphone (150 x 70 cm)
+5 musician seated playing an accordion (60 x 60 cm)
+6 musician standing with a keytar on a strap (60 x 60 cm)
+7 pianist seated at a grand piano seen from the side (150 x 200 cm)
+8 keyboardist standing behind two keyboards on a stand (140 x 90 cm)
+9 organist seated at an organ with two keyboards (130 x 80 cm)
+10 percussionist seated playing two congas (90 x 70 cm)
+11 conductor on a podium with a baton (80 x 80 cm)
+12 DJ standing behind a table with two turntables and a mixer, wearing headphones (180 x 70 cm)
+```
+
+## Sheet 58 (People, line art III)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Standing person | `person2.standing` | 50 x 50 |
+| 2 | Seated person | `person2.seated` | 60 x 60 |
+| 3 | Presenter | `person2.presenter` | 60 x 60 |
+| 4 | Lead singer | `person2.singer` | 70 x 70 |
+| 5 | Choir singer | `person2.choir` | 40 x 40 |
+| 6 | Speaker at a lectern | `person2.lectern` | 70 x 50 |
+| 7 | Person with a laptop | `person2.laptop` | 60 x 60 |
+| 8 | Percussionist standing | `person2.perc` | 70 x 70 |
+
+List to paste:
+
+```text
+1 neutral adult standing relaxed, arms at the sides (50 x 50 cm)
+2 adult seated on a chair (60 x 60 cm)
+3 presenter standing holding a microphone and gesturing (60 x 60 cm)
+4 singer standing at a microphone stand, one hand on the stand (70 x 70 cm)
+5 choir singer standing holding a folder (40 x 40 cm)
+6 speaker standing behind a lectern (70 x 50 cm)
+7 person seated with a laptop on the knees (60 x 60 cm)
+8 percussionist standing with a hand drum and a tambourine (70 x 70 cm)
+```
