@@ -1226,3 +1226,373 @@ List to paste:
 11 bank of walkie-talkies charging in a rack (30 x 20 cm)
 12 toolbox with a handle (50 x 30 cm)
 ```
+
+## Sheet 37 (World percussion)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Timbales | `perc.timbales` | 80 x 60 |
+| 2 | Surdo | `perc.surdo` | 45 x 45 |
+| 3 | Taiko | `perc.taiko` | 60 x 60 |
+| 4 | Doumbek | `perc.doumbek` | 30 x 30 |
+| 5 | Tubular bells | `perc.tubular` | 150 x 60 |
+| 6 | Xylophone | `perc.xylophone` | 130 x 60 |
+| 7 | Maracas | `perc.maracas` | 15 x 15 |
+| 8 | Wind chimes | `perc.chimes` | 30 x 30 |
+| 9 | Wood block | `perc.woodblock` | 20 x 15 |
+| 10 | Kalimba | `perc.kalimba` | 15 x 15 |
+| 11 | Guiro | `perc.guiro` | 35 x 10 |
+| 12 | Agogo bells | `perc.agogo` | 20 x 15 |
+
+List to paste:
+
+```text
+1 timbales, two shallow metal drums on a stand with a cowbell (80 x 60 cm)
+2 large surdo drum with a strap (45 x 45 cm)
+3 large taiko drum on a stand with two sticks (60 x 60 cm)
+4 doumbek goblet drum (30 x 30 cm)
+5 tubular bells, a row of long hanging tubes in a frame (150 x 60 cm)
+6 xylophone with wooden bars on a frame (130 x 60 cm)
+7 pair of maracas (15 x 15 cm)
+8 wind chimes hanging from a bar (30 x 30 cm)
+9 wood block with a mallet (20 x 15 cm)
+10 kalimba thumb piano (15 x 15 cm)
+11 guiro with a scraper (35 x 10 cm)
+12 agogo double bell (20 x 15 cm)
+```
+
+## Sheet 38 (World strings, instruments alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Oud | `strings.oud` | 55 x 35 |
+| 2 | Bouzouki | `strings.bouzouki` | 45 x 25 |
+| 3 | Balalaika | `strings.balalaika` | 65 x 25 |
+| 4 | Koto | `strings.koto` | 180 x 30 |
+| 5 | Erhu | `strings.erhu` | 80 x 15 |
+| 6 | Kora | `strings.kora` | 70 x 35 |
+| 7 | Charango | `strings.charango` | 35 x 15 |
+| 8 | Lute | `strings.lute` | 60 x 35 |
+| 9 | Zither | `strings.zither` | 60 x 30 |
+| 10 | Bandoneon | `keys.bandoneon` | 30 x 25 |
+| 11 | Hurdy-gurdy | `strings.hurdy` | 60 x 25 |
+| 12 | Cavaquinho | `strings.cavaquinho` | 35 x 15 |
+
+List to paste:
+
+```text
+1 oud alone, a pear-shaped lute with a bent neck, no player (55 x 35 cm)
+2 bouzouki alone, no player (45 x 25 cm)
+3 balalaika alone with a triangular body, no player (65 x 25 cm)
+4 koto alone, a long japanese zither on legs, no player (180 x 30 cm)
+5 erhu alone with its bow, no player (80 x 15 cm)
+6 kora alone, a west african harp-lute with a round gourd, no player (70 x 35 cm)
+7 charango alone, no player (35 x 15 cm)
+8 lute alone with a bent back peg box, no player (60 x 35 cm)
+9 zither alone, no player (60 x 30 cm)
+10 bandoneon alone, a square-ended concertina, no player (30 x 25 cm)
+11 hurdy-gurdy alone with a crank, no player (60 x 25 cm)
+12 cavaquinho alone, no player (35 x 15 cm)
+```
+
+## Sheet 39 (Orchestra furniture)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Orchestra chair | `orch.chair` | 45 x 45 |
+| 2 | Double-desk stand | `orch.stand-2` | 70 x 40 |
+| 3 | Conductor podium | `orch.podium` | 100 x 100 |
+| 4 | Conductor score stand | `orch.score-stand` | 70 x 40 |
+| 5 | Harp bench | `orch.harp-bench` | 70 x 35 |
+| 6 | Bass stool | `orch.bass-stool` | 40 x 40 |
+| 7 | Percussion trolley | `orch.perc-trolley` | 100 x 50 |
+| 8 | Choir riser tier | `orch.riser-tier` | 200 x 60 |
+| 9 | Acoustic shell panel | `orch.shell` | 200 x 15 |
+| 10 | Stand light | `orch.stand-light` | 10 x 10 |
+| 11 | Brass stand rack | `orch.brass-rack` | 60 x 40 |
+| 12 | Cello case | `orch.cello-case` | 40 x 130 |
+
+List to paste:
+
+```text
+1 orchestra chair with a straight back (45 x 45 cm)
+2 double music stand for two players (70 x 40 cm)
+3 conductor podium with a safety rail (100 x 100 cm)
+4 conductor score stand (70 x 40 cm)
+5 harp bench (70 x 35 cm)
+6 high stool for a double bass player (40 x 40 cm)
+7 percussion trolley with small instruments (100 x 50 cm)
+8 curved choir riser tier with steps (200 x 60 cm)
+9 acoustic shell panel on wheels (200 x 15 cm)
+10 small clip light on a music stand (10 x 10 cm)
+11 rack holding several brass instruments (60 x 40 cm)
+12 cello case lying flat (40 x 130 cm)
+```
+
+## Sheet 40 (Audio consoles and processing)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Portable mixer | `desk.portable` | 35 x 30 |
+| 2 | Powered mixer | `desk.powered` | 45 x 40 |
+| 3 | Large-format console | `desk.large` | 200 x 90 |
+| 4 | Digital stage box | `rack.stagebox-digital` | 45 x 30 |
+| 5 | Compressor | `rack.compressor` | 48 x 10 |
+| 6 | Graphic EQ | `rack.geq` | 48 x 15 |
+| 7 | Effects processor | `rack.fx-unit` | 48 x 10 |
+| 8 | Speaker processor | `rack.speaker-proc` | 48 x 10 |
+| 9 | Power amp | `rack.power-amp` | 48 x 40 |
+| 10 | Cue box | `rack.cue-box` | 20 x 15 |
+
+List to paste:
+
+```text
+1 small portable mixer with faders and knobs (35 x 30 cm)
+2 powered mixer with faders, knobs and a built-in amplifier (45 x 40 cm)
+3 large-format mixing console with many faders and a screen (200 x 90 cm)
+4 digital stage box with many XLR inputs and a network port (45 x 30 cm)
+5 rack compressor with two meters and knobs (48 x 10 cm)
+6 rack graphic equalizer with a row of sliders (48 x 15 cm)
+7 rack effects processor with a display and a data wheel (48 x 10 cm)
+8 rack speaker processor with a display and two meters (48 x 10 cm)
+9 rack power amplifier with large ventilation grilles (48 x 40 cm)
+10 headphone cue box with a volume knob (20 x 15 cm)
+```
+
+## Sheet 41 (Lighting control and ground support)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Lighting console, large | `control.lx-large` | 150 x 80 |
+| 2 | Fader wing | `control.lx-wing` | 60 x 40 |
+| 3 | DMX controller | `control.dmx` | 40 x 25 |
+| 4 | Dimmer pack | `control.dimmer-pack` | 40 x 30 |
+| 5 | Crank-up tower | `rig.crank` | 60 x 60 |
+| 6 | Ground support tower | `rig.ground-tower` | 100 x 100 |
+| 7 | Lighting boom | `rig.boom` | 40 x 40 |
+| 8 | Stage roof section | `rig.roof` | 300 x 300 |
+| 9 | Handrail | `rig.handrail` | 200 x 10 |
+| 10 | Stage skirt | `rig.skirt` | 300 x 5 |
+| 11 | Box truss | `rig.truss-box` | 300 x 300 |
+| 12 | Truss corner | `rig.truss-corner` | 60 x 60 |
+
+List to paste:
+
+```text
+1 large lighting console with many faders, buttons and two screens (150 x 80 cm)
+2 lighting fader wing with a row of faders (60 x 40 cm)
+3 small dmx controller with sliders (40 x 25 cm)
+4 portable dimmer pack with several sockets (40 x 30 cm)
+5 crank-up lighting tower with a bar on top (60 x 60 cm)
+6 square truss ground support tower with a hoist (100 x 100 cm)
+7 vertical lighting boom with a base plate and several side arms (40 x 40 cm)
+8 stage roof section seen from above with its truss frame (300 x 300 cm)
+9 stage handrail section (200 x 10 cm)
+10 stage skirt cloth with pleats (300 x 5 cm)
+11 square truss rectangle seen from above with corners (300 x 300 cm)
+12 truss corner block (60 x 60 cm)
+```
+
+## Sheet 42 (Video cameras and streaming)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Shoulder camera | `video.shoulder` | 30 x 60 |
+| 2 | Steadicam | `video.steadicam` | 80 x 60 |
+| 3 | Drone | `video.drone` | 35 x 35 |
+| 4 | Action camera | `video.action` | 6 x 6 |
+| 5 | Camera slider | `video.slider` | 100 x 20 |
+| 6 | Streaming PC | `video.stream-pc` | 40 x 40 |
+| 7 | Capture box | `video.capture` | 20 x 15 |
+| 8 | Monitor cart | `video.cart` | 60 x 60 |
+| 9 | Satellite dish | `video.dish` | 120 x 120 |
+| 10 | Wireless video transmitter | `video.wireless` | 15 x 10 |
+| 11 | Tally light | `video.tally` | 10 x 10 |
+| 12 | Camera dolly | `video.dolly` | 60 x 60 |
+
+List to paste:
+
+```text
+1 shoulder-mounted video camera (30 x 60 cm)
+2 steadicam rig worn by a camera operator (80 x 60 cm)
+3 quadcopter drone with a camera (35 x 35 cm)
+4 small action camera in a housing (6 x 6 cm)
+5 camera slider rail with a camera on it (100 x 20 cm)
+6 streaming computer tower with a monitor (40 x 40 cm)
+7 video capture box with HDMI ports (20 x 15 cm)
+8 rolling cart with two monitors (60 x 60 cm)
+9 satellite uplink dish (120 x 120 cm)
+10 wireless video transmitter with an antenna (15 x 10 cm)
+11 camera tally light (10 x 10 cm)
+12 camera dolly on track with a camera (60 x 60 cm)
+```
+
+## Sheet 43 (Scenery and set pieces)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Stage ramp | `set.ramp` | 100 x 300 |
+| 2 | Balcony | `set.balcony` | 300 x 100 |
+| 3 | Column | `set.column` | 40 x 40 |
+| 4 | Archway | `set.arch` | 200 x 30 |
+| 5 | Tree | `set.tree` | 100 x 100 |
+| 6 | Rock | `set.rock` | 100 x 80 |
+| 7 | Picket fence | `set.fence` | 200 x 10 |
+| 8 | Street lamp | `set.street-lamp` | 30 x 30 |
+| 9 | Prop car | `set.car` | 180 x 400 |
+| 10 | Bush | `set.bush` | 60 x 60 |
+| 11 | Signpost | `set.signpost` | 30 x 30 |
+| 12 | Bridge | `set.bridge` | 300 x 100 |
+
+List to paste:
+
+```text
+1 stage ramp with a handrail (100 x 300 cm)
+2 balcony with a railing and a column (300 x 100 cm)
+3 classical column (40 x 40 cm)
+4 archway (200 x 30 cm)
+5 large tree with a leafy crown (100 x 100 cm)
+6 large rock formation (100 x 80 cm)
+7 wooden picket fence section (200 x 10 cm)
+8 old-fashioned street lamp (30 x 30 cm)
+9 car seen from above (180 x 400 cm)
+10 bush (60 x 60 cm)
+11 wooden signpost with two arrow boards (30 x 30 cm)
+12 small arched bridge with railings (300 x 100 cm)
+```
+
+## Sheet 44 (Venue and site II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Seat row | `venue.seats` | 300 x 45 |
+| 2 | Orchestra pit | `venue.pit` | 600 x 200 |
+| 3 | Loading dock | `venue.dock` | 300 x 100 |
+| 4 | Stage door | `venue.stage-door` | 100 x 20 |
+| 5 | Fence panel | `venue.fence` | 250 x 5 |
+| 6 | Gate | `venue.gate` | 300 x 10 |
+| 7 | Trash bin | `venue.bin` | 50 x 50 |
+| 8 | Info desk | `venue.info` | 120 x 60 |
+| 9 | Flag pole | `venue.flag` | 20 x 20 |
+| 10 | Light tower mast | `venue.mast` | 100 x 100 |
+| 11 | Bike rack | `venue.bike` | 200 x 40 |
+| 12 | Utility cart | `venue.cart` | 120 x 70 |
+
+List to paste:
+
+```text
+1 row of audience chairs (300 x 45 cm)
+2 orchestra pit with a rail (600 x 200 cm)
+3 loading dock door with a ramp (300 x 100 cm)
+4 stage door with a sign (100 x 20 cm)
+5 mesh fence panel on feet (250 x 5 cm)
+6 double gate (300 x 10 cm)
+7 trash bin (50 x 50 cm)
+8 information desk with a sign (120 x 60 cm)
+9 flag pole with a flag (20 x 20 cm)
+10 mobile light tower with lamps on a mast (100 x 100 cm)
+11 bicycle rack (200 x 40 cm)
+12 utility cart (120 x 70 cm)
+```
+
+## Sheet 45 (Safety and signage)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | AED | `safety.aed` | 30 x 30 |
+| 2 | Fire blanket | `safety.blanket` | 20 x 20 |
+| 3 | Fire alarm | `safety.alarm` | 15 x 15 |
+| 4 | Hearing protection | `safety.hearing` | 40 x 40 |
+| 5 | Assembly point | `safety.assembly` | 40 x 40 |
+| 6 | Emergency light | `safety.emergency-light` | 30 x 15 |
+| 7 | Traffic cone | `safety.cone` | 30 x 30 |
+| 8 | Caution tape | `safety.tape` | 100 x 5 |
+| 9 | Wet floor sign | `safety.wet` | 30 x 30 |
+| 10 | No smoking | `safety.no-smoking` | 30 x 30 |
+| 11 | Restricted area | `safety.restricted` | 30 x 30 |
+| 12 | Exit sign | `safety.exit-sign` | 40 x 10 |
+
+List to paste:
+
+```text
+1 defibrillator cabinet with a heart and a bolt (30 x 30 cm)
+2 fire blanket in a case (20 x 20 cm)
+3 fire alarm call point (15 x 15 cm)
+4 hearing protection sign with ear defenders (40 x 40 cm)
+5 assembly point sign with a group of people (40 x 40 cm)
+6 emergency light (30 x 15 cm)
+7 traffic cone (30 x 30 cm)
+8 caution tape with diagonal stripes (100 x 5 cm)
+9 wet floor sign (30 x 30 cm)
+10 no smoking sign (30 x 30 cm)
+11 restricted area sign with a hand (30 x 30 cm)
+12 exit sign with an arrow (40 x 10 cm)
+```
+
+## Sheet 46 (DJ and electronic)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Modular synth | `synth.modular` | 120 x 40 |
+| 2 | Drum machine | `synth.drum-machine` | 35 x 30 |
+| 3 | Groovebox | `synth.groovebox` | 30 x 25 |
+| 4 | CDJ player | `dj.cdj` | 35 x 45 |
+| 5 | DJ mixer | `dj.mixer` | 35 x 40 |
+| 6 | Vocoder keyboard | `synth.vocoder` | 80 x 30 |
+| 7 | Theremin | `synth.theremin` | 60 x 60 |
+| 8 | Desktop synth | `synth.desktop` | 30 x 20 |
+| 9 | Sequencer | `synth.sequencer` | 30 x 20 |
+| 10 | Vinyl crate | `dj.crate` | 35 x 35 |
+| 11 | Vocal harmoniser | `rack.harmoniser` | 25 x 15 |
+| 12 | Guitar loop station | `pedal.loop-station` | 30 x 15 |
+
+List to paste:
+
+```text
+1 modular synthesizer rack with many knobs and patch cables (120 x 40 cm)
+2 drum machine with a grid of pads (35 x 30 cm)
+3 groovebox with knobs and small pads (30 x 25 cm)
+4 cdj media player with a large jog wheel (35 x 45 cm)
+5 dj mixer with channel faders and a crossfader (35 x 40 cm)
+6 vocoder keyboard with a gooseneck microphone (80 x 30 cm)
+7 theremin with two antennas (60 x 60 cm)
+8 desktop synth module with knobs (30 x 20 cm)
+9 step sequencer with a row of buttons (30 x 20 cm)
+10 crate full of vinyl records (35 x 35 cm)
+11 vocal harmoniser box with knobs (25 x 15 cm)
+12 loop station pedal with two footswitches and a display (30 x 15 cm)
+```
+
+## Sheet 47 (Conference and ceremony)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Conference table | `conf.table` | 240 x 80 |
+| 2 | Panel table | `conf.panel` | 300 x 70 |
+| 3 | Rostrum | `conf.rostrum` | 70 x 50 |
+| 4 | Backdrop banner | `conf.banner` | 400 x 20 |
+| 5 | Step-and-repeat | `conf.step-repeat` | 300 x 20 |
+| 6 | Flag | `conf.flag` | 40 x 40 |
+| 7 | Trophy table | `conf.trophy` | 150 x 60 |
+| 8 | Red carpet | `conf.carpet` | 500 x 150 |
+| 9 | Ceremony chairs | `conf.chairs` | 200 x 45 |
+| 10 | Interpretation booth | `conf.booth` | 200 x 150 |
+| 11 | Interpreter receiver | `conf.receiver` | 10 x 7 |
+| 12 | Captioning screen | `conf.captions` | 100 x 15 |
+
+List to paste:
+
+```text
+1 conference table with microphones along it (240 x 80 cm)
+2 panel table with a skirt and name cards (300 x 70 cm)
+3 rostrum with a microphone and a lamp (70 x 50 cm)
+4 large backdrop banner on a frame (400 x 20 cm)
+5 step and repeat logo backdrop on a frame (300 x 20 cm)
+6 flag on a floor stand (40 x 40 cm)
+7 table with trophies (150 x 60 cm)
+8 red carpet runner with stanchions (500 x 150 cm)
+9 row of ceremony chairs (200 x 45 cm)
+10 simultaneous interpretation booth with two seats and a window (200 x 150 cm)
+11 interpretation receiver with a headset (10 x 7 cm)
+12 live captioning screen (100 x 15 cm)
+```
