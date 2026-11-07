@@ -1718,3 +1718,135 @@ List to paste:
 6 wall mounted guitar hanger holding one guitar (15 x 10 cm)
 7 adjustable guitar footstool (30 x 20 cm)
 ```
+
+## Sheet 52 (World winds, instruments alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Duduk | `winds.duduk` | 35 x 5 |
+| 2 | Shakuhachi | `winds.shakuhachi` | 55 x 6 |
+| 3 | Panpipes | `winds.panpipes` | 30 x 8 |
+| 4 | Quena | `winds.quena` | 40 x 5 |
+| 5 | Ocarina | `winds.ocarina` | 15 x 10 |
+| 6 | Bansuri | `winds.bansuri` | 60 x 5 |
+| 7 | Tin whistle | `winds.whistle` | 30 x 3 |
+| 8 | Uilleann pipes | `winds.uilleann` | 60 x 30 |
+| 9 | Zurna | `winds.zurna` | 45 x 10 |
+| 10 | Sheng | `winds.sheng` | 30 x 20 |
+| 11 | Suona | `winds.suona` | 50 x 12 |
+| 12 | Ney | `winds.ney` | 65 x 4 |
+
+List to paste:
+
+```text
+1 duduk alone, an armenian double-reed wooden pipe, no player (35 x 5 cm)
+2 shakuhachi alone, a japanese bamboo flute, no player (55 x 6 cm)
+3 panpipes alone, a row of tubes of different lengths, no player (30 x 8 cm)
+4 quena alone, an andean notched flute, no player (40 x 5 cm)
+5 ocarina alone, a ceramic egg-shaped flute, no player (15 x 10 cm)
+6 bansuri alone, an indian bamboo flute, no player (60 x 5 cm)
+7 tin whistle alone, no player (30 x 3 cm)
+8 uilleann pipes alone with bag, bellows and chanter, no player (60 x 30 cm)
+9 zurna alone, a conical double-reed horn with a flared bell, no player (45 x 10 cm)
+10 sheng alone, a chinese mouth organ with vertical pipes, no player (30 x 20 cm)
+11 suona alone, a chinese horn with a metal bell, no player (50 x 12 cm)
+12 ney alone, an end-blown reed flute, no player (65 x 4 cm)
+```
+
+## Sheet 53 (World percussion II)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Bendir | `perc.bendir` | 40 x 40 |
+| 2 | Darbuka | `perc.darbuka` | 30 x 30 |
+| 3 | Dhol | `perc.dhol` | 35 x 55 |
+| 4 | Mridangam | `perc.mridangam` | 25 x 60 |
+| 5 | Pandeiro | `perc.pandeiro` | 25 x 25 |
+| 6 | Berimbau | `perc.berimbau` | 120 x 20 |
+| 7 | Shekere | `perc.shekere` | 30 x 30 |
+| 8 | Talking drum | `perc.talking` | 30 x 30 |
+| 9 | Udu | `perc.udu` | 40 x 40 |
+| 10 | Cajon | `perc.cajon-alone` | 30 x 30 |
+| 11 | Cuica | `perc.cuica` | 25 x 25 |
+| 12 | Daf | `perc.daf` | 45 x 45 |
+
+List to paste:
+
+```text
+1 bendir frame drum with a snare (40 x 40 cm)
+2 darbuka goblet drum (30 x 30 cm)
+3 dhol barrel drum with a strap (35 x 55 cm)
+4 mridangam, a two-headed barrel drum lying on its side (25 x 60 cm)
+5 pandeiro with metal jingles (25 x 25 cm)
+6 berimbau with a gourd and a stretched wire (120 x 20 cm)
+7 shekere, a gourd covered with a net of beads (30 x 30 cm)
+8 talking drum, an hourglass drum with strings and a curved stick (30 x 30 cm)
+9 udu clay pot drum with a side hole (40 x 40 cm)
+10 cajon box drum with a round sound hole (30 x 30 cm)
+11 cuica friction drum with a stick inside (25 x 25 cm)
+12 daf frame drum with metal rings inside (45 x 45 cm)
+```
+
+## Sheet 54 (World strings II, instruments alone)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Sarod | `strings.sarod` | 110 x 30 |
+| 2 | Veena | `strings.veena` | 120 x 30 |
+| 3 | Tanpura | `strings.tanpura` | 130 x 40 |
+| 4 | Santoor | `strings.santoor` | 90 x 40 |
+| 5 | Shamisen | `strings.shamisen` | 95 x 20 |
+| 6 | Pipa | `strings.pipa` | 90 x 30 |
+| 7 | Guzheng | `strings.guzheng` | 165 x 40 |
+| 8 | Saz | `strings.saz` | 100 x 25 |
+| 9 | Nyckelharpa | `strings.nyckelharpa` | 70 x 25 |
+| 10 | Cimbalom | `strings.cimbalom` | 120 x 70 |
+| 11 | Harmonium | `keys.harmonium` | 90 x 40 |
+| 12 | Arpa llanera | `strings.arpa-llanera` | 120 x 50 |
+
+List to paste:
+
+```text
+1 sarod alone, an indian fretless lute, no player (110 x 30 cm)
+2 saraswati veena alone, an indian long-necked lute with two gourds, no player (120 x 30 cm)
+3 tanpura alone, a long-necked drone lute with a large gourd, no player (130 x 40 cm)
+4 santoor alone, a trapezoid hammered dulcimer, no player (90 x 40 cm)
+5 shamisen alone, a three-string japanese lute, no player (95 x 20 cm)
+6 pipa alone, a pear-shaped chinese lute, no player (90 x 30 cm)
+7 guzheng alone, a long chinese zither on legs, no player (165 x 40 cm)
+8 saz alone, a long-necked turkish lute, no player (100 x 25 cm)
+9 nyckelharpa alone, a swedish keyed fiddle, no player (70 x 25 cm)
+10 cimbalom alone, a large hammered dulcimer on legs, no player (120 x 70 cm)
+11 indian harmonium alone, a small pump organ on legs, no player (90 x 40 cm)
+12 arpa llanera alone, a venezuelan folk harp, no player (120 x 50 cm)
+```
+
+## Sheet 55 (Gamelan and Asian ensemble)
+
+| # | Item | id (proposed) | Size (cm) |
+|---|---|---|---|
+| 1 | Gong ageng | `gamelan.gong` | 100 x 40 |
+| 2 | Saron | `gamelan.saron` | 90 x 40 |
+| 3 | Bonang | `gamelan.bonang` | 100 x 60 |
+| 4 | Kenong | `gamelan.kenong` | 60 x 60 |
+| 5 | Angklung | `gamelan.angklung` | 30 x 30 |
+| 6 | Kulintang | `gamelan.kulintang` | 120 x 40 |
+| 7 | Singing bowl | `gamelan.bowl` | 25 x 25 |
+| 8 | Temple blocks | `gamelan.temple` | 80 x 30 |
+| 9 | Tibetan long horn | `gamelan.dungchen` | 250 x 30 |
+| 10 | Dizi | `winds.dizi` | 65 x 4 |
+
+List to paste:
+
+```text
+1 large hanging gamelan gong in a carved frame (100 x 40 cm)
+2 saron, metal bars over a carved wooden resonator (90 x 40 cm)
+3 bonang, a row of small gongs on a wooden frame (100 x 60 cm)
+4 kenong, large pot gongs on a frame (60 x 60 cm)
+5 angklung, bamboo tubes shaken in a frame (30 x 30 cm)
+6 kulintang, a row of small gongs lying on a frame (120 x 40 cm)
+7 tibetan singing bowl on a cushion with a mallet (25 x 25 cm)
+8 temple blocks, a row of wooden blocks on a stand (80 x 30 cm)
+9 long tibetan horn lying on a stand (250 x 30 cm)
+10 dizi alone, a chinese bamboo flute, no player (65 x 4 cm)
+```
