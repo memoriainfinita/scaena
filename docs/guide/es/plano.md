@@ -2,13 +2,13 @@
 
 ## Poner elementos
 
-![Buscar en la biblioteca](../img/biblioteca.png)
+![Buscar en la biblioteca](img/biblioteca.png)
 
 La biblioteca tiene unos 780 elementos dibujados como iconos de línea. Búscalos (sin importar los acentos), acota con el menú **Categoría** sobre la lista y pulsa el elemento: aparece en el primer hueco libre del escenario, seleccionado. Arrástralo para colocarlo; se ajusta a la cuadrícula (**Alt** al arrastrar la desactiva). En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el plano el icono se mantiene vertical y el contorno fino que hay debajo, la huella real con su línea frontal, gira con el elemento (las luces giran con su punto de mira). Con mucho alejamiento solo se ve la huella gris. Los instrumentos de zurdo se dibujan reflejando el elemento. En el inspector puedes escribir la etiqueta, quién lo aporta (banda, sala, alquiler), notas, posición y giro.
 
 ## Seleccionar y editar varios a la vez
 
-![Todo seleccionado, con la barra de acciones](../img/seleccion.png)
+![Todo seleccionado, con la barra de acciones](img/seleccion.png)
 
 - Pulsa un elemento; **Mayús** + pulsar añade o quita. Arrastra sobre el fondo para un **recuadro de selección**; **Ctrl+A** selecciona todo.
 - La barra de arriba gira, voltea, duplica, agrupa, borra y alinea o distribuye lo seleccionado (alinear pide dos elementos, distribuir tres).
@@ -17,13 +17,13 @@ La biblioteca tiene unos 780 elementos dibujados como iconos de línea. Búscalo
 
 ## Medir y escribir en el plano
 
-![Medir entre dos puntos](../img/medir.png)
+![Medir entre dos puntos](img/medir.png)
 
 La herramienta **Medir** da la distancia entre dos puntos (en metros, o en pies si el montaje es imperial). Tras medir, **Fijar como cota** la deja en el plano como una cota en la capa Anotaciones: lee su longitud, se mueve como cualquier elemento, sale en el PDF y se deshace. La herramienta **Texto** coloca una nota y deja la etiqueta lista para escribir.
 
 ## Un plano de la sala de fondo
 
-![Fondo importado y su configuración](../img/fondo.png)
+![Fondo importado y su configuración](img/fondo.png)
 
 Con la herramienta **Fondo PDF o DXF** importas el plano de la sala. El PDF se convierte en imagen en tu navegador y el DXF se dibuja en líneas; hasta 25 MB. Luego:
 

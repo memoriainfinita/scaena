@@ -1,12 +1,12 @@
 # Empezar
 
-![Pantalla de inicio](../img/inicio.png)
+![Pantalla de inicio](img/inicio.png)
 
 ## Un montaje nuevo
 
 En la pantalla de inicio elige el que más se parezca a lo tuyo: banda de rock, jazz, cantautor, DJ, conferencia, teatro con micros de diadema o audiovisual. Cada uno viene con el plano colocado, la lista de canales con micros sugeridos y, en el caso del teatro, un plano de luces básico. Todo se puede cambiar. Si prefieres empezar de cero, **Montaje vacío**.
 
-![El editor con una banda de rock](../img/editor.png)
+![El editor con una banda de rock](img/editor.png)
 
 - A la izquierda, la **biblioteca** de elementos (instrumentos, amplis, monitores, mesas, ordenadores, luces…). Pulsa uno para ponerlo en el plano.
 - En el centro, el **plano**. Arriba, las **vistas**: Plano, Entradas, Salidas, Luces, Producción, Informes y Documento. Solo salen las que tus módulos necesitan.

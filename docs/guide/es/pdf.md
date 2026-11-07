@@ -1,6 +1,6 @@
 # El PDF del rider
 
-![La vista Documento](../img/documento.png)
+![La vista Documento](img/documento.png)
 
 En la vista **Documento** ves el PDF tal como saldrá y se actualiza solo un momento después de cada cambio. La **primera vez** descarga el compilador de PDF (unos 11 MB); queda guardado para las siguientes y funciona sin conexión.
 
@@ -24,6 +24,6 @@ El panel avisa de las palabras demasiado largas para su columna (por ejemplo, un
 
 ## Informes
 
-![Informes de luces y sonido](../img/informes.png)
+![Informes de luces y sonido](img/informes.png)
 
 La vista **Informes** muestra cada lista como tabla: hookup de canales, instrumentos, circuitos, dimmers, recuento de color, focos, etiquetas, entradas y salidas. Cada una se descarga en CSV o se copia como texto para pegarla donde quieras.
