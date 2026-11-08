@@ -15,7 +15,7 @@ test.describe('PDF rider', () => {
 
   test('the theatre rider compiles to a PDF, shows its pages and downloads @a11y', async ({ page }) => {
     await open(page, /Teatro con micros/);
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar PDF' }).click()]);
@@ -37,7 +37,7 @@ test.describe('PDF rider', () => {
     await page.getByRole('textbox', { name: 'Nombre del montaje' }).fill(name);
     await page.getByRole('textbox', { name: 'Nombre del montaje' }).press('Tab');
     await page.getByRole('button', { name: 'Documento', exact: true }).click();
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar PDF' }).click()]);
     mkdirSync('test-results', { recursive: true });
     writeFileSync('test-results/rider-cyrillic.pdf', readFileSync((await download.path())!));
@@ -45,10 +45,10 @@ test.describe('PDF rider', () => {
 
   test('the channel list can be turned and split in blocks, and the layout is kept as an own template', async ({ page }) => {
     await open(page, /Banda de rock/);
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     await page.getByLabel('Orientación de la lista de canales').selectOption({ label: 'Horizontal' });
     await page.getByLabel('Bloques de la lista de canales').selectOption('2');
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
 
     await page.getByText('Plantillas propias').click();
@@ -66,7 +66,7 @@ test.describe('PDF rider', () => {
 
   test('a logo goes on the cover, and a file that is not an image is refused', async ({ page }) => {
     await open(page, /Banda de rock/);
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
     await page.getByText('Datos del documento', { exact: true }).click();
     const input = page.getByLabel(/Logotipo de la portada/);
@@ -74,7 +74,7 @@ test.describe('PDF rider', () => {
     await expect(page.getByRole('alert').filter({ hasText: 'El logotipo debe ser' })).toBeVisible();
     await input.setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: png });
     await expect(page.getByRole('button', { name: 'Quitar logotipo' })).toBeVisible();
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
     await page.getByRole('button', { name: 'Quitar logotipo' }).click();
     await expect(page.getByRole('button', { name: 'Quitar logotipo' })).toHaveCount(0);
@@ -82,7 +82,7 @@ test.describe('PDF rider', () => {
 
   test('turning a section off recompiles with fewer pages and switches to a custom template', async ({ page }) => {
     await open(page, /Banda de rock/);
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     const before = await page.getByRole('img', { name: /^Página \d+$/ }).count();
     for (const s of ['Lista de entradas', 'Lista de salidas', 'Plano del escenario', 'Notas', 'Revisiones', 'Contactos', 'Horario']) await page.getByRole('checkbox', { name: s, exact: true }).uncheck();
     await expect(page.getByRole('combobox', { name: /^Plantilla(?! guardada)/ })).toHaveValue('custom');
@@ -95,7 +95,7 @@ test.describe('offline', () => {
 
   test('after one compile the service worker holds the compiler, so the rider compiles without a network', async ({ page, context }) => {
     await open(page, /Banda de rock/);
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
     await page.evaluate(() => navigator.serviceWorker.ready.then(() => true));
     // Reload under the service worker's control, then cut the network and change something so it recompiles.
     await page.reload();
@@ -103,7 +103,7 @@ test.describe('offline', () => {
     await context.setOffline(true);
     await page.reload();
     await page.getByRole('button', { name: 'Documento', exact: true }).click();
-    await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 60_000 });
     await context.setOffline(false);
   });
 });

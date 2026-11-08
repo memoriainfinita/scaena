@@ -70,7 +70,7 @@ test('hospitality and contract are structured forms, and the document prints the
   expect((await axe(page)).violations).toEqual([]);
 
   await page.getByRole('button', { name: 'Documento', exact: true }).click();
-  await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
   await expect(page.getByRole('checkbox', { name: 'Hospitalidad' })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: 'Contrato' })).toBeChecked();
 });

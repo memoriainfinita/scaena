@@ -115,7 +115,7 @@ test('document view', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Teatro con micros/ }).click();
   await page.getByRole('button', { name: 'Documento', exact: true }).click();
-  await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
   await page.getByRole('img', { name: 'Página 3' }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'docs/design/img/paso-11-documento.png' });
 });

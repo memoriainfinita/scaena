@@ -44,7 +44,7 @@ test('every view and each of its sections has no violations @a11y', async ({ pag
   await page.getByText('Datos del documento').click();
   await page.getByRole('button', { name: 'Añadir contacto' }).click();
   await clean(page);
-  await expect(page.getByRole('img', { name: 'Página 1' })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
   await clean(page);
 });
 

@@ -2,7 +2,7 @@
 // camera only changes the `transform` of one group, so zooming does not repaint the elements.
 import { batch, effect, signal, useComputed, useSignal, type Signal } from '@preact/signals';
 import { memo } from 'preact/compat';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
 import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
@@ -23,6 +23,7 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { stageFrame, stagePoints } from '../model/stage.ts';
 import { addStagePointAfter, deleteStagePoint, moveStagePointTo, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
+import { elementKey, linkKey, mountKey, plotTexts, SCREEN_TEXT, type PlacedText } from '../plan/labels.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -54,11 +55,14 @@ interface ElProps {
   selected: boolean;
   locked: boolean;
   dim: number;
+  /** Where its label goes, from the element's centre; undefined when it has none. Two numbers, so that `memo` holds. */
+  lx: number | undefined;
+  ly: number | undefined;
 }
 
 const BADGE: Record<Severity, string> = { error: '#b3261e', warning: '#9a5b00', tip: '#1a5fb4' };
 
-const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps) {
+const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev, lx, ly }: ElProps) {
   const it = itemById(el.type.id);
   if (!it) return null;
   const { w, d } = elementSize(el);
@@ -70,7 +74,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   const iconKey = iconKeyFor(it, rp2);
   const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
   const units = isDim ? shown.units : 'metric';
-  const { labels, outlines } = shown.view;
+  const { outlines } = shown.view;
   const name = el.label || it.name[lang.value];
   const box = elementBox(el, { w, d });
   const frame = selected ? { stroke: '#0b6e78', 'stroke-width': 3, 'stroke-dasharray': '8 5' } : { stroke: 'none' };
@@ -122,8 +126,8 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
           </text>
         </g>
       )}
-      {!isText && !isDim && el.label && labels && (
-        <text class="detail" x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
+      {lx !== undefined && ly !== undefined && (
+        <text class="detail" x={lx} y={ly} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
         </text>
       )}
@@ -236,7 +240,7 @@ function StageHandles({ show, cam }: { show: Show; cam: Signal<Camera> }) {
 }
 
 /** Mounting positions: bars and pipes as thick lines with their name, floor positions dotted. */
-function Mounts({ show }: { show: Show }) {
+function Mounts({ show, texts }: { show: Show; texts: Map<string, PlacedText> }) {
   const visible = show.layers.find((l) => l.subject === 'lights')?.visible ?? true;
   const list = Object.values(show.mounts);
   if (!visible || list.length === 0) return null;
@@ -244,11 +248,12 @@ function Mounts({ show }: { show: Show }) {
     <g aria-hidden="true" pointer-events="none">
       {list.map((m) => {
         const floor = m.kind === 'floor';
+        const at = texts.get(mountKey(m.id));
         return (
           <g key={m.id}>
             <line x1={m.from.x} y1={m.from.y} x2={m.to.x} y2={m.to.y} stroke="#555" stroke-width={floor ? 2 : 4} stroke-dasharray={floor ? '2 6' : m.kind === 'truss' ? '12 4' : undefined} vector-effect="non-scaling-stroke" />
-            {(
-              <text class="detail" x={Math.min(m.from.x, m.to.x) - 60} y={(m.from.y + m.to.y) / 2 + 55} text-anchor="end" font-size="170" fill="#444" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+            {at && (
+              <text class="detail" x={at.x} y={at.y} text-anchor="middle" font-size="170" fill="#444" stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                 {m.name}
               </text>
             )}
@@ -267,7 +272,7 @@ const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = {
 };
 
 /** Cables between elements: the colour is always backed by a different dash and the connector name. */
-function Connections({ show, hidden }: { show: Show; hidden: Set<string> }) {
+function Connections({ show, hidden, texts }: { show: Show; hidden: Set<string>; texts: Map<string, PlacedText> }) {
   const layers = new Map(show.layers.map((l) => [l.id, l]));
   const shown = (id: string) => {
     const el = show.elements[id];
@@ -281,11 +286,12 @@ function Connections({ show, hidden }: { show: Show; hidden: Set<string> }) {
           const a = show.elements[c.from]!;
           const b = show.elements[c.to]!;
           const st = LINK_STYLE[c.signal];
+          const at = texts.get(linkKey(c.id));
           return (
             <g key={c.id}>
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={st.stroke} stroke-width="2" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
-              {c.connector && (
-                <text class="detail" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 60} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
+              {c.connector && at && (
+                <text class="detail" x={at.x} y={at.y} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                   {c.connector}
                 </text>
               )}
@@ -906,12 +912,14 @@ export function PlanView({ show }: { show: Show }) {
   const elementSev = new Map<string, Severity>();
   for (const i of issues.value) if (i.ref.kind === 'element' && !elementSev.has(i.ref.id)) elementSev.set(i.ref.id, i.severity);
   const dragSet = dragIds.value ? new Set(dragIds.value) : null;
+  const texts = useMemo(() => plotTexts(show, { sizes: SCREEN_TEXT, bounds: planBox(show), lang: lang.value, mounts: show.layers.find((l) => l.subject === 'lights')?.visible ?? true }), [show, lang.value]);
   const rows = Object.values(show.elements)
     .filter((e) => layers.get(e.layerId)?.visible)
     .sort((a, b) => (layerIndex.get(a.layerId) ?? 0) - (layerIndex.get(b.layerId) ?? 0));
   const mk = (e: PlanElement) => {
     const l = layers.get(e.layerId)!;
-    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} />;
+    const at = texts.get(elementKey(e.id));
+    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={at && at.x - e.x} ly={at && at.y - e.y} />;
   };
   lod.current = rows.length > LOD_MIN;
   const iconKeys = [...new Set(rows.map((e) => iconKeyOf(e.type.id)).filter((k): k is string => !!k))].join(',');
@@ -961,8 +969,8 @@ export function PlanView({ show }: { show: Show }) {
         <g transform={camT}>
           <Stage show={show} />
           <BackgroundImage show={show} />
-          <Mounts show={show} />
-          {show.view.links && <Connections show={show} hidden={dragSet ?? new Set()} />}
+          <Mounts show={show} texts={texts} />
+          {show.view.links && <Connections show={show} hidden={dragSet ?? new Set()} texts={texts} />}
           <g>{resting}</g>
           <g class="moving" transform={dragT}>
             {moving}

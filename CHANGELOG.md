@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- **Plot:** free-form stage with draggable points, proscenium, reference lines and permanent dimensions; venue background moved with the mouse; plot export to DXF; view toggles for labels, outlines and connection lines; resizable library and inspector panels; elements resized from the inspector; "swap for another of the same kind".
-- **Library:** 775 line-art symbols, one SVG per item in `symbols/<category>/`, with a category filter; own layers and own items (SVG cleaned by a closed list); 653 fixtures from the Open Fixture Library with their DMX modes; dragging from the library to the plot; placing an element with suggested channels creates them; typical power for everything that plugs in.
+- **Plot:** labels, mount names and connector texts place themselves so they do not collide, on screen and in the PDF; free-form stage with draggable points, proscenium, reference lines and permanent dimensions; venue background moved with the mouse; plot export to DXF; view toggles for labels, outlines and connection lines; resizable library and inspector panels; elements resized from the inspector; "swap for another of the same kind".
+- **Library:** 775 line-art symbols, one SVG per item in `symbols/<category>/`, with a category filter; own layers and own items (SVG cleaned by a closed list); 653 fixtures from the Open Fixture Library with their DMX modes; dragging from the library to the plot; placing an element with suggested channels creates them; typical power for everything that plugs in; datasheet sizes with their source for the most-used items.
 - **Sound:** the patch comes from the cables (input port and lines on each audio cable; what is typed wins and a difference is flagged); Patch and Position columns, cables in the input and instrument lists, number wedges.
 - **Lights:** DMX mode and channels per fixture, overlaps found by range, consecutive addressing, DMX and IP address reports and a document section; aim by dragging with the beam wedge, work notes, equipment count, summary sheet, bar plan, magic sheet with its own layout, rack builder.
 - **Production:** schedule counted back from the curfew.
