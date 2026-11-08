@@ -138,3 +138,15 @@ No single datasheet can give these, because they are arrangements of several thi
 ## Not looked up
 
 People (`vocals.*`, `person.*`) and rooms (`room.*`) keep their sizes on purpose. Still with category estimates, and often a placeholder height: small percussion and world instruments, most microphones, pedals and outboard units, effects, video, control, network, power, rigging, scenery, site and safety items, and the remaining lights and keys.
+
+## Third pass: items the example packages use that have a real product behind them
+
+| Item | Size now | Reference product | Source |
+|---|---|---|---|
+| `control.lightdesk` | 744 × 362 × 107 | ETC Ion Xe 20 | https://www.tsllighting.com/wp-content/uploads/2023/02/IonXe20_Datasheet_RevD.pdf |
+| `control.videomixer` | 356 × 221 × 96 | Roland V-60HD | https://www.rentex.com/wp-content/uploads/2018/05/Roland-V-60HD-Spec-Sheet-from-Rentex-3.pdf |
+| `video.projector` | 545 × 436 × 189 | Epson EB-PU1007 | https://www.epson.co.nz/products/projector/EB-PU1007WNL_Specs.asp |
+| `effect.haze` | 515 × 375 × 355 | Antari HZ-500, in its flight case | https://antari.com/products/hz-500 |
+
+The other items those packages use without a size are people, furniture, curtains or notes, which have no datasheet to read.
+

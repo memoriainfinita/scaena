@@ -38,9 +38,9 @@ Fecha: 2026-11-02. Datos de hojas y páginas de fabricante leídas en esta sesi�
 
 | Modelo | Datos | Fuente |
 |---|---|---|
-| Behringer X32 | 32 preamplis, 25 faders motorizados, 120 W; [PENDIENTE: peso y medidas] | https://www.behringer.com/en/products/0603-ACE |
-| Midas M32 | 40 canales de entrada, 32 preamplis, 25 buses; [PENDIENTE: peso y medidas] | https://www.midasconsoles.com/en/products/0603-ADX |
-| Midas DL16 | 16 entradas, 8 salidas, 2U, AES50; [PENDIENTE: peso y medidas] | https://www.midasconsoles.com/en/products/0606-ACJ |
+| Behringer X32 | 32 preamplis, 25 faders motorizados, 120 W; 900 × 528 × 200 mm, 20,6 kg, de distribuidor (el fabricante no los da en su página) | https://global.channelonline.com/acme/ccs/Products/overview/M025221227 |
+| Midas M32 | 40 canales de entrada, 32 preamplis, 25 buses; 891 × 612 × 256 mm, 25 kg, de distribuidor | https://www.procom-me.com/products/midas-m32-live-digital-console-for-live-and-studio |
+| Midas DL16 | 16 entradas, 8 salidas, 2U, AES50; 482 × 225 × 89 mm, 4,7 kg, de tienda | https://www.bhphotovideo.com/c/product/1823218-REG/midas_dl16_16_input_8_output_stage_box_with.html/overview |
 | Midas DL32 | 32 entradas, 16 salidas, 3U, AES50; 483 × 242 × 138 mm, 5,7 kg (guía rápida en japonés) | https://cdn.mediavalet.com/aunsw/musictribe/I2S29IMZHUa0yyJi8oqqEQ/oeq7RxOvc0uXAz8JkXayZA/Original/QSG_MI_0606-ACR_DL32_JP.pdf |
 | Yamaha DM3 | 16 entradas mic/línea, 8 salidas XLR, 320 × 140 × 455 mm, 6,5 kg | https://usa.yamaha.com/products/proaudio/mixers/dm3/specs.html |
 | Yamaha QL1 | 468 × 272 × 562 mm, 14,7 kg; descatalogada | https://usa.yamaha.com/products/proaudio/mixers/ql_series/specs.html |
@@ -83,4 +83,4 @@ Origen de los nombres: `software-apoyo-tecnicos-teatro.md`. Cifras leídas el 20
 - [PENDIENTE: AKG C451 y Sennheiser MD421 no aparecieron en la búsqueda]
 - [PENDIENTE: cuñas, PA, amplis de guitarra y bajo, baterías]
 - Discrepancias a resolver: SM81 (rango de fantasma), e 835 (peso) y EM 2 (fondo 189 o 206 mm)
-- [PENDIENTE: peso y medidas de X32, M32 y DL16; las páginas de producto no los dan y la guía rápida del DL16 y del M32 no apareció. Un artículo de la base de conocimiento de Music Tribe da 215 × 625 × 510 mm y 15,4 kg para el X32 completo, de hace unos diez años, no se pudo abrir y no se usa]
+- Peso y medidas de X32, M32 y DL16 (2026-11-08): de distribuidores y tiendas, porque Music Tribe no los publica en sus páginas de producto. Los 215 × 625 × 510 mm y 15,4 kg que un artículo suyo daba para el X32 completo son los del X32 Compact (manual en https://www.manualslib.com/manual/722557/Behringer-X32.html?page=25).
