@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { safeParseShow } from '../model/schema.ts';
 import { showFromPackage } from './apply.ts';
-import { CATEGORY_ORDER, ITEMS, itemById, searchItems } from './items.ts';
+import { CATEGORY_ORDER, ITEMS, TYPICAL_POWER_W, itemById, searchItems } from './items.ts';
 import { AUDIO, FIXTURES, needsPhantom } from './models.ts';
 import { PACKAGES, packageById } from './packages.ts';
 import { CONNECTORS, REGIONS, regionByCode } from './regions.ts';
@@ -186,5 +186,14 @@ describe('packages', () => {
     const first = r.findIndex((i) => !i.name.en.toLowerCase().startsWith('guitar'));
     const last = r.findLastIndex((i) => i.name.en.toLowerCase().startsWith('guitar'));
     expect(last).toBeLessThan(first === -1 ? r.length : first);
+  });
+});
+
+describe('typical power', () => {
+  test('every id in the table is an item, and mains equipment has a value while passive things have none', () => {
+    const ids = new Set(ITEMS.map((i) => i.id));
+    expect(Object.keys(TYPICAL_POWER_W).filter((k) => !ids.has(k))).toEqual([]);
+    expect(itemById('rack.power-amp')?.powerW).toBe(1200);
+    for (const id of ['mic.dynamic', 'amp.cab-4x10', 'keys.baby-grand', 'video.screen']) expect(itemById(id)?.powerW).toBeNull();
   });
 });

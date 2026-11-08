@@ -266,3 +266,21 @@ test('names, outlines and connection lines can be hidden from the bottom bar, an
   await legend.uncheck();
   await expect(legend).not.toBeChecked();
 });
+
+test('the library has many PA variations, and an element can be resized and put back to its library size', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('subgrave');
+  expect(await page.getByRole('button', { name: /^Añadir .*[Ss]ubgrave/ }).count()).toBeGreaterThanOrEqual(4);
+  await page.getByRole('button', { name: 'Añadir Subgrave doble de 18 pulgadas al plano' }).click();
+  const width = page.getByLabel('Ancho (m)', { exact: true });
+  const depth = page.getByLabel('Fondo (m)', { exact: true });
+  await expect(width).toHaveValue('1.2');
+  await expect(depth).toHaveValue('0.8');
+  await width.fill('1.5');
+  await width.press('Tab');
+  await expect(width).toHaveValue('1.5');
+  await page.getByRole('button', { name: 'Tamaño de la biblioteca' }).click();
+  await expect(width).toHaveValue('1.2');
+  await expect(page.getByRole('button', { name: 'Tamaño de la biblioteca' })).toHaveCount(0);
+});

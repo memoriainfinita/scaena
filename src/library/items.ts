@@ -87,7 +87,7 @@ const LIGHT_DEFS: Def[] = [
 ];
 
 /** Typical draw in watts of the equipment that needs mains, as a starting point the user edits. Items not listed here have none. */
-const TYPICAL_POWER_W: Record<string, number> = {
+export const TYPICAL_POWER_W: Record<string, number> = {
   'amp.guitar': 150, 'amp.bass': 400, 'amp.stack': 300, 'keys.keyboard': 40, 'keys.synth': 50, 'keys.stage-piano': 60, 'keys.organ': 200,
   'pa.line': 600, 'pa.sub': 1000, 'pa.top': 600, 'pa.front-fill': 300, 'pa.delay': 600,
   'monitor.wedge': 300, 'monitor.iem': 5, 'monitor.sidefill': 600, 'monitor.drumfill': 600,
@@ -96,6 +96,19 @@ const TYPICAL_POWER_W: Record<string, number> = {
   'control.laptop': 65, 'control.lightdesk': 100, 'control.videomixer': 60, 'control.tablet': 15, 'control.server': 300,
   'video.projector': 400, 'video.led-wall': 1500, 'video.tv': 150, 'video.camera': 30,
   'effect.haze': 400, 'effect.smoke': 1000, 'effect.strobe': 1000, 'effect.laser': 300, 'effect.mirror-ball': 20, 'effect.co2': 50,
+  // Rest of the library. Passive things (microphones, cabinets, acoustic pianos, screens, cable reels, machinery without a motor) have none.
+  'effect.smoke-2': 1000, 'effect.bubble': 100, 'effect.confetti': 50, 'effect.snow': 400, 'effect.flame': 300, 'effect.fan': 500, 'effect.coldspark': 600, 'effect.lowfog': 1500, 'effect.streamer': 50,
+  'control.phone': 10, 'control.pad': 10, 'control.looper': 20, 'control.slides': 65, 'control.sm-desk': 60, 'control.lx-large': 200, 'control.lx-wing': 50, 'control.dmx': 20, 'comms.beltpack': 3, 'comms.station': 30, 'comms.cue-light': 10,
+  'amp.leslie': 100, 'amp.head': 150, 'amp.stack-2': 300, 'amp.bass-stack': 600, 'amp.bass-head': 400, 'amp.acoustic': 100, 'amp.keyboard': 150, 'amp.practice': 50, 'amp.vintage': 100,
+  'pa.compact-10': 200, 'pa.top-12': 300, 'pa.column': 400, 'pa.line-ground': 2400, 'pa.cluster': 1200, 'pa.sub-dual': 1800, 'pa.sub-flown': 1000, 'pa.sub-stack': 3000, 'pa.lip-fill': 150, 'pa.infill': 200, 'pa.balcony': 100, 'pa.horn': 200, 'pa.surround': 150,
+  'pa.tripod': 300, 'pa.top-15': 400, 'pa.sub-cardioid': 1000, 'pa.array-hang': 1200, 'pa.array-hung': 1200, 'pa.outfill': 600, 'pa.pole': 300, 'monitor.coax': 300, 'monitor.wedge-15': 300,
+  'rack.wireless-receiver': 20, 'rack.iem-tx': 30, 'rack.personal-mixer': 20, 'rack.headphone-amp': 40, 'rack.antenna-combiner': 15, 'rack.click': 10, 'rack.interface': 30, 'rack.preamp': 40, 'rack.power-conditioner': 20, 'rack.splitter': 20, 'rack.recorder': 60,
+  'rack.compressor': 30, 'rack.geq': 20, 'rack.fx-unit': 40, 'rack.speaker-proc': 40, 'rack.power-amp': 1200, 'rack.cue-box': 10, 'rack.timecode': 15, 'rack.harmoniser': 30,
+  'net.wifi-ap': 15, 'net.router': 15, 'net.hotspot': 10, 'net.poe': 100, 'net.fibre': 10, 'net.dante': 15, 'net.dmx-splitter': 10, 'net.artnet': 10,
+  'keys.epiano': 60, 'keys.hammond': 200, 'keys.organ-console': 200, 'keys.midi': 10, 'synth.modular': 50, 'synth.drum-machine': 15, 'synth.groovebox': 15, 'synth.vocoder': 30, 'synth.desktop': 20, 'synth.sequencer': 15,
+  'dj.cdj': 40, 'dj.mixer': 30, 'desk.portable': 40, 'desk.powered': 150,
+  'video.proj-ceiling': 400, 'video.proj-stand': 400, 'video.proj-large': 1500, 'video.proj-short': 300, 'video.led-proc': 100, 'video.led-curve': 1500, 'video.ptz': 40, 'video.teleprompter': 80, 'video.confidence': 100, 'video.stream-pc': 300, 'video.capture': 20, 'video.cart': 200, 'video.wireless': 15, 'video.tally': 5,
+  'mach.winch': 1500, 'mach.revolve': 2200, 'mach.elevator': 3000, 'mach.trap': 750, 'mach.hoist-ctrl': 100,
 };
 
 export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...ICON_DEFS].map((x) => ({

@@ -11,7 +11,7 @@ import { fixtureById } from '../library/models.ts';
 import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
 import { planSvg } from './plan-svg.ts';
-import { buildReport } from '../reports/reports.ts';
+import { buildReport, cableText } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
 import { docStrings, prodStrings, type DocStrings } from './strings.ts';
@@ -177,7 +177,7 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const rows = list.map((ch) => {
         const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
         const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
-        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, ch.patch, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : ''];
+        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, ch.patch, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
       });
       const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
       const cfg = show.document.inputs;
@@ -185,7 +185,10 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const blocks = cfg.blocks === 'auto' ? autoBlocks(list.length, cfg.landscape) : cfg.blocks;
       let body: string;
       if (blocks === 1) {
-        body = c.table(D.inputs, [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }], [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position], rows, widthMm) + `\n${txt(D.positionLegend)}\n`;
+        // The cable column appears only when some channel has a cable to show.
+        const withCables = rows.some((r) => r[9]);
+        const cols = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }, ...(withCables ? [{ fr: 1.5 }] : [])];
+        body = c.table(D.inputs, cols, [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, ...(withCables ? [D.cables] : [])], withCables ? rows : rows.map((r) => r.slice(0, 9)), widthMm) + `\n${txt(D.positionLegend)}\n`;
       } else {
         // Several blocks side by side: the compact table (channel, name, mic, patch, 48 V), consecutive channels in each.
         const gutter = 5;
@@ -225,9 +228,10 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
         .map((e) => {
           const l = e.luminaire!;
           const fm = l.modelId ? fixtureById(l.modelId) : undefined;
-          return [num(l.unit), elName(e, show.lang), fm ? `${fm.brand} ${fm.model}` : '', (l.mountId && show.mounts[l.mountId]?.name) || '', num(l.channel), num(l.dimmer), num(l.circuit), l.color, numNZ(e.powerW)];
+          return [num(l.unit), elName(e, show.lang), fm ? `${fm.brand} ${fm.model}` : '', (l.mountId && show.mounts[l.mountId]?.name) || '', num(l.channel), num(l.dimmer), num(l.circuit), l.color, numNZ(e.powerW), cableText(show, e.id, ['lightControl', 'network'], show.lang)];
         });
-      let md = heading(D.lights) + c.table(D.lights, [{ mm: 15 }, { fr: 1.1 }, { fr: 1.4 }, { fr: 1 }, { mm: 15 }, { mm: 17 }, { mm: 18 }, { fr: 0.8 }, { mm: 19 }], [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.color, D.power], rows);
+      const lightCables = rows.some((r) => r[9]);
+      let md = heading(D.lights) + c.table(D.lights, [{ mm: 15 }, { fr: 1 }, { fr: 1.2 }, { fr: 1.3 }, { mm: 15 }, { mm: 17 }, { mm: 18 }, { fr: 0.8 }, { mm: 19 }, ...(lightCables ? [{ fr: 1.1 }] : [])], [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.color, D.power, ...(lightCables ? [D.cables] : [])], lightCables ? rows : rows.map((r) => r.slice(0, 9)));
       const stats = mountStats(show);
       if (stats.length > 0) {
         md += `\n== ${txt(D.count)}\n` + c.table(D.count, [{ fr: 1.4 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.mount, D.kind, D.height, D.element, D.weight, D.power], stats.map((st) => {

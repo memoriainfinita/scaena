@@ -94,6 +94,15 @@ describe('Typst source', () => {
     expect(over[0]!.text).toContain('https://example.org');
   });
 
+
+  test('the channel and instrument tables get a cable column only when there is a cable to show', () => {
+    const show = rock();
+    const withCables = buildDocument(show).source;
+    expect(withCables).toContain('→');
+    const bare: Show = { ...show, connections: {} };
+    expect(buildDocument(bare).source).not.toContain('→');
+  });
+
   test('a print scale the plan cannot fit is reported and the used scale is smaller', () => {
     const show: Show = { ...rock(), document: { ...rock().document, planScale: 5 } };
     const b = buildDocument(show);

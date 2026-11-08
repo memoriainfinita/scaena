@@ -41,6 +41,10 @@ En **Ajustes del montaje → Escenario**: ancho y fondo, un **ancho de proscenio
 
 Rueda del ratón para acercar, **Espacio** + arrastrar (o la herramienta Mano) para desplazar, **0** para encajar el plano. En el móvil: dos dedos. Ver [Atajos](atajos.md).
 
+## Tamaño de los símbolos
+
+Cada símbolo se dibuja al tamaño real aproximado de la pieza, en milímetros y a la misma escala que el escenario (un sub de 600 × 700 mm mide 0,6 × 0,7 m en un escenario medido en metros). Son tamaños típicos, no los de un modelo concreto. En el inspector, **Ancho** y **Fondo** (en metros) cambian el tamaño del elemento seleccionado y **Tamaño de la biblioteca** lo devuelve a su medida; el símbolo se estira para ajustarse, así que un rack que aporta la sala puede dibujarse con su medida exacta.
+
 ## Capas propias
 
 Bajo la lista de capas, escribe un nombre y pulsa **Añadir capa** para crear una capa tuya (hasta 20). Pulsa una capa (su cuadrado, o su asa si es tuya) para resaltarla: los elementos nuevos de la biblioteca irán a ella; púlsala otra vez para volver a la capa propia de cada uno; para mover elementos que ya están en el plano, selecciónalos y cambia **Capa** en el inspector. Se puede renombrar, reordenar arrastrando su asa (o con las flechas arriba y abajo cuando tiene el foco; la que está más abajo en la lista se dibuja encima) y quitar; al quitarla, sus elementos vuelven a la capa de su tipo. Para pasar un elemento a una capa, elígela en el campo **Capa** del inspector.

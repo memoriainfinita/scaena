@@ -18,6 +18,7 @@ import { ReportsView } from './Reports.tsx';
 import { RackPanel } from './Rack.tsx';
 import { isLevel, levelHeight } from '../model/levels.ts';
 import { stagePosition } from '../model/position.ts';
+import { elementSize } from '../plan/geometry.ts';
 import { RACK_ITEM } from '../model/racks.ts';
 import { LightsView, LuminairePanel, NumCell } from './Lights.tsx';
 import { Ico, LIBRARY_DRAG, PlanView } from './PlanView.tsx';
@@ -340,6 +341,13 @@ function Inspector({ show }: { show: Show }) {
               <span class="muted mono" style="align-self:end">
                 {t('inspector.zone', { code: stagePosition(show, el) })}
               </span>
+              <NumberField label={t('inspector.width')} value={elementSize(el).w / 1000} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { width: Math.round(v * 1000) })} />
+              <NumberField label={t('inspector.depth')} value={elementSize(el).d / 1000} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { depth: Math.round(v * 1000) })} />
+              {(el.width !== null || el.depth !== null) && (
+                <button type="button" class="btn" style="align-self:end" onClick={() => setElementField(el.id, { width: null, depth: null })}>
+                  {t('inspector.sizeReset')}
+                </button>
+              )}
               {isLevel(el) &&<NumberField label={t('inspector.height')} value={levelHeight(el) / 1000} step={0.1} onCommit={(v) => setElementField(el.id, { height: Math.max(0, Math.round(v * 1000)) })} />}
             </div>
           </div>
