@@ -27,6 +27,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - A medias: 78 de los 780 elementos tienen medidas de ficha técnica con su URL (63 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
 - Lista de canales en modo automático: elige 1 a 4 bloques estimando la altura de cada fila según cómo se parte su texto en cada columna (medido en el PDF el 2026-11-08: fila de 5,5 mm y 4,4 mm por línea de más), no por número de filas; comprobado con PDF reales de 21 a 40 canales en vertical y horizontal
 - DXF con 1000 elementos con icono: 66 ms y 754 KB (2026-11-08)
+- Chrome conserva el `.wasm` de Typst entre visitas en el sitio publicado: lo sirve el service worker (comprobado 2026-11-08)
 
 ## Patterns
 
@@ -91,7 +92,7 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 - [ ] Medidas de ficha técnica para el resto de la biblioteca
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
-- [ ] Sin comprobar todavía: Chrome conservando el `.wasm` entre visitas con el sitio real, un DXF real con muchos bloques, un PDF con imágenes incrustadas o escaneado, `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
+- [ ] Sin comprobar todavía: un DXF real de una sala con muchos bloques y un PDF real escaneado (con archivos generados pasa: DXF de tres niveles de bloques en 0,4 s, PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
 - [ ] Glosario: confirmar con una fuente la lista de siglas de posición y contrastar con un diccionario técnico de teatro (`docs/research/glosario-escena.md`)
 - [ ] Peso y medidas de X32, M32 y DL16 (`docs/research/audio-modelos.md`)
 - [ ] Ideas anotadas y no hechas: reglas del flujo de señal más allá de `connectionMismatch`, rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función
