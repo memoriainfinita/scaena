@@ -60,7 +60,7 @@ export const AUDIO: AudioModel[] = [
   { id: 'shure.psm300', brand: 'Shure', model: 'PSM 300', kind: 'iem', weightKg: 0.783, source: 'https://content-files.shure.com/Pubs/PSM300/PSM300_Spec_Sheet.pdf', note: 'Emisor; petaca P3R 98 g sin pilas' },
   { id: 'shure.psm900', brand: 'Shure', model: 'PSM 900', kind: 'iem', weightKg: 0.85, source: 'https://content-files.shure.com/Pubs/psm900/psm900-datasheet.pdf', note: 'Emisor' },
   { id: 'behringer.x32', brand: 'Behringer', model: 'X32', kind: 'console', weightKg: null, inputs: 32, source: 'https://www.behringer.com/en/products/0603-ACE', note: 'Peso y medidas sin dato' },
-  { id: 'midas.m32', brand: 'Midas', model: 'M32', kind: 'console', weightKg: null, inputs: 40, source: 'https://www.midasconsoles.com/en/products/0603-ADX', note: 'Peso y medidas sin dato' },
+  { id: 'midas.m32', brand: 'Midas', model: 'M32', kind: 'console', weightKg: null, inputs: 32, source: 'https://www.midasconsoles.com/en/products/0603-ADX', note: '32 preamplis, 40 canales de entrada; peso y medidas sin dato' },
   { id: 'midas.dl16', brand: 'Midas', model: 'DL16', kind: 'stagebox', weightKg: null, inputs: 16, source: 'https://www.midasconsoles.com/en/products/0606-ACJ', note: '16 entradas, 8 salidas; peso y medidas sin dato' },
   { id: 'midas.dl32', brand: 'Midas', model: 'DL32', kind: 'stagebox', weightKg: 5.7, inputs: 32, source: 'https://cdn.mediavalet.com/aunsw/musictribe/I2S29IMZHUa0yyJi8oqqEQ/oeq7RxOvc0uXAz8JkXayZA/Original/QSG_MI_0606-ACR_DL32_JP.pdf', note: '483 × 242 × 138 mm; 32 entradas, 16 salidas' },
   { id: 'yamaha.dm3', brand: 'Yamaha', model: 'DM3', kind: 'console', weightKg: 6.5, inputs: 16, source: 'https://usa.yamaha.com/products/proaudio/mixers/dm3/specs.html', note: '320 × 140 × 455 mm' },

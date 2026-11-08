@@ -49,9 +49,9 @@ Retiradas el 2026-11-02 (aceptado por el usuario):
 ## Pendientes
 
 - Gravedades aceptadas por el usuario el 2026-11-02 ("ok" a la propuesta, con las dos retiradas arriba)
-- [PENDIENTE: reglas del flujo de señal (conexión sin destino, tipos de señal incompatibles)]
-- [PENDIENTE: cómo se silencia un aviso concreto en un montaje]
+- Reglas del flujo de señal: `connectionMismatch` (grupo C, `grupo-c-2026-11-06.md`)
+- Silenciar un aviso concreto: lista `muted` del montaje (grupo C)
 
 ## Después de construirlo
 
-Implementados el 2026-11-05 en `src/validate/rules.ts`: 18 reglas, cada una con su prueba (el detalle de cada una, las interpretaciones que conviene confirmar y lo que quedó fuera está en `paso-9-diseno-2026-11-05.md`). «Texto que no cabe» se resolvió como aviso de palabras demasiado largas en el panel del documento (paso 11). Se añadió una regla, `timeFormat` (hora mal escrita), en el paso 13. Siguen abiertos silenciar un aviso y las reglas del flujo de señal.
+Implementados el 2026-11-05 en `src/validate/rules.ts`: 18 reglas, cada una con su prueba (el detalle de cada una, las interpretaciones que conviene confirmar y lo que quedó fuera está en `paso-9-diseno-2026-11-05.md`). «Texto que no cabe» se resolvió como aviso de palabras demasiado largas en el panel del documento (paso 11). Se añadió una regla, `timeFormat` (hora mal escrita), en el paso 13. El grupo C (2026-11-06) añadió `duplicatePatch`, `connectionMismatch`, `cableTooLong` e `ipDuplicate` y el silenciado de avisos. En total, 23 reglas en `src/validate/rules.ts`.

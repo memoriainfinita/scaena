@@ -2,7 +2,7 @@
 
 The icons of the library are asked from GPT in sheets of 12 (4 columns x 3 rows), always with the same **style block** pasted first so every sheet looks alike. A sheet is cut, traced to SVG and matched back to the library items by its order. Style decided 2026-11-07 after a style test (solid black with bold white detail, front or three-quarter view). See "Styles that worked" below for the three styles in use and what failed.
 
-Left as drawn, not asked from GPT: the 15 luminaires (RP-2 convention) and the 3 power items. Text note and Dimension are not objects. Drawn in the style test and accepted: 5-piece drum kit, Guitar amp, Keyboard, Vocal mic with stand, PA speaker, Mixing desk, Rack, Stage box, Riser, Subwoofer, PA line array.
+Left as drawn, not asked from GPT: the 15 luminaires (RP-2 convention) and the 3 power items. (Later superseded for the luminaires: the RP-2 outlines did not read and the lights were asked from GPT seen from the side, see Sheet 14.) Text note and Dimension are not objects. Drawn in the style test and accepted: 5-piece drum kit, Guitar amp, Keyboard, Vocal mic with stand, PA speaker, Mixing desk, Rack, Stage box, Riser, Subwoofer, PA line array.
 
 ## Styles that worked (read this before asking for more)
 

@@ -69,7 +69,7 @@ export interface AudioModel {
   micType?: 'dynamic' | 'condenser';
   pattern?: string;
   weightKg: number | null;
-  /** Channels or inputs, for consoles and stageboxes. */
+  /** Physical mic/line inputs (preamps), for consoles and stageboxes; not the number of mixing channels. */
   inputs?: number;
   source?: string;
   note?: string;

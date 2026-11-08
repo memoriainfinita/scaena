@@ -20,7 +20,7 @@ Estado: lista de contenido propuesta el 2026-10-29. El usuario decidió las dos 
 - Luminarias: símbolos genéricos según la convención de RP-2; no se usan símbolos de fabricantes
 - Sin logos de marcas; el nombre comercial de un equipo puede aparecer como texto
 - Ningún SVG se entrega sin rasterizarlo y mirarlo; herramientas en `4_scratch\svg-lab`
-- [PENDIENTE: leer las láminas de símbolos de RP-2; el PDF no se pudo renderizar en esta sesión]
+- Láminas de RP-2: resuelto en `docs/research/simbolos-rp2-audio.md` (sin licencia de reproducción; se dibuja de cero siguiendo la convención)
 
 ## Datos de luminarias
 
@@ -30,7 +30,7 @@ Estado: lista de contenido propuesta el 2026-10-29. El usuario decidió las dos 
 - Cada equipo concreto se asocia a un símbolo genérico por categoría y lente
 - El usuario puede crear luminarias propias con peso, potencia y tamaño
 - La OFL se centra en equipos DMX y LED; los convencionales de teatro pueden estar poco representados
-- [PENDIENTE: medir el peso total de la OFL]
+- Peso de la OFL: medido en `docs/research/ofl.md` (el subconjunto usado pesa 25 KB en brotli)
 
 ## Audio
 
@@ -38,7 +38,7 @@ Estado: lista de contenido propuesta el 2026-10-29. El usuario decidió las dos 
 - Catálogo propio de tipos genéricos: dinámico, condensador, DI y similares
 - Marca y modelo como texto libre
 - Lista corta de modelos habituales escrita por nosotros
-- [PENDIENTE: contenido de esa lista]
+- Contenido de la lista: `docs/research/audio-modelos.md`
 
 ## Elementos propios del usuario
 
@@ -51,7 +51,7 @@ Estado: lista de contenido propuesta el 2026-10-29. El usuario decidió las dos 
 - Un paquete es un conjunto de plantillas y una selección de elementos
 - Ejemplos: banda de rock, jazz, DJ, conferencia, teatro con micros de diadema
 - Datos del repositorio, abiertos y sin pago
-- [PENDIENTE: lista definitiva de paquetes]
+- Lista definitiva: `docs/design/paquetes-2026-11-02.md` (7 paquetes)
 
 ## Versionado
 
