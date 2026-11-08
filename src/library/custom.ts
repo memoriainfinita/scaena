@@ -5,6 +5,8 @@ import type { LibraryItem } from './types.ts';
 
 export const CUSTOM_ITEM_PREFIX = 'custom.';
 export const CUSTOM_SYMBOL_PREFIX = 'custom:';
+/** Opens the markup of an element the user drew and says how much it is scaled, so that print can give its strokes the right width. */
+export const CUSTOM_DRAWING = /^<!--custom:([\d.]+)-->/;
 
 type Source = () => Record<string, CustomItem>;
 let source: Source = () => ({});
@@ -61,5 +63,6 @@ export function customSymbolBody(key: string, w: number, d: number): string | un
   const c = source()[key.slice(CUSTOM_SYMBOL_PREFIX.length)];
   if (!c) return undefined;
   const [x, y, vw, vh] = c.viewBox;
-  return `<g transform="scale(${Math.round((w / vw) * 100000) / 100000} ${Math.round((d / vh) * 100000) / 100000}) translate(${-x} ${-y})">${c.markup}</g>`;
+  const scale = Math.round(Math.sqrt((w / vw) * (d / vh)) * 100000) / 100000;
+  return `<!--custom:${scale}--><g transform="scale(${Math.round((w / vw) * 100000) / 100000} ${Math.round((d / vh) * 100000) / 100000}) translate(${-x} ${-y})">${c.markup}</g>`;
 }

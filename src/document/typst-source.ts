@@ -220,10 +220,16 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       if (!plan.fits) c.warnings.push({ kind: 'scale', text: `1:${show.document.planScale} → 1:${plan.scaleN}` });
       files['/plan.svg'] = new TextEncoder().encode(plan.svg);
       const alt = `${D.plan}: ${elements.length}`;
+      if (plan.legend) files['/legend.svg'] = new TextEncoder().encode(plan.legend.svg);
+      const legendPage = plan.legend ? `#page(flipped: ${flipped})[
+== ${txt(D.legend)}
+#align(center)[#image("/legend.svg", width: ${(plan.legend.widthMm * Math.min(1, availH / plan.legend.heightMm)).toFixed(2)}mm, alt: ${lit(D.legend)})]
+]
+` : '';
       parts.push(`#page(flipped: ${flipped})[
 ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFixed(2)}mm, alt: ${lit(alt)})]
 ]
-`);
+${legendPage}`);
     } else if (s === 'inputs') {
       const list = channelList(show);
       const rows = list.map((ch) => {

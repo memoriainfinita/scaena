@@ -378,7 +378,7 @@ function Inspector({ show }: { show: Show }) {
               </div>
             </div>
           )}
-          {el.type.id === RACK_ITEM && <RackPanel el={el} />}
+          {(el.type.id === RACK_ITEM || el.rack) && <RackPanel el={el} />}
           {el.computer && <ComputerPanel el={el} c={el.computer} />}
           {el.luminaire && <LuminairePanel el={el} show={show} />}
           <ConnectionsPanel show={show} el={el} />

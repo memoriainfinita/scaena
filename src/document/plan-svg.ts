@@ -1,7 +1,7 @@
 // The plan as a standalone SVG string, for the PDF. Sizes that must look right on paper (strokes, text, the legend, the
 // scale bar) are given in millimetres of paper and converted to plan units with the print scale `k` (paper mm per plan mm).
 import type { Lang } from '../i18n/index.ts';
-import { withCustomItems } from '../library/custom.ts';
+import { CUSTOM_DRAWING, withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import { footprintBody, iconData, iconDefs, iconUse } from '../library/icons.ts';
@@ -29,6 +29,8 @@ export interface PlanSvg {
   /** The scale actually used, as 1:N (rounded), and whether the requested one fit. */
   scaleN: number;
   fits: boolean;
+  /** The legend, when it needs a page of its own. */
+  legend?: { svg: string; widthMm: number; heightMm: number };
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -36,6 +38,8 @@ const r = (n: number) => Math.round(n * 100) / 100;
 
 /** Rewrites a symbol's screen-pixel strokes into plan units and drops the effect that SVG renderers for print ignore. */
 export function printStrokes(markup: string, f: number): string {
+  const own = CUSTOM_DRAWING.exec(markup);
+  if (own) f /= Number(own[1]);
   return markup
     .replace(/ vector-effect="non-scaling-stroke"/g, '')
     .replace(/stroke-width="([\d.]+)"/g, (_, n: string) => `stroke-width="${r(Number(n) * f)}"`)
@@ -97,12 +101,15 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const sideMm = used.length > 0 ? Math.ceil(used.length / sideRows) * cellW + 6 : 0;
   const fitBelow = Math.min(opts.availWidthMm / worldW, (opts.availHeightMm - extraMm) / worldH);
   const fitBeside = Math.min((opts.availWidthMm - sideMm) / worldW, (opts.availHeightMm - barMm) / worldH);
-  const beside = used.length > 0 && fitBeside > fitBelow * 1.1;
-  const fitK = beside ? fitBeside : fitBelow;
+  // A legend that would cost the plan a quarter of its size goes to a page of its own.
+  const fitFree = Math.min(opts.availWidthMm / worldW, (opts.availHeightMm - barMm) / worldH);
+  const apart = used.length > 0 && Math.max(fitBelow, fitBeside) < fitFree * 0.75;
+  const beside = !apart && used.length > 0 && fitBeside > fitBelow * 1.1;
+  const fitK = apart ? fitFree : beside ? fitBeside : fitBelow;
   const wanted = opts.planScale ? 1 / opts.planScale : null;
   const fits = wanted === null || wanted <= fitK + 1e-9;
   const k = wanted !== null && fits ? wanted : fitK;
-  const extra = extraMm / k;
+  const extra = (apart ? barMm : extraMm) / k;
   const f = 0.17 / k; // paper-pixel unit: 1.5 becomes 0.26 mm
 
   const texts = plotTexts(show, { sizes: paperText(k), bounds: box, lang: opts.lang, mounts: true });
@@ -162,25 +169,37 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const barLabel = bar >= 1000 ? `${bar / 1000} m` : `${bar} mm`;
   out.push(`<text x="${bx + bar + 2 / k}" y="${y0 + 4 / k}" font-size="${r(2.4 / k)}" fill="#000" font-family="Inter">${esc(`${barLabel} · ${D.scaleLabel} 1:${Math.round(1 / k)}`)}</text>`);
 
-  used.forEach((id, i) => {
+  /** One symbol with its name, at a place given in the units of the drawing it goes into; `u` is paper mm per unit. */
+  const legendCell = (id: string, cx: number, cy: number, u: number, stroke: number): string => {
     const it = itemById(id)!;
-    const cx = beside ? box.x1 + (6 + Math.floor(i / sideRows) * cellW) / k : box.x0 + (i % cols) * (cellW / k);
-    const cy = beside ? box.y0 + ((i % sideRows) * cellH) / k : y0 + (barMm + Math.floor(i / cols) * cellH) / k;
-    const side = 7 / k;
+    const side = 7 / u;
     const sc = Math.min(side / it.size.w, side / it.size.d);
     const w = it.size.w * sc;
     const d = it.size.d * sc;
     const lk = iconKeyFor(it, show.view.rp2Lights);
     const licon = lk && iconData(lk) ? lk : undefined;
-    out.push(`<g transform="translate(${r(cx + (side - w) / 2)} ${r(cy + (side - d) / 2)}) scale(${r(sc * 1000) / 1000})">${printStrokes(licon ? footprintBody(it.size.w, it.size.d) : symbolBody(drawnSymbolOf(it, show.view.rp2Lights), it.size.w, it.size.d), f / sc)}${licon ? iconUse(licon, it.size.w, it.size.d) : ''}</g>`);
-    out.push(`<text x="${r(cx + side + 1.5 / k)}" y="${r(cy + side / 2 + 0.8 / k)}" font-size="${r(2.2 / k)}" fill="#000" font-family="Inter">${esc(it.name[opts.lang])}</text>`);
-  });
+    return `<g transform="translate(${r(cx + (side - w) / 2)} ${r(cy + (side - d) / 2)}) scale(${r(sc * 1000) / 1000})">${printStrokes(licon ? footprintBody(it.size.w, it.size.d) : symbolBody(drawnSymbolOf(it, show.view.rp2Lights), it.size.w, it.size.d), stroke / sc)}${licon ? iconUse(licon, it.size.w, it.size.d) : ''}</g><text x="${r(cx + side + 1.5 / u)}" y="${r(cy + side / 2 + 0.8 / u)}" font-size="${r(2.2 / u)}" fill="#000" font-family="Inter">${esc(it.name[opts.lang])}</text>`;
+  };
+
+  if (!apart) {
+    used.forEach((id, i) => {
+      const cx = beside ? box.x1 + (6 + Math.floor(i / sideRows) * cellW) / k : box.x0 + (i % cols) * (cellW / k);
+      const cy = beside ? box.y0 + ((i % sideRows) * cellH) / k : y0 + (barMm + Math.floor(i / cols) * cellH) / k;
+      out.push(legendCell(id, cx, cy, k, f));
+    });
+  }
 
   const height = beside ? Math.max(worldH + barMm / k, (Math.min(sideRows, used.length) * cellH) / k) : worldH + extra;
-  const width = beside ? worldW + sideMm / k : Math.max(worldW, used.length > 0 ? (cols * cellW) / k : 0);
+  const width = beside ? worldW + sideMm / k : Math.max(worldW, used.length > 0 && !apart ? (cols * cellW) / k : 0);
   const defs = iconDefs(els.map((e) => itemById(e.type.id)).concat(used.map((id) => itemById(id))).map((it) => (it ? iconKeyFor(it, show.view.rp2Lights) : undefined)).filter((x): x is string => !!x));
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${r(box.x0)} ${r(box.y0)} ${r(width)} ${r(height)}" width="${r(width)}" height="${r(height)}">${defs}${out.join('')}</svg>`;
-  return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };
+  if (!apart) return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };
+  const pageCols = Math.max(1, Math.floor(opts.availWidthMm / cellW));
+  const legendW = pageCols * cellW;
+  const legendH = Math.ceil(used.length / pageCols) * cellH;
+  const cells = used.map((id, i) => legendCell(id, (i % pageCols) * cellW, Math.floor(i / pageCols) * cellH, 1, 0.17)).join('');
+  const legend = { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${legendW} ${legendH}" width="${legendW}" height="${legendH}">${iconDefs(used.map((id) => iconKeyFor(itemById(id)!, show.view.rp2Lights)).filter((x): x is string => !!x))}${cells}</svg>`, widthMm: legendW, heightMm: legendH };
+  return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits, legend };
 }
 
 function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Show['units'], lang: Lang, outlines: boolean, rp2: boolean): string {

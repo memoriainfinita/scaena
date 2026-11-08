@@ -42,6 +42,10 @@ Added the same day, for what placement alone cannot solve: on a dense plan a lab
 
 The space the texts have depends on the print scale. On a landscape page the legend under the plan cost as much height as the plan itself: the rock example printed at 1:142. When the legend beside the plan gives a scale at least 10 % larger, `planSvgIn` puts it there, filled top to bottom.
 
+## Legend on its own page
+
+A legend of many symbols can cost the plan more than either placement can give back: the full example printed at 1:208 with its 37 symbols. When the better of the two placements would leave the plan under 75 % of the size it has with no legend, the legend goes to its own page and the plan keeps its size.
+
 ## Moved by hand
 
 `labelAt` on the element holds the offset from its centre in plan millimetres, null by default, so older files load unchanged. A moved label has that one slot and is placed first, so the automatic ones avoid it. The offset is the same on screen and on paper; text size is what differs. It keeps the leader rule of any other label. In the editor the label of the only selected element is dragged, or moved with Alt and the arrows; the inspector clears it.
