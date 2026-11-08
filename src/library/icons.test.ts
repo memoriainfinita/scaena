@@ -59,6 +59,16 @@ describe('icons', () => {
     expect(footprintBody(100, 50)).toContain('<rect');
   });
 
+  test('the view setting leaves out the footprint outline but keeps the icons', async () => {
+    const show = showFromPackage(packageById('rock')!, 'Rock', 'en');
+    await loadShowIcons(show);
+    const opts = { availWidthMm: 250, availHeightMm: 170, planScale: null, lang: 'en' as const };
+    const on = planSvg(show, {}, opts).svg;
+    const off = planSvg({ ...show, view: { ...show.view, outlines: false } }, {}, opts).svg;
+    expect(off.length).toBeLessThan(on.length);
+    expect(off).toContain('<use href="#ic-');
+  });
+
   test('icon paths pass through the print stroke rewrite untouched', async () => {
     await loadIcons(['12-01']);
     const defs = iconDefs(['12-01']);

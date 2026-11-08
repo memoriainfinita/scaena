@@ -38,3 +38,26 @@ describe('connection lines', () => {
     expect(planSvg({ ...show, view: { ...show.view, links: false } }, {}, opts).svg).not.toContain('#0b6e78');
   });
 });
+
+describe('names, outlines and the legend of the exported plan', () => {
+  const opts = { availWidthMm: 267, availHeightMm: 170, planScale: null, lang: 'es' as const };
+  const labelled = (show: ReturnType<typeof showFromPackage>) => {
+    const first = Object.values(show.elements).find((e) => e.label);
+    return first!.label;
+  };
+
+  test('the view settings hide the names under the elements', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const label = labelled(show);
+    expect(planSvg(show, {}, opts).svg).toContain(`>${label}</text>`);
+    expect(planSvg({ ...show, view: { ...show.view, labels: false } }, {}, opts).svg).not.toContain(`>${label}</text>`);
+  });
+
+  test('the legend is optional and the plan gets the room back', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const on = planSvg(show, {}, opts);
+    const off = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, opts);
+    expect(off.scaleN).toBeLessThan(on.scaleN);
+    expect(off.svg.length).toBeLessThan(on.svg.length);
+  });
+});

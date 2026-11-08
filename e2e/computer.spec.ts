@@ -76,3 +76,22 @@ test('the connect tool joins two elements and the connection can be edited and u
   await page.getByRole('button', { name: 'Deshacer' }).click();
   await expect(connector).toHaveValue('SDI');
 });
+
+test('equipment brings its typical power, it can be changed, and the Power report adds it up @a11y', async ({ page }) => {
+  await start(page);
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');
+  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
+  await expect(page.getByRole('heading', { name: 'Consumo' })).toBeVisible();
+  const power = page.getByLabel('Potencia (W)', { exact: true });
+  await expect(power).toHaveValue('400');
+  await power.fill('500');
+  await power.press('Tab');
+  await page.getByRole('combobox', { name: 'Fase' }).selectOption('2');
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Consumo' }).click();
+  const table = page.getByRole('table');
+  await expect(table).toContainText('Proyector');
+  await expect(table).toContainText('L2');
+  await expect(table.getByRole('row').last()).toContainText('Total');
+});

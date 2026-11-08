@@ -22,10 +22,24 @@ const rock = () => bare(showFromPackage(packageById('rock')!, 'Rock', 'es'));
 
 describe('reports', () => {
   test('which reports are offered follows the modules', () => {
-    expect(availableReports({ ...rock(), modules: ['audio', 'document'] })).toEqual(['cables', 'inputs', 'outputs']);
+    expect(availableReports({ ...rock(), modules: ['audio', 'document'] })).toEqual(['cables', 'power', 'inputs', 'outputs']);
     expect(availableReports(theatre())).toEqual(expect.arrayContaining(['hookup', 'inputs']));
-    expect(availableReports({ ...rock(), modules: ['document'] })).toEqual(['cables']);
-    expect(availableReports({ ...rock(), modules: ['document'], connections: {} })).toEqual([]);
+    expect(availableReports({ ...rock(), modules: ['document'] })).toEqual(['cables', 'power']);
+    expect(availableReports({ ...rock(), modules: ['document'], connections: {} })).toEqual(['power']);
+    expect(availableReports({ ...rock(), modules: ['document'], connections: {}, elements: {} })).toEqual([]);
+  });
+
+  test('the power report lists the equipment, the lights and a total, in the show language', () => {
+    const show = rock();
+    const t = buildReport(show, 'power');
+    expect(t.header).toHaveLength(4);
+    for (const row of t.rows) expect(row).toHaveLength(4);
+    const total = t.rows[t.rows.length - 1]!;
+    expect(total[0]).toBe('Total');
+    const sum = Object.values(show.elements).reduce((a, e) => a + (e.powerW ?? 0), 0);
+    expect(Number(total[1])).toBe(sum);
+    expect(Number(total[2])).toBeCloseTo(sum / show.region.voltage, 1);
+    expect(t.rows.length).toBeGreaterThan(5);
   });
 
   test('the cable list is offered only with cables and sorts them by signal and connector', () => {
@@ -222,5 +236,18 @@ describe('revisions and the local library', () => {
     expect(shows.value.some((x) => x.id === s.id)).toBe(false);
     await openStored(shows.value[0]!.id);
     expect(session.value).not.toBeNull();
+  });
+});
+
+describe('cables on the input and instrument lists', () => {
+  test('a channel lists the audio cables of its source and a light its control cables', () => {
+    const show = rock();
+    const inputs = buildReport(show, 'inputs');
+    expect(inputs.header[inputs.header.length - 1]).toBe('Cables');
+    const withCable = inputs.rows.filter((r) => r[r.length - 1] !== '');
+    expect(withCable.length).toBeGreaterThan(0);
+    expect(withCable[0]![withCable[0]!.length - 1]).toMatch(/→/);
+    const lights = buildReport(show, 'instruments');
+    for (const row of lights.rows) expect(row).toHaveLength(lights.header.length);
   });
 });

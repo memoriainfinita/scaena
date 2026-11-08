@@ -3,18 +3,18 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
-import { cableLength } from '../model/connections.ts';
+import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
 import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
-import { circuitLoads, dimmerLoads, luminaires, riggingPlan } from '../model/lights.ts';
+import { circuitLoads, dimmerLoads, luminaires, powered, riggingPlan } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 
-export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'inputs', 'outputs'] as const;
+export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'power', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
 
 /** The module a report belongs to: it is offered only when that module is on. */
-export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio' | 'any'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', cables: 'any', inputs: 'audio', outputs: 'audio' };
+export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio' | 'any'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', cables: 'any', power: 'any', inputs: 'audio', outputs: 'audio' };
 
 export interface ReportTable {
   id: ReportId;
@@ -26,8 +26,20 @@ const num = (n: number | null, digits = 0) => (n === null ? '' : String(Math.rou
 const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemById(e.type.id)?.name[lang] || e.type.id : '');
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
+/** The cables of the given signal types that touch an element, as a line: "XLR 10 m → Stagebox". Estimated lengths carry a "≈". */
+export function cableText(show: Show, elementId: string, signals: readonly SignalType[], lang: Lang = show.lang): string {
+  return connectionsOf(show, elementId)
+    .filter((c) => signals.includes(c.signal))
+    .map((c) => {
+      const len = cableLength(show, c);
+      const other = show.elements[c.from === elementId ? c.to : c.from];
+      return [c.connector, len ? `${len.estimated ? '≈ ' : ''}${num(len.mm / 1000, 1)} m` : '', other ? `→ ${name(other, lang)}` : ''].filter(Boolean).join(' ');
+    })
+    .join('; ');
+}
+
 export function availableReports(show: Show): ReportId[] {
-  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0));
+  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'power' || powered(show).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0));
 }
 
 export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): ReportTable {
@@ -52,8 +64,8 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   if (id === 'instruments') {
     const rows = [...lum]
       .sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit) || a.id.localeCompare(b.id, 'en', { numeric: true }))
-      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes]);
-    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.color, D.weight, D.power, D.note], rows };
+      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes, cableText(show, e.id, ['lightControl', 'network'], lang)]);
+    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.color, D.weight, D.power, D.note, D.cables], rows };
   }
   if (id === 'circuits') {
     const rows = circuitLoads(show).map((c) => [String(c.circuit), String(c.count), unitList(lum.filter((e) => e.luminaire!.circuit === c.circuit)), num(c.powerW), num(c.amps, 2), c.phase === null ? '' : `L${c.phase}`]);
@@ -139,6 +151,19 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       });
     return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows };
   }
+  if (id === 'power') {
+    const volts = show.region.voltage;
+    const amps = (w: number) => (volts > 0 ? num(w / volts, 2) : '');
+    const list = powered(show).sort((a, b) => byNumber(a.phase, b.phase) || name(a, lang).localeCompare(name(b, lang), lang) || a.id.localeCompare(b.id, 'en', { numeric: true }));
+    const rows = list.map((e) => [name(e, lang), num(e.powerW), amps(e.powerW!), e.phase === null ? '' : `L${e.phase}`]);
+    if (rows.length > 0) {
+      const total = list.reduce((a, e) => a + e.powerW!, 0);
+      const lightsW = lum.reduce((a, e) => a + (e.powerW ?? 0), 0);
+      if (lightsW > 0) rows.push([D.lights, num(lightsW), amps(lightsW), '']);
+      rows.push([D.total, num(total + lightsW), amps(total + lightsW), '']);
+    }
+    return { id, header: [D.element, D.power, D.amps, D.phase], rows };
+  }
   if (id === 'worknotes') {
     const rows = show.workNotes.map((n) => [n.text, n.done ? D.yes : D.no, n.refId && show.elements[n.refId] ? name(show.elements[n.refId], lang) : '']);
     return { id, header: [D.task, D.done, D.element], rows };
@@ -147,9 +172,9 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const rows = channelList(show).map((c) => {
       const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
       const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
-      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, c.patch, c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes];
+      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, c.patch, c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
     });
-    return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note], rows };
+    return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note, D.cables], rows };
   }
   const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.notes]);
   return { id, header: ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows };

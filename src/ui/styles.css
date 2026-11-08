@@ -366,3 +366,5 @@ main.canvas:focus { outline: none; }
 .split.left:hover, .split.left:focus-visible { box-shadow: inset 2px 0 0 var(--accent); }
 .split.right:hover, .split.right:focus-visible { box-shadow: inset -2px 0 0 var(--accent); }
 @media (max-width: 900px), (max-height: 520px) and (max-width: 1100px) and (orientation: landscape) { .split { display: none; } }
+
+.cabletext { white-space: nowrap; font-size: 12px; color: var(--muted, inherit); }

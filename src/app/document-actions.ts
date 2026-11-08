@@ -17,6 +17,7 @@ export const toggleSection = (id: SectionId, on: boolean): void =>
     return { ...show, document: { ...show.document, template: 'custom', sections: ALL_SECTIONS.filter((s) => current.has(s)) } };
   });
 
+export const setPlanLegend = (planLegend: boolean): void => commit((show) => ({ ...show, document: { ...show.document, planLegend } }));
 export const setPlanScale = (planScale: number | null): void => commit((show) => ({ ...show, document: { ...show.document, planScale } }));
 export const setInputsLayout = (patch: Partial<Show['document']['inputs']>): void => commit((show) => ({ ...show, document: { ...show.document, inputs: { ...show.document.inputs, ...patch } } }));
 export const setPaper = (paper: Show['paper']): void => commit((show) => ({ ...show, paper }));

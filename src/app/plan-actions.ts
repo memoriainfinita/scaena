@@ -136,6 +136,16 @@ export function setLinks(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, links: on } }));
 }
 
+/** Shows or hides the names written under the elements, on the plan and in the PDF. */
+export function setLabels(on: boolean): void {
+  session.value?.commit((show) => ({ ...show, view: { ...show.view, labels: on } }));
+}
+
+/** Shows or hides the outline of the elements that draw one (the icons' footprints), on the plan and in the PDF. */
+export function setOutlines(on: boolean): void {
+  session.value?.commit((show) => ({ ...show, view: { ...show.view, outlines: on } }));
+}
+
 export function setGrid(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, grid: on } }));
 }

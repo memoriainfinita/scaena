@@ -231,3 +231,38 @@ test('an element is swapped for another of its kind and keeps its label and chan
   await expect(type).toHaveValue(other);
   await expect(page.locator('g.el[aria-label="Voz 1"]')).toBeVisible();
 });
+
+test('the input list shows the cable that leaves each source', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: 'Entradas', exact: true }).click();
+  await expect(page.getByRole('columnheader', { name: 'Conexiones' })).toBeVisible();
+  await expect(page.locator('td.cabletext', { hasText: '→' }).first()).toBeVisible();
+});
+
+test('names, outlines and connection lines can be hidden from the bottom bar, and the legend from the document', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  const names = page.getByRole('button', { name: 'Nombres de los elementos' });
+  const outlines = page.getByRole('button', { name: 'Bordes de los elementos' });
+  const links = page.getByRole('button', { name: 'Líneas de conexión' });
+  for (const b of [names, outlines, links]) await expect(b).toHaveAttribute('aria-pressed', 'true');
+  const labelTexts = page.locator('g.el > text.detail');
+  const before = await labelTexts.count();
+  expect(before).toBeGreaterThan(0);
+  await names.click();
+  await expect(names).toHaveAttribute('aria-pressed', 'false');
+  await expect(labelTexts).toHaveCount(0);
+  const rects = page.locator('g.el .detail rect[stroke]');
+  const withOutlines = await rects.count();
+  await outlines.click();
+  await expect.poll(() => rects.count()).toBeLessThan(withOutlines);
+  await names.click();
+  await expect(labelTexts).toHaveCount(before);
+
+  await page.getByRole('button', { name: 'Documento', exact: true }).click();
+  const legend = page.getByRole('checkbox', { name: 'Leyenda de símbolos bajo el plano' });
+  await expect(legend).toBeChecked();
+  await legend.uncheck();
+  await expect(legend).not.toBeChecked();
+});

@@ -14,6 +14,8 @@ Turn on the **Lights** module (the theatre package already has it). Six sections
 
 **Electrical:** power and amps per circuit at the region's voltage, each dimmer's maximum and the total per phase (L1 to L3). Enter each phase's breaker to be warned when it is exceeded.
 
+Equipment that is not a light counts too. Amplifiers, speakers, desks, projectors, laptops, haze machines and similar items come with a typical power draw (an estimate, not a datasheet value), and the inspector's **Power draw** section lets you change it and choose the phase (L1 to L3) it is plugged into. Without a phase it is counted under "No phase". The **Power** report (Reports tab, CSV, and a table in the Electrical section of the PDF) lists every piece with its watts and amps, the lights, and the total. The Inputs and Instruments lists also show the cable that leaves each source (connector, length, destination) in a **Connections** column; the PDF keeps its own layout.
+
 ![Side section](img/luces-seccion.png)
 
 **Section:** a side view, back to audience across and height up. It draws the stage deck (its height is set in **Show settings → Stage**) and every riser and platform on the plot with its own height; a mount's height is measured from the deck. Select a riser or platform to set its **height above the deck** in the inspector. If you give the proscenium an **opening height** (Show settings → Stage), the opening is drawn at the downstage edge with its height; turn the proscenium reference line off to hide it.

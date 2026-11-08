@@ -344,6 +344,7 @@ export function addFromLibrary(itemId: string, at?: { x: number; y: number }): s
       layerId: layer.id,
       ...(item.id === 'power.outlet' ? { label: [show.region.voltage ? `${show.region.voltage} V` : '', show.region.plug].filter(Boolean).join(' · ') } : {}),
       computer: item.symbol === 'laptop' ? emptyComputer() : null,
+      powerW: item.powerW,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
     });
     created = el;
@@ -378,7 +379,8 @@ export function setElementType(ids: string[], itemId: string): void {
     for (const id of ids) {
       const el = elements[id];
       const old = el && itemById(el.type.id);
-      if (el && old && old.category === item.category) elements[id] = { ...el, type: { id: item.id, version: item.version } };
+      // A power the user never changed follows the new type; one they typed stays.
+      if (el && old && old.category === item.category) elements[id] = { ...el, type: { id: item.id, version: item.version }, ...(el.powerW === old.powerW ? { powerW: item.powerW } : {}) };
     }
     return { ...show, elements };
   });

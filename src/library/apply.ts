@@ -36,6 +36,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
       layerId: layer.id,
       label: translatePackageText(pe.label ?? '', lang),
       suppliedBy: pe.suppliedBy ?? 'unset',
+      powerW: item.powerW,
       computer,
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
       ...(pe.size ? { width: pe.size.w, depth: pe.size.d, height: pe.size.height ?? null } : {}),

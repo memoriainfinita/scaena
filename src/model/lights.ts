@@ -141,10 +141,14 @@ export interface PhaseLoad {
   amps: number;
 }
 
-/** Power per phase from the circuits; circuits with no phase are grouped under null. */
+/** The equipment that is not a light and has a power draw, in creation order. */
+export const powered = (show: Show): PlanElement[] => Object.values(show.elements).filter((e) => !e.luminaire && (e.powerW ?? 0) > 0);
+
+/** Power per phase: the lights through their circuits, the other equipment through its own phase. What has no phase is grouped under null. */
 export function phaseLoads(show: Show): PhaseLoad[] {
   const by = new Map<number | null, number>();
   for (const c of circuitLoads(show)) by.set(c.phase, (by.get(c.phase) ?? 0) + c.powerW);
+  for (const e of powered(show)) by.set(e.phase ?? null, (by.get(e.phase ?? null) ?? 0) + e.powerW!);
   return [...by.entries()].sort((a, b) => (a[0] ?? Infinity) - (b[0] ?? Infinity)).map(([phase, powerW]) => ({ phase, powerW, amps: amps(powerW, show.region.voltage) }));
 }
 

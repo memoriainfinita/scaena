@@ -25,7 +25,11 @@ describe('sections', () => {
     expect(templateForPackage('conference')).toBe('av');
     const show = { ...rock(), modules: ['audio' as const, 'document' as const] };
     expect(effectiveSections(show)).toEqual(expect.arrayContaining([...TEMPLATE_SECTIONS.concert, 'cables']));
-    expect(effectiveSections({ ...show, connections: {} })).toEqual(TEMPLATE_SECTIONS.concert);
+    // Equipment with a power draw brings the electrical section in with it.
+    const noCables = effectiveSections({ ...show, connections: {} });
+    expect(noCables).toEqual(expect.arrayContaining([...TEMPLATE_SECTIONS.concert, 'electrical']));
+    expect(noCables).not.toContain('cables');
+    expect(effectiveSections({ ...show, connections: {}, elements: {} })).toEqual(TEMPLATE_SECTIONS.concert);
     const [withPc] = addElement(show, { type: { id: 'control.laptop', version: 1 }, x: 0, y: 0, layerId: 'l-control', computer: { functions: ['sound'], os: 'other', programs: [], license: '', dongle: false, outputs: [] } });
     expect(effectiveSections(withPc)).toContain('computers');
   });

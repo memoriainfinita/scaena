@@ -1,6 +1,7 @@
 import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
+import { setElementNumber, setElementPhase } from '../app/lights-actions.ts';
 import { createLayer, moveCustomLayer, moveCustomLayerTo, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
@@ -18,7 +19,7 @@ import { RackPanel } from './Rack.tsx';
 import { isLevel, levelHeight } from '../model/levels.ts';
 import { stagePosition } from '../model/position.ts';
 import { RACK_ITEM } from '../model/racks.ts';
-import { LightsView, LuminairePanel } from './Lights.tsx';
+import { LightsView, LuminairePanel, NumCell } from './Lights.tsx';
 import { Ico, LIBRARY_DRAG, PlanView } from './PlanView.tsx';
 
 const VIEW_NEEDS: Partial<Record<ViewId, 'audio' | 'lights' | 'document' | 'production'>> = { inputs: 'audio', outputs: 'audio', lights: 'lights', production: 'production', document: 'document' };
@@ -271,6 +272,9 @@ function PaneSplit({ pane, side }: { pane: Pane; side: 'left' | 'right' }) {
   );
 }
 
+/** Equipment that plugs into the mains: these get a power field in the inspector. */
+const POWERED_CATEGORIES = new Set(['amp', 'keys', 'pa', 'monitor', 'desk', 'rack', 'dj', 'video', 'control', 'effect', 'network', 'machinery']);
+
 function Inspector({ show }: { show: Show }) {
   const sel = selection.value[0];
   const el = sel ? show.elements[sel] : undefined;
@@ -339,6 +343,28 @@ function Inspector({ show }: { show: Show }) {
               {isLevel(el) &&<NumberField label={t('inspector.height')} value={levelHeight(el) / 1000} step={0.1} onCommit={(v) => setElementField(el.id, { height: Math.max(0, Math.round(v * 1000)) })} />}
             </div>
           </div>
+          {!el.luminaire && (el.powerW !== null || POWERED_CATEGORIES.has(it.category)) && (
+            <div class="panel">
+              <h2>{t('inspector.power')}</h2>
+              <div class="grid2">
+                <label class="field">
+                  {t('table.power')}
+                  <NumCell value={el.powerW} label={t('table.power')} onCommit={(v) => setElementNumber(el.id, 'powerW', v)} />
+                </label>
+                <label class="field">
+                  {t('elec.phase')}
+                  <select class="input" value={el.phase === null ? '' : String(el.phase)} onChange={(e) => setElementPhase(el.id, (e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null)}>
+                    <option value="">{t('elec.nophase')}</option>
+                    {[1, 2, 3].map((p) => (
+                      <option key={p} value={p}>
+                        L{p}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+          )}
           {el.type.id === RACK_ITEM && <RackPanel el={el} />}
           {el.computer && <ComputerPanel el={el} c={el.computer} />}
           {el.luminaire && <LuminairePanel el={el} show={show} />}

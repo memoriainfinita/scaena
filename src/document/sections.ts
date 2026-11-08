@@ -1,5 +1,5 @@
 // Which sections the rider has. A template is a starting list; touching a section switches to "custom" with an explicit list.
-import { luminaires } from '../model/lights.ts';
+import { luminaires, powered } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
 
 export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
@@ -36,6 +36,7 @@ export function effectiveSections(show: Show): SectionId[] {
   }
   if (Object.values(show.elements).some((e) => e.rack && e.rack.slots.length > 0)) list.add('racks');
   if (Object.keys(show.connections).length > 0) list.add('cables');
+  if (powered(show).length > 0) list.add('electrical');
   if (!show.modules.includes('audio')) {
     list.delete('inputs');
     list.delete('outputs');

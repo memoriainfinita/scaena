@@ -264,6 +264,8 @@ ${heading(D.magic)}#align(center)[#image("/magic.svg", width: ${width.toFixed(2)
         [D.plug, show.region.plug || D.none],
       ];
       let md = heading(D.electrical) + `#table(columns: (34mm, 1fr), inset: 4.5pt, stroke: 0.4pt + luma(160), ${kv.map(([k, v]) => `[*${txt(k)}*], [${txt(v)}]`).join(', ')})\n\n`;
+      const draw = buildReport(show, 'power').rows;
+      if (draw.length > 0) md += c.table(D.power, [{ fr: 2 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.element, D.power, D.amps, D.phase], draw) + '\n';
       const circuits = circuitLoads(show);
       if (circuits.length > 0) md += c.table(D.circuit, [{ mm: 20 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.circuit, D.element, D.power, D.amps, D.phase], circuits.map((x) => [String(x.circuit), String(x.count), num(x.powerW), num(x.amps, 2), x.phase === null ? D.none : `L${x.phase}`])) + '\n';
       const dimmers = dimmerLoads(show);

@@ -9,6 +9,7 @@ import { itemById } from '../library/items.ts';
 import { FIXTURES, OFL_FIXTURES, fixtureById } from '../library/models.ts';
 import type { FixtureModel } from '../library/types.ts';
 import { levels } from '../model/levels.ts';
+import { cableText } from '../reports/reports.ts';
 import { circuitLoads, defaultFocus, dimmerLoads, luminaires, magicPosition, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
 
@@ -143,6 +144,7 @@ function Instruments({ show }: { show: Show }) {
               <th>{t('table.address')}</th>
               <th>{t('table.color')}</th>
               <th>{t('table.power')}</th>
+              <th>{t('connections.title')}</th>
             </tr>
           </thead>
           <tbody>
@@ -186,6 +188,7 @@ function Instruments({ show }: { show: Show }) {
                   <td>
                     <NumCell value={el.powerW} label={tag('table.power')} onCommit={(v) => setElementNumber(el.id, 'powerW', v)} />
                   </td>
+                  <td class="cabletext">{cableText(show, el.id, ['lightControl', 'network'], lang.value)}</td>
                 </tr>
               );
             })}
@@ -315,7 +318,7 @@ function Electrical({ show }: { show: Show }) {
   const circuits = circuitLoads(show);
   const dimmers = dimmerLoads(show);
   const phases = phaseLoads(show);
-  const total = circuits.reduce((a, c) => a + c.powerW, 0);
+  const total = phases.reduce((a, p) => a + p.powerW, 0);
   return (
     <div class="electrical">
       <p class="muted pad">{t('elec.region', { voltage: formatNumber(show.region.voltage, lang.value) })}</p>

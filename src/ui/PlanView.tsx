@@ -5,7 +5,7 @@ import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
-import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLinks, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setOutlines, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -66,7 +66,9 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   void iconsVersion.value; // redraw when the sheet of this element's icon arrives
   const iconKey = iconKeyOf(it.id);
   const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
-  const units = isDim ? session.value!.show.value.units : 'metric';
+  const shown = session.value!.show.value;
+  const units = isDim ? shown.units : 'metric';
+  const { labels, outlines } = shown.view;
   const name = el.label || it.name[lang.value];
   const box = elementBox(el, { w, d });
   const frame = selected ? { stroke: '#0b6e78', 'stroke-width': 3, 'stroke-dasharray': '8 5' } : { stroke: 'none' };
@@ -94,7 +96,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
       <g transform={`rotate(${el.rotation}) scale(${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})`}>
         <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="transparent" vector-effect="non-scaling-stroke" {...frame} />
         <rect class="simple" width={w} height={d} fill="#c9cfd4" />
-        <g class="detail" dangerouslySetInnerHTML={{ __html: symbolMarkup(it.symbol, w, d, !!icon) + (icon ? iconUse(icon, w, d) : '') }} />
+        <g class="detail" dangerouslySetInnerHTML={{ __html: (icon && !outlines ? '' : symbolMarkup(it.symbol, w, d, !!icon)) + (icon ? iconUse(icon, w, d) : '') }} />
       </g>
       {isText && (
         <g class="detail" transform={`rotate(${el.rotation})`}>
@@ -118,7 +120,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
           </text>
         </g>
       )}
-      {!isText && !isDim && el.label && (
+      {!isText && !isDim && el.label && labels && (
         <text class="detail" x={0} y={box.y1 - el.y + 190} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
         </text>
@@ -445,6 +447,8 @@ const ICONS: Record<string, string> = {
   fit: 'M3 7V3h4M11 3h4v4M15 11v4h-4M7 15H3v-4',
   grid: 'M3 3h12v12H3zM9 3v12M3 9h12',
   links: 'M3 14L15 4M3 14h0M15 4h0',
+  labels: 'M3 5h12M9 5v9M6 14h6',
+  outlines: 'M3 3h3M8 3h2M12 3h3M15 3v3M15 8v2M15 12v3M3 15h3M8 15h2M12 15h3M3 3v3M3 8v2M3 12v3',
   dim: 'M9 3a6 6 0 1 0 0 12z',
 };
 
@@ -1033,6 +1037,8 @@ export function PlanView({ show }: { show: Show }) {
         <Btn icon="fit" label={`${t('plan.fit')} (0)`} onClick={fit} />
         <Btn icon="grid" label={t('plan.grid')} pressed={show.view.grid} onClick={() => setGrid(!show.view.grid)} />
         <Btn icon="links" label={t('plan.links')} pressed={show.view.links} onClick={() => setLinks(!show.view.links)} />
+        <Btn icon="labels" label={t('plan.labels')} pressed={show.view.labels} onClick={() => setLabels(!show.view.labels)} />
+        <Btn icon="outlines" label={t('plan.outlines')} pressed={show.view.outlines} onClick={() => setOutlines(!show.view.outlines)} />
         <ScaleBar cam={cam} units={show.units} />
       </div>
     </div>

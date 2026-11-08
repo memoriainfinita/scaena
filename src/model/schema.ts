@@ -98,6 +98,8 @@ export const PlanElement = v.object({
   notes: text(),
   weightKg: v.optional(v.nullable(v.number()), null),
   powerW: v.optional(v.nullable(v.number()), null),
+  /** Mains phase (1 to 3) a piece of equipment that is not a light is plugged into; lights take theirs from their circuit. */
+  phase: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(3))), null),
   computer: v.optional(v.nullable(Computer), null),
   luminaire: v.optional(v.nullable(Luminaire), null),
   rack: v.optional(v.nullable(Rack), null),
@@ -190,7 +192,7 @@ export const ReportConfig = v.object({
   layerPreset: v.optional(v.array(id), []),
 });
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
-export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true) });
+export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true) });
 
 export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(86400)), 0) });
 
@@ -233,6 +235,8 @@ export const DocumentConfig = v.object({
   sections: v.optional(v.array(DocSection), []),
   /** Print scale of the plan as 1:N, or null to fit the page. */
   planScale: v.optional(v.nullable(v.pipe(v.number(), v.minValue(1))), null),
+  /** The legend of item symbols under the plan; absent counts as on. */
+  planLegend: v.optional(v.boolean()),
   /** The channel list: horizontal pages, and how many blocks side by side (automatic fits it on one page). */
   inputs: v.optional(v.object({ landscape: v.optional(v.boolean(), false), blocks: v.optional(v.union([v.literal('auto'), v.literal(1), v.literal(2), v.literal(3), v.literal(4)]), 'auto') }), {}),
 });

@@ -14,6 +14,8 @@ const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 export const setLuminaire = (id: string, patch: Partial<Luminaire>): void => commit((show) => updateLuminaire(show, id, patch));
 export const setLuminaireModel = (id: string, modelId: string): void => commit((show) => setFixtureModel(show, id, modelId ? (fixtureById(modelId) ?? null) : null));
 export const setElementNumber = (id: string, field: 'weightKg' | 'powerW', value: number | null): void => commit((show) => (show.elements[id] ? updateElement(show, id, { [field]: value }) : show));
+/** The mains phase of a piece of equipment that is not a light; null clears it. */
+export const setElementPhase = (id: string, phase: number | null): void => commit((show) => (show.elements[id] ? updateElement(show, id, { phase }) : show));
 /** Sets or clears where a luminaire points, in plan millimetres. */
 export const setFocusPoint = (id: string, p: { x: number; y: number } | null): void => commit((show) => updateLuminaire(show, id, { focus: p ? { x: Math.round(p.x / 10) * 10, y: Math.round(p.y / 10) * 10 } : null }));
 /** Moves an instrument on the magic sheet only; each move is one undo step. */

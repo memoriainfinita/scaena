@@ -220,7 +220,6 @@ const unitsDuplicated: Rule = (show) => {
 };
 
 const phaseBreaker: Rule = (show) => {
-  if (!lightsOn(show)) return [];
   const out: Issue[] = [];
   for (const p of phaseLoads(show)) {
     if (p.phase === null) continue;

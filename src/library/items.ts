@@ -86,6 +86,18 @@ const LIGHT_DEFS: Def[] = [
   { id: 'effect.strobe', category: 'effect', layer: 'lights', name: b('Estroboscopio', 'Strobe'), tags: ['estrobo', 'strobe'], w: 450, d: 200, h: 150, symbol: 'strobe' },
 ];
 
+/** Typical draw in watts of the equipment that needs mains, as a starting point the user edits. Items not listed here have none. */
+const TYPICAL_POWER_W: Record<string, number> = {
+  'amp.guitar': 150, 'amp.bass': 400, 'amp.stack': 300, 'keys.keyboard': 40, 'keys.synth': 50, 'keys.stage-piano': 60, 'keys.organ': 200,
+  'pa.line': 600, 'pa.sub': 1000, 'pa.top': 600, 'pa.front-fill': 300, 'pa.delay': 600,
+  'monitor.wedge': 300, 'monitor.iem': 5, 'monitor.sidefill': 600, 'monitor.drumfill': 600,
+  'desk.digital': 100, 'desk.analog': 150, 'desk.monitor': 100, 'rack.stagebox': 60, 'rack.iem': 60, 'rack.wireless': 60, 'rack.amps': 2000, 'rack.fx': 150, 'rack.network': 100,
+  'dj.booth': 300, 'dj.controller': 30, 'dj.turntables': 30,
+  'control.laptop': 65, 'control.lightdesk': 100, 'control.videomixer': 60, 'control.tablet': 15, 'control.server': 300,
+  'video.projector': 400, 'video.led-wall': 1500, 'video.tv': 150, 'video.camera': 30,
+  'effect.haze': 400, 'effect.smoke': 1000, 'effect.strobe': 1000, 'effect.laser': 300, 'effect.mirror-ball': 20, 'effect.co2': 50,
+};
+
 export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...ICON_DEFS].map((x) => ({
   id: x.id,
   version: 1,
@@ -95,7 +107,7 @@ export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...IC
   tags: x.tags ?? [],
   size: { w: x.w, d: x.d, h: x.h },
   weightKg: x.weightKg ?? null,
-  powerW: x.powerW ?? null,
+  powerW: x.powerW ?? TYPICAL_POWER_W[x.id] ?? null,
   symbol: x.symbol,
   ...(x.channels ? { suggestedChannels: x.channels } : {}),
 }));

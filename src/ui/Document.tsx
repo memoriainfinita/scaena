@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
 import { applyDocTemplate, deleteDocTemplate, docTemplates, MAX_TEMPLATES, saveDocTemplate } from '../app/doc-templates.ts';
-import { setInputsLayout, setPaper, setPlanScale, setTemplate, toggleSection } from '../app/document-actions.ts';
+import { setInputsLayout, setPaper, setPlanLegend, setPlanScale, setTemplate, toggleSection } from '../app/document-actions.ts';
 import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
 import { compilePdf, fixPdf } from '../document/compile.ts';
@@ -130,6 +130,10 @@ export function DocumentView({ show }: { show: Show }) {
               </option>
             ))}
           </select>
+        </label>
+        <label class="check">
+          <input type="checkbox" checked={show.document.planLegend !== false} onChange={(e) => setPlanLegend((e.currentTarget as HTMLInputElement).checked)} />
+          {t('doc.legend')}
         </label>
         {sections.includes('inputs') && (
           <>

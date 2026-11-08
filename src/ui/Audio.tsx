@@ -7,6 +7,7 @@ import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
 import { channelList, outputList, wedgesInOrder } from '../model/audio.ts';
 import { stagePosition } from '../model/position.ts';
+import { cableText } from '../reports/reports.ts';
 import type { InputChannel, Output, PlanElement, Show } from '../model/schema.ts';
 
 const elementName = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
@@ -74,6 +75,7 @@ export function InputsView({ show }: { show: Show }) {
               <th>{t('table.source')}</th>
               <th>{t('table.position')}</th>
               <th>{t('table.notes')}</th>
+              <th>{t('connections.title')}</th>
               <th />
             </tr>
           </thead>
@@ -139,6 +141,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show
       <td>
         <Cell value={c.notes} label={tag('table.notes')} onCommit={(v) => setChannel(c.id, { notes: v })} />
       </td>
+      <td class="cabletext">{src ? cableText(show, src.id, ['audio'], lang.value) : ''}</td>
       <RowButtons row={row} first={i === 0} last={i === count - 1} onUp={() => moveChannelRow(c.id, -1)} onDown={() => moveChannelRow(c.id, 1)} onRemove={() => removeChannelRow(c.id)} />
     </tr>
   );

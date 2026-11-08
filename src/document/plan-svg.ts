@@ -80,7 +80,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     .sort((a, b) => (layers.get(a.layerId)?.i ?? 0) - (layers.get(b.layerId)?.i ?? 0));
 
   // Legend: one cell per distinct item on the plan.
-  const used = [...new Set(els.map((e) => e.type.id))].filter((id) => itemById(id));
+  const used = show.document.planLegend === false ? [] : [...new Set(els.map((e) => e.type.id))].filter((id) => itemById(id));
   const cellW = 46;
   const cellH = 10;
   // The legend is as wide as the plan, but never narrower than three cells.
@@ -131,7 +131,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     if (c.connector) out.push(`<text x="${r((a.x + b.x) / 2)}" y="${r((a.y + b.y) / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2 / k)}" fill="${st.stroke}" font-family="Inter">${esc(c.connector)}</text>`);
   }
 
-  for (const e of els) out.push(elementSvg(e, f, k, layers.get(e.layerId)?.l.dim ?? 0, show.units, opts.lang));
+  for (const e of els) out.push(elementSvg(e, f, k, layers.get(e.layerId)?.l.dim ?? 0, show.units, opts.lang, show.view.labels, show.view.outlines));
 
   // Scale bar and legend, below the plan.
   const y0 = box.y1 + 1.5 / k;
@@ -162,7 +162,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };
 }
 
-function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Show['units'], lang: Lang): string {
+function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Show['units'], lang: Lang, labels: boolean, outlines: boolean): string {
   const it = itemById(e.type.id);
   if (!it) return '';
   const { w, d } = elementSize(e);
@@ -172,9 +172,9 @@ function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Sh
   let s = `<g transform="translate(${e.x} ${e.y})"${opacity}>`;
   const key = iconKeyOf(it.id);
   const icon = key && iconData(key) ? key : undefined;
-  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${printStrokes(icon ? footprintBody(w, d) : symbolBody(it.symbol, w, d), f)}${icon ? iconUse(icon, w, d) : ''}</g>`;
+  s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${icon && !outlines ? '' : printStrokes(icon ? footprintBody(w, d) : symbolBody(it.symbol, w, d), f)}${icon ? iconUse(icon, w, d) : ''}</g>`;
   if (it.symbol === 'dimension') s += `<g transform="rotate(${e.rotation})"><text x="0" y="${r(-d / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label || formatLength(w, units, lang))}</text></g>`;
   else if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
-  else if (e.label) s += `<text x="0" y="${r(box.y1 - e.y + 2.6 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
+  else if (e.label && labels) s += `<text x="0" y="${r(box.y1 - e.y + 2.6 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
   return s + '</g>';
 }

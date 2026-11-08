@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { PACKAGES, packageById } from '../library/packages.ts';
 import { showFromPackage } from '../library/apply.ts';
-import { addMount, autoNumber, beamDegrees, defaultFocus, circuitLoads, dimmerLoads, emptyLuminaire, luminaires, mountStats, phaseLoads, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, updateLuminaire, updateMount } from './lights.ts';
+import { itemById } from '../library/items.ts';
+import { powered, addMount, autoNumber, beamDegrees, defaultFocus, circuitLoads, dimmerLoads, emptyLuminaire, luminaires, mountStats, phaseLoads, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, updateLuminaire, updateMount } from './lights.ts';
 import { newShow } from './new.ts';
 import { addElement } from './ops.ts';
 import type { Show } from './schema.ts';
@@ -163,5 +164,26 @@ describe('breakers', () => {
     expect(s2.electrical.phases).toHaveLength(1);
     expect(s2.electrical.phases[0]!.breakerA).toBe(25);
     expect(setPhaseBreaker(s2, 2, null).electrical.phases[0]!.breakerA).toBeNull();
+  });
+});
+
+describe('power of the rest of the equipment', () => {
+  test('equipment with a phase counts in that phase next to the lights, and the rest under none', () => {
+    const [start] = plot();
+    const [s1, amp] = addElement(start, { type: { id: 'amp.guitar', version: 1 }, x: 0, y: 0, layerId: 'l-audio', powerW: 460, phase: 2 });
+    const [s2] = addElement(s1, { type: { id: 'video.projector', version: 1 }, x: 500, y: 0, layerId: 'l-control', powerW: 400 });
+    const [s3] = addElement(s2, { type: { id: 'furniture.chair', version: 1 }, x: 900, y: 0, layerId: 'l-stage' });
+    expect(powered(s3).map((e) => e.powerW).sort()).toEqual([400, 460]);
+    expect(amp.phase).toBe(2);
+    const loads = phaseLoads(s3);
+    expect(loads.find((p) => p.phase === 2)?.powerW).toBe(460);
+    expect(loads.find((p) => p.phase === null)?.powerW).toBe(400);
+  });
+
+  test('the library gives typical power to equipment and none to what has no plug', () => {
+    expect(itemById('video.projector')?.powerW).toBe(400);
+    expect(itemById('pa.sub')?.powerW).toBe(1000);
+    expect(itemById('furniture.chair')?.powerW).toBeNull();
+    expect(itemById('rack.di')?.powerW).toBeNull();
   });
 });
