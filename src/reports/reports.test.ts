@@ -22,7 +22,7 @@ const rock = () => bare(showFromPackage(packageById('rock')!, 'Rock', 'es'));
 
 describe('reports', () => {
   test('which reports are offered follows the modules', () => {
-    expect(availableReports({ ...rock(), modules: ['audio', 'document'] })).toEqual(['cables', 'power', 'inputs', 'outputs']);
+    expect(availableReports({ ...rock(), modules: ['audio', 'document'] })).toEqual(['racks', 'cables', 'power', 'inputs', 'outputs']);
     expect(availableReports(theatre())).toEqual(expect.arrayContaining(['hookup', 'inputs']));
     expect(availableReports({ ...rock(), modules: ['document'] })).toEqual(['cables', 'power']);
     expect(availableReports({ ...rock(), modules: ['document'], connections: {} })).toEqual(['power']);

@@ -15,12 +15,11 @@ test('DMX: a model offers its modes, fixtures are addressed in a row and listed 
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await page.getByRole('button', { name: 'Luces', exact: true }).click();
-  await L(page, 'Modo DMX · Wash 1').fill('7');
-  await L(page, 'Modo DMX · Wash 2').fill('7');
-  await L(page, 'Modo DMX · Wash 2').press('Tab');
+  await L(page, 'Modo DMX · Wash 1').selectOption('3ch');
+  await L(page, 'Modo DMX · Wash 2').selectOption('3ch');
   await page.getByRole('button', { name: 'Direccionar DMX' }).click();
   await expect(L(page, 'Dirección · Wash 1')).toHaveValue('1');
-  await expect(L(page, 'Dirección · Wash 2')).toHaveValue('8');
+  await expect(L(page, 'Dirección · Wash 2')).toHaveValue('4');
   await page.getByRole('button', { name: 'Informes', exact: true }).click();
   await page.getByRole('button', { name: 'Direcciones DMX' }).click();
   await expect(page.getByRole('cell', { name: 'Wash 2', exact: true })).toBeVisible();

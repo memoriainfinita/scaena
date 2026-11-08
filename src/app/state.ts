@@ -1,7 +1,7 @@
 // Application state: signals over the show's history. The model itself stays plain data (src/model).
 import { signal } from '@preact/signals';
 import { lang, resolveLang, type Lang } from '../i18n/index.ts';
-import { showFromPackage } from '../library/apply.ts';
+import { showFromPackage, withHistory } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { regionByCode } from '../library/regions.ts';
 import { History } from '../model/history.ts';
@@ -209,7 +209,9 @@ function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {})
 export function startFromPackage(pkgId: string, name: string): void {
   const pkg = packageById(pkgId);
   if (!pkg) throw new Error(`unknown package ${pkgId}`);
-  open(withDefaults(showFromPackage(pkg, name, lang.value)));
+  const { show, stored } = withHistory(pkg, withDefaults(showFromPackage(pkg, name, lang.value)));
+  const s = open(show, undefined, pkg.images?.() ?? {});
+  for (const r of stored) void s.storeRevision(r.number, r.data).catch(() => undefined);
 }
 
 /** A new show starts with the units, paper and region chosen in the app settings. */

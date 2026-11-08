@@ -14,6 +14,8 @@ const EN: Record<string, string> = {
   Wash: 'Wash', Suelo: 'Floor', Distribución: 'Power distro', 'Toma 16 A derecha': 'Outlet 16 A right', 'Toma 16 A izquierda': 'Outlet 16 A left', Público: 'Audience', Hazer: 'Hazer', Móvil: 'Mover',
   'Pantalla LED': 'LED wall', 'Portátil de visuales': 'Visuals laptop', Cámara: 'Camera', 'Rack inalámbrico': 'Wireless rack', 'Recorte FOH': 'Ellipsoidal FOH', 'Recorte vara 2': 'Ellipsoidal bar 2',
   Ciclorama: 'Cyc', PC: 'PC', 'Servidor de vídeo': 'Video server', 'Conmutador de red': 'Network switch', 'Control de luces': 'Lighting control', Emisión: 'Streaming',
+  // The full example
+  Switch: 'Switch', Baúl: 'Flight case', 'Boca útil': 'Clear opening', Butacas: 'Seats', Cabina: 'Booth', Camerino: 'Dressing room', Frontal: 'Front fill', 'Mesa de monitores': 'Monitor console', 'Mesa de producción': 'Production table', 'Muelle de carga': 'Loading dock', 'Nodo Art-Net': 'Art-Net node', 'Petacas IEM': 'IEM packs', 'Rack de escenario': 'Stage rack', 'Splitter DMX': 'DMX splitter',
   // Channel names (drums and others)
   'OH I': 'OH L', 'OH D': 'OH R', Tom: 'Tom', 'DJ L': 'DJ L', 'DJ R': 'DJ R', 'Salida de mesa DJ': 'DJ desk output', 'Micro de mesa': 'Table mic', 'Salida del portátil': 'Laptop output',
   Bombo: 'Kick', Caja: 'Snare', Charles: 'Hi-hat', 'Tom suelo': 'Floor tom', 'Bajo DI': 'Bass DI', 'Bajo ampli': 'Bass amp', 'Teclado L': 'Keys L', 'Teclado R': 'Keys R', 'Piano L': 'Piano L', 'Piano R': 'Piano R',

@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-08
+last_updated: 2026-11-09
 ---
 
 # scaena — state
@@ -17,8 +17,8 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
-- Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 7 paquetes con datos completos y la prueba `packages-clean`
-- Pruebas (2026-11-08): 439 unitarias; e2e completos, 149 en Firefox (14 omitidos) y 107 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
+- Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
+- Pruebas (2026-11-08): 456 unitarias; e2e completos, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
 - Patch desde los cables (`docs/design/patch-from-cables-2026-11-08.md`): cada cable de audio lleva entrada de llegada y líneas; lo escrito manda y una diferencia avisa. Solo el ejemplo de rock lo usa; los otros con stagebox llevan el patch escrito
 - Mezclas de monitores (`docs/design/monitor-mixes-2026-11-08.md`): para quién es cada salida y cuánto pide de cada canal, en cuadrícula, documento e informe

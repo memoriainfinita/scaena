@@ -10,7 +10,7 @@
 - **Documents:** channel list in landscape and in blocks, logo on the cover, own document templates, comparing two revisions, cables report, power table, Greek and Cyrillic in the PDF.
 - **Warnings:** 34 rules (`channelNotCabled`, `outputNotCabled`, `dmxChainLong`, `networkLoop`, `universeRepeated`, `dmxBeyond`, `duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate`, `stageCrossing`, `portTaken`, `portRange`, `patchMismatch`, `cableLinesShort` added); any warning can be muted.
 - **Lights as RP-2 symbols:** a view toggle that draws luminaires as top-view outlines on the plot and in the PDF; on in the theatre example; the DXF always uses them.
-- **Examples:** the 7 packages rewritten with complete data (cables, PA, desk, power, production); the rock band's keyboard goes through a stereo DI, the hi-hat has a small-diaphragm condenser and the DMX runs as one chain.
+- **Examples:** a full showcase that uses every feature, checked by a test so it stays complete, with a venue plan, a logo and two saved revisions; the 7 packages rewritten with complete data (cables, PA, desk, power, production, mixes, DMX addresses and universes, IPs); the rock band's keyboard goes through a stereo DI, the hi-hat has a small-diaphragm condenser and the DMX runs as one chain.
 - **Interface:** app defaults and grid settings; phone in landscape with a view rail.
 
 ## 0.1.0 (published 2026-11-05)

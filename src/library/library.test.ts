@@ -92,9 +92,10 @@ describe('packages', () => {
     conference: { channels: 9, outputs: 2 },
     theatre: { channels: 12, outputs: 2 },
     av: { channels: 4, outputs: 2 },
+    showcase: { channels: 22, outputs: 11 },
   };
 
-  test('the seven packages exist', () => {
+  test('the packages exist', () => {
     expect(PACKAGES.map((p) => p.id)).toEqual(Object.keys(expected));
     expect(packageById('rock')).toBeDefined();
   });
@@ -105,7 +106,7 @@ describe('packages', () => {
       expect(safeParseShow(show).success).toBe(true);
       expect(Object.keys(show.channels)).toHaveLength(expected[pkg.id]!.channels);
       expect(Object.keys(show.outputs)).toHaveLength(expected[pkg.id]!.outputs);
-      expect(Object.keys(show.elements)).toHaveLength(pkg.elements.length);
+      expect(Object.values(show.elements).filter((e) => !e.type.id.startsWith('custom.'))).toHaveLength(pkg.elements.length);
     });
 
     test(`${pkg.id} draws its cables between elements that exist, none repeated`, () => {
@@ -124,6 +125,7 @@ describe('packages', () => {
       for (const e of pkg.elements) {
         expect(itemById(e.type), e.type).toBeDefined();
         expect(e.x).toBeGreaterThanOrEqual(0);
+        if (pkg.id === 'showcase') continue; // a wider, free-form stage, in a room of its own
         expect(e.x).toBeLessThanOrEqual(8000);
         expect(e.y).toBeGreaterThanOrEqual(0);
         // The stage is 5000 deep; beyond that only control-position equipment may sit.

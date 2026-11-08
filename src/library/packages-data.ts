@@ -5,7 +5,7 @@ import { nextId } from '../model/ids.ts';
 import { addSong, addSlot } from '../model/production.ts';
 import { addWorkNote, setCircuitPhase, setDimmerMax, setPhaseBreaker } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
-import type { Bilingual } from './types.ts';
+import type { Bilingual, PackageChannel, PackageElement, PackageLink, PackageMount } from './types.ts';
 
 export type Tx = (b: Bilingual) => string;
 export const bi = (es: string, en: string): Bilingual => ({ es, en });
@@ -65,3 +65,26 @@ export function addNotes(show: Show, placed: { id: string }[], tx: Tx, rows: [Bi
   for (const [text, at] of rows) [show] = addWorkNote(show, tx(text), at === undefined ? null : placed[at]!.id);
   return show;
 }
+
+type Extra = Partial<PackageElement>;
+
+/** A package under construction: `el` and friends return the index the others refer to. */
+export function build() {
+  const elements: PackageElement[] = [];
+  const channels: PackageChannel[] = [];
+  const links: PackageLink[] = [];
+  const el = (type: string, x: number, y: number, label = '', extra: Extra = {}): number => elements.push({ type, x, y, label, ...extra }) - 1;
+  const ch = (name: string, mic: string, stand: string, phantom: boolean, element?: number, patch?: string): void => {
+    channels.push({ name, mic, stand, phantom, ...(element === undefined ? {} : { element }), ...(patch === undefined ? {} : { patch }) });
+  };
+  const link = (from: number, to: number, signal: PackageLink['signal'] = 'audio', connector?: string, toPort?: number, lines?: number): void => {
+    links.push({ from, to, signal, ...(connector === undefined ? {} : { connector }), ...(toPort === undefined ? {} : { toPort }), ...(lines === undefined ? {} : { lines }) });
+  };
+  return { elements, channels, links, el, ch, link };
+}
+
+export const BAND: Extra = { suppliedBy: 'band' };
+export const VENUE: Extra = { suppliedBy: 'venue' };
+export const mount = (kind: PackageMount['kind'], es: string, en: string, from: [number, number], to: [number, number], heightMm: number, maxLoadKg?: number): PackageMount => ({
+  kind, name: bi(es, en), from: { x: from[0], y: from[1] }, to: { x: to[0], y: to[1] }, heightMm, ...(maxLoadKg === undefined ? {} : { maxLoadKg }),
+});

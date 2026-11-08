@@ -1,11 +1,13 @@
-// The seven example shows. They are meant to be read as much as to be started from: between them they use everything
+// The example shows. They are meant to be read as much as to be started from: between them they use everything
 // the app does (instruments with their amps and mics, stageboxes and desks, racks, wedges, lights on bars,
 // trusses, booms and the floor, circuits, dimmers and phases, computers, video, the day's schedule, set lists,
 // hospitality, contacts and notes), each with what that kind of show really has. Stage coordinates are in
 // millimetres: x from the left, y from the back wall (0) to the front edge; the default stage is 8000 by 5000.
 // Every cable is drawn between the two elements it joins, so the plan can show or hide the lines.
-import { addContacts, PERSON, addNotes, addSchedule, addSetlist, bi, setElectrical } from './packages-data.ts';
-import type { PackageChannel, PackageElement, PackageLink, PackageMount, ShowPackage } from './types.ts';
+import { setUniverseInfo } from '../model/dmx.ts';
+import { showcase } from './package-showcase.ts';
+import { addContacts, PERSON, addNotes, addSchedule, addSetlist, BAND, bi, build, mount, setElectrical, VENUE } from './packages-data.ts';
+import type { ShowPackage } from './types.ts';
 
 /** What each wedge of the rock example asks for, by position in its channel list: 0 kick, 1 snare, 10 and 11 guitars, 12 and 13 keys, 14 to 16 vocals. */
 const WEDGE_MIXES: { who: string; mix: Record<number, 'low' | 'normal' | 'high'> }[] = [
@@ -14,29 +16,6 @@ const WEDGE_MIXES: { who: string; mix: Record<number, 'low' | 'normal' | 'high'>
   { who: 'Voz 3', mix: { 16: 'high', 14: 'normal', 11: 'low' } },
   { who: 'Guitarra 1', mix: { 10: 'high', 14: 'normal', 0: 'low', 1: 'low' } },
 ];
-
-type Extra = Partial<PackageElement>;
-
-/** A package under construction: `el` and friends return the index the others refer to. */
-function build() {
-  const elements: PackageElement[] = [];
-  const channels: PackageChannel[] = [];
-  const links: PackageLink[] = [];
-  const el = (type: string, x: number, y: number, label = '', extra: Extra = {}): number => elements.push({ type, x, y, label, ...extra }) - 1;
-  const ch = (name: string, mic: string, stand: string, phantom: boolean, element?: number, patch?: string): void => {
-    channels.push({ name, mic, stand, phantom, ...(element === undefined ? {} : { element }), ...(patch === undefined ? {} : { patch }) });
-  };
-  const link = (from: number, to: number, signal: PackageLink['signal'] = 'audio', connector?: string, toPort?: number, lines?: number): void => {
-    links.push({ from, to, signal, ...(connector === undefined ? {} : { connector }), ...(toPort === undefined ? {} : { toPort }), ...(lines === undefined ? {} : { lines }) });
-  };
-  return { elements, channels, links, el, ch, link };
-}
-
-const BAND: Extra = { suppliedBy: 'band' };
-const VENUE: Extra = { suppliedBy: 'venue' };
-const mount = (kind: PackageMount['kind'], es: string, en: string, from: [number, number], to: [number, number], heightMm: number, maxLoadKg?: number): PackageMount => ({
-  kind, name: bi(es, en), from: { x: from[0], y: from[1] }, to: { x: to[0], y: to[1] }, heightMm, ...(maxLoadKg === undefined ? {} : { maxLoadKg }),
-});
 
 // ---------------------------------------------------------------------------------------------------------------
 
@@ -58,14 +37,14 @@ const rock = (): ShowPackage => {
   const v2 = el('vocals.mic-stand', 4000, 3900, 'Voz 2');
   const v3 = el('vocals.mic-stand', 5300, 3700, 'Voz 3');
   const wedges = [2500, 3500, 4500, 5500].map((x, i) => el('monitor.wedge', x, 4600, `Cuña ${i + 1}`, VENUE));
-  const sb = el('rack.stagebox', 7500, 700, 'SB', VENUE);
+  const sb = el('rack.stagebox', 7500, 700, 'SB', { ...VENUE, rack: { units: 6, slots: [[bi('Stagebox Midas DL16', 'Midas DL16 stagebox'), 2], [bi('Splitter de monitores', 'Monitor splitter'), 1], [bi('Regleta de corriente', 'Power strip'), 1]] } });
   const desk = el('desk.digital', 4000, 7600, 'Mesa', VENUE);
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
   const ld = el('control.lightdesk', 5600, 7600, 'Mesa de luces', VENUE);
   // Lights: four LED pars on the rear truss, two on the floor at each side.
   const par = (x: number, y: number, label: string, n: number, mountIx: number, addr: number) =>
-    el('light.led-par', x, y, label, { light: { modelId: 'etc.colorsource-par', channel: n, circuit: n, mount: mountIx, universe: 1, address: addr } });
+    el('light.led-par', x, y, label, { light: { modelId: 'ofl.chauvet-dj.slim-par-64', channel: n, circuit: n, mount: mountIx, universe: 1, address: addr, dmxMode: '7ch' } });
   const truss = [1500, 3000, 5000, 6500].map((x, i) => par(x, 400, `Wash ${i + 1}`, i + 1, 0, 1 + i * 7));
   const floorL = [2300, 2900].map((y, i) => par(350, y, `Suelo ${i + 1}`, 5 + i, 1, 29 + i * 7));
   const floorR = [2300, 2900].map((y, i) => par(7650, y, `Suelo ${i + 3}`, 7 + i, 2, 43 + i * 7));
@@ -120,7 +99,7 @@ const rock = (): ShowPackage => {
     modules: ['audio', 'lights', 'power', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [...wedges.map((element, i) => ({ kind: 'wedge' as const, element, ...WEDGE_MIXES[i]! })), { kind: 'main' as const, element: paL }, { kind: 'main' as const, element: paR }],
+    outputs: [...wedges.map((element, i) => ({ kind: 'wedge' as const, element, ...WEDGE_MIXES[i]! })), { kind: 'main' as const, element: paL, who: bi('Público', 'Audience') }, { kind: 'main' as const, element: paR, who: bi('Público', 'Audience') }],
     links: b.links,
     mounts: [mount('truss', 'Truss trasero', 'Rear truss', [1000, 400], [7000, 400], 5000, 300), mount('floor', 'Suelo izquierda', 'Floor left', [350, 2200], [350, 3000], 0), mount('floor', 'Suelo derecha', 'Floor right', [7650, 2200], [7650, 3000], 0)],
     desk: 'behringer.x32',
@@ -157,6 +136,7 @@ const rock = (): ShowPackage => {
         event: { ...show.event, venueAddress: tx(bi('Calle de la Sala 1, 00000 Ciudad (ejemplo)', '1 Club Street, 00000 City (example)')), parking: tx(bi('Furgoneta junto al acceso de carga', 'Van next to the loading door')) },
       };
       show = setElectrical(show, { breakers: [16, 16, 16], circuits: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 2], [6, 2], [7, 3], [8, 3]] });
+      show = setUniverseInfo(show, 1, { output: tx(bi('Salida A de la mesa de luces', 'Lighting desk output A')) });
       return addNotes(show, placed, tx, [[bi('Confirmar con la sala las dos tomas de 16 A', 'Confirm the two 16 A outlets with the venue')], [bi('Colocar el ampli del bajo sobre su caja', 'Put the bass amp on its stand'), ampBass]]);
     },
   };
@@ -181,8 +161,13 @@ const jazz = (): ShowPackage => {
   const desk = el('desk.digital', 4000, 7600, 'Mesa', VENUE);
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
-  [1500, 3000, 5000, 6500].forEach((x, i) => el('light.led-par', x, 400, `Wash ${i + 1}`, { light: { modelId: 'etc.colorsource-par', channel: i + 1, circuit: i + 1, mount: 0, universe: 1, address: 1 + i * 7 } }));
-  [3000, 5000].forEach((x, i) => el('light.ellipsoidal', x, 6200, `Recorte ${i + 1}`, { light: { modelId: 'etc.s4-26', channel: 5 + i, circuit: 5 + i, dimmer: 1 + i, mount: 1, color: 'R02' } }));
+  const ld = el('control.lightdesk', 5600, 7600, 'Mesa de luces', VENUE);
+  const dimmer = el('rack.dimmer', 7400, 1500, 'Rack de dimmers', VENUE);
+  const washes = [1500, 3000, 5000, 6500].map((x, i) => el('light.led-par', x, 400, `Wash ${i + 1}`, { light: { modelId: 'ofl.chauvet-dj.slim-par-64', channel: i + 1, circuit: i + 1, mount: 0, universe: 1, address: 1 + i * 7, dmxMode: '7ch' } }));
+  [3000, 5000].forEach((x, i) => el('light.ellipsoidal', x, 6200, `Recorte ${i + 1}`, { light: { modelId: 'etc.s4-26', channel: 5 + i, circuit: 5 + i, dimmer: 1 + i, mount: 1, color: 'R02', universe: 1, address: 29 + i, dmxSlots: 1 } }));
+
+  // DMX: the desk, then the rear truss, then the dimmers of the front of house.
+  [ld, ...washes, dimmer].forEach((e, i, all) => { if (i > 0) link(all[i - 1]!, e, 'lightControl', 'DMX'); });
 
   link(bassist, diBass, 'audio', 'Jack');
   link(diBass, sb, 'audio', 'XLR');
@@ -217,7 +202,12 @@ const jazz = (): ShowPackage => {
     modules: ['audio', 'lights', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [...wedges.map((element) => ({ kind: 'wedge' as const, element })), { kind: 'main' as const, element: paL }, { kind: 'main' as const, element: paR }],
+    outputs: [
+      { kind: 'wedge' as const, element: wedges[0]!, who: 'Viento 1', mix: { 9: 'high', 11: 'normal', 6: 'low', 7: 'low' } },
+      { kind: 'wedge' as const, element: wedges[1]!, who: 'Viento 2', mix: { 10: 'high', 11: 'normal', 4: 'low' } },
+      { kind: 'main' as const, element: paL, who: bi('Público', 'Audience') },
+      { kind: 'main' as const, element: paR, who: bi('Público', 'Audience') },
+    ],
     links: b.links,
     mounts: [mount('truss', 'Truss trasero', 'Rear truss', [1000, 400], [7000, 400], 4500, 200), mount('pipe', 'Frente de sala', 'Front of house', [2000, 6200], [6000, 6200], 4500, 100)],
     finish: (show, placed, tx) => {
@@ -238,6 +228,7 @@ const jazz = (): ShowPackage => {
         contract: { ...show.contract, setLengthMin: 60, other: tx(bi('Dos pases de una hora; piano afinado por la sala', 'Two one-hour sets; piano tuned by the venue')) },
       };
       show = setElectrical(show, { breakers: [16, 16], circuits: [[1, 1], [2, 1], [3, 2], [4, 2], [5, 1], [6, 2]], dimmers: [[1, 2300], [2, 2300]] });
+      show = setUniverseInfo(show, 1, { output: tx(bi('Salida A de la mesa de luces', 'Lighting desk output A')) });
       return addNotes(show, placed, tx, [[bi('Pedir a la sala el piano afinado antes de la prueba', 'Ask the venue for the piano tuned before soundcheck'), piano]]);
     },
   };
@@ -278,7 +269,7 @@ const singer = (): ShowPackage => {
     modules: ['audio', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [{ kind: 'wedge', element: wedge }, { kind: 'main', element: paL }, { kind: 'main', element: paR }],
+    outputs: [{ kind: 'wedge', element: wedge, who: bi('Voz y guitarra', 'Vocal and guitar'), mix: { 0: 'high', 1: 'normal', 3: 'normal' } }, { kind: 'main', element: paL, who: bi('Público', 'Audience') }, { kind: 'main', element: paR, who: bi('Público', 'Audience') }],
     links: b.links,
     finish: (show, placed, tx) => {
       show = addContacts(show, tx, [[bi('Artista', 'Artist'), ...PERSON]]);
@@ -306,8 +297,8 @@ const dj = (): ShowPackage => {
   const visuals = el('control.laptop', 6700, 1100, 'Portátil de visuales', { ...BAND, computer: { functions: ['video', 'lights'], os: 'macos', programs: [{ name: 'Resolume', use: 'Vídeo en directo' }, { name: 'MadMapper', use: 'Control de luces' }] } });
   const haze = el('effect.haze', 700, 900, 'Hazer', VENUE);
   const movers = [1500, 3000, 5000, 6500].map((x, i) => el('light.moving-spot', x, 1800, `Móvil ${i + 1}`, { light: { modelId: 'ofl.chauvet-dj.intimidator-spot-160', channel: 1 + i, circuit: 1 + i, mount: 0, universe: 1, address: 1 + i * 16 } }));
-  const ledL = el('light.led-par', 1400, 2800, 'Suelo 1', { light: { modelId: 'etc.colorsource-par', channel: 5, circuit: 5, mount: 1, universe: 1, address: 65 } });
-  const ledR = el('light.led-par', 6600, 2800, 'Suelo 2', { light: { modelId: 'etc.colorsource-par', channel: 6, circuit: 6, mount: 2, universe: 1, address: 72 } });
+  const ledL = el('light.led-par', 1400, 2800, 'Suelo 1', { light: { modelId: 'ofl.chauvet-dj.slim-par-64', channel: 5, circuit: 5, mount: 1, universe: 1, address: 65, dmxMode: '7ch' } });
+  const ledR = el('light.led-par', 6600, 2800, 'Suelo 2', { light: { modelId: 'ofl.chauvet-dj.slim-par-64', channel: 6, circuit: 6, mount: 2, universe: 1, address: 72, dmxMode: '7ch' } });
 
   link(laptop, booth, 'audio', 'USB');
   link(mc, booth, 'audio', 'XLR');
@@ -332,7 +323,7 @@ const dj = (): ShowPackage => {
     modules: ['audio', 'lights', 'computers', 'video', 'power', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [{ kind: 'main', element: paL }, { kind: 'main', element: paR }, { kind: 'send', element: subL }, { kind: 'send', element: subR }],
+    outputs: [{ kind: 'main', element: paL, who: bi('Público', 'Audience') }, { kind: 'main', element: paR, who: bi('Público', 'Audience') }, { kind: 'send', element: subL, who: bi('Subgrave', 'Subs') }, { kind: 'send', element: subR, who: bi('Subgrave', 'Subs') }],
     links: b.links,
     mounts: [mount('truss', 'Truss', 'Truss', [1000, 1800], [7000, 1800], 4500, 400), mount('floor', 'Suelo izquierda', 'Floor left', [1400, 2700], [1400, 2900], 0), mount('floor', 'Suelo derecha', 'Floor right', [6600, 2700], [6600, 2900], 0)],
     finish: (show, placed, tx) => {
@@ -353,6 +344,7 @@ const dj = (): ShowPackage => {
         contract: { ...show.contract, setLengthMin: 120, crew: tx(bi('DJ y técnico de visuales', 'DJ and visuals technician')), other: tx(bi('Hazer permitido; avisar a la sala del humo', 'Hazer allowed; tell the venue about the haze')) },
       };
       show = setElectrical(show, { breakers: [16, 16, 16], circuits: [[1, 1], [2, 1], [3, 2], [4, 2], [5, 3], [6, 3]] });
+      show = setUniverseInfo(show, 1, { output: tx(bi('Interfaz DMX del portátil de visuales', 'DMX interface of the visuals laptop')) });
       return addNotes(show, placed, tx, [[bi('Avisar a la sala del hazer antes de la prueba', 'Tell the venue about the hazer before soundcheck'), haze], [bi('Probar el DMX de los móviles desde el portátil de visuales', 'Test the movers DMX from the visuals laptop'), visuals]]);
     },
   };
@@ -373,9 +365,9 @@ const conference = (): ShowPackage => {
   const laptop = el('control.laptop', 2700, 3800, 'Portátil de presentación', { ...BAND, computer: { functions: ['video', 'sound'], os: 'windows', programs: [{ name: 'PowerPoint', use: 'Diapositivas' }] } });
   const camera = el('video.camera', 5300, 6200, 'Cámara', BAND);
   const mixer = el('control.videomixer', 5700, 7700, 'Mesa de vídeo', BAND);
-  const desk = el('desk.digital', 2600, 7600, 'Mesa', VENUE);
+  const desk = el('desk.digital', 2600, 7600, 'Mesa', { ...VENUE, ip: '192.168.1.10' });
   const sb = el('rack.stagebox', 7500, 1800, 'Stagebox', VENUE);
-  const wl = el('rack.wireless', 7500, 700, 'Rack inalámbrico', { ...BAND, rack: { units: 8, slots: [[bi('Receptor doble inalámbrico (×4)', 'Dual wireless receiver (x4)'), 4], [bi('Combinador de antenas', 'Antenna combiner'), 1], [bi('Distribuidor de antenas', 'Antenna distributor'), 1], [bi('Conmutador de red', 'Network switch'), 1]] } });
+  const wl = el('rack.wireless', 7500, 700, 'Rack inalámbrico', { ...BAND, ip: '192.168.1.20', rack: { units: 8, slots: [[bi('Receptor doble inalámbrico (×4)', 'Dual wireless receiver (x4)'), 4], [bi('Combinador de antenas', 'Antenna combiner'), 1], [bi('Distribuidor de antenas', 'Antenna distributor'), 1], [bi('Conmutador de red', 'Network switch'), 1]] } });
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
 
@@ -391,6 +383,7 @@ const conference = (): ShowPackage => {
   link(mixer, projector, 'video', 'HDMI');
   link(desk, paL, 'audio', 'XLR');
   link(desk, paR, 'audio', 'XLR');
+  link(wl, desk, 'network', 'Cat6');
 
   ch('Atril', 'sennheiser.e835', 'Cuello de cisne', false, lectern, 'SB 1');
   ch('Diadema 1', 'sennheiser.ew-dx', '', false, h1, 'RX 1');
@@ -406,7 +399,7 @@ const conference = (): ShowPackage => {
     modules: ['audio', 'computers', 'video', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [{ kind: 'main', element: paL }, { kind: 'main', element: paR }],
+    outputs: [{ kind: 'main', element: paL, who: bi('Público', 'Audience') }, { kind: 'main', element: paR, who: bi('Público', 'Audience') }],
     links: b.links,
     desk: 'yamaha.dm3',
     finish: (show, placed, tx) => {
@@ -447,14 +440,14 @@ const theatre = (): ShowPackage => {
   el('scenery.curtain', 4000, 200, 'Telón de fondo');
   const computer = el('control.laptop', 2600, 7600, 'Ordenador de sonido', { ...BAND, computer: { functions: ['sound'], os: 'macos', programs: [{ name: 'QLab', use: 'Efectos y música' }] } });
   const desk = el('desk.digital', 4000, 7600, 'Mesa', VENUE);
-  const lightdesk = el('control.lightdesk', 5600, 7600, 'Mesa de luces', VENUE);
-  const dimmer = el('rack.dimmer', 7600, 1000, 'Rack de dimmers', VENUE);
+  const lightdesk = el('control.lightdesk', 5600, 7600, 'Mesa de luces', { ...VENUE, ip: '10.101.0.10' });
+  const dimmer = el('rack.dimmer', 7600, 1000, 'Rack de dimmers', { ...VENUE, ip: '10.101.0.20' });
   const wl = el('rack.wireless', 7500, 2800, 'Rack inalámbrico', { ...BAND, rack: { units: 8, slots: [[bi('Receptor doble inalámbrico (×4)', 'Dual wireless receiver (x4)'), 4], [bi('Combinador de antenas', 'Antenna combiner'), 1], [bi('Distribuidor de antenas', 'Antenna distributor'), 1], [bi('Conmutador de red', 'Network switch'), 1]] } });
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
   // Lights, by where they hang: front of house, the three bars, the side booms and the floor.
   const lamp = (type: string, x: number, y: number, label: string, n: number, mountIx: number, model: string, color = '') =>
-    el(type, x, y, label, { light: { modelId: model, channel: n, circuit: n, dimmer: n, mount: mountIx, color } });
+    el(type, x, y, label, { light: { modelId: model, channel: n, circuit: n, dimmer: n, mount: mountIx, color, universe: 1, address: n, dmxSlots: 1 } });
   [1500, 3000, 5000, 6500].forEach((x, i) => lamp('light.ellipsoidal', x, 6200, `Recorte FOH ${i + 1}`, 1 + i, 3, 'etc.s4-19', i < 2 ? 'R02' : 'R33'));
   const bar1 = [1500, 4000, 6500].map((x, i) => lamp('light.fresnel', x, 3300, `Fresnel ${i + 1}`, 5 + i, 0, 'etc.s4-fresnel', 'L201'));
   [1500, 4000, 6500].forEach((x, i) => lamp('light.ellipsoidal', x, 1800, `Recorte vara 2 ${i + 1}`, 8 + i, 1, 'etc.s4-26'));
@@ -469,7 +462,7 @@ const theatre = (): ShowPackage => {
   link(computer, desk, 'audio', 'Jack');
   link(desk, paL, 'audio', 'XLR');
   link(desk, paR, 'audio', 'XLR');
-  link(lightdesk, dimmer, 'lightControl', 'DMX');
+  link(lightdesk, dimmer, 'lightControl', 'Ethernet');
 
   actors.forEach((a, i) => ch(`Actor ${i + 1}`, 'sennheiser.ew-dx', '', false, a, `RX ${i + 1}`));
   ch('Reserva 1', 'sennheiser.ew-dx', '', false);
@@ -484,7 +477,7 @@ const theatre = (): ShowPackage => {
     modules: ['audio', 'lights', 'computers', 'power', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [{ kind: 'main', element: paL }, { kind: 'main', element: paR }],
+    outputs: [{ kind: 'main', element: paL, who: bi('Público', 'Audience') }, { kind: 'main', element: paR, who: bi('Público', 'Audience') }],
     links: b.links,
     mounts: [
       mount('bar', 'Vara 1', 'Bar 1', [600, 3300], [7400, 3300], 6000, 250),
@@ -498,6 +491,7 @@ const theatre = (): ShowPackage => {
     desk: 'yamaha.dm3',
     finish: (show, placed, tx) => {
       // A theatre light plot is read in RP-2 top-view outlines.
+      show = setUniverseInfo(show, 1, { protocol: 'sacn', net: '1', output: tx(bi('Entrada de red del rack de dimmers', 'Network input of the dimmer rack')) });
       show = { ...show, view: { ...show.view, rp2Lights: true }, titleBlock: { ...show.titleBlock, production: tx(bi('Obra de ejemplo', 'Example play')), venue: tx(bi('Teatro de ejemplo', 'Example theatre')) } };
       show = addContacts(show, tx, [
         [bi('Regidora', 'Stage manager'), ...PERSON],
@@ -546,10 +540,10 @@ const av = (): ShowPackage => {
   const m1 = el('vocals.mic-stand', 3200, 3500, 'Micro 1');
   const m2 = el('vocals.mic-stand', 4800, 3500, 'Micro 2');
   const desk = el('desk.digital', 1500, 7700, 'Mesa', VENUE);
-  const computer = el('control.laptop', 3000, 7700, 'Ordenador de vídeo', { ...BAND, computer: { functions: ['video', 'sound'], os: 'windows', programs: [{ name: 'Resolume', use: 'Vídeo en directo' }] } });
-  const server = el('control.server', 4300, 7700, 'Servidor de vídeo', { ...BAND, computer: { functions: ['video', 'network'], os: 'linux', programs: [{ name: 'OBS Studio', use: 'Emisión' }] } });
-  const mixer = el('control.videomixer', 5600, 7700, 'Mesa de vídeo', BAND);
-  const net = el('rack.network', 7000, 7700, 'Conmutador de red', { ...BAND, rack: { units: 2, slots: [[bi('Conmutador de 24 puertos', '24-port switch'), 1], [bi('Panel de parcheo', 'Patch panel'), 1]] } });
+  const computer = el('control.laptop', 3000, 7700, 'Ordenador de vídeo', { ...BAND, ip: '192.168.10.11', computer: { functions: ['video', 'sound'], os: 'windows', programs: [{ name: 'Resolume', use: 'Vídeo en directo' }] } });
+  const server = el('control.server', 4300, 7700, 'Servidor de vídeo', { ...BAND, ip: '192.168.10.12', computer: { functions: ['video', 'network'], os: 'linux', programs: [{ name: 'OBS Studio', use: 'Emisión' }] } });
+  const mixer = el('control.videomixer', 5600, 7700, 'Mesa de vídeo', { ...BAND, ip: '192.168.10.13' });
+  const net = el('rack.network', 7000, 7700, 'Conmutador de red', { ...BAND, ip: '192.168.10.1', rack: { units: 2, slots: [[bi('Conmutador de 24 puertos', '24-port switch'), 1], [bi('Panel de parcheo', 'Patch panel'), 1]] } });
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
 
@@ -577,7 +571,7 @@ const av = (): ShowPackage => {
     modules: ['audio', 'computers', 'video', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [{ kind: 'main', element: paL }, { kind: 'main', element: paR }],
+    outputs: [{ kind: 'main', element: paL, who: bi('Público', 'Audience') }, { kind: 'main', element: paR, who: bi('Público', 'Audience') }],
     links: b.links,
     finish: (show, placed, tx) => {
       show = addContacts(show, tx, [
@@ -599,5 +593,5 @@ const av = (): ShowPackage => {
   };
 };
 
-export const PACKAGES: ShowPackage[] = [rock(), jazz(), singer(), dj(), conference(), theatre(), av()];
+export const PACKAGES: ShowPackage[] = [rock(), jazz(), singer(), dj(), conference(), theatre(), av(), showcase()];
 export const packageById = (id: string): ShowPackage | undefined => PACKAGES.find((p) => p.id === id);

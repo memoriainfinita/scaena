@@ -4,6 +4,8 @@ import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
 import { addMount, autoNumber, emptyLuminaire, setFixtureModel, updateLuminaire } from '../model/lights.ts';
 import { addRackSlot, makeRack, setRackUnits as updateRackUnits } from '../model/racks.ts';
+import { diffShows } from '../model/diff.ts';
+import { saveRevision } from '../model/revisions.ts';
 import type { Computer, Connection, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
 import { templateForPackage } from '../document/sections.ts';
 import { itemById } from './items.ts';
@@ -33,6 +35,8 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
       type: { id: item.id, version: item.version },
       x: pe.x,
       y: pe.y,
+      rotation: pe.rotation ?? 0,
+      ip: pe.ip ?? '',
       layerId: layer.id,
       label: translatePackageText(pe.label ?? '', lang),
       suppliedBy: pe.suppliedBy ?? 'unset',
@@ -56,7 +60,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
   pkg.outputs.forEach((o, i) => {
     let id: string;
     [id, show] = nextId(show, 'out');
-    outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, who: translatePackageText(o.who ?? '', lang), mix: Object.fromEntries(Object.entries(o.mix ?? {}).map(([n, level]) => [channelIds[Number(n)]!, level])), notes: '' };
+    outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, who: tx(o.who ?? '', lang), mix: Object.fromEntries(Object.entries(o.mix ?? {}).map(([n, level]) => [channelIds[Number(n)]!, level])), notes: '' };
   });
   // Cables the package draws between its elements.
   for (const link of pkg.links ?? []) {
@@ -97,11 +101,21 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     if (model) show = setFixtureModel(show, e.id, model);
     show = updateLuminaire(show, e.id, {
       mountId: (pkg.mounts ? (l?.mount === undefined ? undefined : mounts[l.mount]?.id) : mounts[0]?.id) ?? null,
-      ...(l ? { channel: l.channel, circuit: l.circuit ?? null, dimmer: l.dimmer ?? null, color: l.color ?? '', universe: l.universe ?? null, address: l.address ?? null } : {}),
+      ...(l ? { channel: l.channel, circuit: l.circuit ?? null, dimmer: l.dimmer ?? null, color: l.color ?? '', universe: l.universe ?? null, address: l.address ?? null, ...(l.dmxMode ? { dmxMode: l.dmxMode } : {}), ...(l.dmxSlots ? { dmxSlots: l.dmxSlots } : {}) } : {}),
     });
   });
   if (pkg.desk) show = { ...show, desk: { ...show.desk, model: audioById(pkg.desk) ? `${audioById(pkg.desk)!.brand} ${audioById(pkg.desk)!.model}` : pkg.desk } };
   if (lit.length > 0) show = autoNumber(show);
-  if (pkg.finish) show = pkg.finish(show, placed, (b) => tx(b, lang));
-  return { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null, inputs: { landscape: false, blocks: 'auto' } } };
+  show = { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null, inputs: { landscape: false, blocks: 'auto' } } };
+  return pkg.finish ? pkg.finish(show, placed, (b) => tx(b, lang)) : show;
+}
+
+/** The two saved versions of an example, ready to store, and the show that lists them. */
+export function withHistory(pkg: ShowPackage, show: Show): { show: Show; stored: { number: number; data: Uint8Array }[] } {
+  if (!pkg.history) return { show, stored: [] };
+  const { earlier, first, second } = pkg.history;
+  const a = saveRevision(earlier(show), first[0], tx(first[1], show.lang));
+  const current: Show = { ...show, revisions: a.show.revisions, revision: a.show.revision };
+  const b = saveRevision(current, second[0], tx(second[1], show.lang), diffShows(a.show, current, show.lang));
+  return { show: b.show, stored: [{ number: 1, data: a.data }, { number: 2, data: b.data }] };
 }

@@ -105,12 +105,14 @@ export interface PackageElement {
   suppliedBy?: 'band' | 'venue' | 'rental' | 'unset';
   /** Computers: what they do and run. */
   /** Lights: fixture model, the numbers that identify it and where it hangs (index into the package's mounts). */
-  light?: { modelId: string; channel: number; circuit?: number; dimmer?: number; mount?: number; color?: string; universe?: number; address?: number };
+  light?: { modelId: string; channel: number; circuit?: number; dimmer?: number; mount?: number; color?: string; universe?: number; address?: number; dmxMode?: string; dmxSlots?: number };
   /** Risers, platforms and the like: size and height when they differ from the library's. */
   size?: { w: number; d: number; height?: number };
   /** A rack: its height in units and what is mounted in it, from the top. */
   rack?: { units: number; slots: [Bilingual, number][] };
   notes?: Bilingual;
+  /** Network address of a computer, switch or desk. */
+  ip?: string;
   computer?: { functions: ('sound' | 'video' | 'lights' | 'network')[]; os: 'windows' | 'macos' | 'linux' | 'other'; programs: { name: string; use: string }[] };
 }
 
@@ -154,11 +156,15 @@ export interface ShowPackage {
   elements: PackageElement[];
   channels: PackageChannel[];
   /** Number of wedge monitors (placed by the package among the elements) and in-ears. */
-  outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number; who?: string; mix?: Record<number, 'low' | 'normal' | 'high'> }[];
+  outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number; who?: Bilingual | string; mix?: Record<number, 'low' | 'normal' | 'high'> }[];
   links?: PackageLink[];
   mounts?: PackageMount[];
   /** The mixing desk the example uses (a library audio model id). */
   desk?: string;
   /** Everything that is not on the plan: contacts, schedule, hospitality, electrical, notes. Texts come as both languages. */
   finish?: (show: Show, placed: PlanElement[], tx: (b: Bilingual) => string) => Show;
+  /** Images the example brings with it, by the file name the show refers to them by. */
+  images?: () => Record<string, Uint8Array>;
+  /** Two saved versions of the example: `earlier` turns the finished show into the first one. */
+  history?: { earlier: (show: Show) => Show; first: [string, Bilingual]; second: [string, Bilingual] };
 }

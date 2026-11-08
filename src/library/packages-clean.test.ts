@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { validate } from '../validate/rules.ts';
 import { showFromPackage } from './apply.ts';
-import { planSvg } from '../document/plan-svg.ts';
+import { planSvg, printStrokes } from '../document/plan-svg.ts';
 import { PACKAGES } from './packages.ts';
 
 // What a new show may still ask the user for: the data only they have.
@@ -11,7 +11,7 @@ describe('the example packages', () => {
   for (const pkg of PACKAGES) {
     const show = showFromPackage(pkg, pkg.id, 'es');
     test(`${pkg.id}: no warning of its own, only the contact and the date`, () => {
-      expect(validate(show).filter((i) => !THEIRS.has(i.rule)).map((i) => `${i.rule} ${JSON.stringify(i.vars)}`)).toEqual([]);
+      expect(validate(show).filter((i) => !THEIRS.has(i.rule) && !i.muted).map((i) => `${i.rule} ${JSON.stringify(i.vars)}`)).toEqual([]);
     });
     test(`${pkg.id}: no two elements on top of each other`, () => {
       const under = /^(furniture|scenery)\./;
@@ -60,7 +60,21 @@ describe('names, outlines and the legend of the exported plan', () => {
     expect(off.scaleN).toBeLessThanOrEqual(on.scaleN);
     expect(off.svg.length).toBeLessThan(on.svg.length);
     const portrait = { ...opts, availWidthMm: 130, availHeightMm: 200 };
-    expect(planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, portrait).scaleN).toBeLessThan(planSvg(show, {}, portrait).scaleN);
+    expect(planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, portrait).scaleN).toBeLessThanOrEqual(planSvg(show, {}, portrait).scaleN);
+  });
+
+  test('a legend too long for the page of the plan gets its own, and the plan keeps its size', () => {
+    const show = showFromPackage(PACKAGES.find((p) => p.id === 'showcase')!, 'x', 'es');
+    const page = { ...opts, availWidthMm: 267, availHeightMm: 160 };
+    const with_ = planSvg(show, {}, page);
+    const without = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, page);
+    expect(with_.legend).toBeDefined();
+    expect(with_.scaleN).toBe(without.scaleN);
+    expect(with_.legend!.svg).toContain('Rack');
+  });
+
+  test('a drawing of the user prints with thin lines, whatever it is scaled by', () => {
+    expect(printStrokes('<!--custom:12--><rect stroke-width="1.5"/>', 24)).toContain('stroke-width="3"');
   });
 
   test('on a wide page the legend goes beside the plan and prints it larger', () => {

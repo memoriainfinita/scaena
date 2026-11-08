@@ -520,6 +520,7 @@ export const en: Messages = {
   'pkg.conference': 'Conference',
   'pkg.theatre': 'Theatre with headset mics',
   'pkg.av': 'Audiovisual and projection',
+  'pkg.showcase': 'Full showcase',
   'top.untitled': 'Untitled show',
   'top.name': 'Show name',
   'top.undo': 'Undo',

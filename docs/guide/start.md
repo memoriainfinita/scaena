@@ -2,7 +2,7 @@
 
 ![Start screen](img/inicio.png)
 
-Pick the package closest to your show (rock band, jazz, singer-songwriter, DJ, conference, theatre with headset mics, AV) or an empty show. Each comes with the plot laid out and a suggested channel list; the theatre one also has a basic light plot. Everything can be changed.
+Pick the package closest to your show (rock band, jazz, singer-songwriter, DJ, conference, theatre with headset mics, AV) or an empty show. **Full showcase** uses every feature of the app, with a venue plan, a logo and two saved revisions: it is the one for trying things out. Its cable lines start hidden so the plot can be read; the button under the plot shows them. Each comes with the plot laid out and a suggested channel list; the theatre one also has a basic light plot. Everything can be changed.
 
 ![The editor](img/editor.png)
 

@@ -4,7 +4,7 @@
 
 ## Un montaje nuevo
 
-En la pantalla de inicio elige el que más se parezca a lo tuyo: banda de rock, jazz, cantautor, DJ, conferencia, teatro con micros de diadema o audiovisual. Cada uno viene con el plano colocado, la lista de canales con micros sugeridos y, en el caso del teatro, un plano de luces básico. Todo se puede cambiar. Si prefieres empezar de cero, **Montaje vacío**.
+En la pantalla de inicio elige el que más se parezca a lo tuyo: banda de rock, jazz, cantautor, DJ, conferencia, teatro con micros de diadema o audiovisual. **Muestra completa** usa todas las funciones de la aplicación, con plano de sala, logo y dos revisiones guardadas: es la que sirve para probarlo todo. Sus líneas de cables empiezan ocultas para que el plano se lea; el botón de debajo del plano las muestra. Cada uno viene con el plano colocado, la lista de canales con micros sugeridos y, en el caso del teatro, un plano de luces básico. Todo se puede cambiar. Si prefieres empezar de cero, **Montaje vacío**.
 
 ![El editor con una banda de rock](img/editor.png)
 

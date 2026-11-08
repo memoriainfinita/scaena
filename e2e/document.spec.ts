@@ -127,3 +127,21 @@ test('the document details are edited in the document view and clear the matchin
   await expect(dlg.getByText(/No hay un contacto técnico/)).toHaveCount(0);
   await expect(dlg.getByText(/no tiene fecha de versión/)).toHaveCount(0);
 });
+
+test('the full example opens with its venue plan, logo and revisions, and prints every section', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  await page.getByRole('button', { name: /Muestra completa/ }).click();
+  await expect(page.locator('svg.plansvg image')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Avisos' })).toBeVisible();
+  await page.getByRole('button', { name: 'Revisiones' }).click();
+  await expect(page.getByText('Primera versión para la sala')).toBeVisible();
+  await expect(page.getByText('Añadidos el bis y un canal de reserva')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Documento', exact: true }).click();
+  await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 120000 });
+  const [download] = await Promise.all([page.waitForEvent('download', { timeout: 120000 }), page.getByRole('button', { name: 'Descargar PDF' }).click()]);
+  expect(await download.path()).toBeTruthy();
+  expect(errors).toEqual([]);
+});

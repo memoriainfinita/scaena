@@ -524,6 +524,7 @@ export const es = {
   'pkg.conference': 'Conferencia',
   'pkg.theatre': 'Teatro con micros de diadema',
   'pkg.av': 'Audiovisual y proyección',
+  'pkg.showcase': 'Muestra completa',
   'top.untitled': 'Montaje sin título',
   'top.name': 'Nombre del montaje',
   'top.undo': 'Deshacer',
