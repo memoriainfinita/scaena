@@ -4,6 +4,16 @@ import { expect, test, type Page } from '@playwright/test';
 const L = (page: Page, text: string) => page.getByLabel(text, { exact: true });
 const axe = (page: Page) => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
 
+test('the patch comes from the cables, what is typed wins and a difference is flagged', async ({ page }) => {
+  await inputs(page);
+  await expect(L(page, 'Patch · Canal 13')).toHaveAttribute('placeholder', 'SB 13');
+  await expect(L(page, 'Patch · Canal 13')).toHaveValue('');
+  await L(page, 'Patch · Canal 13').fill('X 1');
+  await L(page, 'Patch · Canal 13').press('Tab');
+  await page.getByRole('button', { name: /^Avisos/ }).click();
+  await expect(page.getByText('El canal 13 tiene escrito el patch «X 1» y los cables dicen «SB 13».')).toBeVisible();
+});
+
 async function inputs(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();

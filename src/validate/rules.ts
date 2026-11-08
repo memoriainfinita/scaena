@@ -3,6 +3,7 @@
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms } from '../library/programs.ts';
 import { channelList, drawnWedges, outputList, wedgeOrder } from '../model/audio.ts';
+import { slotsOf, UNIVERSE_SIZE } from '../model/dmx.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { handlesSignal, maxCableM } from '../model/compat.ts';
 import { effectivePatch, patchAnalysis } from '../model/patch.ts';
@@ -40,7 +41,8 @@ export type RuleId =
   | 'portTaken'
   | 'portRange'
   | 'patchMismatch'
-  | 'cableLinesShort';
+  | 'cableLinesShort'
+  | 'dmxBeyond';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -91,6 +93,7 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   portRange: 'warning',
   patchMismatch: 'warning',
   cableLinesShort: 'warning',
+  dmxBeyond: 'warning',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -195,20 +198,33 @@ const outletUnmarked: Rule = (show) =>
 
 const dmxOverlap: Rule = (show) => {
   if (!lightsOn(show)) return [];
-  const by = new Map<string, PlanElement[]>();
-  for (const e of luminaires(show)) {
+  const out: Issue[] = [];
+  const placed = luminaires(show)
+    .filter((e) => e.luminaire!.universe !== null && e.luminaire!.address !== null)
+    .sort((x, y) => x.luminaire!.universe! - y.luminaire!.universe! || x.luminaire!.address! - y.luminaire!.address!);
+  // Going up the addresses of each universe, a fixture overlaps the one that reaches furthest so far.
+  let widest: PlanElement | null = null;
+  let end = 0;
+  for (const e of placed) {
     const { universe, address } = e.luminaire!;
-    if (universe === null || address === null) continue;
-    const k = `${universe}:${address}`;
-    by.set(k, [...(by.get(k) ?? []), e]);
+    if (widest && widest.luminaire!.universe === universe && address! <= end) out.push(issue('dmxOverlap', { kind: 'element', id: e.id }, { universe: universe!, address: address!, a: elName(widest), b: elName(e) }));
+    const last = address! + (slotsOf(e.luminaire!) ?? 1) - 1;
+    if (!widest || widest.luminaire!.universe !== universe || last > end) {
+      widest = e;
+      end = last;
+    }
   }
-  return [...by.entries()]
-    .filter(([, list]) => list.length > 1)
-    .map(([k, list]) => {
-      const [u, a] = k.split(':');
-      return issue('dmxOverlap', { kind: 'element', id: list[1]!.id }, { universe: Number(u), address: Number(a), a: elName(list[0]!), b: elName(list[1]!) });
-    });
+  return out;
 };
+
+const dmxBeyond: Rule = (show) =>
+  lightsOn(show)
+    ? luminaires(show).flatMap((e) => {
+        const { address } = e.luminaire!;
+        const slots = slotsOf(e.luminaire!);
+        return address !== null && slots !== null && address + slots - 1 > UNIVERSE_SIZE ? [issue('dmxBeyond', { kind: 'element', id: e.id }, { name: elName(e), address, slots })] : [];
+      })
+    : [];
 
 const dimmerOverload: Rule = (show) =>
   lightsOn(show)
@@ -363,7 +379,7 @@ const patchMismatch: Rule = (show) => {
 
 const cableLinesShort: Rule = (show) => (audioOn(show) ? patchAnalysis(show).short.map((s) => issue('cableLinesShort', { kind: 'element', id: s.element }, { name: elementNamed(show, s.element), channels: s.channels, lines: s.lines })) : []);
 
-export const RULES: Record<RuleId, Rule> = { portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+export const RULES: Record<RuleId, Rule> = { dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

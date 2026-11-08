@@ -52,6 +52,10 @@ export interface DocStrings {
   outputsOf: string;
   unit: string;
   universe: string;
+  dmx: string;
+  network: string;
+  dmxEnd: string;
+  dmxMode: string;
   address: string;
   element: string;
   model: string;
@@ -109,6 +113,7 @@ const es: DocStrings = {
   channel: 'Canal', shortName: 'Nombre', mic: 'Micro o DI', stand: 'Pie', phantom: '48 V', pair: 'Par', source: 'Fuente', yes: 'Sí', no: 'No',
   kind: 'Tipo', stereo: 'Estéreo', aux: 'Aux', supplier: 'Lo aporta', unset: 'Sin indicar', band: 'Banda', venueSupplies: 'Sala', rental: 'Alquiler',
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
+  dmx: 'Direcciones DMX', network: 'Direcciones IP', dmxEnd: 'Hasta', dmxMode: 'Modo DMX',
   unit: 'Unidad', universe: 'Univ.', address: 'Dir.', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
   height: 'Altura sobre la tarima (m)', maxLoad: 'Carga máx. (kg)', count: 'Recuento', phase: 'Fase', amps: 'Amperios', voltage: 'Tensión', plug: 'Enchufe', total: 'Total', note: 'Nota',
   legend: 'Leyenda', patch: 'Patch', logo: 'Logotipo', position: 'Pos.', positionLegend: 'US fondo · DS proscenio (hacia el público) · C centro · SL izquierda del artista · SR derecha del artista', none: '—', magic: 'Magic sheet', audience: 'Público', rigging: 'Plan de varas', desk: 'Mesa', showFile: 'Show file', racks: 'Racks', task: 'Tarea', done: 'Hecha', ref: 'Elemento', changes: 'Cambios',
@@ -129,6 +134,7 @@ const en: DocStrings = {
   channel: 'Ch.', shortName: 'Name', mic: 'Mic or DI', stand: 'Stand', phantom: '48 V', pair: 'Pair', source: 'Source', yes: 'Yes', no: 'No',
   kind: 'Type', stereo: 'Stereo', aux: 'Aux', supplier: 'Supplied by', unset: 'Not stated', band: 'Band', venueSupplies: 'Venue', rental: 'Rental',
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',
+  dmx: 'DMX addresses', network: 'IP addresses', dmxEnd: 'To', dmxMode: 'DMX mode',
   unit: 'Unit', universe: 'Univ.', address: 'Addr.', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',
   height: 'Height above the stage (m)', maxLoad: 'Max load (kg)', count: 'Count', phase: 'Phase', amps: 'Amps', voltage: 'Voltage', plug: 'Plug', total: 'Total', note: 'Note',
   legend: 'Legend', patch: 'Patch', logo: 'Logo', position: 'Pos.', positionLegend: 'US upstage · DS downstage (towards the audience) · C centre · SL stage left · SR stage right', none: '—', magic: 'Magic sheet', audience: 'Audience', rigging: 'Hanging plot', desk: 'Desk', showFile: 'Show file', racks: 'Racks', task: 'Task', done: 'Done', ref: 'Element', changes: 'Changes',

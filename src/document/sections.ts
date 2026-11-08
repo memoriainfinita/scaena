@@ -2,7 +2,7 @@
 import { luminaires, powered } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
 
-export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
+export const ALL_SECTIONS = ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'] as const;
 export type SectionId = (typeof ALL_SECTIONS)[number];
 
 export const TEMPLATES = ['concert', 'theatre', 'av', 'custom'] as const;
@@ -36,6 +36,7 @@ export function effectiveSections(show: Show): SectionId[] {
   }
   if (Object.values(show.elements).some((e) => e.rack && e.rack.slots.length > 0)) list.add('racks');
   if (Object.keys(show.connections).length > 0) list.add('cables');
+  if (luminaires(show).some((e) => e.luminaire!.address !== null) || Object.values(show.elements).some((e) => e.ip.trim())) list.add('dmx');
   if (powered(show).length > 0) list.add('electrical');
   if (!show.modules.includes('audio')) {
     list.delete('inputs');

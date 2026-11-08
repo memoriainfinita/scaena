@@ -1,4 +1,5 @@
 // Edits of the light plot: each one is a single undo step.
+import { autoAddress } from '../model/dmx.ts';
 import { signal } from '@preact/signals';
 import { fixtureById } from '../library/models.ts';
 import { addMount, addWorkNote, resetMagicLayout, setMagicPosition, removeWorkNote, updateWorkNote, autoNumber, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, setPhaseBreaker, updateLuminaire, updateMount } from '../model/lights.ts';
@@ -22,6 +23,7 @@ export const setFocusPoint = (id: string, p: { x: number; y: number } | null): v
 export const setMagicPos = (id: string, p: { x: number; y: number }): void => commit((show) => setMagicPosition(show, id, p));
 export const resetMagic = (): void => commit((show) => resetMagicLayout(show));
 export const numberUnits = (): void => commit((show) => autoNumber(show));
+export const addressDmx = (): void => commit((show) => autoAddress(show));
 
 /** A new bar across the stage, a third of the way from the back; `name` is the already-translated default. */
 export function addMountRow(name: string, kind: Mount['kind'] = 'bar'): string | null {

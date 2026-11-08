@@ -3,7 +3,7 @@ import { fixtureById } from '../library/models.ts';
 import { nextId } from './ids.ts';
 import type { Luminaire, Mount, PlanElement, Show, WorkNote } from './schema.ts';
 
-export const emptyLuminaire = (): Luminaire => ({ mountId: null, unit: null, channel: null, dimmer: null, circuit: null, universe: null, address: null, color: '', modelId: null, accessories: [], focus: null, notes: '' });
+export const emptyLuminaire = (): Luminaire => ({ mountId: null, unit: null, channel: null, dimmer: null, circuit: null, universe: null, address: null, dmxMode: '', dmxSlots: null, color: '', modelId: null, accessories: [], focus: null, notes: '' });
 
 /** The elements that are luminaires, in creation order. */
 export const luminaires = (show: Show): PlanElement[] => Object.values(show.elements).filter((e) => e.luminaire);
@@ -36,10 +36,10 @@ export function updateLuminaire(show: Show, id: string, patch: Partial<Luminaire
 }
 
 /** Sets the fixture model; weight and power start from the model's when it has them, and stay as they were when not. */
-export function setFixtureModel(show: Show, id: string, model: { id: string; weightKg: number | null; powerW: number | null } | null): Show {
+export function setFixtureModel(show: Show, id: string, model: { id: string; weightKg: number | null; powerW: number | null; modes?: [string, number][] } | null): Show {
   const e = show.elements[id];
   if (!e?.luminaire) return show;
-  const next: PlanElement = { ...e, luminaire: { ...e.luminaire, modelId: model?.id ?? null } };
+  const next: PlanElement = { ...e, luminaire: { ...e.luminaire, modelId: model?.id ?? null, dmxMode: model?.modes?.[0]?.[0] ?? '', dmxSlots: null } };
   if (model) {
     if (model.weightKg !== null) next.weightKg = model.weightKg;
     if (model.powerW !== null) next.powerW = model.powerW;
@@ -47,16 +47,20 @@ export function setFixtureModel(show: Show, id: string, model: { id: string; wei
   return { ...show, elements: { ...show.elements, [id]: next } };
 }
 
-/** Numbers the luminaires 1..n by mount (in the order the mounts were created) and then from left to right and back to front. */
-export function autoNumber(show: Show): Show {
+/** The luminaires by mount (in the order the mounts were created), then from left to right and back to front. */
+export function rigOrder(show: Show): PlanElement[] {
   const mountIndex = new Map(mountList(show).map((m, i) => [m.id, i]));
-  const order = luminaires(show).sort((a, b) => {
+  return luminaires(show).sort((a, b) => {
     const ma = a.luminaire!.mountId === null ? Infinity : (mountIndex.get(a.luminaire!.mountId!) ?? Infinity);
     const mb = b.luminaire!.mountId === null ? Infinity : (mountIndex.get(b.luminaire!.mountId!) ?? Infinity);
     return ma - mb || a.x - b.x || a.y - b.y;
   });
+}
+
+/** Numbers the luminaires 1..n by mount (in the order the mounts were created) and then from left to right and back to front. */
+export function autoNumber(show: Show): Show {
   let s = show;
-  order.forEach((e, i) => (s = updateLuminaire(s, e.id, { unit: i + 1 })));
+  rigOrder(show).forEach((e, i) => (s = updateLuminaire(s, e.id, { unit: i + 1 })));
   return s;
 }
 

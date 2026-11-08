@@ -74,7 +74,7 @@ export const AUDIO: AudioModel[] = [
 
 export const audioById = (id: string): AudioModel | undefined => AUDIO.find((a) => a.id === id);
 /** Fixtures from the Open Fixture Library (MIT), built by `scripts/import-ofl.mjs`. Weight and power are volunteers' data, marked `community`. */
-export const OFL_FIXTURES: FixtureModel[] = (oflData as Omit<FixtureModel, 'estimate'>[]).map((f) => ({ ...f, community: true }));
+export const OFL_FIXTURES: FixtureModel[] = (oflData as unknown as Omit<FixtureModel, 'estimate'>[]).map((f) => ({ ...f, community: true }));
 const FIXTURE_BY_ID = new Map<string, FixtureModel>([...FIXTURES, ...OFL_FIXTURES].map((f) => [f.id, f]));
 export const fixtureById = (id: string): FixtureModel | undefined => FIXTURE_BY_ID.get(id);
 

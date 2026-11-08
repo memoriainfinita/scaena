@@ -301,6 +301,11 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
     } else if (s === 'cables') {
       const rows = buildReport(show, 'cables').rows;
       parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows) + '\n');
+    } else if (s === 'dmx') {
+      const dmx = buildReport(show, 'dmx').rows;
+      const net = buildReport(show, 'network').rows;
+      if (dmx.length > 0) parts.push(heading(D.dmx) + c.table(D.dmx, [{ mm: 14 }, { mm: 14 }, { mm: 14 }, { mm: 14 }, { fr: 1.3 }, { fr: 1.5 }, { fr: 1 }, { fr: 1.1 }], [D.universe, D.address, D.dmxEnd, D.unit, D.element, D.model, D.dmxMode, D.mount], dmx) + '\n');
+      if (net.length > 0) parts.push(heading(D.network) + c.table(D.network, [{ fr: 1.3 }, { fr: 1.3 }, { mm: 34 }, { mm: 14 }, { fr: 1.2 }], [D.element, D.model, 'IP', D.position, D.note], net) + '\n');
     } else if (s === 'magic') {
       const sheet = magicSheet(show, show.lang);
       if (sheet) {

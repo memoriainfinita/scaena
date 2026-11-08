@@ -66,6 +66,9 @@ export const Luminaire = v.object({
   circuit: v.optional(v.nullable(v.number()), null),
   universe: v.optional(v.nullable(v.number()), null),
   address: v.optional(v.nullable(v.number()), null),
+  /** Name of the DMX mode of its model; `dmxSlots` is the channel count typed by hand for models without modes. */
+  dmxMode: v.optional(v.pipe(v.string(), v.maxLength(60)), ''),
+  dmxSlots: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(512))), null),
   color: text(40),
   /** A library fixture model id when the user picked one; weight and power then start from it. */
   modelId: v.optional(v.nullable(v.pipe(v.string(), v.maxLength(80))), null),
@@ -232,7 +235,7 @@ export const Contract = v.object({
 /** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */

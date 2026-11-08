@@ -11,6 +11,21 @@ async function theatre(page: Page) {
   await expect(page.getByRole('navigation', { name: 'Secciones de luces' })).toBeVisible();
 }
 
+test('DMX: a model offers its modes, fixtures are addressed in a row and listed in the report', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await L(page, 'Modo DMX · Wash 1').fill('7');
+  await L(page, 'Modo DMX · Wash 2').fill('7');
+  await L(page, 'Modo DMX · Wash 2').press('Tab');
+  await page.getByRole('button', { name: 'Direccionar DMX' }).click();
+  await expect(L(page, 'Dirección · Wash 1')).toHaveValue('1');
+  await expect(L(page, 'Dirección · Wash 2')).toHaveValue('8');
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Direcciones DMX' }).click();
+  await expect(page.getByRole('cell', { name: 'Wash 2', exact: true })).toBeVisible();
+});
+
 test('instruments are listed with their mount, numbered, and edited in the table @a11y', async ({ page }) => {
   await theatre(page);
   await expect(page.getByLabel('Montaje · Fresnel 1', { exact: true })).toHaveValue(/m\d+/);

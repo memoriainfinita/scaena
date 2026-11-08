@@ -1,7 +1,8 @@
 // The light plot lists: instruments, mounts, electrical load and the side section.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { magicSheet } from '../document/magic-svg.ts';
-import { addNote, lightsTab, removeNote, setNote, numberUnits, resetMagic, selectElement, setMagicPos, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { addNote, lightsTab, removeNote, setNote, addressDmx, numberUnits, resetMagic, selectElement, setMagicPos, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { modesOfLuminaire, slotsOf } from '../model/dmx.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
@@ -126,6 +127,9 @@ function Instruments({ show }: { show: Show }) {
         <button type="button" class="btn" disabled={rows.length === 0} onClick={() => numberUnits()}>
           {t('lights.number')}
         </button>
+        <button type="button" class="btn" disabled={!rows.some((e) => slotsOf(e.luminaire!) !== null)} onClick={() => addressDmx()}>
+          {t('lights.address')}
+        </button>
       </div>
       {rows.length === 0 ? (
         <p class="muted pad">{t('lights.empty')}</p>
@@ -142,6 +146,7 @@ function Instruments({ show }: { show: Show }) {
               <th>{t('table.circuit')}</th>
               <th>{t('table.universe')}</th>
               <th>{t('table.address')}</th>
+              <th>{t('table.dmxMode')}</th>
               <th>{t('table.color')}</th>
               <th>{t('table.power')}</th>
               <th>{t('connections.title')}</th>
@@ -181,6 +186,19 @@ function Instruments({ show }: { show: Show }) {
                   </td>
                   <td>
                     <NumCell value={l.address} label={tag('table.address')} onCommit={(v) => setLuminaire(el.id, { address: v })} />
+                  </td>
+                  <td>
+                    {modesOfLuminaire(l).length > 0 ? (
+                      <select class="input cell" aria-label={tag('table.dmxMode')} value={l.dmxMode} onChange={(e) => setLuminaire(el.id, { dmxMode: (e.currentTarget as HTMLSelectElement).value })}>
+                        {modesOfLuminaire(l).map(([m, n]) => (
+                          <option key={m} value={m}>
+                            {m} ({n})
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <NumCell value={l.dmxSlots} label={tag('table.dmxMode')} onCommit={(v) => setLuminaire(el.id, { dmxSlots: v !== null && v >= 1 && v <= 512 ? Math.floor(v) : null })} />
+                    )}
                   </td>
                   <td>
                     <input class="input cell" aria-label={tag('table.color')} value={l.color} maxLength={40} onChange={(e) => setLuminaire(el.id, { color: (e.currentTarget as HTMLInputElement).value })} />

@@ -49,6 +49,8 @@ export interface FixtureModel {
   powerW: number | null;
   /** Lens angle or range, as text: "26°", "15-30°", "16-35°". */
   beam: string;
+  /** DMX modes as [name, channels], from the Open Fixture Library. */
+  modes?: [string, number][];
   /** Datasheet URL; absent for generic estimates. */
   source?: string;
   /** True for generic values that are not from a datasheet. */

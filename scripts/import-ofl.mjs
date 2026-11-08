@@ -1,6 +1,6 @@
 // Builds src/library/ofl-data.json from a local clone of the Open Fixture Library (MIT).
 // Usage: node scripts/import-ofl.mjs <path to the clone>
-// Keeps only what the plan uses: brand, model, kind, weight, power, beam angle and the fixture's page.
+// Keeps only what the plan uses: brand, model, kind, weight, power, beam angle, DMX modes (name and channels) and the fixture's page.
 import { readdirSync, readFileSync, writeFileSync, copyFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -26,6 +26,33 @@ const beamOf = (lens) => {
 };
 const num = (x) => (typeof x === 'number' && Number.isFinite(x) && x > 0 ? x : null);
 
+/** How many pixels or groups a matrix insert repeats over; null when the file does not say. */
+const repeats = (rep, matrix) => {
+  if (Array.isArray(rep)) return rep.length;
+  if (rep === 'eachPixelGroup') return matrix?.pixelGroups ? Object.keys(matrix.pixelGroups).length : null;
+  if (typeof rep !== 'string' || !rep.startsWith('eachPixel')) return null;
+  if (matrix?.pixelCount) return matrix.pixelCount.reduce((a, b) => a * b, 1);
+  if (matrix?.pixelKeys) return matrix.pixelKeys.flat(2).filter(Boolean).length;
+  return null;
+};
+/** Channels a mode takes, counting matrix inserts; null when it cannot be told. */
+const modeSlots = (mode, matrix) => {
+  let n = 0;
+  for (const c of mode.channels ?? []) {
+    if (c === null || typeof c === 'string') n += 1;
+    else if (c.insert === 'matrixChannels') {
+      const r = repeats(c.repeatFor, matrix);
+      if (r === null) return null;
+      n += r * c.templateChannels.length;
+    } else return null;
+  }
+  return n > 0 ? n : null;
+};
+const modesOf = (d) => (d.modes ?? []).flatMap((m) => {
+  const slots = modeSlots(m, d.matrix);
+  return slots === null ? [] : [[m.shortName || m.name, slots]];
+});
+
 const out = [];
 for (const dir of readdirSync(fixtures, { withFileTypes: true })) {
   if (!dir.isDirectory() || !makers[dir.name]) continue;
@@ -42,6 +69,7 @@ for (const dir of readdirSync(fixtures, { withFileTypes: true })) {
       weightKg: num(p.weight),
       powerW: num(p.power),
       beam: beamOf(p.lens),
+      modes: modesOf(d),
       source: `https://open-fixture-library.org/${dir.name}/${slug}`,
     });
   }

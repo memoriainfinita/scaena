@@ -4,6 +4,7 @@ import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
 import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
+import { modeLabel, slotsOf } from '../model/dmx.ts';
 import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
@@ -11,11 +12,11 @@ import { circuitLoads, dimmerLoads, luminaires, powered, riggingPlan } from '../
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 
-export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'power', 'inputs', 'outputs'] as const;
+export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'power', 'dmx', 'network', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
 
 /** The module a report belongs to: it is offered only when that module is on. */
-export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio' | 'any'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', cables: 'any', power: 'any', inputs: 'audio', outputs: 'audio' };
+export const REPORT_MODULE: Record<ReportId, 'lights' | 'audio' | 'any'> = { hookup: 'lights', instruments: 'lights', circuits: 'lights', dimmers: 'lights', colors: 'lights', focus: 'lights', labels: 'lights', equipment: 'lights', rigging: 'lights', racks: 'audio', cheat: 'lights', worknotes: 'lights', cables: 'any', power: 'any', dmx: 'lights', network: 'any', inputs: 'audio', outputs: 'audio' };
 
 export interface ReportTable {
   id: ReportId;
@@ -40,7 +41,7 @@ export function cableText(show: Show, elementId: string, signals: readonly Signa
 }
 
 export function availableReports(show: Show): ReportId[] {
-  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'power' || powered(show).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0));
+  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'power' || powered(show).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0) && (id !== 'dmx' || luminaires(show).some((e) => e.luminaire!.address !== null)) && (id !== 'network' || Object.values(show.elements).some((e) => e.ip.trim())));
 }
 
 export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): ReportTable {
@@ -65,8 +66,8 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   if (id === 'instruments') {
     const rows = [...lum]
       .sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit) || a.id.localeCompare(b.id, 'en', { numeric: true }))
-      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes, cableText(show, e.id, ['lightControl', 'network'], lang)]);
-    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.color, D.weight, D.power, D.note, D.cables], rows };
+      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), modeLabel(e.luminaire!), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes, cableText(show, e.id, ['lightControl', 'network'], lang)]);
+    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.dmxMode, D.color, D.weight, D.power, D.note, D.cables], rows };
   }
   if (id === 'circuits') {
     const rows = circuitLoads(show).map((c) => [String(c.circuit), String(c.count), unitList(lum.filter((e) => e.luminaire!.circuit === c.circuit)), num(c.powerW), num(c.amps, 2), c.phase === null ? '' : `L${c.phase}`]);
@@ -141,6 +142,23 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       rows.push([name(e, lang), '', D.total, `${rackUsed(e.rack!)} / ${e.rack!.units}`]);
     }
     return { id, header: [D.element, 'U', D.model, D.count], rows };
+  }
+  if (id === 'dmx') {
+    const rows = lum
+      .filter((e) => e.luminaire!.address !== null)
+      .sort((a, b) => byNumber(a.luminaire!.universe, b.luminaire!.universe) || byNumber(a.luminaire!.address, b.luminaire!.address))
+      .map((e) => {
+        const l = e.luminaire!;
+        return [num(l.universe), num(l.address), String(l.address! + (slotsOf(l) ?? 1) - 1), num(l.unit), name(e, lang), model(e), modeLabel(l), mount(e)];
+      });
+    return { id, header: [D.universe, D.address, D.dmxEnd, D.unit, D.element, D.model, D.dmxMode, D.mount], rows };
+  }
+  if (id === 'network') {
+    const rows = Object.values(show.elements)
+      .filter((e) => e.ip.trim())
+      .sort((a, b) => a.ip.localeCompare(b.ip, 'en', { numeric: true }))
+      .map((e) => [name(e, lang), itemById(e.type.id)?.name[lang] ?? '', e.ip.trim(), stagePosition(show, e), e.notes]);
+    return { id, header: [D.element, D.model, 'IP', D.position, D.note], rows };
   }
   if (id === 'cables') {
     const order = ['audio', 'video', 'lightControl', 'network'];
