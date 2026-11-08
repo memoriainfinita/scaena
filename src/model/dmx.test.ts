@@ -4,7 +4,7 @@ import { fixtureById, OFL_FIXTURES } from '../library/models.ts';
 import { packageById } from '../library/packages.ts';
 import { buildReport } from '../reports/reports.ts';
 import { RULES } from '../validate/rules.ts';
-import { autoAddress, modeLabel, slotsOf } from './dmx.ts';
+import { autoAddress, modeLabel, setUniverseInfo, slotsOf, universeInfo, universesInUse } from './dmx.ts';
 import { emptyLuminaire, setFixtureModel, updateLuminaire } from './lights.ts';
 import { newShow } from './new.ts';
 import { addElement, updateElement } from './ops.ts';
@@ -54,6 +54,35 @@ describe('rules with channel ranges', () => {
   test('running past 512 is flagged', () => {
     const [s] = put(base(), 0, { universe: 1, address: 510, dmxSlots: 11 });
     expect(RULES.dmxBeyond(s)[0]).toMatchObject({ severity: 'warning', vars: { address: 510, slots: 11 } });
+  });
+});
+
+describe('universes', () => {
+  const two = () => {
+    let [s] = put(base(), 0, { universe: 2, address: 1 });
+    [s] = put(s, 500, { universe: 1, address: 1 });
+    return s;
+  };
+  test('the ones in use, in order, plain DMX until something is said', () => {
+    const s = two();
+    expect(universesInUse(s)).toEqual([1, 2]);
+    expect(universeInfo(s, 1)).toEqual({ protocol: 'dmx', net: '', output: '' });
+  });
+  test('going back to plain DMX with nothing said takes no room in the file', () => {
+    let s = setUniverseInfo(two(), 1, { protocol: 'sacn', net: '101' });
+    expect(universeInfo(s, 1).net).toBe('101');
+    s = setUniverseInfo(s, 1, { protocol: 'dmx', net: '' });
+    expect(s.universes).toEqual({});
+  });
+  test('the same number twice on one protocol is an error, on two protocols it is not', () => {
+    let s = setUniverseInfo(setUniverseInfo(two(), 1, { protocol: 'sacn', net: '5' }), 2, { protocol: 'sacn', net: '5' });
+    expect(RULES.universeRepeated(s)[0]).toMatchObject({ severity: 'error', vars: { universe: 2, other: 1, net: '5' } });
+    s = setUniverseInfo(s, 2, { protocol: 'artnet' });
+    expect(RULES.universeRepeated(s)).toEqual([]);
+  });
+  test('the report lists every universe in use', () => {
+    const s = setUniverseInfo(two(), 2, { protocol: 'artnet', net: '0:0:1', output: 'Nodo truss' });
+    expect(buildReport(s, 'universes').rows).toEqual([['1', 'DMX', '', ''], ['2', 'Art-Net', '0:0:1', 'Nodo truss']]);
   });
 });
 

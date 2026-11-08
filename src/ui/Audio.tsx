@@ -20,7 +20,7 @@ function sourceOptions(show: Show): { id: string; name: string }[] {
     .sort((a, b) => a.name.localeCompare(b.name, lang.value));
 }
 
-function Cell({ value, label, onCommit, list, max, mono, placeholder, title }: { value: string; label: string; onCommit: (v: string) => void; list?: string; max?: number; mono?: boolean; placeholder?: string; title?: string }) {
+export function Cell({ value, label, onCommit, list, max, mono, placeholder, title }: { value: string; label: string; onCommit: (v: string) => void; list?: string; max?: number; mono?: boolean; placeholder?: string; title?: string }) {
   return <input class={`input cell${mono ? ' mono' : ''}`} aria-label={label} list={list} maxLength={max} value={value} placeholder={placeholder} title={title} onChange={(e) => onCommit((e.currentTarget as HTMLInputElement).value)} />;
 }
 

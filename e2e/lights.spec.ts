@@ -26,6 +26,21 @@ test('DMX: a model offers its modes, fixtures are addressed in a row and listed 
   await expect(page.getByRole('cell', { name: 'Wash 2', exact: true })).toBeVisible();
 });
 
+test('a universe says how it reaches the stage, and it reaches the report @a11y', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await L(page, 'Protocolo · Universo 1').selectOption('sacn');
+  await L(page, 'Nº en red · Universo 1').fill('101');
+  await L(page, 'Nº en red · Universo 1').press('Tab');
+  await L(page, 'Salida en escenario · Universo 1').fill('Nodo en truss trasero');
+  await L(page, 'Salida en escenario · Universo 1').press('Tab');
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Universos', exact: true }).click();
+  await expect(page.getByRole('cell', { name: 'Nodo en truss trasero' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'sACN' })).toBeVisible();
+});
+
 test('instruments are listed with their mount, numbered, and edited in the table @a11y', async ({ page }) => {
   await theatre(page);
   await expect(page.getByLabel('Montaje · Fresnel 1', { exact: true })).toHaveValue(/m\d+/);

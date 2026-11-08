@@ -127,6 +127,15 @@ export const InputChannel = v.object({
 
 export const MixLevel = v.picklist(['low', 'normal', 'high']);
 
+/** How one lighting universe travels from the control position to the stage. */
+export const UniverseInfo = v.object({
+  protocol: v.optional(v.picklist(['dmx', 'sacn', 'artnet']), 'dmx'),
+  /** The number it has on the network: an sACN universe, or Art-Net net:subnet:universe. */
+  net: text(24),
+  /** Where it comes out on stage. */
+  output: text(80),
+});
+
 export const Output = v.object({
   id,
   number: v.pipe(v.number(), v.integer(), v.minValue(1)),
@@ -273,6 +282,8 @@ export const Show = v.object({
   outputs: v.optional(v.record(id, Output), {}),
   connections: v.optional(v.record(id, Connection), {}),
   mounts: v.optional(v.record(id, Mount), {}),
+  /** By universe number; a universe that is absent is plain DMX with nothing else said. */
+  universes: v.optional(v.record(v.string(), UniverseInfo), {}),
   electrical: v.optional(Electrical, {}),
   contacts: v.optional(v.array(Contact), []),
   schedule: v.optional(v.array(ScheduleItem), []),
@@ -306,6 +317,7 @@ export type Layer = v.InferOutput<typeof Layer>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;
 export type Output = v.InferOutput<typeof Output>;
 export type MixLevel = v.InferOutput<typeof MixLevel>;
+export type UniverseInfo = v.InferOutput<typeof UniverseInfo>;
 export type Connection = v.InferOutput<typeof Connection>;
 export type Mount = v.InferOutput<typeof Mount>;
 export type Computer = v.InferOutput<typeof Computer>;

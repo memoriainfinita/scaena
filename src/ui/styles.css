@@ -188,6 +188,7 @@ table.editable tr.sel td { background: var(--accent-soft); }
 .mixes tbody th { position: sticky; left: 0; z-index: 1; background: var(--panel); font-weight: 400; border-top: 1px solid var(--line); padding: 3px 12px; }
 .mixes thead th:first-child { position: sticky; left: 0; z-index: 1; }
 .mixes .input.cell.on { background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
+.mixes.universes table.editable td .input.cell { width: 180px; min-width: 180px; }
 .flow { padding-bottom: 24px; }
 .flowsvg { width: calc(100% - 32px); max-width: 900px; margin: 8px 16px; display: block; }
 .flowhead { font-size: 11px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font); }

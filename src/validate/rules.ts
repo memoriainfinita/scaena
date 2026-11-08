@@ -3,7 +3,7 @@
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms } from '../library/programs.ts';
 import { channelList, drawnWedges, outputList, wedgeOrder } from '../model/audio.ts';
-import { slotsOf, UNIVERSE_SIZE } from '../model/dmx.ts';
+import { slotsOf, UNIVERSE_SIZE, universeInfo, universesInUse } from '../model/dmx.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { handlesSignal, maxCableM } from '../model/compat.ts';
 import { effectivePatch, patchAnalysis } from '../model/patch.ts';
@@ -42,7 +42,8 @@ export type RuleId =
   | 'portRange'
   | 'patchMismatch'
   | 'cableLinesShort'
-  | 'dmxBeyond';
+  | 'dmxBeyond'
+  | 'universeRepeated';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -94,6 +95,7 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   patchMismatch: 'warning',
   cableLinesShort: 'warning',
   dmxBeyond: 'warning',
+  universeRepeated: 'error',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -225,6 +227,21 @@ const dmxBeyond: Rule = (show) =>
         return address !== null && slots !== null && address + slots - 1 > UNIVERSE_SIZE ? [issue('dmxBeyond', { kind: 'element', id: e.id }, { name: elName(e), address, slots })] : [];
       })
     : [];
+
+const universeRepeated: Rule = (show) => {
+  if (!lightsOn(show)) return [];
+  const seen = new Map<string, number>();
+  const out: Issue[] = [];
+  for (const universe of universesInUse(show)) {
+    const { protocol, net } = universeInfo(show, universe);
+    const written = net.trim();
+    if (protocol === 'dmx' || !written) continue;
+    const other = seen.get(`${protocol}|${written}`);
+    if (other === undefined) seen.set(`${protocol}|${written}`, universe);
+    else out.push(issue('universeRepeated', { kind: 'show', id: `universe:${universe}` }, { universe, other, net: written }));
+  }
+  return out;
+};
 
 const dimmerOverload: Rule = (show) =>
   lightsOn(show)
@@ -379,7 +396,7 @@ const patchMismatch: Rule = (show) => {
 
 const cableLinesShort: Rule = (show) => (audioOn(show) ? patchAnalysis(show).short.map((s) => issue('cableLinesShort', { kind: 'element', id: s.element }, { name: elementNamed(show, s.element), channels: s.channels, lines: s.lines })) : []);
 
-export const RULES: Record<RuleId, Rule> = { dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+export const RULES: Record<RuleId, Rule> = { universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

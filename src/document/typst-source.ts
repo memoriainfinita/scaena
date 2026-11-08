@@ -4,6 +4,7 @@ import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
 import { channelList, mixOutputs, mixText, outputList } from '../model/audio.ts';
+import { universeInfo, universesInUse, universeSaysSomething } from '../model/dmx.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
@@ -306,6 +307,8 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
     } else if (s === 'dmx') {
       const dmx = buildReport(show, 'dmx').rows;
       const net = buildReport(show, 'network').rows;
+      // Only when something was said: a show of plain DMX universes has nothing to add here.
+      if (universesInUse(show).some((u) => universeSaysSomething(universeInfo(show, u)))) parts.push(heading(D.universes) + c.table(D.universes, [{ mm: 16 }, { mm: 26 }, { mm: 34 }, { fr: 1 }], [D.universe, D.protocol, D.netNumber, D.stageOutput], buildReport(show, 'universes').rows) + '\n');
       if (dmx.length > 0) parts.push(heading(D.dmx) + c.table(D.dmx, [{ mm: 14 }, { mm: 14 }, { mm: 14 }, { mm: 14 }, { fr: 1.3 }, { fr: 1.5 }, { fr: 1 }, { fr: 1.1 }], [D.universe, D.address, D.dmxEnd, D.unit, D.element, D.model, D.dmxMode, D.mount], dmx) + '\n');
       if (net.length > 0) parts.push(heading(D.network) + c.table(D.network, [{ fr: 1.3 }, { fr: 1.3 }, { mm: 34 }, { mm: 14 }, { fr: 1.2 }], [D.element, D.model, 'IP', D.position, D.note], net) + '\n');
     } else if (s === 'magic') {

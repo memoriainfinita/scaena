@@ -1,8 +1,9 @@
 // The light plot lists: instruments, mounts, electrical load and the side section.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { magicSheet } from '../document/magic-svg.ts';
-import { addNote, lightsTab, removeNote, setNote, addressDmx, numberUnits, resetMagic, selectElement, setMagicPos, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
-import { modesOfLuminaire, slotsOf } from '../model/dmx.ts';
+import { addNote, lightsTab, removeNote, setNote, setUniverse, addressDmx, numberUnits, resetMagic, selectElement, setMagicPos, addMountRow, removeMountRow, setBreaker, setDimmerMaxW, setElementNumber, setLuminaire, setLuminaireModel, setMount, setFocusPoint, setPhase, type LightsTab } from '../app/lights-actions.ts';
+import { Cell } from './Audio.tsx';
+import { modesOfLuminaire, PROTOCOL_NAME, PROTOCOLS, slotsOf, universeInfo, universesInUse } from '../model/dmx.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
@@ -213,8 +214,58 @@ function Instruments({ show }: { show: Show }) {
           </tbody>
         </table>
       )}
+      <Universes show={show} />
       <MountCount show={show} />
     </>
+  );
+}
+
+/** How each universe in use gets from the control position to the stage. */
+function Universes({ show }: { show: Show }) {
+  const used = universesInUse(show);
+  if (used.length === 0) return null;
+  return (
+    <section class="mixes universes" aria-labelledby="universes-title">
+      <h3 id="universes-title">{t('universes.title')}</h3>
+      <div class="mixes-scroll">
+        <table class="list editable">
+          <thead>
+            <tr>
+              <th scope="col">{t('table.universe')}</th>
+              <th scope="col">{t('universes.protocol')}</th>
+              <th scope="col">{t('universes.net')}</th>
+              <th scope="col">{t('universes.output')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {used.map((n) => {
+              const u = universeInfo(show, n);
+              const tag = (k: Key) => `${t(k)} · ${t('table.universe')} ${n}`;
+              return (
+                <tr key={n}>
+                  <th scope="row" class="mono">
+                    {n}
+                  </th>
+                  <td>
+                    <select class="input cell" aria-label={tag('universes.protocol')} value={u.protocol} onChange={(e) => setUniverse(n, { protocol: (e.currentTarget as HTMLSelectElement).value as typeof u.protocol })}>
+                      {PROTOCOLS.map((p) => (
+                        <option key={p} value={p}>
+                          {PROTOCOL_NAME[p]}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>{u.protocol !== 'dmx' && <Cell value={u.net} label={tag('universes.net')} max={24} mono onCommit={(v) => setUniverse(n, { net: v })} />}</td>
+                  <td>
+                    <Cell value={u.output} label={tag('universes.output')} max={80} onCommit={(v) => setUniverse(n, { output: v })} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 
