@@ -43,7 +43,41 @@ export const lit = (s: string): string => `"${s.replace(/\\/g, '\\\\').replace(/
 /** The same as content: `#"text"` inside markup. */
 export const txt = (s: string): string => `#${lit(s)}`;
 
-type Col = { mm: number } | { fr: number };
+export type Col = { mm: number } | { fr: number };
+
+/** Column widths in mm for a table this wide: fixed columns first, the rest shared by their fractions. */
+export function colWidths(cols: Col[], widthMm: number): number[] {
+  const fixed = cols.reduce((a, c) => a + ('mm' in c ? c.mm : 0), 0);
+  const fr = cols.reduce((a, c) => a + ('fr' in c ? c.fr : 0), 0) || 1;
+  return cols.map((c) => ('mm' in c ? c.mm : ((widthMm - fixed) * c.fr) / fr));
+}
+
+// Table metrics at the body size, measured on the PDF (2026-11-08): a one-line row is 5.5 mm, each extra line 4.4 mm,
+// the cell inset takes 3.2 mm of the width and an average character about 0.55 em.
+const ROW_MM = 5.5;
+const LINE_MM = 4.4;
+const CHAR_MM = BODY_PT * 0.3528 * 0.55;
+
+/** Lines a cell takes in a column this wide, wrapping at spaces like Typst (a word longer than the line is cut). */
+export function cellLines(text: string, widthMm: number): number {
+  const per = Math.max(1, Math.floor((widthMm - 3.2) / CHAR_MM));
+  let lines = 1;
+  let used = 0;
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const len = word.length;
+    if (used > 0 && used + 1 + len <= per) {
+      used += 1 + len;
+      continue;
+    }
+    if (used > 0) lines++;
+    lines += Math.floor((len - 1) / per);
+    used = ((len - 1) % per) + 1;
+  }
+  return lines;
+}
+
+/** Estimated height of the body rows of a table, in mm. */
+export const tableRowsMm = (rows: string[][], widths: number[]): number => rows.reduce((a, r) => a + ROW_MM + LINE_MM * (Math.max(1, ...r.map((cell, i) => cellLines(cell, widths[i] ?? 0))) - 1), 0);
 
 class Collector {
   warnings: DocWarning[] = [];
@@ -54,9 +88,7 @@ class Collector {
 
   /** A table with a header row; cells that hold a word too long for their column raise a warning. */
   table(section: string, cols: Col[], header: string[], rows: string[][], widthMm = this.contentMm): string {
-    const fixed = cols.reduce((a, c) => a + ('mm' in c ? c.mm : 0), 0);
-    const fr = cols.reduce((a, c) => a + ('fr' in c ? c.fr : 0), 0) || 1;
-    const widths = cols.map((c) => ('mm' in c ? c.mm : ((widthMm - fixed) * c.fr) / fr));
+    const widths = colWidths(cols, widthMm);
     rows.forEach((row, r) =>
       row.forEach((cell, i) => {
         const longest = cell.split(/\s+/).reduce((a, w) => Math.max(a, w.length), 0);
@@ -85,11 +117,29 @@ const num = (n: number | null, digits = 0) => (n === null ? '' : String(Math.rou
 /** Like num, but zero reads as nothing: an unstated weight or height is not a measurement of zero. */
 const numNZ = (n: number | null, digits = 0) => (n === null || n === 0 ? '' : num(n, digits));
 
-/** Rows of the channel list that fit one page, vertical and horizontal (an estimate from the row height at 9 pt). */
-const ROWS_PER_PAGE = { portrait: 32, landscape: 20 };
+/** From the top of the page's content to the first row of the channel list (heading, desk line, header row), and the position legend under it. */
+const LIST_TOP_MM = 18.5;
+const LEGEND_MM = 7;
+const GUTTER_MM = 5;
+/** The compact table of the channel list in blocks: channel, name, mic, patch, 48 V. */
+export const COMPACT_COLS: Col[] = [{ mm: 8 }, { fr: 1 }, { fr: 1.3 }, { mm: 14 }, { mm: 11 }];
 
-/** The fewest blocks (1 to 4) with which the whole channel list fits on one page. */
-export const autoBlocks = (rows: number, landscape: boolean): number => Math.min(4, Math.max(1, Math.ceil(rows / ROWS_PER_PAGE[landscape ? 'landscape' : 'portrait'])));
+/** Room for the rows of the channel list on its page, in mm. */
+export const listRoomMm = (pageHeightMm: number): number => pageHeightMm - 2 * MARGIN - LIST_TOP_MM - LEGEND_MM;
+
+/**
+ * The fewest blocks (1 to 4) with which the channel list fits one page: the full table if its rows fit, else the compact
+ * table split into blocks side by side. Row heights are estimated from how each cell wraps in its column.
+ */
+export function autoBlocks(full: string[][], fullCols: Col[], compact: string[][], widthMm: number, roomMm: number): number {
+  if (tableRowsMm(full, colWidths(fullCols, widthMm)) <= roomMm) return 1;
+  for (let n = 2; n <= 4; n++) {
+    const widths = colWidths(COMPACT_COLS, (widthMm - GUTTER_MM * (n - 1)) / n);
+    const size = Math.ceil(compact.length / n);
+    if (Array.from({ length: n }, (_, i) => compact.slice(i * size, (i + 1) * size)).every((b) => tableRowsMm(b, widths) <= roomMm)) return n;
+  }
+  return 4;
+}
 
 /** The document source of a show; the show's own elements are drawn from the show itself, open or not. */
 export const buildDocument = (show: Show, images: Record<string, Uint8Array> = {}): Built => withCustomItems(show.customItems, () => buildDocumentIn(show, images));
@@ -182,22 +232,23 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
       const cfg = show.document.inputs;
       const widthMm = (cfg.landscape ? paper.h : paper.w) - 2 * MARGIN;
-      const blocks = cfg.blocks === 'auto' ? autoBlocks(list.length, cfg.landscape) : cfg.blocks;
+      // The cable column appears only when some channel has a cable to show.
+      const withCables = rows.some((r) => r[9]);
+      const fullCols: Col[] = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }, ...(withCables ? [{ fr: 1.5 }] : [])];
+      const fullRows = withCables ? rows : rows.map((r) => r.slice(0, 9));
+      const compactRows = rows.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]);
+      const blocks = cfg.blocks === 'auto' ? autoBlocks(fullRows, fullCols, compactRows, widthMm, listRoomMm(cfg.landscape ? paper.w : paper.h)) : cfg.blocks;
       let body: string;
       if (blocks === 1) {
-        // The cable column appears only when some channel has a cable to show.
-        const withCables = rows.some((r) => r[9]);
-        const cols = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }, ...(withCables ? [{ fr: 1.5 }] : [])];
-        body = c.table(D.inputs, cols, [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, ...(withCables ? [D.cables] : [])], withCables ? rows : rows.map((r) => r.slice(0, 9)), widthMm) + `\n${txt(D.positionLegend)}\n`;
+        body = c.table(D.inputs, fullCols, [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, ...(withCables ? [D.cables] : [])], fullRows, widthMm) + `\n${txt(D.positionLegend)}\n`;
       } else {
-        // Several blocks side by side: the compact table (channel, name, mic, patch, 48 V), consecutive channels in each.
-        const gutter = 5;
-        const blockMm = (widthMm - gutter * (blocks - 1)) / blocks;
-        const size = Math.ceil(rows.length / blocks);
-        const tables = Array.from({ length: blocks }, (_, i) => rows.slice(i * size, (i + 1) * size))
+        // Several blocks side by side: the compact table, consecutive channels in each.
+        const blockMm = (widthMm - GUTTER_MM * (blocks - 1)) / blocks;
+        const size = Math.ceil(compactRows.length / blocks);
+        const tables = Array.from({ length: blocks }, (_, i) => compactRows.slice(i * size, (i + 1) * size))
           .filter((chunk) => chunk.length > 0)
-          .map((chunk) => c.table(D.inputs, [{ mm: 8 }, { fr: 1 }, { fr: 1.3 }, { mm: 14 }, { mm: 9 }], ['#', D.shortName, D.mic, D.patch, '48 V'], chunk.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]), blockMm));
-        body = `#grid(columns: (${tables.map(() => '1fr').join(', ')}), column-gutter: ${gutter}mm, align: top, ${tables.map((tb) => `[${tb}]`).join(', ')})\n`;
+          .map((chunk) => c.table(D.inputs, COMPACT_COLS, ['#', D.shortName, D.mic, D.patch, '48 V'], chunk, blockMm));
+        body = `#grid(columns: (${tables.map(() => '1fr').join(', ')}), column-gutter: ${GUTTER_MM}mm, align: top, ${tables.map((tb) => `[${tb}]`).join(', ')})\n`;
       }
       const inputsMd = heading(D.inputs) + (deskLine ? `${txt(deskLine)}\n\n` : '') + body;
       parts.push(cfg.landscape ? `#page(flipped: true)[\n${inputsMd}\n]\n` : inputsMd);
@@ -231,7 +282,7 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
           return [num(l.unit), elName(e, show.lang), fm ? `${fm.brand} ${fm.model}` : '', (l.mountId && show.mounts[l.mountId]?.name) || '', num(l.channel), num(l.dimmer), num(l.circuit), l.color, numNZ(e.powerW), cableText(show, e.id, ['lightControl', 'network'], show.lang)];
         });
       const lightCables = rows.some((r) => r[9]);
-      let md = heading(D.lights) + c.table(D.lights, [{ mm: 15 }, { fr: 1 }, { fr: 1.2 }, { fr: 1.3 }, { mm: 15 }, { mm: 17 }, { mm: 18 }, { fr: 0.8 }, { mm: 19 }, ...(lightCables ? [{ fr: 1.1 }] : [])], [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.color, D.power, ...(lightCables ? [D.cables] : [])], lightCables ? rows : rows.map((r) => r.slice(0, 9)));
+      let md = heading(D.lights) + c.table(D.lights, [{ mm: 13 }, { fr: 1.25 }, { fr: 1.1 }, { fr: 1.2 }, { mm: 13 }, { mm: 16 }, { mm: 17 }, { fr: 0.7 }, { mm: 17 }, ...(lightCables ? [{ fr: 1.1 }] : [])], [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.color, D.power, ...(lightCables ? [D.cables] : [])], lightCables ? rows : rows.map((r) => r.slice(0, 9)));
       const stats = mountStats(show);
       if (stats.length > 0) {
         md += `\n== ${txt(D.count)}\n` + c.table(D.count, [{ fr: 1.4 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.mount, D.kind, D.height, D.element, D.weight, D.power], stats.map((st) => {

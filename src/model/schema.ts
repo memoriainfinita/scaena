@@ -192,7 +192,7 @@ export const ReportConfig = v.object({
   layerPreset: v.optional(v.array(id), []),
 });
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
-export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true) });
+export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true), rp2Lights: v.optional(v.boolean(), false) });
 
 export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(86400)), 0) });
 

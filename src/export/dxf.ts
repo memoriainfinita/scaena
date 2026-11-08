@@ -1,6 +1,7 @@
 // The plan as a DXF drawing for CAD programs: millimetres, one DXF layer per plan layer, every symbol as lines and circles.
 // ASCII R12 (AC1009) keeps to what any reader takes: LINE, CIRCLE and TEXT. Curves become short lines.
 import { symbolBody } from '../library/symbols.ts';
+import { drawnSymbolOf } from '../library/light-symbols.ts';
 import { itemById } from '../library/items.ts';
 import { withCustomItems } from '../library/custom.ts';
 import { elementSize } from '../plan/geometry.ts';
@@ -333,7 +334,7 @@ export function planDxf(show: Show): DxfFile {
       m = mul(m, [Math.cos(r), Math.sin(r), -Math.sin(r), Math.cos(r), 0, 0]);
       m = mul(m, [e.flipX ? -1 : 1, 0, 0, e.flipY ? -1 : 1, 0, 0]);
       m = mul(m, [1, 0, 0, 1, -w / 2, -d / 2]);
-      draw(layer, primitivesOf(symbolBody(it.symbol, w, d), m));
+      draw(layer, primitivesOf(symbolBody(drawnSymbolOf(it, true), w, d), m));
       const label = e.label.trim();
       if (label) text(layer, [e.x - w / 2, e.y + d / 2 + 160], 100, label);
     };

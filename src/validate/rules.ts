@@ -34,7 +34,8 @@ export type RuleId =
   | 'duplicatePatch'
   | 'connectionMismatch'
   | 'cableTooLong'
-  | 'ipDuplicate';
+  | 'ipDuplicate'
+  | 'stageCrossing';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -80,6 +81,7 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   connectionMismatch: 'warning',
   cableTooLong: 'warning',
   ipDuplicate: 'error',
+  stageCrossing: 'warning',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -306,7 +308,34 @@ const ipDuplicate: Rule = (show) => {
   return out;
 };
 
-export const RULES: Record<RuleId, Rule> = { duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+type Pt = { x: number; y: number };
+const cross = (o: Pt, a: Pt, b: Pt): number => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+/** True when segments ab and cd cross or touch (collinear overlaps included). */
+function segmentsMeet(a: Pt, b: Pt, c: Pt, d: Pt): boolean {
+  const d1 = cross(c, d, a);
+  const d2 = cross(c, d, b);
+  const d3 = cross(a, b, c);
+  const d4 = cross(a, b, d);
+  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
+  const on = (p: Pt, q: Pt, r: Pt) => Math.min(p.x, q.x) <= r.x && r.x <= Math.max(p.x, q.x) && Math.min(p.y, q.y) <= r.y && r.y <= Math.max(p.y, q.y);
+  return (d1 === 0 && on(c, d, a)) || (d2 === 0 && on(c, d, b)) || (d3 === 0 && on(a, b, c)) || (d4 === 0 && on(a, b, d));
+}
+
+/** A free-form stage whose outline crosses itself: its area, the reference lines and the side section are then wrong. */
+const stageCrossing: Rule = (show) => {
+  const sh = show.stage.shape;
+  if (sh.kind !== 'polygon') return [];
+  const p = sh.points;
+  const n = p.length;
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++) {
+      if (j === i + 1 || (i === 0 && j === n - 1)) continue; // neighbours share a corner
+      if (segmentsMeet(p[i]!, p[(i + 1) % n]!, p[j]!, p[(j + 1) % n]!)) return [issue('stageCrossing', { kind: 'show', id: 'stage' }, { a: i + 1, b: j + 1 })];
+    }
+  return [];
+};
+
+export const RULES: Record<RuleId, Rule> = { stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

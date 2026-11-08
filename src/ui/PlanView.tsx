@@ -5,7 +5,7 @@ import { memo } from 'preact/compat';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
-import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setOutlines, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -16,6 +16,7 @@ import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import { footprintBody, iconData, iconKeyOf, iconUse, iconsVersion, loadIcons } from '../library/icons.ts';
+import { drawnSymbolOf, iconKeyFor } from '../library/light-symbols.ts';
 import { SIGNALS, type SignalType } from '../model/connections.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
@@ -64,9 +65,10 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
   const isText = it.symbol === 'textbox';
   const isDim = it.symbol === 'dimension';
   void iconsVersion.value; // redraw when the sheet of this element's icon arrives
-  const iconKey = iconKeyOf(it.id);
-  const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
   const shown = session.value!.show.value;
+  const rp2 = shown.view.rp2Lights;
+  const iconKey = iconKeyFor(it, rp2);
+  const icon = iconKey && iconData(iconKey) ? iconKey : undefined;
   const units = isDim ? shown.units : 'metric';
   const { labels, outlines } = shown.view;
   const name = el.label || it.name[lang.value];
@@ -96,7 +98,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev }: ElProps)
       <g transform={`rotate(${el.rotation}) scale(${el.flipX ? -1 : 1} ${el.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})`}>
         <rect class="hit" x={-40} y={-40} width={w + 80} height={d + 80} fill="transparent" vector-effect="non-scaling-stroke" {...frame} />
         <rect class="simple" width={w} height={d} fill="#c9cfd4" />
-        <g class="detail" dangerouslySetInnerHTML={{ __html: (icon && !outlines ? '' : symbolMarkup(it.symbol, w, d, !!icon)) + (icon ? iconUse(icon, w, d) : '') }} />
+        <g class="detail" dangerouslySetInnerHTML={{ __html: (icon && !outlines ? '' : symbolMarkup(drawnSymbolOf(it, rp2), w, d, !!icon)) + (icon ? iconUse(icon, w, d) : '') }} />
       </g>
       {isText && (
         <g class="detail" transform={`rotate(${el.rotation})`}>
@@ -448,6 +450,7 @@ const ICONS: Record<string, string> = {
   grid: 'M3 3h12v12H3zM9 3v12M3 9h12',
   links: 'M3 14L15 4M3 14h0M15 4h0',
   labels: 'M3 5h12M9 5v9M6 14h6',
+  rp2: 'M4 6h10v6H4zM6 12v3M12 12v3M9 3v3',
   outlines: 'M3 3h3M8 3h2M12 3h3M15 3v3M15 8v2M15 12v3M3 15h3M8 15h2M12 15h3M3 3v3M3 8v2M3 12v3',
   dim: 'M9 3a6 6 0 1 0 0 12z',
 };
@@ -1039,6 +1042,7 @@ export function PlanView({ show }: { show: Show }) {
         <Btn icon="links" label={t('plan.links')} pressed={show.view.links} onClick={() => setLinks(!show.view.links)} />
         <Btn icon="labels" label={t('plan.labels')} pressed={show.view.labels} onClick={() => setLabels(!show.view.labels)} />
         <Btn icon="outlines" label={t('plan.outlines')} pressed={show.view.outlines} onClick={() => setOutlines(!show.view.outlines)} />
+        <Btn icon="rp2" label={t('plan.rp2Lights')} pressed={show.view.rp2Lights} onClick={() => setRp2Lights(!show.view.rp2Lights)} />
         <ScaleBar cam={cam} units={show.units} />
       </div>
     </div>

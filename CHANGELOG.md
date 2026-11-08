@@ -8,9 +8,12 @@
 - **Lights:** aim by dragging with the beam wedge, work notes, equipment count, summary sheet, bar plan, magic sheet with its own layout, rack builder.
 - **Production:** schedule counted back from the curfew.
 - **Documents:** channel list in landscape and in blocks, logo on the cover, own document templates, comparing two revisions, cables report, power table, Greek and Cyrillic in the PDF.
-- **Warnings:** 23 rules (`duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate` added); any warning can be muted.
-- **Examples:** the 7 packages rewritten with complete data (cables, PA, desk, power, production).
+- **Warnings:** 24 rules (`duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate`, `stageCrossing` added); any warning can be muted.
+- **Lights as RP-2 symbols:** a view toggle that draws luminaires as top-view outlines on the plot and in the PDF; on in the theatre example; the DXF always uses them.
+- **Examples:** the 7 packages rewritten with complete data (cables, PA, desk, power, production); the rock band's keyboard goes through a stereo DI, the hi-hat has a small-diaphragm condenser and the DMX runs as one chain.
 - **Interface:** app defaults and grid settings; phone in landscape with a view rail.
+
+## 0.1.0 (published 2026-11-05)
 
 First complete version.
 

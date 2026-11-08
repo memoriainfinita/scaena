@@ -70,7 +70,7 @@ export function goToIssue(i: Issue): void {
     if (id === 'schedule') {
       view.value = 'production';
       prodTab.value = 'schedule';
-    } else view.value = id === 'channels' ? 'inputs' : 'document';
+    } else view.value = id === 'channels' ? 'inputs' : id === 'stage' ? 'plan' : 'document';
   }
   dialog.value = null;
 }

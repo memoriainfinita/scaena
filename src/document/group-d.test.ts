@@ -8,7 +8,12 @@ import { addChannel } from '../model/audio.ts';
 import { newShow } from '../model/new.ts';
 import type { Show } from '../model/schema.ts';
 import { sniffLogo } from './logo.ts';
-import { autoBlocks, buildDocument } from './typst-source.ts';
+import { autoBlocks, buildDocument, cellLines, colWidths, type Col, listRoomMm } from './typst-source.ts';
+
+const FULL: Col[] = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }];
+const WITH_CABLES: Col[] = [...FULL, { fr: 1.5 }];
+const plainRows = (n: number) => Array.from({ length: n }, (_, i) => [String(i + 1), `c${i + 1}`, 'SM57', 'Pinza', `P${i + 1}`, 'No', '', 'Caja', 'US']);
+const compactOf = (rows: string[][]) => rows.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]);
 
 const PNG = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
 
@@ -20,10 +25,21 @@ const withChannels = (n: number): Show => {
 };
 
 describe('channel list layout', () => {
-  test('automatic blocks are the fewest that fit one page, vertical and horizontal', () => {
-    expect([0, 1, 32].map((n) => autoBlocks(n, false))).toEqual([1, 1, 1]);
-    expect([33, 64, 65, 96, 97, 300].map((n) => autoBlocks(n, false))).toEqual([2, 2, 3, 3, 4, 4]);
-    expect([20, 21, 40, 41].map((n) => autoBlocks(n, true))).toEqual([1, 2, 2, 3]);
+  test('a cell wraps at spaces by the width of its column, as measured on the PDF', () => {
+    const w = colWidths(WITH_CABLES, 180);
+    expect(cellLines('Sennheiser e 604', w[2]!)).toBe(2);
+    expect(cellLines('AKG C414 XLII', w[2]!)).toBe(1);
+    expect(cellLines('XLR 7.5 m → Stagebox', w[9]!)).toBe(2);
+    expect(cellLines('', w[9]!)).toBe(1);
+  });
+  test('automatic blocks are the fewest that fit one page, counting how rows wrap', () => {
+    const auto = (n: number, landscape: boolean) => autoBlocks(plainRows(n), FULL, compactOf(plainRows(n)), landscape ? 267 : 180, listRoomMm(landscape ? 210 : 297));
+    // One-line rows on A4: 43 fit upright and 28 turned.
+    expect([0, 1, 43, 44, 86, 87, 300].map((n) => auto(n, false))).toEqual([1, 1, 1, 2, 2, 3, 4]);
+    expect([28, 29, 56, 57].map((n) => auto(n, true))).toEqual([1, 2, 2, 3]);
+    // Rows whose cables wrap over several lines leave room for fewer: 32 of them no longer fit in one table.
+    const cabled = plainRows(32).map((r) => [...r, 'XLR 7.5 m → Stagebox; Jack 3 m → DI bajo']);
+    expect(autoBlocks(cabled, WITH_CABLES, compactOf(cabled), 180, listRoomMm(297))).toBe(2);
   });
   test('one block is the full table with its position legend, vertical by default', () => {
     const doc = buildDocument(inputsOnly(withChannels(17)));

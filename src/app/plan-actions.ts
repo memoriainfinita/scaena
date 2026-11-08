@@ -146,6 +146,11 @@ export function setOutlines(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, outlines: on } }));
 }
 
+/** Draws the luminaires as RP-2 top-view outlines instead of pictograms, on the plan and in the PDF. */
+export function setRp2Lights(on: boolean): void {
+  session.value?.commit((show) => ({ ...show, view: { ...show.view, rp2Lights: on } }));
+}
+
 export function setGrid(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, grid: on } }));
 }

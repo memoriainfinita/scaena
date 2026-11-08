@@ -2,6 +2,15 @@
 
 Lo que salió de `state.md` y por qué.
 
+### 2026-11-08 — Símbolos: de «los dibuja Claude según RP-2» a pictogramas de GPT
+El registro decía que los símbolos los dibujaba Claude en SVG según RP-2. Al construir, las siluetas RP-2 de las luminarias «no se leían» en el rider de una banda y se pidieron a GPT, con el resto de la biblioteca, como pictogramas de lado. La revisión del 2026-11-08 corrigió el registro y recuperó RP-2 para el plano de luces como opción de vista (`view.rp2Lights`), porque un iluminador espera ver contornos cenitales.
+
+### 2026-11-08 — Filas por página de la lista de canales: de un número fijo a una estimación por líneas
+`ROWS_PER_PAGE` (32 en vertical, 20 en horizontal) contaba filas. Con la columna de cables, cada fila ocupa 2 a 5 líneas y en vertical solo cabían 26; en horizontal sobraba media página con 21. Se midió en el PDF (pymupdf, posición de cada número de canal): fila de 5,5 mm y 4,4 mm por línea de más; ahora se estima cómo se parte el texto de cada celda en su columna.
+
+### 2026-11-08 — Preferencias corregidas tras la revisión
+Propuestas B: comparar revisiones, «Probar con un ejemplo» y el formato con versión entraron por otra vía y se quedan. GDTF: la idea de importar un `.gdtf` propio pasa al 3D, con MVR. El lienzo de diseño en oscuro (Luces y Documento) se abandona: la referencia es ya la aplicación.
+
 ### 2026-11-08 — Registro de los grupos A a F y de las tandas del 2026-11-07 y 2026-11-08 (sacado de state.md)
 Status y TODO contaban lo hecho con fecha y detalle de implementación; state.md queda con el estado actual. Texto movido tal cual; el detalle de cada grupo está en `docs/design/grupo-*.md`, `stage-freeform-2026-11-07.md`, `icons-integration-2026-11-07.md` y `symbols.md`. Las cifras de pruebas de abajo son las de su fecha.
 

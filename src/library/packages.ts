@@ -45,7 +45,7 @@ const rock = (): ShowPackage => {
   const g1 = el('guitar.electric', 6700, 2400, 'Guitarra 1', BAND);
   const g2 = el('guitar.electric', 5400, 2400, 'Guitarra 2', BAND);
   const diBass = el('rack.di', 1900, 2000, 'DI bajo', BAND);
-  const diKeys = el('rack.di', 4900, 3100, 'DI teclado', BAND);
+  const diKeys = el('rack.di-stereo', 4900, 3100, 'DI teclado', BAND);
   const v1 = el('vocals.mic-stand', 2700, 3700, 'Voz 1');
   const v2 = el('vocals.mic-stand', 4000, 3900, 'Voz 2');
   const v3 = el('vocals.mic-stand', 5300, 3700, 'Voz 3');
@@ -83,13 +83,13 @@ const rock = (): ShowPackage => {
   for (const w of wedges) link(desk, w, 'audio', 'XLR');
   link(desk, paL, 'audio', 'XLR');
   link(desk, paR, 'audio', 'XLR');
-  link(ld, truss[0]!, 'lightControl', 'DMX');
-  link(ld, floorL[0]!, 'lightControl', 'DMX');
-  link(ld, floorR[0]!, 'lightControl', 'DMX');
+  // DMX runs as one daisy chain: desk, the rear truss left to right, then the floor units.
+  const chain = [ld, ...truss, ...floorR.slice().reverse(), ...floorL];
+  for (let i = 1; i < chain.length; i++) link(chain[i - 1]!, chain[i]!, 'lightControl', 'DMX');
 
   ch('Bombo', 'shure.beta52a', 'Pie corto', false, drums, 'SB 1');
   ch('Caja', 'shure.sm57', 'Pinza', false, drums, 'SB 2');
-  ch('Charles', 'akg.c414xlii', 'Pie recto', true, drums, 'SB 3');
+  ch('Charles', 'shure.sm81', 'Pie recto', true, drums, 'SB 3');
   ch('Tom 1', 'sennheiser.e604', 'Pinza', false, drums, 'SB 4');
   ch('Tom 2', 'sennheiser.e604', 'Pinza', false, drums, 'SB 5');
   ch('Tom suelo', 'sennheiser.e604', 'Pinza', false, drums, 'SB 6');
@@ -489,7 +489,8 @@ const theatre = (): ShowPackage => {
     ],
     desk: 'yamaha.dm3',
     finish: (show, placed, tx) => {
-      show = { ...show, titleBlock: { ...show.titleBlock, production: tx(bi('Obra de ejemplo', 'Example play')), venue: tx(bi('Teatro de ejemplo', 'Example theatre')) } };
+      // A theatre light plot is read in RP-2 top-view outlines.
+      show = { ...show, view: { ...show.view, rp2Lights: true }, titleBlock: { ...show.titleBlock, production: tx(bi('Obra de ejemplo', 'Example play')), venue: tx(bi('Teatro de ejemplo', 'Example theatre')) } };
       show = addContacts(show, tx, [
         [bi('Regidora', 'Stage manager'), ...PERSON],
         [bi('Técnico de luces', 'Lighting technician'), ...PERSON],
