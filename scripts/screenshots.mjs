@@ -96,7 +96,7 @@ try {
 
   // Document
   await page.getByRole('button', { name: L('Documento', 'Document'), exact: true }).click();
-  await page.getByRole('img', { name: L('Página 1', 'Page 1') }).waitFor({ timeout: 90000 });
+  await page.getByRole('img', { name: L('Página 1', 'Page 1'), exact: true }).waitFor({ timeout: 90000 });
   await shot(page, 'documento');
   await page.getByRole('button', { name: L('Informes', 'Reports'), exact: true }).click();
   await page.getByRole('button', { name: L('Lista de instrumentos', 'Instrument schedule') }).click();
