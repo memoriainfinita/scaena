@@ -69,3 +69,22 @@ PDF aportado por el usuario («Salto o caída», plano genérico reducido): Auto
 Contenido útil para el diseño: vista cenital con varas, calles y suelo; cada aparato con canal, filtro y ángulo; leyenda con recuento por posición (varas, suelo, calles, sala); alturas de las calles; escala gráfica y cajetín; símbolos propios del autor, no USITT.
 - No se midió la memoria en Firefox ni con documentos grandes.
 - El puerto 4190 está bloqueado por Firefox (la navegación falla con «interrupted by another navigation»); usar otro puerto en los bancos.
+
+## Real DXF: Meany Studio Theatre (2026-11-08)
+
+Written in English, as every document since 2026-11-07. Ground plan and section with a repertory light plot, from https://depts.washington.edu/meanystu/techspecs.html (AutoCAD 2004, 7.8 MB, inches, 24 383 entities, 33 blocks, 43 layers). Kept out of the repository in `.work/real-dxf/`.
+
+Imported in Firefox in about 1 s with no errors, at its real size (49.8 x 42.9 m). It showed what generated files had not:
+
+| Found | Now |
+| --- | --- |
+| 419 ellipses (334 on the instruments layer) and 63 splines not drawn | Drawn |
+| 131 polylines with arcs drawn straight | Bulges become curves |
+| Inserts scaled by 1.5 and 36 left circles and text at their original size | Full transform per insert |
+| Mirrored inserts (-1, 1) turned arcs the wrong way | Mirrored arcs are drawn as short lines in the right place |
+| Text rotation and alignment ignored: "STAGE" horizontal, numbers off their circles | Applied |
+| Paper space mixed with the model | Left out, unless the drawing only lives there |
+| `dxf-parser` leaves an empty fifth vertex on 3D faces | Discarded |
+
+Added from the format, not seen in this file: frozen or switched-off layers, block base points, insert arrays, dimensions, nesting up to 8 levels with protection against a block that contains itself, and the code page of files before AutoCAD 2007, so accents survive.
+

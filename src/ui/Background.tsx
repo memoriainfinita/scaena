@@ -3,7 +3,7 @@ import { useRef, useState } from 'preact/hooks';
 import { removeBackground, setBackgroundImage, updateBackground } from '../app/background-actions.ts';
 import { tool } from '../app/plan-actions.ts';
 import { session } from '../app/state.ts';
-import { DxfError, parseDxf, renderDxf } from '../background/dxf.ts';
+import { decodeDxf, DxfError, parseDxf, renderDxf } from '../background/dxf.ts';
 import { openPdf, type PdfDoc } from '../background/pdf.ts';
 import { t } from '../i18n/index.ts';
 import { Modal } from './Dialogs.tsx';
@@ -44,7 +44,7 @@ export function BackgroundDialog({ onClose }: { onClose: () => void }) {
           setPage(1);
         }
       } else if (name.endsWith('.dxf')) {
-        const r = await renderDxf(parseDxf(await file.text()));
+        const r = await renderDxf(parseDxf(decodeDxf(new Uint8Array(await file.arrayBuffer()))));
         setBackgroundImage(r.png, r.widthMm, r.heightMm);
         onClose();
       } else {
