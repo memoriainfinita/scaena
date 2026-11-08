@@ -296,6 +296,6 @@ List to paste:
 12 motor controller rack with many hoist channels and a handle (55 x 60 cm)
 ```
 
-## When the sheets come back
+## Sheets came back (2026-11-08)
 
-Save them in `assets/symbol-sheets/` as `sheet-67.png` and so on, and tell me which sheet came back swapped or touching. I cut, trace and map them to the library items with the same pipeline as sheets 1 to 66. For the items marked **new** I add the item (size, power, layer, translated names and tags) together with the icon; for the 13 PA items that already exist I only add the icon. The library rule that two items never share an icon keeps holding.
+All eight sheets (67 to 74) came back, were cut and traced, and are now `symbols/<category>/<id>.svg`: 97 symbols, 84 of them new library items (names, sizes, typical power and, for singers, suggested channels). Sheet 69 needed the duo joined into one icon; sheet 74 had a 13th drawing (a half coupler), added as `rig.coupler`. Heights of the new items are estimates and the Spanish names are to be reviewed. See `symbols.md` for how to add more.

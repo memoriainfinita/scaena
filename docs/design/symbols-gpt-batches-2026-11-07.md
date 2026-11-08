@@ -25,7 +25,7 @@ What failed, so it is not asked again:
 - **Dotted or mesh grilles** (the wedge monitor): GPT draws them as noise; ask for two or three plain rings.
 - **Variants discarded or kept as alternatives:** 35b discarded (35 preferred); 01b, 44b, 47b, 54b, 55b are alternative versions; 63b is a full re-draw of sheet 63 of which only the rock band was used (the first had an error in the drawing).
 
-Removed from the review viewer on 2026-11-07 (70 icons, the files stay in `assets/symbol-sheets/`): every person with a round solid head (all of sheets 1 and 1b; the seated person, presenter, wind player and DJ booth of sheet 2; sheet 10 except steel pan and gong; the audience area and FOH position of sheet 3; the choir of sheet 5) and every person with a drawn face (all of sheets 30 and 50; interpreter, stagehand and security of sheet 21; marching snare of sheet 31; camera with operator of sheet 12b). Their roles are redone faceless in sheets 56 to 63. Kept although they show a small person inside: merch stand, ticket booth and food stall (sheet 21), and the solid camera operator of sheet 12.
+Removed from the review viewer on 2026-11-07 (70 icons, the files stay in `archive/symbol-ingest/symbol-sheets/`): every person with a round solid head (all of sheets 1 and 1b; the seated person, presenter, wind player and DJ booth of sheet 2; sheet 10 except steel pan and gong; the audience area and FOH position of sheet 3; the choir of sheet 5) and every person with a drawn face (all of sheets 30 and 50; interpreter, stagehand and security of sheet 21; marching snare of sheet 31; camera with operator of sheet 12b). Their roles are redone faceless in sheets 56 to 63. Kept although they show a small person inside: merch stand, ticket booth and food stall (sheet 21), and the solid camera operator of sheet 12.
 
 How to ask for a sheet (what worked):
 
@@ -47,7 +47,7 @@ Create clean, detailed black-and-white line-art illustrations in a consistent te
 
 ## Style block E (candidate: described by the GPT conversation that drew the sheets)
 
-The same question was put to the GPT conversation that generated the accepted sheets (not to a fresh one). Its answer differs from D: it describes **clean vector pictograms** with blank faces and **no hatching, no textures, no halftones**, whereas D asks for hatching, stippling and crosshatching. D, tested on sheet 12, gave the hatched look (`sheet-12b`). **E was tested on the same sheet 12 list and rejected as the general style:** it came back as flat solid-black pictograms again, close to the blocky first sheet 12, and it also reinterpreted items (the stage manager desk became a seated person, the presentation desk a presenter standing at a lectern, the cue light box two plain discs). Keep D for objects. What E does well is the blank faces, which D needs as an extra clause. Not saved in `assets/symbol-sheets/`.
+The same question was put to the GPT conversation that generated the accepted sheets (not to a fresh one). Its answer differs from D: it describes **clean vector pictograms** with blank faces and **no hatching, no textures, no halftones**, whereas D asks for hatching, stippling and crosshatching. D, tested on sheet 12, gave the hatched look (`sheet-12b`). **E was tested on the same sheet 12 list and rejected as the general style:** it came back as flat solid-black pictograms again, close to the blocky first sheet 12, and it also reinterpreted items (the stage manager desk became a seated person, the presentation desk a presenter standing at a lectern, the cue light box two plain discs). Keep D for objects. What E does well is the blank faces, which D needs as an extra clause. Not saved in `archive/symbol-ingest/symbol-sheets/`.
 
 ```text
 Create a clean black-and-white vector-style illustration for a professional live-event and stage-plot icon library.
@@ -780,7 +780,7 @@ List to paste:
 12 trailer seen from above (250 x 600 cm)
 ```
 
-## Received sheets (files in `assets/symbol-sheets/`, not in git)
+## Received sheets (files in `archive/symbol-ingest/symbol-sheets/`, not in git)
 
 The sheets of 1 to 21 came back as `sheet-NN.png` (renamed from their GPT names). `sheet-01b.png` is a second version of sheet 1 with slimmer figures. Sheets 14 and 21 and a few others have an irregular layout (not 4 x 3), so they are cut by connected shapes, not by a grid.
 

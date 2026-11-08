@@ -109,6 +109,8 @@ export const TYPICAL_POWER_W: Record<string, number> = {
   'dj.cdj': 40, 'dj.mixer': 30, 'desk.portable': 40, 'desk.powered': 150,
   'video.proj-ceiling': 400, 'video.proj-stand': 400, 'video.proj-large': 1500, 'video.proj-short': 300, 'video.led-proc': 100, 'video.led-curve': 1500, 'video.ptz': 40, 'video.teleprompter': 80, 'video.confidence': 100, 'video.stream-pc': 300, 'video.capture': 20, 'video.cart': 200, 'video.wireless': 15, 'video.tally': 5,
   'mach.winch': 1500, 'mach.revolve': 2200, 'mach.elevator': 3000, 'mach.trap': 750, 'mach.hoist-ctrl': 100,
+  // Added with the symbols of round 3.
+  'pa.sub-15': 800, 'pa.mini-line': 400, 'pa.ceiling': 50, 'pa.wall': 100, 'monitor.wedge-12': 300, 'monitor.wedge-dual': 500, 'monitor.sidefill-stack': 800, 'monitor.drum-sub': 800, 'monitor.pole': 150, 'monitor.rack-amp': 1500, 'monitor.cube': 100, 'desk.large-digital': 400, 'desk.compact-digital': 150, 'desk.rackmount': 80, 'desk.table-8': 30, 'desk.surface': 40, 'rack.stagebox-48': 120, 'rack.stagebox-16': 60, 'rack.stagebox-fibre': 80, 'rack.stagebox-wireless': 60, 'desk.broadcast': 300, 'rack.matrix': 150, 'desk.monitor-ctrl': 10, 'light.mover-hybrid': 350, 'light.pixel-tube': 60, 'light.matrix': 600, 'light.led-zoom': 300, 'light.hmi': 1200, 'light.cyc-led': 200, 'light.footlight': 150, 'light.flood-ip': 200, 'light.uplight-battery': 20, 'light.led-screen': 300, 'light.searchlight': 1000, 'light.led-par-mini': 30, 'rig.motor-1t': 750, 'rig.hoist-rack': 200,
 };
 
 export const ITEMS: LibraryItem[] = [...DEFS, ...LIGHT_DEFS, ...MORE_DEFS, ...ICON_DEFS].map((x) => ({
