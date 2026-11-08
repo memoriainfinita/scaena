@@ -3,6 +3,7 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
+import { cableLength } from '../model/connections.ts';
 import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
 import { circuitLoads, dimmerLoads, luminaires, riggingPlan } from '../model/lights.ts';
@@ -132,7 +133,10 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const order = ['audio', 'video', 'lightControl', 'network'];
     const rows = Object.values(show.connections)
       .sort((a, b) => order.indexOf(a.signal) - order.indexOf(b.signal) || a.connector.localeCompare(b.connector, 'en') || a.id.localeCompare(b.id, 'en', { numeric: true }))
-      .map((c, i) => [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, c.lengthMm === null ? '' : num(c.lengthMm / 1000, 1)]);
+      .map((c, i) => {
+        const len = cableLength(show, c);
+        return [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, len === null ? '' : `${len.estimated ? '≈ ' : ''}${num(len.mm / 1000, 1)}`];
+      });
     return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows };
   }
   if (id === 'worknotes') {

@@ -408,6 +408,7 @@ export const en: Messages = {
   'connections.connector': 'Connector',
   'connections.signal': 'Signal type',
   'connections.length': 'Length (m)',
+  'connections.estimate': 'Estimated from the distance on the plan, with slack and a stock length. Type the real one to replace it.',
   'connections.remove': 'Remove the connection to {name}',
   'connections.with': '{signal} with {name}',
   'connector.hdmi': 'HDMI',

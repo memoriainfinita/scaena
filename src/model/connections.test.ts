@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { PROGRAMS, incompatiblePrograms, suggestPrograms } from '../library/programs.ts';
-import { addConnection, connectionsOf, removeConnection, updateConnection } from './connections.ts';
+import { addConnection, cableLength, connectionsOf, estimateCableMm, removeConnection, updateConnection } from './connections.ts';
 import { newShow } from './new.ts';
 import { addElement, removeElements } from './ops.ts';
 import type { Show } from './schema.ts';
@@ -38,6 +38,26 @@ describe('connections', () => {
     expect(connectionsOf(s2, b)).toHaveLength(1);
     expect(connectionsOf(s2, a)[0]).toMatchObject({ connector: 'Ethernet 5e', lengthMm: 15000 });
     expect(removeConnection(s2, c!.id).connections).toEqual({});
+  });
+
+  test('a cable without a length is estimated and the typed length wins', () => {
+    const [show, a, b] = two();
+    const [s1, c] = addConnection(show, a, b, 'video');
+    // 2 m apart: 2 × 1.1 + 1.5 = 3.7 m, so a 5 m cable.
+    expect(estimateCableMm(s1, c!)).toBe(5000);
+    expect(cableLength(s1, c!)).toEqual({ mm: 5000, estimated: true });
+    const s2 = updateConnection(s1, c!.id, { lengthMm: 12000 });
+    expect(cableLength(s2, s2.connections[c!.id]!)).toEqual({ mm: 12000, estimated: false });
+    expect(estimateCableMm(s1, { from: a, to: 'nope' })).toBeNull();
+  });
+
+  test('the estimate follows the floor, not the straight line, and counts the height', () => {
+    const [show, a, b] = two();
+    const far = { ...show, elements: { ...show.elements, [b]: { ...show.elements[b]!, x: 6000, y: 8000, z: 4000 } } };
+    // 6 + 8 + 4 = 18 m → 18 × 1.1 + 1.5 = 21.3 m → 25 m.
+    expect(estimateCableMm(far, { from: a, to: b })).toBe(25000);
+    const huge = { ...show, elements: { ...show.elements, [b]: { ...show.elements[b]!, x: 120000 } } };
+    expect(estimateCableMm(huge, { from: a, to: b })! % 10000).toBe(0);
   });
 
   test('removing an element removes its connections', () => {

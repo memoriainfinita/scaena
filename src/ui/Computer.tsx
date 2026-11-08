@@ -4,7 +4,7 @@ import { addComputerOutput, addProgram, dropConnection, removeComputerOutput, re
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms, suggestPrograms } from '../library/programs.ts';
-import { connectionsOf, DEFAULT_CONNECTOR, SIGNALS, type SignalType } from '../model/connections.ts';
+import { connectionsOf, DEFAULT_CONNECTOR, estimateCableMm, SIGNALS, type SignalType } from '../model/connections.ts';
 import type { Computer, PlanElement, Show } from '../model/schema.ts';
 
 const FUNCTIONS = ['sound', 'video', 'lights', 'network'] as const;
@@ -148,6 +148,7 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
       {list.map((c) => {
         const otherId = c.from === el.id ? c.to : c.from;
         const name = elementName(show.elements[otherId]);
+        const est = estimateCableMm(show, c);
         return (
           <div class="conn" key={c.id}>
             <strong>{t('connections.with', { signal: t(`signal.${c.signal}` as Key), name })}</strong>
@@ -174,6 +175,8 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
                 min="0"
                 step="0.5"
                 aria-label={`${t('connections.length')} · ${name}`}
+                placeholder={c.lengthMm === null && est !== null ? `≈ ${est / 1000}` : ''}
+                title={c.lengthMm === null ? t('connections.estimate') : undefined}
                 value={c.lengthMm === null ? '' : Math.round(c.lengthMm) / 1000}
                 onChange={(e) => {
                   const raw = (e.currentTarget as HTMLInputElement).value;

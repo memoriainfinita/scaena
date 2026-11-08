@@ -412,6 +412,7 @@ export const es = {
   'connections.connector': 'Conector',
   'connections.signal': 'Tipo de señal',
   'connections.length': 'Longitud (m)',
+  'connections.estimate': 'Estimación por la distancia en el plano, con holgura y medida comercial. Escribe la real para sustituirla.',
   'connections.remove': 'Quitar la conexión con {name}',
   'connections.with': '{signal} con {name}',
   'connector.hdmi': 'HDMI',

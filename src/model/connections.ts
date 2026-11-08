@@ -31,6 +31,30 @@ export function removeConnection(show: Show, id: string): Show {
   return { ...show, connections: Object.fromEntries(Object.entries(show.connections).filter(([k]) => k !== id)) };
 }
 
+/** Cable lengths that are sold, in metres; an estimate is rounded up to the next one. */
+const STOCK_M = [1, 2, 3, 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+/** Slack for the connectors at both ends and for the cable not running in a straight line. */
+const SLACK_MM = 1500;
+const ROUTE_FACTOR = 1.1;
+
+/** A rough length for a cable laid between two elements: along the floor (not as the crow flies), up or down, plus slack, in a stock size. */
+export function estimateCableMm(show: Show, c: Pick<Connection, 'from' | 'to'>): number | null {
+  const a = show.elements[c.from];
+  const b = show.elements[c.to];
+  if (!a || !b) return null;
+  const run = Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs((a.z ?? 0) - (b.z ?? 0));
+  const m = (run * ROUTE_FACTOR + SLACK_MM) / 1000;
+  const stock = STOCK_M.find((s) => s >= m) ?? Math.ceil(m / 10) * 10;
+  return stock * 1000;
+}
+
+/** The length to use: the one the user typed, or the estimate when there is none. */
+export function cableLength(show: Show, c: Connection): { mm: number; estimated: boolean } | null {
+  if (c.lengthMm !== null) return { mm: c.lengthMm, estimated: false };
+  const mm = estimateCableMm(show, c);
+  return mm === null ? null : { mm, estimated: true };
+}
+
 /** The connections that touch an element, in a stable order. */
 export const connectionsOf = (show: Show, elementId: string): Connection[] =>
   Object.values(show.connections)

@@ -63,6 +63,13 @@ test('the connect tool joins two elements and the connection can be edited and u
   await connector.fill('SDI');
   await connector.press('Tab');
   await expect(connector).toHaveValue('SDI');
+  // Without a typed length the field offers an estimate; typing one replaces it.
+  const length = page.getByLabel(/^Longitud \(m\) · /);
+  await expect(length).toHaveValue('');
+  await expect(length).toHaveAttribute('placeholder', /^≈ \d/);
+  await length.fill('12');
+  await length.press('Tab');
+  await expect(length).toHaveValue('12');
   expect((await axe(page)).violations).toEqual([]);
   await page.getByRole('button', { name: /^Quitar la conexión con/ }).click();
   await expect(page.getByText('Sin conexiones')).toBeVisible();
