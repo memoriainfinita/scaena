@@ -303,10 +303,15 @@ function Inspector({ show }: { show: Show }) {
                   ))}
               </select>
             </label>
-            <label class="field">
+            <label class="field" title={t('inspector.label.tip')}>
               {t('inspector.label')}
               <input class="input" data-label-field value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
             </label>
+            {el.labelAt && (
+              <button type="button" class="btn" title={t('inspector.labelAuto.tip')} onClick={() => setElementField(el.id, { labelAt: null })}>
+                {t('inspector.labelAuto')}
+              </button>
+            )}
             <label class="field">
               {t('inspector.layer')}
               <select class="input" value={el.layerId} onChange={(e) => moveToLayer(selection.value, (e.currentTarget as HTMLSelectElement).value)}>

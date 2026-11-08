@@ -243,7 +243,7 @@ export const elementKey = (id: string) => `el:${id}`;
 export const mountKey = (id: string) => `mount:${id}`;
 export const linkKey = (id: string) => `link:${id}`;
 
-const GROUP = { mount: 0, element: 1, link: 2 };
+const GROUP = { pinned: -1, mount: 0, element: 1, link: 2 };
 
 export interface PlotTextOptions {
   sizes: TextSizes;
@@ -278,7 +278,8 @@ export function plotInput(show: Show, { sizes, lang, mounts }: PlotTextOptions):
       solids.push({ id: `${e.id}#text`, box: { x0: cx - hw, y0: cy - hh, x1: cx + hw, y1: cy + hh } });
     } else if (it.symbol !== 'textbox' && e.label && show.view.labels) {
       const width = textWidth(e.label, sizes.element);
-      texts.push({ id: elementKey(e.id), group: GROUP.element, width, fontSize: sizes.element, owner: e.id, ownerBox: box, slots: elementSlots(box, width, sizes.element, sizes.elementGap) });
+      // A label the user moved has one place and goes first, so the others make room for it.
+      texts.push({ id: elementKey(e.id), group: e.labelAt ? GROUP.pinned : GROUP.element, width, fontSize: sizes.element, owner: e.id, ownerBox: box, slots: e.labelAt ? [{ x: e.x + e.labelAt.x, y: e.y + e.labelAt.y }] : elementSlots(box, width, sizes.element, sizes.elementGap) });
     }
   }
   if (mounts) {

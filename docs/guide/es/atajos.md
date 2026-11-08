@@ -20,6 +20,7 @@ También se ven en la propia aplicación con la tecla **?**.
 | + / − | Acerca / aleja |
 | Espacio + arrastrar | Mueve la vista |
 | Alt al arrastrar | Sin ajuste a la cuadrícula |
+| Alt + flechas | Mueve la etiqueta del elemento seleccionado |
 | Rueda | Zoom; con **Mayús**, desplazamiento horizontal |
 
 ## En todas partes

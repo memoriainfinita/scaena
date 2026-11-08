@@ -62,7 +62,7 @@ Fecha: 2026-11-02. Leída la sección 4 del PDF de la guía (páginas 31 a 38 de
 ## Comparado con scaena (2026-11-08)
 
 - Ya cubierto: IP del elemento (`ip`), universo y dirección de cada luminaria, conector y longitud de cada conexión, constructor de racks contado desde arriba (como 4.7.1), channel hookup e instrument schedule
-- Falta, como propuesta del 2026-11-08 sin aceptar: lista de direcciones IP (informe con elemento, función e IP, sacada de los elementos que la tienen); modo DMX y número de canales de cada luminaria, como columna en el instrument schedule y el hookup (4.5.3 y 4.6.2); protocolo de control por luminaria o universo (DMX, sACN, Art-Net); nombre del rack en el alzado
+- Falta, como propuesta del 2026-11-08 sin aceptar: lista de direcciones IP (informe con elemento, función e IP, sacada de los elementos que la tienen); modo DMX y número de canales de cada luminaria, como columna en el instrument schedule y el hookup (4.5.3 y 4.6.2); protocolo de control por luminaria o universo (DMX, sACN, Art-Net)
 - Fuera, por ser de instalación fija y no de un rider: paneles de parcheo, listas de puertos de switch, VLAN, routers, Wi-Fi y contraseñas, cajas DIN, archivos de configuración
 
 ## Efecto en scaena

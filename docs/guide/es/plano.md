@@ -25,7 +25,9 @@ La herramienta **Medir** da la distancia entre dos puntos (en metros, o en pies 
 
 ![Fondo importado y su configuración](img/fondo.png)
 
-Con la herramienta **Fondo PDF o DXF** importas el plano de la sala. El PDF se convierte en imagen en tu navegador y el DXF se dibuja en líneas; hasta 25 MB. Luego:
+Las etiquetas se colocan solas, pero puedes mover cualquiera: selecciona el elemento y arrastra su nombre en el plano, o usa **Alt** y las flechas. Se queda donde la dejes, también en el PDF, y las demás le hacen sitio. **Colocar la etiqueta automáticamente**, en el inspector, la devuelve a su sitio.
+
+Con la herramienta **Fondo PDF o DXF** importas el plano de la sala. El PDF se convierte en imagen en tu navegador y el DXF se dibuja en líneas, sin las capas apagadas o congeladas ni el cajetín del espacio papel; hasta 25 MB. Luego:
 
 1. **Calibrar la escala:** pulsa dos puntos del plano que estén a una distancia conocida y escribe esa distancia. El fondo se reescala alrededor del primer punto.
 2. **Mover con el ratón:** arrastra el fondo por el plano y pulsa **Terminar**. Es un solo paso de deshacer y no funciona mientras el fondo esté bloqueado (también puedes escribir su posición X e Y).

@@ -42,9 +42,12 @@ Added the same day, for what placement alone cannot solve: on a dense plan a lab
 
 The space the texts have depends on the print scale. On a landscape page the legend under the plan cost as much height as the plan itself: the rock example printed at 1:142. When the legend beside the plan gives a scale at least 10 % larger, `planSvgIn` puts it there, filled top to bottom.
 
+## Moved by hand
+
+`labelAt` on the element holds the offset from its centre in plan millimetres, null by default, so older files load unchanged. A moved label has that one slot and is placed first, so the automatic ones avoid it. The offset is the same on screen and on paper; text size is what differs. It keeps the leader rule of any other label. In the editor the label of the only selected element is dragged, or moved with Alt and the arrows; the inspector clears it.
+
 ## Not done
 
-- A manual offset per element. It needs a field in `src/model/schema.ts`, a migration and a handle in the editor; left for later.
 - Avoiding connection lines themselves and the bars of mounts. Only connector texts and mount names are avoided.
 - Leader lines from a label pushed to an outer ring to its element. In dense plans some labels end up nearer another element than their own (on the 2026-11-08 examples, 4 to 6 per plan on screen, 2 to 5 on paper).
 - In the editor labels still sit under elements drawn later, and mount and connector texts under all elements; only the PDF writes texts last.

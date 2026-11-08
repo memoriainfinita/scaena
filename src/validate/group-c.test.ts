@@ -182,3 +182,78 @@ describe('the new rules on a built package', () => {
     for (const r of ['duplicatePatch', 'connectionMismatch', 'cableTooLong', 'ipDuplicate'] as const) expect(RULES[r](show)).toEqual([]);
   });
 });
+
+describe('signal flow', () => {
+  const cable = (show: Show, from: string, to: string, signal: 'audio' | 'network' | 'lightControl', connector?: string) => addConnection(show, from, to, signal, connector)[0];
+
+  test('with audio cables drawn, a channel or output whose element has none is pointed out', () => {
+    let [show, mic] = put(base(), 'vocals.mic-stand', 0, 0);
+    let wedge: string, box: string, other: string;
+    [show, wedge] = put(show, 'monitor.wedge', 1000, 0);
+    [show, box] = put(show, 'rack.stagebox', 2000, 0);
+    [show, other] = put(show, 'guitar.electric', 3000, 0);
+    const [s1, c] = addChannel(show, { shortName: 'v', mic: 'x', sourceElementId: mic });
+    const [s2, o] = addOutput(s1, { kind: 'wedge', sourceElementId: wedge });
+    expect(RULES.channelNotCabled(s2)).toEqual([]);
+    expect(RULES.outputNotCabled(s2)).toEqual([]);
+    const wired = cable(s2, other, box, 'audio');
+    expect(RULES.channelNotCabled(wired).map((i) => i.ref.id)).toEqual([c.id]);
+    expect(RULES.outputNotCabled(wired).map((i) => i.ref.id)).toEqual([o.id]);
+    expect(RULES.channelNotCabled(updateChannel(wired, c.id, { patch: 'SB 1' }))).toEqual([]);
+    expect(RULES.channelNotCabled(cable(wired, mic, box, 'audio'))).toEqual([]);
+  });
+
+  test('a wireless source needs no cable', () => {
+    const [show, mic] = put(base(), 'vocals.headset', 0, 0);
+    const [s0, a] = put(show, 'guitar.electric', 1000, 0);
+    const [s1, b] = put(s0, 'rack.stagebox', 2000, 0);
+    const [s2] = addChannel(s1, { shortName: 'v', mic: 'x', sourceElementId: mic });
+    expect(RULES.channelNotCabled(cable(s2, a, b, 'audio'))).toEqual([]);
+  });
+
+  const fixtures = (n: number): [Show, string[]] => {
+    let show = base();
+    const ids: string[] = [];
+    for (let i = 0; i < n; i++) {
+      let id: string;
+      [show, id] = put(show, 'light.par', i * 300, 0);
+      show = updateElement(show, id, { luminaire: { ...show.elements[id]!.luminaire!, universe: 1, address: i + 1 } });
+      ids.push(id);
+    }
+    return [show, ids];
+  };
+
+  test('more than 32 fixtures on one DMX line without a splitter', () => {
+    const [start, ids] = fixtures(33);
+    let show = start;
+    for (let i = 1; i < 32; i++) show = cable(show, ids[i - 1]!, ids[i]!, 'lightControl', 'DMX 5');
+    expect(RULES.dmxChainLong(show)).toEqual([]);
+    const long = cable(show, ids[31]!, ids[32]!, 'lightControl', 'DMX 5');
+    expect(RULES.dmxChainLong(long)).toHaveLength(1);
+    expect(RULES.dmxChainLong(long)[0]!.vars).toMatchObject({ n: 33, max: 32 });
+    let split = show;
+    let splitter: string;
+    [split, splitter] = put(split, 'net.dmx-splitter', 0, 1000);
+    split = cable(cable(split, ids[31]!, splitter, 'lightControl', 'DMX 5'), splitter, ids[32]!, 'lightControl', 'DMX 5');
+    expect(RULES.dmxChainLong(split)).toEqual([]);
+  });
+
+  test('a ring of network cables is a loop; a tree is not', () => {
+    let [show, a] = put(base(), 'rack.network', 0, 0);
+    let b: string, c: string;
+    [show, b] = put(show, 'rack.network', 1000, 0);
+    [show, c] = put(show, 'control.laptop', 2000, 0);
+    const tree = cable(cable(show, a, b, 'network'), b, c, 'network');
+    expect(RULES.networkLoop(tree)).toEqual([]);
+    expect(RULES.networkLoop(cable(tree, c, a, 'network'))).toHaveLength(1);
+  });
+});
+
+describe('racks in the document', () => {
+  test('every rack is under its own name', () => {
+    const [show, id] = put(base(), 'rack.amps', 0, 0);
+    const named = updateElement(show, id, { label: 'Rack de ampliS', rack: { units: 4, slots: [{ id: 's1', name: 'Ampli A', u: 2 }] } });
+    const doc = buildDocument({ ...named, document: { ...named.document, sections: [...named.document.sections, 'racks'] } });
+    expect(doc.source).toContain('== #"Rack de ampliS"');
+  });
+});

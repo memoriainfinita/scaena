@@ -11,7 +11,7 @@ export function addElement(show: Show, init: NewElement): [Show, PlanElement] {
   if (!show.layers.some((l) => l.id === init.layerId)) throw new Error(`unknown layer ${init.layerId}`);
   const [id, s] = nextId(show, 'e');
   const el: PlanElement = {
-    z: 0, rotation: 0, flipX: false, flipY: false, width: null, depth: null, height: null, label: '', groupId: null,
+    z: 0, rotation: 0, flipX: false, flipY: false, width: null, depth: null, height: null, label: '', labelAt: null, groupId: null,
     suppliedBy: 'unset', notes: '', weightKg: null, powerW: null, phase: null, computer: null, luminaire: null, rack: null, ip: '',
     ...init, id,
   };

@@ -18,14 +18,15 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 7 paquetes con datos completos y la prueba `packages-clean`
-- Pruebas (2026-11-08): 424 unitarias; e2e completos, 148 en Firefox (14 omitidos) y 106 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
+- Pruebas (2026-11-08): 439 unitarias; e2e completos, 149 en Firefox (14 omitidos) y 107 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
 - Patch desde los cables (`docs/design/patch-from-cables-2026-11-08.md`): cada cable de audio lleva entrada de llegada y líneas; lo escrito manda y una diferencia avisa. Solo el ejemplo de rock lo usa; los otros con stagebox llevan el patch escrito
 - Mezclas de monitores (`docs/design/monitor-mixes-2026-11-08.md`): para quién es cada salida y cuánto pide de cada canal, en cuadrícula, documento e informe
 - DMX (`docs/design/dmx-2026-11-08.md`): modos de la Open Fixture Library (653 aparatos), rangos en el aviso de solape, direccionado seguido, protocolo por universo (DMX, sACN, Art-Net), informes DMX, universos e IP y sección del documento
-- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse, en editor y PDF. Las que quedan lejos de su elemento llevan línea guía; sin ajuste manual
-- A medias: 78 de los 780 elementos tienen medidas de ficha técnica con su URL (63 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
+- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse, en editor y PDF. Las que quedan lejos de su elemento llevan línea guía; cualquiera se puede mover a mano (`labelAt`)
+- A medias: 82 de los 780 elementos tienen medidas de ficha técnica con su URL (67 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
 - Lista de canales en modo automático: elige 1 a 4 bloques estimando la altura de cada fila según cómo se parte su texto en cada columna (medido en el PDF el 2026-11-08: fila de 5,5 mm y 4,4 mm por línea de más), no por número de filas; comprobado con PDF reales de 21 a 40 canales en vertical y horizontal
+- DXF real de una sala importado y comprobado: Meany Studio Theatre, 7,8 MB, en 1 s en Firefox y a escala (`docs/research/importar-pdf-dxf.md`)
 - DXF con 1000 elementos con icono: 66 ms y 754 KB (2026-11-08)
 - Chrome conserva el `.wasm` de Typst entre visitas en el sitio publicado: lo sirve el service worker (comprobado 2026-11-08)
 
@@ -87,12 +88,9 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 ## TODO
 
 - [ ] Icono de `effect.co2`: en la próxima hoja de iconos que haga falta
-- [ ] Sin decidir: nombre del rack en el alzado (`docs/research/usitt-2025-seccion4.md`)
-- [ ] Etiquetas: ajuste manual por elemento (`docs/design/plot-labels-2026-11-08.md`)
 - [ ] Medidas de ficha técnica para el resto de la biblioteca
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
-- [ ] Sin comprobar todavía: un DXF real de una sala con muchos bloques y un PDF real escaneado (con archivos generados pasa: DXF de tres niveles de bloques en 0,4 s, PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
+- [ ] Sin comprobar todavía: un PDF real escaneado (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
 - [ ] Glosario: confirmar con una fuente la lista de siglas de posición y contrastar con un diccionario técnico de teatro (`docs/research/glosario-escena.md`)
-- [ ] Peso y medidas de X32, M32 y DL16 (`docs/research/audio-modelos.md`)
-- [ ] Ideas anotadas y no hechas: reglas del flujo de señal más allá de `connectionMismatch`, rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función
+- [ ] Ideas anotadas y no hechas: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función

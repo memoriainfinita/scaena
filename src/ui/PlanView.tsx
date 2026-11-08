@@ -11,7 +11,7 @@ import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
 import { issues } from '../app/issues.ts';
 import type { Severity } from '../validate/rules.ts';
-import { addFromLibrary, dialog, selection, session } from '../app/state.ts';
+import { addFromLibrary, dialog, selection, session, setElementField } from '../app/state.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
@@ -129,7 +129,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev, lx, ly, le
       )}
       {lead && <path class="detail" d={lead} fill="none" stroke="#555" stroke-width="1" vector-effect="non-scaling-stroke" />}
       {lx !== undefined && ly !== undefined && (
-        <text class="detail" x={lx} y={ly} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
+        <text class="detail" data-label="" style={selected && !locked ? 'cursor:move' : undefined} x={lx} y={ly} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
         </text>
       )}
@@ -519,10 +519,12 @@ type Interaction =
   | { kind: 'drag'; ids: string[]; hitId: string; p0: Pt; w0: Pt; sx: number; sy: number; moved: boolean; shift: boolean; wasMulti: boolean }
   | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] }
   | { kind: 'bgdrag'; w0: Pt; x0: number; y0: number }
+  | { kind: 'label'; id: string; w0: Pt; x0: number; y0: number }
   | { kind: 'vertex'; index: number };
 
 /** How far the background has been dragged while the mouse is still down; written to the show on release. */
 const bgDrag = signal<{ dx: number; dy: number } | null>(null);
+const labelDrag = signal<{ id: string; x: number; y: number } | null>(null);
 
 /** Keeps the pointer events coming to the plan while a finger or the mouse moves outside it; some environments refuse, and nothing depends on it. */
 const capture = (el: Element, id: number) => {
@@ -559,6 +561,7 @@ export function PlanView({ show }: { show: Show }) {
   const fitReq = fitRequest.value;
   const lod = useRef(false);
   const showRef = useRef(show);
+  const textsRef = useRef(new Map<string, PlacedText>());
   showRef.current = show;
   const fitted = useRef(false);
   const space = useRef(false);
@@ -674,7 +677,11 @@ export function PlanView({ show }: { show: Show }) {
       } else if (e.key.startsWith('Arrow')) {
         const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
         const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
-        if (has) moveSelection(dx, dy);
+        const picked = selection.peek();
+        const only = e.altKey && has && picked.length === 1 ? showRef.current.elements[picked[0]!] : undefined;
+        const label = only && textsRef.current.get(elementKey(only.id));
+        if (only && label) setElementField(only.id, { labelAt: { x: label.x - only.x + dx, y: label.y - only.y + dy } });
+        else if (has) moveSelection(dx, dy);
         else {
           const c = cam.peek();
           cam.value = { ...c, x: c.x - dx * c.k * 4, y: c.y - dy * c.k * 4 };
@@ -780,7 +787,11 @@ export function PlanView({ show }: { show: Show }) {
       const id = (e.target as Element).closest('[data-id]')?.getAttribute('data-id');
       const el = id ? s.elements[id] : undefined;
       capture(svg, e.pointerId);
-      if (el && editable(s, el)) {
+      const picked = selection.peek();
+      const label = el && !e.shiftKey && picked.length === 1 && picked[0] === el.id && editable(s, el) && (e.target as Element).closest('[data-label]') ? textsRef.current.get(elementKey(el.id)) : undefined;
+      if (el && label) {
+        act.current = { kind: 'label', id: el.id, w0: world(e), x0: label.x - el.x, y0: label.y - el.y };
+      } else if (el && editable(s, el)) {
         const group = expandGroups(s, [el.id]);
         const was = selection.peek().includes(el.id);
         let sel = selection.peek();
@@ -834,6 +845,9 @@ export function PlanView({ show }: { show: Show }) {
       const w = world(e);
       const st = e.altKey ? 0 : gridStep();
       vertexDrag.value = { index: a.index, x: snap(w.x, st), y: snap(w.y, st) };
+    } else if (a.kind === 'label') {
+      const w = world(e);
+      labelDrag.value = { id: a.id, x: Math.round(a.x0 + w.x - a.w0.x), y: Math.round(a.y0 + w.y - a.w0.y) };
     } else if (a.kind === 'bgdrag') {
       const w = world(e);
       bgDrag.value = { dx: Math.round(w.x - a.w0.x), dy: Math.round(w.y - a.w0.y) };
@@ -875,6 +889,10 @@ export function PlanView({ show }: { show: Show }) {
       const d = vertexDrag.peek();
       vertexDrag.value = null;
       if (d && !cancelled) moveStagePointTo(d.index, d.x, d.y);
+    } else if (a.kind === 'label') {
+      const d = labelDrag.peek();
+      labelDrag.value = null;
+      if (d && !cancelled) setElementField(a.id, { labelAt: { x: d.x, y: d.y } });
     } else if (a.kind === 'bgdrag') {
       const d = bgDrag.peek();
       bgDrag.value = null;
@@ -915,13 +933,16 @@ export function PlanView({ show }: { show: Show }) {
   for (const i of issues.value) if (i.ref.kind === 'element' && !elementSev.has(i.ref.id)) elementSev.set(i.ref.id, i.severity);
   const dragSet = dragIds.value ? new Set(dragIds.value) : null;
   const texts = useMemo(() => plotTexts(show, { sizes: SCREEN_TEXT, bounds: planBox(show), lang: lang.value, mounts: show.layers.find((l) => l.subject === 'lights')?.visible ?? true }), [show, lang.value]);
+  textsRef.current = texts;
+  const labelMove = labelDrag.value;
   const rows = Object.values(show.elements)
     .filter((e) => layers.get(e.layerId)?.visible)
     .sort((a, b) => (layerIndex.get(a.layerId) ?? 0) - (layerIndex.get(b.layerId) ?? 0));
   const mk = (e: PlanElement) => {
     const l = layers.get(e.layerId)!;
     const at = texts.get(elementKey(e.id));
-    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={at && at.x - e.x} ly={at && at.y - e.y} lead={at?.leader && `M${at.leader.x1 - e.x} ${at.leader.y1 - e.y}L${at.leader.x2 - e.x} ${at.leader.y2 - e.y}`} />;
+    const moving = labelMove?.id === e.id ? labelMove : null;
+    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={moving ? moving.x : at && at.x - e.x} ly={moving ? moving.y : at && at.y - e.y} lead={!moving && at?.leader ? `M${at.leader.x1 - e.x} ${at.leader.y1 - e.y}L${at.leader.x2 - e.x} ${at.leader.y2 - e.y}` : undefined} />;
   };
   lod.current = rows.length > LOD_MIN;
   const iconKeys = [...new Set(rows.map((e) => iconKeyOf(e.type.id)).filter((k): k is string => !!k))].join(',');

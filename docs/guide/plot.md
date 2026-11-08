@@ -14,7 +14,9 @@ The library holds about 780 elements drawn as line icons. With no search it is l
 
 ![Background](img/fondo.png)
 
-**PDF or DXF background** imports the venue plan (up to 25 MB; a PDF becomes an image in your browser, a DXF is drawn as lines). **Calibrate the scale** by clicking two points a known distance apart and typing that distance; set the opacity and lock it. It is saved inside the show file. **Move with the mouse** lets you drag the background across the plot and then press **Done**; it is one undo step and is not available while the background is locked.
+Labels place themselves, but any of them can be moved: select the element and drag its name on the plan, or use **Alt** and the arrows. It stays where you leave it, in the PDF too, and the others make room. **Place the label automatically**, in the inspector, sends it back.
+
+**PDF or DXF background** imports the venue plan (up to 25 MB; a PDF becomes an image in your browser, a DXF is drawn as lines, without switched-off or frozen layers or the title block in paper space). **Calibrate the scale** by clicking two points a known distance apart and typing that distance; set the opacity and lock it. It is saved inside the show file. **Move with the mouse** lets you drag the background across the plot and then press **Done**; it is one undo step and is not available while the background is locked.
 
 Wheel to zoom, **Space** + drag or the Hand tool to pan, **0** to fit. On a phone: two fingers.
 

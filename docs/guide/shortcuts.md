@@ -18,6 +18,7 @@ Also shown in the app with **?**.
 | + / − | Zoom in / out |
 | Space + drag | Pan |
 | Alt while dragging | No grid snap |
+| Alt + arrows | Move the label of the selected element |
 | Wheel | Zoom (**Shift**: horizontal pan) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 

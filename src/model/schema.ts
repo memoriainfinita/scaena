@@ -108,6 +108,8 @@ export const PlanElement = v.object({
   rack: v.optional(v.nullable(Rack), null),
   /** Network address of a computer, switch or desk. */
   ip: v.optional(v.pipe(v.string(), v.maxLength(45)), ''),
+  /** Where the user put the label, from the centre of the element, in plan millimetres; null lets it place itself. */
+  labelAt: v.optional(v.nullable(v.object({ x: mm, y: mm })), null),
 });
 
 export const InputChannel = v.object({

@@ -49,9 +49,23 @@ Retiradas el 2026-11-02 (aceptado por el usuario):
 ## Pendientes
 
 - Gravedades aceptadas por el usuario el 2026-11-02 ("ok" a la propuesta, con las dos retiradas arriba)
-- Reglas del flujo de señal: `connectionMismatch` (grupo C, `grupo-c-2026-11-06.md`)
+- Reglas del flujo de señal: `connectionMismatch` (grupo C, `grupo-c-2026-11-06.md`); las demás, al final de este documento
 - Silenciar un aviso concreto: lista `muted` del montaje (grupo C)
 
 ## Después de construirlo
 
 Implementados el 2026-11-05 en `src/validate/rules.ts`: 18 reglas, cada una con su prueba (el detalle de cada una, las interpretaciones que conviene confirmar y lo que quedó fuera está en `paso-9-diseno-2026-11-05.md`). «Texto que no cabe» se resolvió como aviso de palabras demasiado largas en el panel del documento (paso 11). Se añadió una regla, `timeFormat` (hora mal escrita), en el paso 13. El grupo C (2026-11-06) añadió `duplicatePatch`, `connectionMismatch`, `cableTooLong` e `ipDuplicate` y el silenciado de avisos. El 2026-11-08 se añadió `stageCrossing` (contorno del escenario de forma libre que se cruza, aviso). El mismo día, `portTaken`, `portRange`, `patchMismatch` y `cableLinesShort` (`patch-from-cables-2026-11-08.md`). `dmxOverlap` pasa a comparar rangos y se añade `dmxBeyond` (`dmx-2026-11-08.md`). Se añade `universeRepeated` (`dmx-2026-11-08.md`). En total, 30 reglas en `src/validate/rules.ts`.
+
+## Signal flow rules (2026-11-08)
+
+Written in English, as every document since 2026-11-07. 34 rules in total.
+
+| Rule | Severity | Fires when |
+| --- | --- | --- |
+| `channelNotCabled` | tip | There is at least one audio cable, and a channel's source has none, no written patch and is not wireless |
+| `outputNotCabled` | tip | There is at least one audio cable, and the element an output goes to has none; in-ear mixes and wireless elements are skipped |
+| `dmxChainLong` | warning | More than 32 fixtures on one line. EIA-485, the wire under DMX512, allows 32 unit loads; a fixture is counted as one. A desk or a splitter starts a new line; cables on a network connector are not DMX lines |
+| `networkLoop` | warning | A network cable joins two elements already connected. Managed switches can handle a loop, so it is not an error |
+
+The first two wait for the first audio cable, since a show that does not draw its cables has nothing to be told. None of them fires on the example packages.
+

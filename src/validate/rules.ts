@@ -8,7 +8,7 @@ import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights
 import { handlesSignal, maxCableM } from '../model/compat.ts';
 import { effectivePatch, patchAnalysis } from '../model/patch.ts';
 import { isClock } from '../model/production.ts';
-import type { PlanElement, Show } from '../model/schema.ts';
+import type { PlanElement, Show, SignalType } from '../model/schema.ts';
 
 export type Severity = 'error' | 'warning' | 'tip';
 export const SEVERITIES: readonly Severity[] = ['error', 'warning', 'tip'];
@@ -43,7 +43,11 @@ export type RuleId =
   | 'patchMismatch'
   | 'cableLinesShort'
   | 'dmxBeyond'
-  | 'universeRepeated';
+  | 'universeRepeated'
+  | 'channelNotCabled'
+  | 'outputNotCabled'
+  | 'dmxChainLong'
+  | 'networkLoop';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -96,6 +100,10 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   cableLinesShort: 'warning',
   dmxBeyond: 'warning',
   universeRepeated: 'error',
+  channelNotCabled: 'tip',
+  outputNotCabled: 'tip',
+  dmxChainLong: 'warning',
+  networkLoop: 'warning',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -396,7 +404,91 @@ const patchMismatch: Rule = (show) => {
 
 const cableLinesShort: Rule = (show) => (audioOn(show) ? patchAnalysis(show).short.map((s) => issue('cableLinesShort', { kind: 'element', id: s.element }, { name: elementNamed(show, s.element), channels: s.channels, lines: s.lines })) : []);
 
-export const RULES: Record<RuleId, Rule> = { universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+/** The elements with a cable of that signal. */
+const cabled = (show: Show, signal: SignalType): Set<string> => new Set(Object.values(show.connections).flatMap((c) => (c.signal === signal ? [c.from, c.to] : [])));
+const wireless = (e: PlanElement): boolean => {
+  const it = itemById(e.type.id);
+  return !!it && /inal[aá]mbr|wireless/i.test(`${it.name.es} ${it.name.en} ${it.tags.join(' ')}`);
+};
+
+// Both wait for the first audio cable: a show that does not draw its cables has nothing to be told.
+const channelNotCabled: Rule = (show) => {
+  const on = audioOn(show) ? cabled(show, 'audio') : new Set<string>();
+  if (on.size === 0) return [];
+  return channelList(show).flatMap((c) => {
+    const e = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
+    return e && !on.has(e.id) && !c.patch.trim() && !wireless(e) ? [issue('channelNotCabled', { kind: 'channel', id: c.id }, { n: c.number, name: elName(e) })] : [];
+  });
+};
+
+const outputNotCabled: Rule = (show) => {
+  const on = audioOn(show) ? cabled(show, 'audio') : new Set<string>();
+  if (on.size === 0) return [];
+  return outputList(show).flatMap((o) => {
+    const e = o.sourceElementId ? show.elements[o.sourceElementId] : undefined;
+    return e && o.kind !== 'iem' && !on.has(e.id) && !wireless(e) ? [issue('outputNotCabled', { kind: 'output', id: o.id }, { n: o.number, name: elName(e) })] : [];
+  });
+};
+
+/** EIA-485, the wire under DMX512, allows 32 unit loads on a line without a splitter; a fixture is usually one. */
+const DMX_LINE_MAX = 32;
+const OVER_NETWORK = /^(cat|ethernet|rj-?45)/i;
+
+const dmxChainLong: Rule = (show) => {
+  if (!lightsOn(show)) return [];
+  const next = new Map<string, string[]>();
+  for (const c of Object.values(show.connections)) {
+    if (c.signal !== 'lightControl' || OVER_NETWORK.test(c.connector.trim()) || !show.elements[c.from] || !show.elements[c.to]) continue;
+    next.set(c.from, [...(next.get(c.from) ?? []), c.to]);
+    next.set(c.to, [...(next.get(c.to) ?? []), c.from]);
+  }
+  // A desk or a splitter starts a new line, so a line ends at them.
+  const startsLine = (id: string) => {
+    const type = show.elements[id]!.type.id;
+    return type === 'control.lightdesk' || type.includes('splitter');
+  };
+  const seen = new Set<string>();
+  const out: Issue[] = [];
+  for (const start of [...next.keys()].sort()) {
+    if (seen.has(start) || startsLine(start)) continue;
+    const line: string[] = [];
+    const stack = [start];
+    seen.add(start);
+    while (stack.length > 0) {
+      const id = stack.pop()!;
+      line.push(id);
+      for (const n of next.get(id) ?? []) {
+        if (seen.has(n) || startsLine(n)) continue;
+        seen.add(n);
+        stack.push(n);
+      }
+    }
+    const fixtures = line.filter((id) => show.elements[id]!.luminaire).length;
+    if (fixtures > DMX_LINE_MAX) out.push(issue('dmxChainLong', { kind: 'element', id: start }, { name: elName(show.elements[start]!), n: fixtures, max: DMX_LINE_MAX }));
+  }
+  return out;
+};
+
+const networkLoop: Rule = (show) => {
+  const parent = new Map<string, string>();
+  const root = (id: string): string => {
+    const p = parent.get(id) ?? id;
+    if (p === id) return id;
+    const r = root(p);
+    parent.set(id, r);
+    return r;
+  };
+  const out: Issue[] = [];
+  for (const c of Object.values(show.connections).sort((a, b) => (a.id < b.id ? -1 : 1))) {
+    const [a, b] = [show.elements[c.from], show.elements[c.to]];
+    if (c.signal !== 'network' || !a || !b) continue;
+    if (root(a.id) === root(b.id)) out.push(issue('networkLoop', { kind: 'element', id: a.id }, { name: elName(a), other: elName(b) }, undefined, c.id));
+    else parent.set(root(a.id), root(b.id));
+  }
+  return out;
+};
+
+export const RULES: Record<RuleId, Rule> = { channelNotCabled, outputNotCabled, dmxChainLong, networkLoop, universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

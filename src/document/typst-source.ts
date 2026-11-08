@@ -299,8 +299,14 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const rows = buildReport(show, 'rigging').rows;
       parts.push(heading(D.rigging) + c.table(D.rigging, [{ fr: 1.2 }, { mm: 9 }, { mm: 14 }, { fr: 1.2 }, { fr: 1.4 }, { mm: 15 }, { fr: 0.8 }, { mm: 17 }, { mm: 17 }], [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows) + '\n');
     } else if (s === 'racks') {
-      const rows = buildReport(show, 'racks').rows;
-      parts.push(heading(D.racks) + c.table(D.racks, [{ fr: 1.2 }, { mm: 16 }, { fr: 2 }, { mm: 20 }], [D.element, 'U', D.model, D.count], rows) + '\n');
+      // The report closes every rack with a total, whose unit column is empty.
+      const blocks: string[][][] = [[]];
+      for (const row of buildReport(show, 'racks').rows) {
+        blocks[blocks.length - 1]!.push(row);
+        if (row[1] === '') blocks.push([]);
+      }
+      const named = blocks.filter((b) => b.length > 0).map((b) => `== ${txt(b[0]![0]!)}\n\n` + c.table(D.racks, [{ mm: 16 }, { fr: 2 }, { mm: 20 }], ['U', D.model, D.count], b.map((r) => r.slice(1))));
+      parts.push(heading(D.racks) + named.join('\n\n') + '\n');
     } else if (s === 'cables') {
       const rows = buildReport(show, 'cables').rows;
       parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows) + '\n');

@@ -284,3 +284,20 @@ test('the library has many PA variations, and an element can be resized and put 
   await expect(width).toHaveValue('1.2');
   await expect(page.getByRole('button', { name: 'Tamaño de la biblioteca' })).toHaveCount(0);
 });
+
+test('a selected element keeps its label where it is dragged, and the inspector puts it back', async ({ page }) => {
+  await rock(page);
+  const element = page.locator('g.el').filter({ has: page.locator('text[data-label]') }).first();
+  await element.click({ position: { x: 4, y: 4 }, force: true });
+  const label = element.locator('text[data-label]');
+  const before = (await label.boundingBox())!;
+  await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(before.x + before.width / 2 + 70, before.y + before.height / 2 + 40, { steps: 5 });
+  await page.mouse.up();
+  const after = (await label.boundingBox())!;
+  expect(Math.abs(after.x - before.x - 70)).toBeLessThan(4);
+  expect(Math.abs(after.y - before.y - 40)).toBeLessThan(4);
+  await page.getByRole('button', { name: 'Colocar la etiqueta automáticamente' }).click();
+  await expect.poll(async () => Math.round((await label.boundingBox())!.x)).toBe(Math.round(before.x));
+});

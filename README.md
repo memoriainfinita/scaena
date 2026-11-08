@@ -15,7 +15,7 @@ Technical riders for live shows, in the browser: stage plot, input and output li
 - **Computers, video and network:** a computer element with its programs (a catalogue of 62) and compatibility notes.
 - **Production of one event:** setlist, day and build schedules, hospitality and contract, day sheet.
 - **Rider PDF:** compiled in the browser with Typst, tagged, with the plot at a print scale. Plus CSV, SVG, PNG, revisions with comparison and an update sheet.
-- **Warnings** (30 rules, each one can be muted) that never block exporting; works on a phone; installable; works offline.
+- **Warnings** (34 rules, each one can be muted) that never block exporting; works on a phone; installable; works offline.
 
 [User guide](docs/guide/README.md) · [Guía en español](docs/guide/es/README.md) · [Documentation](docs/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
 

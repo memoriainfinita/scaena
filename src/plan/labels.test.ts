@@ -193,3 +193,29 @@ describe('leader lines', () => {
     }
   });
 });
+
+describe('a label moved by hand', () => {
+  const options = (show: Show) => ({ sizes: SCREEN_TEXT, bounds: planBox(show), lang: 'es' as const, mounts: true });
+
+  test('stays where it was put, gets a line when far, and the rest avoid it', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const [a, b] = Object.values(show.elements).filter((e) => e.label);
+    const auto = plotTexts(show, options(show)).get(`el:${b!.id}`)!;
+    const moved: Show = { ...show, elements: { ...show.elements, [a!.id]: { ...a!, labelAt: { x: auto.x - a!.x, y: auto.y - a!.y } } } };
+    const placed = plotTexts(moved, options(moved));
+    const at = placed.get(`el:${a!.id}`)!;
+    expect(at.x - a!.x).toBeCloseTo(auto.x - a!.x);
+    expect(at.y - a!.y).toBeCloseTo(auto.y - a!.y);
+    const other = placed.get(`el:${b!.id}`)!;
+    expect(overlaps(at.box, other.box)).toBe(false);
+  });
+
+  test('the PDF places it at the same offset and a far one gets a leader', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const a = Object.values(show.elements).find((e) => e.label)!;
+    const moved: Show = { ...show, elements: { ...show.elements, [a.id]: { ...a, labelAt: { x: 3000, y: -2500 } } } };
+    const at = plotTexts(moved, { ...options(moved), sizes: paperText(1 / 50) }).get(`el:${a.id}`)!;
+    expect([at.x - a.x, at.y - a.y]).toEqual([3000, -2500]);
+    expect(at.leader).toBeDefined();
+  });
+});
