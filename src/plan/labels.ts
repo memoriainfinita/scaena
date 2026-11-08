@@ -12,8 +12,16 @@ export interface Slot {
   /** How far out this slot is from its natural place; a text prefers a near slot that touches an element to one two rings away. */
   ring?: number;
 }
+/** A thin line from a text to its element, when the text had to land far from it. */
+export interface Leader {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
 export interface PlacedText extends Slot {
   box: Box;
+  leader?: Leader;
 }
 /** Something a text must not sit on. */
 export interface Solid {
@@ -292,8 +300,44 @@ export function plotInput(show: Show, { sizes, lang, mounts }: PlotTextOptions):
   return { solids, texts };
 }
 
+const boxGap = (a: Box, b: Box): number => Math.hypot(Math.max(a.x0 - b.x1, b.x0 - a.x1, 0), Math.max(a.y0 - b.y1, b.y0 - a.y1, 0));
+
+/** The point of each span nearest the other: their facing ends, or the middle of what they share. */
+function facing(a0: number, a1: number, b0: number, b1: number): [number, number] {
+  if (a1 < b0) return [a1, b0];
+  if (b1 < a0) return [a0, b1];
+  const m = (Math.max(a0, b0) + Math.min(a1, b1)) / 2;
+  return [m, m];
+}
+
+/** From this far, in font sizes, a text gets a line whatever is around it. */
+export const LEADER_FAR = 2;
+/** From this far, a text gets a line only if another element stands nearer than its own. */
+export const LEADER_NEAR = 0.8;
+
+/** The line for a text placed at `box`, or null when it reads as belonging to its element without one. */
+export function leaderFor(box: Box, text: TextRequest, solids: Solid[]): Leader | null {
+  const own = text.ownerBox;
+  if (!own) return null;
+  const gap = boxGap(box, own);
+  if (gap < text.fontSize * LEADER_NEAR) return null;
+  const misleading = gap >= text.fontSize * LEADER_FAR || solids.some((s) => s.id !== text.owner && s.id !== `${text.owner}#text` && !boxContains(s.box, own) && !boxContains(s.box, box) && boxGap(box, s.box) < gap);
+  if (!misleading) return null;
+  const [x1, x2] = facing(box.x0, box.x1, own.x0, own.x1);
+  const [y1, y2] = facing(box.y0, box.y1, own.y0, own.y1);
+  // Starts a little off the text, so it does not read as an underline or a stroke of a letter.
+  const air = (text.fontSize * 0.12) / (Math.hypot(x2 - x1, y2 - y1) || 1);
+  return { x1: x1 + (x2 - x1) * air, y1: y1 + (y2 - y1) * air, x2, y2 };
+}
+
 /** Where every text of the plan goes, for one renderer. */
 export function plotTexts(show: Show, options: PlotTextOptions): Map<string, PlacedText> {
   const { solids, texts } = plotInput(show, options);
-  return placeTexts(solids, texts, options.bounds);
+  const placed = placeTexts(solids, texts, options.bounds);
+  for (const text of texts) {
+    const at = placed.get(text.id);
+    const leader = at && leaderFor(at.box, text, solids);
+    if (at && leader) at.leader = leader;
+  }
+  return placed;
 }

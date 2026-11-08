@@ -18,12 +18,13 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 7 paquetes con datos completos y la prueba `packages-clean`
-- Pruebas (2026-11-08): 410 unitarias; e2e completos, 144 en Firefox (14 omitidos) y 104 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
+- Pruebas (2026-11-08): 420 unitarias; e2e completos, 146 en Firefox (14 omitidos) y 105 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
 - Patch desde los cables (`docs/design/patch-from-cables-2026-11-08.md`): cada cable de audio lleva entrada de llegada y líneas; lo escrito manda y una diferencia avisa. Solo el ejemplo de rock lo usa; los otros con stagebox llevan el patch escrito
+- Mezclas de monitores (`docs/design/monitor-mixes-2026-11-08.md`): para quién es cada salida y cuánto pide de cada canal, en cuadrícula, documento e informe
 - DMX (`docs/design/dmx-2026-11-08.md`): modos de la Open Fixture Library (653 aparatos), rangos en el aviso de solape, direccionado seguido, informes DMX e IP y sección del documento
-- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse, en editor y PDF. Límite: en planos densos 2 a 6 etiquetas quedan más cerca de otro elemento que del suyo; sin líneas guía ni ajuste manual
-- A medias: 78 de los 780 elementos tienen medidas de ficha técnica con su URL (63 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; los nombres en español de las hojas 67 a 74, sin revisar por el usuario; `effect.co2` no tiene icono
+- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse, en editor y PDF. Las que quedan lejos de su elemento llevan línea guía; sin ajuste manual
+- A medias: 78 de los 780 elementos tienen medidas de ficha técnica con su URL (63 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
 - Lista de canales en modo automático: elige 1 a 4 bloques estimando la altura de cada fila según cómo se parte su texto en cada columna (medido en el PDF el 2026-11-08: fila de 5,5 mm y 4,4 mm por línea de más), no por número de filas; comprobado con PDF reales de 21 a 40 canales en vertical y horizontal
 - DXF con 1000 elementos con icono: 66 ms y 754 KB (2026-11-08)
 
@@ -84,11 +85,9 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 
 ## TODO
 
-- [ ] Revisar a ojo los símbolos sobre el plano (el usuario no los ha revisado)
-- [ ] Revisar los nombres en español de los 84 elementos de las hojas 67 a 74 (en `docs/design/icons-catalog.md`)
 - [ ] Icono de `effect.co2`: en la próxima hoja de iconos que haga falta
-- [ ] Sin decidir: mezclas de monitores estructuradas (para quién es cada salida y qué canales lleva; hoy solo una nota); protocolo de control por aparato o universo (DMX, sACN, Art-Net); nombre del rack en el alzado (`docs/research/usitt-2025-seccion4.md`)
-- [ ] Etiquetas: líneas guía o ajuste manual para las que quedan lejos de su elemento en planos densos
+- [ ] Sin decidir: protocolo de control por aparato o universo (DMX, sACN, Art-Net); nombre del rack en el alzado (`docs/research/usitt-2025-seccion4.md`)
+- [ ] Etiquetas: ajuste manual por elemento (`docs/design/plot-labels-2026-11-08.md`)
 - [ ] Medidas de ficha técnica para el resto de la biblioteca
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico

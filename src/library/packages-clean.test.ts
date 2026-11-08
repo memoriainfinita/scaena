@@ -57,7 +57,15 @@ describe('names, outlines and the legend of the exported plan', () => {
     const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
     const on = planSvg(show, {}, opts);
     const off = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, opts);
-    expect(off.scaleN).toBeLessThan(on.scaleN);
+    expect(off.scaleN).toBeLessThanOrEqual(on.scaleN);
     expect(off.svg.length).toBeLessThan(on.svg.length);
+    const portrait = { ...opts, availWidthMm: 130, availHeightMm: 200 };
+    expect(planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, portrait).scaleN).toBeLessThan(planSvg(show, {}, portrait).scaleN);
+  });
+
+  test('on a wide page the legend goes beside the plan and prints it larger', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const wide = planSvg(show, {}, { ...opts, availWidthMm: 257, availHeightMm: 170 });
+    expect(wide.scaleN).toBeLessThan(100);
   });
 });

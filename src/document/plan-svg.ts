@@ -92,7 +92,13 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const barMm = 10;
   const extraMm = legendMm + barMm;
 
-  const fitK = Math.min(opts.availWidthMm / worldW, (opts.availHeightMm - extraMm) / worldH);
+  // A plan that is limited by the height of the page gains more from the legend beside it, filled top to bottom.
+  const sideRows = Math.max(1, Math.floor((opts.availHeightMm - barMm) / cellH));
+  const sideMm = used.length > 0 ? Math.ceil(used.length / sideRows) * cellW + 6 : 0;
+  const fitBelow = Math.min(opts.availWidthMm / worldW, (opts.availHeightMm - extraMm) / worldH);
+  const fitBeside = Math.min((opts.availWidthMm - sideMm) / worldW, (opts.availHeightMm - barMm) / worldH);
+  const beside = used.length > 0 && fitBeside > fitBelow * 1.1;
+  const fitK = beside ? fitBeside : fitBelow;
   const wanted = opts.planScale ? 1 / opts.planScale : null;
   const fits = wanted === null || wanted <= fitK + 1e-9;
   const k = wanted !== null && fits ? wanted : fitK;
@@ -143,6 +149,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     const dim = layers.get(e.layerId)?.l.dim ?? 0;
     out.push(elementSvg(e, f, k, dim, show.units, opts.lang, show.view.outlines, show.view.rp2Lights));
     const label = texts.get(elementKey(e.id));
+    if (label?.leader) written.push(`<line x1="${r(label.leader.x1)}" y1="${r(label.leader.y1)}" x2="${r(label.leader.x2)}" y2="${r(label.leader.y2)}" stroke="#555" stroke-width="${r(0.12 / k)}"${dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : ''}/>`);
     if (label) written.push(`<text x="${r(label.x)}" y="${r(label.y)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter"${dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : ''}>${esc(e.label)}</text>`);
   }
   out.push(...written);
@@ -157,8 +164,8 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
 
   used.forEach((id, i) => {
     const it = itemById(id)!;
-    const cx = box.x0 + (i % cols) * (cellW / k);
-    const cy = y0 + (barMm + Math.floor(i / cols) * cellH) / k;
+    const cx = beside ? box.x1 + (6 + Math.floor(i / sideRows) * cellW) / k : box.x0 + (i % cols) * (cellW / k);
+    const cy = beside ? box.y0 + ((i % sideRows) * cellH) / k : y0 + (barMm + Math.floor(i / cols) * cellH) / k;
     const side = 7 / k;
     const sc = Math.min(side / it.size.w, side / it.size.d);
     const w = it.size.w * sc;
@@ -169,8 +176,8 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     out.push(`<text x="${r(cx + side + 1.5 / k)}" y="${r(cy + side / 2 + 0.8 / k)}" font-size="${r(2.2 / k)}" fill="#000" font-family="Inter">${esc(it.name[opts.lang])}</text>`);
   });
 
-  const height = worldH + extra;
-  const width = Math.max(worldW, used.length > 0 ? (cols * cellW) / k : 0);
+  const height = beside ? Math.max(worldH + barMm / k, (Math.min(sideRows, used.length) * cellH) / k) : worldH + extra;
+  const width = beside ? worldW + sideMm / k : Math.max(worldW, used.length > 0 ? (cols * cellW) / k : 0);
   const defs = iconDefs(els.map((e) => itemById(e.type.id)).concat(used.map((id) => itemById(id))).map((it) => (it ? iconKeyFor(it, show.view.rp2Lights) : undefined)).filter((x): x is string => !!x));
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${r(box.x0)} ${r(box.y0)} ${r(width)} ${r(height)}" width="${r(width)}" height="${r(height)}">${defs}${out.join('')}</svg>`;
   return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits };

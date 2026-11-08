@@ -58,11 +58,12 @@ interface ElProps {
   /** Where its label goes, from the element's centre; undefined when it has none. Two numbers, so that `memo` holds. */
   lx: number | undefined;
   ly: number | undefined;
+  lead: string | undefined;
 }
 
 const BADGE: Record<Severity, string> = { error: '#b3261e', warning: '#9a5b00', tip: '#1a5fb4' };
 
-const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev, lx, ly }: ElProps) {
+const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev, lx, ly, lead }: ElProps) {
   const it = itemById(el.type.id);
   if (!it) return null;
   const { w, d } = elementSize(el);
@@ -126,6 +127,7 @@ const PlanEl = memo(function PlanEl({ el, selected, locked, dim, sev, lx, ly }: 
           </text>
         </g>
       )}
+      {lead && <path class="detail" d={lead} fill="none" stroke="#555" stroke-width="1" vector-effect="non-scaling-stroke" />}
       {lx !== undefined && ly !== undefined && (
         <text class="detail" x={lx} y={ly} text-anchor="middle" font-size="170" fill="#000" font-family="Inter Variable, sans-serif">
           {el.label}
@@ -919,7 +921,7 @@ export function PlanView({ show }: { show: Show }) {
   const mk = (e: PlanElement) => {
     const l = layers.get(e.layerId)!;
     const at = texts.get(elementKey(e.id));
-    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={at && at.x - e.x} ly={at && at.y - e.y} />;
+    return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={at && at.x - e.x} ly={at && at.y - e.y} lead={at?.leader && `M${at.leader.x1 - e.x} ${at.leader.y1 - e.y}L${at.leader.x2 - e.x} ${at.leader.y2 - e.y}`} />;
   };
   lod.current = rows.length > LOD_MIN;
   const iconKeys = [...new Set(rows.map((e) => iconKeyOf(e.type.id)).filter((k): k is string => !!k))].join(',');

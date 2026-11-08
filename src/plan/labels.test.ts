@@ -4,7 +4,7 @@ import { showFromPackage } from '../library/apply.ts';
 import { PACKAGES } from '../library/packages.ts';
 import type { Show } from '../model/schema.ts';
 import { boxContains, elementBox, planBox, type Box } from './geometry.ts';
-import { AIR_X, elementSlots, linkKey, mountKey, paperText, placeTexts, plotInput, plotTexts, SCREEN_TEXT, textWidth, type PlotTextOptions, type Solid, type TextRequest } from './labels.ts';
+import { AIR_X, elementSlots, leaderFor, linkKey, mountKey, paperText, placeTexts, plotInput, plotTexts, SCREEN_TEXT, textWidth, type PlotTextOptions, type Solid, type TextRequest } from './labels.ts';
 
 const FS = 170;
 const box = (x0: number, y0: number, x1: number, y1: number): Box => ({ x0, y0, x1, y1 });
@@ -153,5 +153,43 @@ describe('the example shows', () => {
     const show = showFromPackage(PACKAGES.find((p) => p.id === 'theatre')!, 'theatre', 'es');
     const placed = plotTexts(show, { sizes: SCREEN_TEXT, bounds: planBox(show), lang: 'es', mounts: false });
     for (const m of Object.values(show.mounts)) expect(placed.has(mountKey(m.id))).toBe(false);
+  });
+});
+
+describe('leader lines', () => {
+  const own = box(0, 0, 500, 500);
+  const req: TextRequest = { id: 't', group: 1, width: 600, fontSize: FS, owner: 'a', ownerBox: own, slots: [] };
+  const below = (gap: number) => box(0, 500 + gap, 500, 500 + gap + 190);
+
+  test('a text next to its element has none', () => {
+    expect(leaderFor(below(60), req, [{ id: 'a', box: own }])).toBeNull();
+  });
+  test('a far text has one, from the text to the edge of its element', () => {
+    const l = leaderFor(below(FS * 3), req, [{ id: 'a', box: own }])!;
+    expect(l.x2).toBe(250);
+    expect(l.y2).toBe(500);
+    expect(l.y1).toBeGreaterThan(500);
+    expect(l.y1).toBeLessThan(500 + FS * 3);
+  });
+  test('a text at middle distance has one only if another element is nearer', () => {
+    const text = below(FS);
+    expect(leaderFor(text, req, [{ id: 'a', box: own }])).toBeNull();
+    expect(leaderFor(text, req, [{ id: 'a', box: own }, { id: 'b', box: box(0, 500 + FS + 200, 500, 2000) }])).not.toBeNull();
+  });
+  test('what the element stands on does not count as nearer', () => {
+    const riser = box(-1000, -1000, 2000, 3000);
+    expect(leaderFor(below(FS), req, [{ id: 'a', box: own }, { id: 'r', box: riser }])).toBeNull();
+  });
+  test('the examples end with every far label tied to its element, on the PDF too', () => {
+    for (const p of PACKAGES) {
+      const show = showFromPackage(p, p.id, 'es');
+      const placed = plotTexts(show, { sizes: paperText(1 / 110), bounds: planBox(show), lang: 'es', mounts: true });
+      for (const [key, at] of placed) {
+        if (!key.startsWith('el:')) continue;
+        const own = elementBox(show.elements[key.slice(3)]!);
+        const far = Math.hypot(Math.max(at.box.x0 - own.x1, own.x0 - at.box.x1, 0), Math.max(at.box.y0 - own.y1, own.y0 - at.box.y1, 0));
+        if (far >= paperText(1 / 110).element * 2) expect(at.leader, key).toBeTruthy();
+      }
+    }
   });
 });

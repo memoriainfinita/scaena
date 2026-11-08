@@ -34,6 +34,14 @@ Each renderer also tells it what it really draws: the editor shows mount names o
 
 Placement runs once per change of the show (`useMemo` on `show` and the language), not on every render, and reaches `PlanEl` as two numbers so its `memo` still holds. While dragging, labels travel with their element; placement reruns when the drag is committed. Grid buckets keep each lookup local: 1000 tightly packed elements took about 170 ms on the development machine (2026-11-08).
 
+## Leader lines
+
+Added the same day, for what placement alone cannot solve: on a dense plan a label can land nearer another element than its own. `leaderFor` draws a thin line from the text to the edge of its element when the text is at least 2 font sizes away, or at least 0.8 and another element stands nearer than its own. An element that contains the owner, or the text, does not count as nearer (a drum kit on its riser). Only element labels get one. On screen the line travels with its element while dragging; on paper it is written with the texts, over the elements.
+
+## Legend beside the plan
+
+The space the texts have depends on the print scale. On a landscape page the legend under the plan cost as much height as the plan itself: the rock example printed at 1:142. When the legend beside the plan gives a scale at least 10 % larger, `planSvgIn` puts it there, filled top to bottom.
+
 ## Not done
 
 - A manual offset per element. It needs a field in `src/model/schema.ts`, a migration and a handle in the editor; left for later.
