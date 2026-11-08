@@ -1,3 +1,5 @@
+> **Superseded 2026-11-08:** the data layout below (sheet chunks, `icon-map.ts`, manifest) was replaced by one SVG per item in `symbols/<category>/`; see `symbols.md`. The pipeline now lives in `archive/symbol-ingest/`.
+
 # Icon library integration (2026-11-07)
 
 How the 678 traced icons become library symbols. Decisions already taken with the user are listed as such; the rest are recommendations to be reviewed.

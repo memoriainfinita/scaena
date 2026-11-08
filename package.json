@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "pnpm typecheck && vite build",
     "preview": "vite preview --port 4184 --strictPort",
+    "symbols": "node scripts/build-symbols.mjs",
     "typecheck": "tsc && tsc -p tsconfig.sw.json",
     "lint": "eslint .",
     "test": "vitest run",

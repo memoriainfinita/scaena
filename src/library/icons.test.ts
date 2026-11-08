@@ -3,31 +3,39 @@ import { describe, expect, test } from 'vitest';
 import { planSvg, printStrokes } from '../document/plan-svg.ts';
 import { loadShowIcons } from './show-icons.ts';
 import { showFromPackage } from './apply.ts';
-import { ICON_OF } from './icon-map.ts';
 import { footprintBody, iconData, iconDefs, iconFit, iconKeyOf, iconUse, loadIcons } from './icons.ts';
 import { ITEMS, itemById } from './items.ts';
 import { packageById } from './packages.ts';
 
 const dir = new URL('./icons/', import.meta.url);
+const symbols = new URL('../../symbols/', import.meta.url);
 const all: Record<string, [number, number, string]> = {};
 for (const f of readdirSync(dir)) Object.assign(all, JSON.parse(readFileSync(new URL(f, dir), 'utf8')));
 
 describe('icons', () => {
-  test('every mapped item and icon exists', () => {
-    for (const [id, key] of Object.entries(ICON_OF)) {
-      expect(itemById(id), id).toBeDefined();
-      expect(all[key], `${id} -> ${key}`).toBeDefined();
+  test('every symbol file is a library item, in the folder of its category', () => {
+    const files = readdirSync(symbols, { withFileTypes: true }).filter((d) => d.isDirectory());
+    let n = 0;
+    for (const cat of files) {
+      for (const f of readdirSync(new URL(`${cat.name}/`, symbols))) {
+        const id = f.slice(0, -4);
+        expect(f.endsWith('.svg'), f).toBe(true);
+        expect(itemById(id), id).toBeDefined();
+        expect(itemById(id)!.category, id).toBe(cat.name);
+        expect(iconKeyOf(id), id).toBe(id);
+        n++;
+      }
     }
+    expect(n).toBe(Object.keys(all).length);
   });
 
-  test('two items never share an icon unless they are the same thing under two ids', () => {
-    const seen = new Map<string, string>();
-    const twice: string[] = [];
-    for (const [id, key] of Object.entries(ICON_OF)) {
-      if (seen.has(key)) twice.push(`${key}: ${seen.get(key)} and ${id}`);
-      seen.set(key, id);
+  test('the generated chunks match the SVG files (run node scripts/build-symbols.mjs)', () => {
+    for (const [id, [w, h, d]] of Object.entries(all)) {
+      const cat = (itemById(id) ?? { category: '' }).category;
+      const text = readFileSync(new URL(`${cat}/${id}.svg`, symbols), 'utf8');
+      expect(text, id).toContain(`viewBox="0 0 ${w} ${h}"`);
+      expect(text, id).toContain(` d="${d}"`);
     }
-    expect(twice).toEqual([]);
   });
 
   test('every icon is one even-odd path with a size', () => {
@@ -39,12 +47,12 @@ describe('icons', () => {
   });
 
   test('an icon is fitted inside its footprint with its aspect kept', async () => {
-    await loadIcons(['12-01']);
-    const f = iconFit('12-01', 1000, 1000)!;
+    await loadIcons(['video.ptz']);
+    const f = iconFit('video.ptz', 1000, 1000)!;
     expect(f.s * f.iw).toBeLessThanOrEqual(1000);
     expect(f.s * f.ih).toBeLessThanOrEqual(1000);
-    expect(iconUse('12-01', 1000, 1000)).toContain('href="#ic-12-01"');
-    expect(iconUse('99-99', 1000, 1000)).toBe('');
+    expect(iconUse('video.ptz', 1000, 1000)).toContain('href="#ic-video.ptz"');
+    expect(iconUse('no.such', 1000, 1000)).toBe('');
   });
 
   test('the plan for print draws each icon once in defs and references it', async () => {
@@ -70,14 +78,14 @@ describe('icons', () => {
   });
 
   test('icon paths pass through the print stroke rewrite untouched', async () => {
-    await loadIcons(['12-01']);
-    const defs = iconDefs(['12-01']);
+    await loadIcons(['video.ptz']);
+    const defs = iconDefs(['video.ptz']);
     expect(printStrokes(defs, 0.2)).toBe(defs);
   });
 
   test('lights turn with their aim and keep their drawn symbol as a footprint', () => {
     const lights = ITEMS.filter((i) => i.category === 'light' && iconKeyOf(i.id));
     expect(lights.length).toBeGreaterThan(0);
-    expect(iconData('12-01')).toBeDefined();
+    expect(iconData('video.ptz')).toBeDefined();
   });
 });

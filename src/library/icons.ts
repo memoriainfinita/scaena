@@ -1,10 +1,11 @@
-// Icons: line pictograms traced from the GPT sheets (see docs/design/icons-integration-2026-11-07.md).
-// Each sheet is a separate chunk loaded on demand and precached by the service worker. Every icon is a single
+// Icons: line pictograms, one SVG per library item in symbols/<category>/<item id>.svg, bundled per category by
+// scripts/build-symbols.mjs (see docs/design/symbols.md). An icon's key is its item id.
+// Each category is a separate chunk loaded on demand and precached by the service worker. Every icon is a single
 // even-odd path in its own pixel units; one copy per icon goes in a hidden sprite (screen) or in the file's own
 // <defs> (PDF), and elements reference it with <use>.
 
 import { signal } from '@preact/signals';
-import { ICON_OF } from './icon-map.ts';
+import INDEX from './icon-index.json';
 import { front, rect } from './symbol-kit.ts';
 
 /** Width, height and path data of an icon. */
@@ -17,8 +18,10 @@ const sheets = new Map<string, Promise<void>>();
 /** Bumps whenever a sheet finishes loading, so drawing code that reads it redraws. */
 export const iconsVersion = signal(0);
 
-export const iconKeyOf = (itemId: string): string | undefined => ICON_OF[itemId];
-export const sheetOf = (key: string): string => key.slice(0, key.lastIndexOf('-'));
+const INDEX_OF = INDEX as Record<string, string>;
+export const iconKeyOf = (itemId: string): string | undefined => (itemId in INDEX_OF ? itemId : undefined);
+/** The category chunk that holds an icon. */
+export const sheetOf = (key: string): string => INDEX_OF[key] ?? '';
 export const iconData = (key: string): IconData | undefined => loaded.get(key);
 export const iconId = (key: string): string => `ic-${key}`;
 
@@ -67,7 +70,7 @@ function loadSheet(sheet: string): Promise<void> {
 
 /** Loads the sheets that hold these icons. Resolves when they are ready to draw. */
 export function loadIcons(keys: Iterable<string>): Promise<void> {
-  return Promise.all([...new Set([...keys].map(sheetOf))].map(loadSheet)).then(() => undefined);
+  return Promise.all([...new Set([...keys].map(sheetOf).filter(Boolean))].map(loadSheet)).then(() => undefined);
 }
 
 /** Loads every sheet, for the library panel. */
