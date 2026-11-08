@@ -15,7 +15,7 @@ Cada fila es un canal. Se edita en la propia tabla; cada cambio se confirma al s
 
 ![Salidas y flujo de señal](img/salidas.png)
 
-Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. Debajo, el **flujo de señal**: las fuentes agrupadas por elemento, la mesa (escribe su modelo) y las salidas. Cada línea lleva su nombre escrito y un trazo distinto: el color nunca va solo.
+Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. **Para** dice quién escucha cada salida, y **Mezclas de monitores**, bajo la tabla, es una cuadrícula con una columna por mezcla y una fila por canal: elige cuánto pide de cada canal (poco, sí, más). Un par estéreo cambia junto. El PDF lista cada mezcla con sus canales. Debajo, el **flujo de señal**: las fuentes agrupadas por elemento, la mesa (escribe su modelo) y las salidas. Cada línea lleva su nombre escrito y un trazo distinto: el color nunca va solo.
 
 ## Patch y posición
 

@@ -3,7 +3,7 @@
 import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
-import { channelList, outputList } from '../model/audio.ts';
+import { channelList, mixOutputs, mixText, outputList } from '../model/audio.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
@@ -256,6 +256,8 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
     } else if (s === 'outputs') {
       const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
       parts.push(heading(D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');
+      const mixes = mixOutputs(show).map((o) => [String(o.number), o.who, mixText(show, o, D.mixWords)]).filter(([, who, mix]) => who || mix);
+      if (mixes.length > 0) parts.push(heading(D.mixes) + c.table(D.mixes, [{ mm: 11 }, { fr: 1 }, { fr: 4 }], ['#', D.who, D.mix], mixes) + '\n');
     } else if (s === 'computers') {
       const pcs = elements.filter((e) => e.computer);
       let md = heading(D.computers);

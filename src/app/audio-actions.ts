@@ -1,8 +1,8 @@
 // Edits of the input and output lists: each one is a single undo step.
 import { itemById } from '../library/items.ts';
 import { audioFromLabel, needsPhantom } from '../library/models.ts';
-import { addChannel, addOutput, moveChannel, numberWedges, moveOutput, removeChannel, removeOutput, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
-import type { InputChannel, Output, Show } from '../model/schema.ts';
+import { addChannel, addOutput, moveChannel, numberWedges, moveOutput, removeChannel, removeOutput, setMixLevel, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
+import type { InputChannel, MixLevel, Output, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
 type ChannelPatch = Partial<Omit<InputChannel, 'id' | 'number'>>;
@@ -60,6 +60,7 @@ export function addOutputRow(kind: Output['kind'] = 'wedge'): string | null {
   return id;
 }
 export const setOutput = (id: string, patch: OutputPatch): void => commit((show) => (show.outputs[id] ? updateOutput(show, id, patch) : show));
+export const setMix = (output: string, channel: string, level: MixLevel | null): void => commit((show) => setMixLevel(show, output, channel, level));
 export const removeOutputRow = (id: string): void => commit((show) => removeOutput(show, id));
 export const moveOutputRow = (id: string, delta: -1 | 1): void => commit((show) => moveOutput(show, id, delta));
 

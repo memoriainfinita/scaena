@@ -178,6 +178,16 @@ table.editable tr.sel td { background: var(--accent-soft); }
 .input.cell { height: 28px; width: 100%; min-width: 90px; padding: 0 6px; }
 .rowbtns { white-space: nowrap; }
 .field.inline { flex-direction: row; align-items: center; gap: 8px; margin-left: auto; }
+.mixes { padding: 12px 0 8px; }
+.mixes h3 { margin: 0 16px 8px; font-size: 13px; }
+.mixes-scroll { overflow-x: auto; }
+.mixes table.list { width: auto; margin: 0 16px; }
+.mixes table.list td { padding: 3px 6px; }
+.mixes table.editable td .input.cell { width: 96px; min-width: 96px; }
+.mixes table.list th { white-space: nowrap; }
+.mixes tbody th { position: sticky; left: 0; z-index: 1; background: var(--panel); font-weight: 400; border-top: 1px solid var(--line); padding: 3px 12px; }
+.mixes thead th:first-child { position: sticky; left: 0; z-index: 1; }
+.mixes .input.cell.on { background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
 .flow { padding-bottom: 24px; }
 .flowsvg { width: calc(100% - 32px); max-width: 900px; margin: 8px 16px; display: block; }
 .flowhead { font-size: 11px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font); }

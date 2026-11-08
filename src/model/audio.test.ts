@@ -3,7 +3,9 @@ import { setChannel, setChannelMic, sortByInstrument } from '../app/audio-action
 import { selection, session, setLibrary, startEmpty, startFromPackage } from '../app/state.ts';
 import { itemById } from '../library/items.ts';
 import { audioFromLabel, audioLabel } from '../library/models.ts';
-import { addChannel, addOutput, channelList, moveChannel, moveOutput, outputList, removeChannel, removeOutput, setStereoPair, sortChannels } from './audio.ts';
+import { showFromPackage } from '../library/apply.ts';
+import { packageById } from '../library/packages.ts';
+import { addChannel, addOutput, channelList, mixOutputs, mixText, moveChannel, moveOutput, outputList, removeChannel, removeOutput, setMixLevel, setStereoPair, sortChannels } from './audio.ts';
 import { newShow } from './new.ts';
 import type { Show } from './schema.ts';
 
@@ -126,5 +128,47 @@ describe('actions on the open show', () => {
     expect(after.map((c) => c.number)).toEqual(after.map((_, i) => i + 1));
     const drums = after.filter((c) => category(c) === 'drums').length;
     expect(after.slice(0, drums).every((c) => category(c) === 'drums')).toBe(true);
+  });
+});
+
+describe('monitor mixes', () => {
+  const setup = () => {
+    let show = newShow('t', ['audio', 'document']);
+    let a, b, c, o;
+    [show, a] = addChannel(show, { shortName: 'Voz' });
+    [show, b] = addChannel(show, { shortName: 'Teclado L' });
+    [show, c] = addChannel(show, { shortName: 'Teclado R' });
+    [show, o] = addOutput(show, { who: 'Voz 1' });
+    show = setStereoPair(show, b.id, c.id);
+    return { show, a, b, c, o };
+  };
+  const words = { low: 'poco', high: 'más' };
+
+  test('reads in channel order with its level, and a stereo pair goes together', () => {
+    let { show, a, b, o } = setup();
+    show = setMixLevel(show, o.id, b.id, 'low');
+    show = setMixLevel(show, o.id, a.id, 'high');
+    expect(mixText(show, show.outputs[o.id]!, words)).toBe('Voz (más), Teclado L (poco), Teclado R (poco)');
+    show = setMixLevel(show, o.id, a.id, 'normal');
+    show = setMixLevel(show, o.id, b.id, null);
+    expect(mixText(show, show.outputs[o.id]!, words)).toBe('Voz');
+  });
+  test('removing a channel takes it out of the mixes', () => {
+    let { show, a, o } = setup();
+    show = setMixLevel(show, o.id, a.id, 'normal');
+    show = removeChannel(show, a.id);
+    expect(show.outputs[o.id]!.mix).toEqual({});
+  });
+  test('the main PA carries no mix of its own', () => {
+    const { show, o } = setup();
+    const [next, main] = addOutput(show, { kind: 'main' });
+    expect(mixOutputs(next).map((x) => x.id)).toEqual([o.id]);
+    expect(main.mix).toEqual({});
+  });
+  test('the rock example asks for a mix per wedge', () => {
+    const show = showFromPackage(packageById('rock')!, 'rock', 'es');
+    const first = mixOutputs(show)[0]!;
+    expect(first.who).toBe('Voz 1');
+    expect(mixText(show, first, words)).toBe('Guitarra 1, Teclado L (poco), Teclado R (poco), Voz 1 (más)');
   });
 });

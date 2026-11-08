@@ -2,7 +2,7 @@
 import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
-import { channelList, outputList } from '../model/audio.ts';
+import { channelList, mixText, outputList } from '../model/audio.ts';
 import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
 import { modeLabel, slotsOf } from '../model/dmx.ts';
 import { effectivePatch } from '../model/patch.ts';
@@ -195,8 +195,8 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     });
     return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note, D.cables], rows };
   }
-  const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.notes]);
-  return { id, header: ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows };
+  const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.who, o.kind === 'main' ? '' : mixText(show, o, D.mixWords), o.notes]);
+  return { id, header: ['#', D.kind, D.stereo, D.aux, D.source, D.who, D.mix, D.note], rows };
 }
 
 // ---- Text formats ----

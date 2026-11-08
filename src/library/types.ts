@@ -154,7 +154,7 @@ export interface ShowPackage {
   elements: PackageElement[];
   channels: PackageChannel[];
   /** Number of wedge monitors (placed by the package among the elements) and in-ears. */
-  outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number }[];
+  outputs: { kind: 'wedge' | 'iem' | 'main' | 'send'; element?: number; who?: string; mix?: Record<number, 'low' | 'normal' | 'high'> }[];
   links?: PackageLink[];
   mounts?: PackageMount[];
   /** The mixing desk the example uses (a library audio model id). */

@@ -1,15 +1,15 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
-import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setOutput, sortByInstrument } from '../app/audio-actions.ts';
+import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setMix, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
-import { channelList, outputList, wedgesInOrder } from '../model/audio.ts';
+import { channelList, mixOutputs, outputList, wedgesInOrder } from '../model/audio.ts';
 import { patchAnalysis } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { cableText } from '../reports/reports.ts';
-import type { InputChannel, Output, PlanElement, Show } from '../model/schema.ts';
+import type { InputChannel, MixLevel, Output, PlanElement, Show } from '../model/schema.ts';
 
 const elementName = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
 
@@ -175,6 +175,7 @@ export function OutputsView({ show }: { show: Show }) {
               <th>{t('table.stereo')}</th>
               <th>{t('table.aux')}</th>
               <th>{t('table.source')}</th>
+              <th>{t('table.who')}</th>
               <th>{t('table.notes')}</th>
               <th />
             </tr>
@@ -215,6 +216,9 @@ export function OutputsView({ show }: { show: Show }) {
                     </select>
                   </td>
                   <td>
+                    <Cell value={o.who} label={tag('table.who')} max={80} onCommit={(v) => setOutput(o.id, { who: v })} />
+                  </td>
+                  <td>
                     <Cell value={o.notes} label={tag('table.notes')} onCommit={(v) => setOutput(o.id, { notes: v })} />
                   </td>
                   <RowButtons row={row} first={i === 0} last={i === rows.length - 1} onUp={() => moveOutputRow(o.id, -1)} onDown={() => moveOutputRow(o.id, 1)} onRemove={() => removeOutputRow(o.id)} />
@@ -224,8 +228,62 @@ export function OutputsView({ show }: { show: Show }) {
           </tbody>
         </table>
       )}
+      <MixMatrix show={show} />
       <FlowDiagram show={show} />
     </div>
+  );
+}
+
+const MIX_LEVELS: MixLevel[] = ['low', 'normal', 'high'];
+
+/** One column per monitor mix and one row per channel: the mixes are read across, like the sends of a desk. */
+function MixMatrix({ show }: { show: Show }) {
+  const outs = mixOutputs(show);
+  const channels = channelList(show);
+  if (outs.length === 0 || channels.length === 0) return null;
+  const titleOf = (o: Output) => o.who || t('outputs.row', { n: o.number });
+  return (
+    <section class="mixes" aria-labelledby="mixes-title">
+      <h3 id="mixes-title">{t('mix.title')}</h3>
+      <div class="mixes-scroll">
+        <table class="list editable">
+          <thead>
+            <tr>
+              <th scope="col">{t('mix.channel')}</th>
+              {outs.map((o) => (
+                <th key={o.id} scope="col">
+                  <span class="mono">{o.number}</span> {titleOf(o)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {channels.map((c) => {
+              const name = c.shortName || t('mix.channel') + ' ' + c.number;
+              return (
+                <tr key={c.id}>
+                  <th scope="row">
+                    <span class="mono">{c.number}</span> {c.shortName}
+                  </th>
+                  {outs.map((o) => (
+                    <td key={o.id}>
+                      <select class={`input cell${o.mix[c.id] ? ' on' : ''}`} aria-label={`${name} · ${titleOf(o)}`} value={o.mix[c.id] ?? ''} onChange={(e) => setMix(o.id, c.id, ((e.currentTarget as HTMLSelectElement).value || null) as MixLevel | null)}>
+                        <option value="">–</option>
+                        {MIX_LEVELS.map((l) => (
+                          <option key={l} value={l}>
+                            {t(`mix.${l}` as Key)}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

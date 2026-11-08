@@ -39,6 +39,10 @@ export interface DocStrings {
   kind: string;
   stereo: string;
   aux: string;
+  mixes: string;
+  who: string;
+  mix: string;
+  mixWords: Record<'low' | 'high', string>;
   supplier: string;
   unset: string;
   band: string;
@@ -111,7 +115,7 @@ const es: DocStrings = {
   lights: 'Instrumentos de luz', electrical: 'Eléctrica', notes: 'Notas', revisions: 'Revisiones',
   role: 'Función', name: 'Nombre', phone: 'Teléfono', email: 'Correo', time: 'Hora', what: 'Qué', scaleLabel: 'Escala',
   channel: 'Canal', shortName: 'Nombre', mic: 'Micro o DI', stand: 'Pie', phantom: '48 V', pair: 'Par', source: 'Fuente', yes: 'Sí', no: 'No',
-  kind: 'Tipo', stereo: 'Estéreo', aux: 'Aux', supplier: 'Lo aporta', unset: 'Sin indicar', band: 'Banda', venueSupplies: 'Sala', rental: 'Alquiler',
+  kind: 'Tipo', stereo: 'Estéreo', aux: 'Aux', mixes: 'Mezclas de monitores', who: 'Para', mix: 'Mezcla', mixWords: { low: 'poco', high: 'más' }, supplier: 'Lo aporta', unset: 'Sin indicar', band: 'Banda', venueSupplies: 'Sala', rental: 'Alquiler',
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
   dmx: 'Direcciones DMX', network: 'Direcciones IP', dmxEnd: 'Hasta', dmxMode: 'Modo DMX',
   unit: 'Unidad', universe: 'Univ.', address: 'Dir.', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
@@ -132,7 +136,7 @@ const en: DocStrings = {
   lights: 'Lighting instruments', electrical: 'Electrical', notes: 'Notes', revisions: 'Revisions',
   role: 'Role', name: 'Name', phone: 'Phone', email: 'Email', time: 'Time', what: 'What', scaleLabel: 'Scale',
   channel: 'Ch.', shortName: 'Name', mic: 'Mic or DI', stand: 'Stand', phantom: '48 V', pair: 'Pair', source: 'Source', yes: 'Yes', no: 'No',
-  kind: 'Type', stereo: 'Stereo', aux: 'Aux', supplier: 'Supplied by', unset: 'Not stated', band: 'Band', venueSupplies: 'Venue', rental: 'Rental',
+  kind: 'Type', stereo: 'Stereo', aux: 'Aux', mixes: 'Monitor mixes', who: 'For', mix: 'Mix', mixWords: { low: 'a little', high: 'more' }, supplier: 'Supplied by', unset: 'Not stated', band: 'Band', venueSupplies: 'Venue', rental: 'Rental',
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',
   dmx: 'DMX addresses', network: 'IP addresses', dmxEnd: 'To', dmxMode: 'DMX mode',
   unit: 'Unit', universe: 'Univ.', address: 'Addr.', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',

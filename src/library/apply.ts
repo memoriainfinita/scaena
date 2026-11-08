@@ -45,16 +45,18 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     placed.push(el);
   }
   const channels: Record<string, InputChannel> = {};
+  const channelIds: string[] = [];
   pkg.channels.forEach((c, i) => {
     let id: string;
     [id, show] = nextId(show, 'ch');
+    channelIds.push(id);
     channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', patch: c.patch ?? '', stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
   });
   const outputs: Record<string, Output> = {};
   pkg.outputs.forEach((o, i) => {
     let id: string;
     [id, show] = nextId(show, 'out');
-    outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, notes: '' };
+    outputs[id] = { id, number: i + 1, kind: o.kind, stereo: false, aux: '', sourceElementId: o.element === undefined ? null : placed[o.element]!.id, who: translatePackageText(o.who ?? '', lang), mix: Object.fromEntries(Object.entries(o.mix ?? {}).map(([n, level]) => [channelIds[Number(n)]!, level])), notes: '' };
   });
   // Cables the package draws between its elements.
   for (const link of pkg.links ?? []) {

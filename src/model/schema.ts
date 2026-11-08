@@ -125,6 +125,8 @@ export const InputChannel = v.object({
   notes: text(),
 });
 
+export const MixLevel = v.picklist(['low', 'normal', 'high']);
+
 export const Output = v.object({
   id,
   number: v.pipe(v.number(), v.integer(), v.minValue(1)),
@@ -132,6 +134,10 @@ export const Output = v.object({
   stereo: v.optional(v.boolean(), false),
   aux: text(40),
   sourceElementId: v.optional(v.nullable(id), null),
+  /** Who listens to this mix. */
+  who: text(80),
+  /** Channel id to how much of it this mix asks for; a channel that is absent is not sent. */
+  mix: v.optional(v.record(id, MixLevel), {}),
   notes: text(),
 });
 
@@ -299,6 +305,7 @@ export type CustomItem = v.InferOutput<typeof CustomItem>;
 export type Layer = v.InferOutput<typeof Layer>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;
 export type Output = v.InferOutput<typeof Output>;
+export type MixLevel = v.InferOutput<typeof MixLevel>;
 export type Connection = v.InferOutput<typeof Connection>;
 export type Mount = v.InferOutput<typeof Mount>;
 export type Computer = v.InferOutput<typeof Computer>;

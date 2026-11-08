@@ -7,6 +7,14 @@
 import { addContacts, PERSON, addNotes, addSchedule, addSetlist, bi, setElectrical } from './packages-data.ts';
 import type { PackageChannel, PackageElement, PackageLink, PackageMount, ShowPackage } from './types.ts';
 
+/** What each wedge of the rock example asks for, by position in its channel list: 0 kick, 1 snare, 10 and 11 guitars, 12 and 13 keys, 14 to 16 vocals. */
+const WEDGE_MIXES: { who: string; mix: Record<number, 'low' | 'normal' | 'high'> }[] = [
+  { who: 'Voz 1', mix: { 14: 'high', 10: 'normal', 12: 'low', 13: 'low' } },
+  { who: 'Voz 2', mix: { 15: 'high', 14: 'normal', 12: 'normal', 13: 'normal' } },
+  { who: 'Voz 3', mix: { 16: 'high', 14: 'normal', 11: 'low' } },
+  { who: 'Guitarra 1', mix: { 10: 'high', 14: 'normal', 0: 'low', 1: 'low' } },
+];
+
 type Extra = Partial<PackageElement>;
 
 /** A package under construction: `el` and friends return the index the others refer to. */
@@ -112,7 +120,7 @@ const rock = (): ShowPackage => {
     modules: ['audio', 'lights', 'power', 'production', 'document'],
     elements: b.elements,
     channels: b.channels,
-    outputs: [...wedges.map((element) => ({ kind: 'wedge' as const, element })), { kind: 'main' as const, element: paL }, { kind: 'main' as const, element: paR }],
+    outputs: [...wedges.map((element, i) => ({ kind: 'wedge' as const, element, ...WEDGE_MIXES[i]! })), { kind: 'main' as const, element: paL }, { kind: 'main' as const, element: paR }],
     links: b.links,
     mounts: [mount('truss', 'Truss trasero', 'Rear truss', [1000, 400], [7000, 400], 5000, 300), mount('floor', 'Suelo izquierda', 'Floor left', [350, 2200], [350, 3000], 0), mount('floor', 'Suelo derecha', 'Floor right', [7650, 2200], [7650, 3000], 0)],
     desk: 'behringer.x32',

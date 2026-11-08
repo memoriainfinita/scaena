@@ -1,6 +1,6 @@
 // Input channels and outputs: pure operations that keep the numbers 1..n without gaps.
 import { nextId } from './ids.ts';
-import type { InputChannel, Output, PlanElement, Show } from './schema.ts';
+import type { InputChannel, MixLevel, Output, PlanElement, Show } from './schema.ts';
 
 const byNumber = <T extends { number: number }>(rec: Record<string, T>): T[] => Object.values(rec).sort((a, b) => a.number - b.number);
 
@@ -60,7 +60,8 @@ export function removeChannel(show: Show, id: string): Show {
   const rest = channelList(show)
     .filter((c) => c.id !== id)
     .map((c) => (c.stereoPairWith === id ? { ...c, stereoPairWith: null } : c));
-  return { ...show, channels: renumber(rest) };
+  const outputs = Object.fromEntries(Object.values(show.outputs).map((o) => [o.id, o.mix[id] ? { ...o, mix: Object.fromEntries(Object.entries(o.mix).filter(([k]) => k !== id)) } : o]));
+  return { ...show, channels: renumber(rest), outputs };
 }
 
 /** Swaps the channel with its neighbour (`delta` -1 up, +1 down). */
@@ -102,7 +103,7 @@ export function sortChannels(show: Show, rank: (c: InputChannel) => number): Sho
 
 export function addOutput(show: Show, init: Partial<Omit<Output, 'id' | 'number'>> = {}): [Show, Output] {
   const [id, s] = nextId(show, 'out');
-  const out: Output = { kind: 'wedge', stereo: false, aux: '', sourceElementId: null, notes: '', ...init, id, number: Object.keys(show.outputs).length + 1 };
+  const out: Output = { kind: 'wedge', stereo: false, aux: '', sourceElementId: null, who: '', mix: {}, notes: '', ...init, id, number: Object.keys(show.outputs).length + 1 };
   return [{ ...s, outputs: { ...s.outputs, [id]: out } }, out];
 }
 
@@ -110,6 +111,34 @@ export function updateOutput(show: Show, id: string, patch: Partial<Omit<Output,
   const o = show.outputs[id];
   if (!o) throw new Error(`unknown output ${id}`);
   return { ...show, outputs: { ...show.outputs, [id]: { ...o, ...patch } } };
+}
+
+/** The outputs that carry a mix of their own: every one but the main PA. */
+export const mixOutputs = (show: Show): Output[] => outputList(show).filter((o) => o.kind !== 'main');
+
+/** Sets how much of a channel a mix asks for, null to leave it out. The other side of a stereo pair goes with it. */
+export function setMixLevel(show: Show, outputId: string, channelId: string, level: MixLevel | null): Show {
+  const o = show.outputs[outputId];
+  const ch = show.channels[channelId];
+  if (!o || !ch) return show;
+  const mix = { ...o.mix };
+  for (const id of ch.stereoPairWith && show.channels[ch.stereoPairWith] ? [channelId, ch.stereoPairWith] : [channelId]) {
+    if (level) mix[id] = level;
+    else delete mix[id];
+  }
+  return { ...show, outputs: { ...show.outputs, [outputId]: { ...o, mix } } };
+}
+
+/** The channels of a mix in channel order, for the document and the reports. */
+export function mixText(show: Show, o: Output, words: Record<'low' | 'high', string>): string {
+  return channelList(show)
+    .filter((c) => o.mix[c.id])
+    .map((c) => {
+      const name = c.shortName || String(c.number);
+      const level = o.mix[c.id]!;
+      return level === 'normal' ? name : `${name} (${words[level]})`;
+    })
+    .join(', ');
 }
 
 export function removeOutput(show: Show, id: string): Show {

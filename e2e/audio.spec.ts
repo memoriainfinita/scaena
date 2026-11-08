@@ -21,6 +21,20 @@ async function inputs(page: Page) {
   await expect(L(page, 'Nombre · Canal 1')).toBeVisible();
 }
 
+test('a monitor mix is set in the grid and listed in the report @a11y', async ({ page }) => {
+  await inputs(page);
+  await page.getByRole('button', { name: 'Salidas', exact: true }).click();
+  const bass = L(page, 'Bajo DI · Voz 1');
+  await expect(bass).toHaveValue('');
+  await bass.selectOption('low');
+  await expect(bass).toHaveValue('low');
+  const results = await new AxeBuilder({ page }).include('.mixes').withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
+  expect(results.violations).toEqual([]);
+  await page.getByRole('button', { name: 'Informes', exact: true }).click();
+  await page.getByRole('button', { name: 'Salidas', exact: true }).last().click();
+  await expect(page.getByRole('cell', { name: 'Bajo DI (poco), Guitarra 1, Teclado L (poco), Teclado R (poco), Voz 1 (más)' })).toBeVisible();
+});
+
 test('a channel name is edited in the table and undone as one step @a11y', async ({ page }) => {
   await inputs(page);
   const name = L(page, 'Nombre · Canal 1');
@@ -77,7 +91,7 @@ test('outputs: add one and the signal flow draws sources, desk and outputs @a11y
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await page.getByRole('button', { name: 'Salidas', exact: true }).click();
-  const n = await page.locator('table.editable tbody tr').count();
+  const n = await page.locator('table.editable').first().locator('tbody tr').count();
   await page.getByRole('button', { name: 'Añadir salida' }).click();
   await expect(L(page, `Tipo · Salida ${n + 1}`)).toBeVisible();
   await L(page, `Tipo · Salida ${n + 1}`).selectOption('main');
