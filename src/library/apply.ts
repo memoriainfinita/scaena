@@ -1,10 +1,10 @@
-import { addConnection } from '../model/connections.ts';
+import { addConnection, updateConnection } from '../model/connections.ts';
 import { nextId } from '../model/ids.ts';
 import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
 import { addMount, autoNumber, emptyLuminaire, setFixtureModel, updateLuminaire } from '../model/lights.ts';
 import { addRackSlot, makeRack, setRackUnits as updateRackUnits } from '../model/racks.ts';
-import type { Computer, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
+import type { Computer, Connection, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
 import { templateForPackage } from '../document/sections.ts';
 import { itemById } from './items.ts';
 import { audioById, fixtureById } from './models.ts';
@@ -60,7 +60,10 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
   for (const link of pkg.links ?? []) {
     const a = placed[link.from];
     const b = placed[link.to];
-    if (a && b) [show] = addConnection(show, a.id, b.id, link.signal, link.connector === undefined ? undefined : translatePackageText(link.connector, lang));
+    if (!a || !b) continue;
+    let made: Connection | null;
+    [show, made] = addConnection(show, a.id, b.id, link.signal, link.connector === undefined ? undefined : translatePackageText(link.connector, lang));
+    if (made && link.toPort !== undefined) show = updateConnection(show, made.id, { toPort: link.toPort, lines: link.lines ?? 1 });
   }
   // Racks, with what is mounted in them.
   pkg.elements.forEach((pe, i) => {

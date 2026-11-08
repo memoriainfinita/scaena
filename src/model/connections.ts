@@ -14,7 +14,7 @@ export function addConnection(show: Show, from: string, to: string, signal: Sign
   const same = Object.values(show.connections).some((c) => c.signal === signal && ((c.from === from && c.to === to) || (c.from === to && c.to === from)));
   if (same) return [show, null];
   const [id, s] = nextId(show, 'cn');
-  const c: Connection = { id, from, to, signal, connector, lengthMm: null, label: '' };
+  const c: Connection = { id, from, to, signal, connector, lengthMm: null, label: '', toPort: null, lines: 1 };
   return [{ ...s, connections: { ...s.connections, [id]: c } }, c];
 }
 

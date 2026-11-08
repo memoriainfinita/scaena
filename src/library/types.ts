@@ -129,6 +129,9 @@ export interface PackageLink {
   to: number;
   signal: 'audio' | 'video' | 'lightControl' | 'network';
   connector?: string;
+  /** Numbered input the cable arrives at, and the lines it carries from there. */
+  toPort?: number;
+  lines?: number;
 }
 
 /** Where lights hang or stand: a bar, pipe, truss, side boom, or the floor. */

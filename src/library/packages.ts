@@ -18,8 +18,8 @@ function build() {
   const ch = (name: string, mic: string, stand: string, phantom: boolean, element?: number, patch?: string): void => {
     channels.push({ name, mic, stand, phantom, ...(element === undefined ? {} : { element }), ...(patch === undefined ? {} : { patch }) });
   };
-  const link = (from: number, to: number, signal: PackageLink['signal'] = 'audio', connector?: string): void => {
-    links.push({ from, to, signal, ...(connector === undefined ? {} : { connector }) });
+  const link = (from: number, to: number, signal: PackageLink['signal'] = 'audio', connector?: string, toPort?: number, lines?: number): void => {
+    links.push({ from, to, signal, ...(connector === undefined ? {} : { connector }), ...(toPort === undefined ? {} : { toPort }), ...(lines === undefined ? {} : { lines }) });
   };
   return { elements, channels, links, el, ch, link };
 }
@@ -50,7 +50,7 @@ const rock = (): ShowPackage => {
   const v2 = el('vocals.mic-stand', 4000, 3900, 'Voz 2');
   const v3 = el('vocals.mic-stand', 5300, 3700, 'Voz 3');
   const wedges = [2500, 3500, 4500, 5500].map((x, i) => el('monitor.wedge', x, 4600, `Cuña ${i + 1}`, VENUE));
-  const sb = el('rack.stagebox', 7500, 700, 'Stagebox', VENUE);
+  const sb = el('rack.stagebox', 7500, 700, 'SB', VENUE);
   const desk = el('desk.digital', 4000, 7600, 'Mesa', VENUE);
   const paL = el('pa.line', 500, 3800, 'PA izquierda', VENUE);
   const paR = el('pa.line', 7500, 3800, 'PA derecha', VENUE);
@@ -69,16 +69,16 @@ const rock = (): ShowPackage => {
   // The signal path: instrument, then amp or DI, then the stagebox, then the desk and out to the PA and the wedges.
   link(bass, diBass, 'audio', 'Jack');
   link(diBass, ampBass, 'audio', 'Jack');
-  link(diBass, sb, 'audio', 'XLR');
-  link(ampBass, sb, 'audio', 'XLR');
+  link(diBass, sb, 'audio', 'XLR', 9);
+  link(ampBass, sb, 'audio', 'XLR', 10);
   link(g1, ampG1, 'audio', 'Jack');
   link(g2, ampG2, 'audio', 'Jack');
-  link(ampG1, sb, 'audio', 'XLR');
-  link(ampG2, sb, 'audio', 'XLR');
+  link(ampG1, sb, 'audio', 'XLR', 11);
+  link(ampG2, sb, 'audio', 'XLR', 12);
   link(keys, diKeys, 'audio', 'Jack');
-  link(diKeys, sb, 'audio', 'XLR');
-  link(drums, sb, 'audio', 'XLR');
-  for (const v of [v1, v2, v3]) link(v, sb, 'audio', 'XLR');
+  link(diKeys, sb, 'audio', 'XLR', 13, 2);
+  link(drums, sb, 'audio', 'XLR', 1, 8);
+  [v1, v2, v3].forEach((v, i) => link(v, sb, 'audio', 'XLR', 15 + i));
   link(sb, desk, 'audio', 'Cat6');
   for (const w of wedges) link(desk, w, 'audio', 'XLR');
   link(desk, paL, 'audio', 'XLR');
@@ -87,23 +87,23 @@ const rock = (): ShowPackage => {
   const chain = [ld, ...truss, ...floorR.slice().reverse(), ...floorL];
   for (let i = 1; i < chain.length; i++) link(chain[i - 1]!, chain[i]!, 'lightControl', 'DMX');
 
-  ch('Bombo', 'shure.beta52a', 'Pie corto', false, drums, 'SB 1');
-  ch('Caja', 'shure.sm57', 'Pinza', false, drums, 'SB 2');
-  ch('Charles', 'shure.sm81', 'Pie recto', true, drums, 'SB 3');
-  ch('Tom 1', 'sennheiser.e604', 'Pinza', false, drums, 'SB 4');
-  ch('Tom 2', 'sennheiser.e604', 'Pinza', false, drums, 'SB 5');
-  ch('Tom suelo', 'sennheiser.e604', 'Pinza', false, drums, 'SB 6');
-  ch('OH I', 'akg.c414xlii', 'Pie largo', true, drums, 'SB 7');
-  ch('OH D', 'akg.c414xlii', 'Pie largo', true, drums, 'SB 8');
-  ch('Bajo DI', 'radial.jdi', '', false, diBass, 'SB 9');
-  ch('Bajo ampli', 'shure.sm57', 'Pie corto', false, ampBass, 'SB 10');
-  ch('Guitarra 1', 'shure.sm57', 'Pie corto', false, ampG1, 'SB 11');
-  ch('Guitarra 2', 'shure.sm57', 'Pie corto', false, ampG2, 'SB 12');
-  ch('Teclado L', 'radial.jdi', '', false, keys, 'SB 13');
-  ch('Teclado R', 'radial.jdi', '', false, keys, 'SB 14');
-  ch('Voz 1', 'shure.sm58', 'Pie recto', false, v1, 'SB 15');
-  ch('Voz 2', 'shure.sm58', 'Pie recto', false, v2, 'SB 16');
-  ch('Voz 3', 'shure.sm58', 'Pie recto', false, v3, 'SB 17');
+  ch('Bombo', 'shure.beta52a', 'Pie corto', false, drums);
+  ch('Caja', 'shure.sm57', 'Pinza', false, drums);
+  ch('Charles', 'shure.sm81', 'Pie recto', true, drums);
+  ch('Tom 1', 'sennheiser.e604', 'Pinza', false, drums);
+  ch('Tom 2', 'sennheiser.e604', 'Pinza', false, drums);
+  ch('Tom suelo', 'sennheiser.e604', 'Pinza', false, drums);
+  ch('OH I', 'akg.c414xlii', 'Pie largo', true, drums);
+  ch('OH D', 'akg.c414xlii', 'Pie largo', true, drums);
+  ch('Bajo DI', 'radial.jdi', '', false, diBass);
+  ch('Bajo ampli', 'shure.sm57', 'Pie corto', false, ampBass);
+  ch('Guitarra 1', 'shure.sm57', 'Pie corto', false, ampG1);
+  ch('Guitarra 2', 'shure.sm57', 'Pie corto', false, ampG2);
+  ch('Teclado L', 'radial.jdi', '', false, keys);
+  ch('Teclado R', 'radial.jdi', '', false, keys);
+  ch('Voz 1', 'shure.sm58', 'Pie recto', false, v1);
+  ch('Voz 2', 'shure.sm58', 'Pie recto', false, v2);
+  ch('Voz 3', 'shure.sm58', 'Pie recto', false, v3);
 
   return {
     id: 'rock',

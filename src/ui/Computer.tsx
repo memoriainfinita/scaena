@@ -188,6 +188,38 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
                 ✕
               </button>
             </div>
+            {c.signal === 'audio' && (
+              <div class="sub">
+                <input
+                  class="input mono"
+                  type="number"
+                  min="1"
+                  step="1"
+                  aria-label={`${t('connections.port')} · ${name}`}
+                  title={t('connections.port')}
+                  placeholder={t('connections.port')}
+                  value={c.toPort ?? ''}
+                  onChange={(e) => {
+                    const v = Math.floor(Number((e.currentTarget as HTMLInputElement).value));
+                    setConnection(c.id, { toPort: Number.isFinite(v) && v >= 1 ? v : null });
+                  }}
+                />
+                <input
+                  class="input mono"
+                  type="number"
+                  min="1"
+                  max="64"
+                  step="1"
+                  aria-label={`${t('connections.lines')} · ${name}`}
+                  title={t('connections.lines')}
+                  value={c.lines}
+                  onChange={(e) => {
+                    const v = Math.floor(Number((e.currentTarget as HTMLInputElement).value));
+                    if (Number.isFinite(v) && v >= 1 && v <= 64) setConnection(c.id, { lines: v });
+                  }}
+                />
+              </div>
+            )}
           </div>
         );
       })}

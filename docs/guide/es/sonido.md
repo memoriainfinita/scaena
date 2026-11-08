@@ -19,7 +19,7 @@ Cuñas, in-ear, principal y envíos, con su aux y el elemento que las lleva. Deb
 
 ## Patch y posición
 
-**Patch** es dónde se conecta el canal (stagebox y puerto, por ejemplo «SB A 12»); el mismo patch en dos canales avisa. **Pos.** muestra dónde está la fuente en el escenario (US fondo, DS proscenio, C centro, SL izquierda del artista, SR derecha del artista, y combinaciones como USC o DSL), leída del plano; el PDF añade una leyenda bajo la tabla. En Salidas, **Numerar cuñas** renumera las cuñas dibujadas de izquierda a derecha y de delante atrás con los números que ya tienen; las demás salidas conservan los suyos.
+**Patch** es dónde se conecta el canal (stagebox y puerto, por ejemplo «SB A 12»). Puedes escribirlo o dejar que lo den los cables: en el inspector de un cable de audio pon **Entrada de llegada** y **Líneas** (una manguera de batería es un cable con 8 líneas), y los canales del elemento del que sale toman esas entradas por orden de canal; se ven en gris en la celda. Una caja de inyección en el camino pasa los canales de lo que la alimenta. Lo que escribas manda, y un aviso te dice si no coincide con los cables. El mismo patch en dos canales avisa; dos cables en una misma entrada es un error. **Pos.** muestra dónde está la fuente en el escenario (US fondo, DS proscenio, C centro, SL izquierda del artista, SR derecha del artista, y combinaciones como USC o DSL), leída del plano; el PDF añade una leyenda bajo la tabla. En Salidas, **Numerar cuñas** renumera las cuñas dibujadas de izquierda a derecha y de delante atrás con los números que ya tienen; las demás salidas conservan los suyos.
 
 ## Racks
 

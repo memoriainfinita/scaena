@@ -140,6 +140,10 @@ export const Connection = v.object({
   connector: text(40),
   lengthMm: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
   label: text(80),
+  /** The numbered input an audio cable arrives at; the channels it carries take their patch from it. */
+  toPort: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))), null),
+  /** Lines the cable carries from that port on: a drum loom is one cable with 8 lines. */
+  lines: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(64)), 1),
 });
 
 export const Mount = v.object({

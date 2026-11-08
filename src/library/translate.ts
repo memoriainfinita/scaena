@@ -8,7 +8,7 @@ const EN: Record<string, string> = {
   'Segunda voz': 'Second vocal', 'Mesa de DJ': 'DJ booth', Portátil: 'Laptop', MC: 'MC', 'PA izquierda': 'PA left', 'PA derecha': 'PA right', 'Sub izquierdo': 'Sub left', 'Sub derecho': 'Sub right',
   Atril: 'Lectern', 'Mesa de ponentes': "Speakers' table", Diadema: 'Headset', Pantalla: 'Screen', Proyector: 'Projector', 'Portátil de presentación': 'Presentation laptop', Actor: 'Actor',
   'Pata izquierda': 'Left leg', 'Pata derecha': 'Right leg', 'Telón de fondo': 'Back curtain', 'Ordenador de sonido': 'Sound computer', Recorte: 'Ellipsoidal', Fresnel: 'Fresnel',
-  'Mesa de vídeo': 'Video mixer', 'Ordenador de vídeo': 'Video computer', Micro: 'Mic', Stagebox: 'Stagebox', Reserva: 'Spare', Efectos: 'Effects', Ordenador: 'Computer',
+  'Mesa de vídeo': 'Video mixer', 'Ordenador de vídeo': 'Video computer', Micro: 'Mic', Stagebox: 'Stagebox', SB: 'SB', Reserva: 'Spare', Efectos: 'Effects', Ordenador: 'Computer',
   // The fuller examples: instruments with their amps, lights by where they hang, racks, video and network
   'Tarima de batería': 'Drum riser', 'Ampli de bajo': 'Bass amp', 'Ampli guitarra': 'Guitar amp', 'DI bajo': 'Bass DI', 'DI teclado': 'Keys DI', 'DI contrabajo': 'Double bass DI', 'DI guitarra': 'Guitar DI',
   Wash: 'Wash', Suelo: 'Floor', Distribución: 'Power distro', 'Toma 16 A derecha': 'Outlet 16 A right', 'Toma 16 A izquierda': 'Outlet 16 A left', Público: 'Audience', Hazer: 'Hazer', Móvil: 'Mover',

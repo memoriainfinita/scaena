@@ -4,11 +4,11 @@
 
 - **Plot:** free-form stage with draggable points, proscenium, reference lines and permanent dimensions; venue background moved with the mouse; plot export to DXF; view toggles for labels, outlines and connection lines; resizable library and inspector panels; elements resized from the inspector; "swap for another of the same kind".
 - **Library:** 775 line-art symbols, one SVG per item in `symbols/<category>/`, with a category filter; own layers and own items (SVG cleaned by a closed list); 652 fixtures from the Open Fixture Library; dragging from the library to the plot; placing an element with suggested channels creates them; typical power for everything that plugs in.
-- **Sound:** Patch and Position columns, cables in the input and instrument lists, number wedges.
+- **Sound:** the patch comes from the cables (input port and lines on each audio cable; what is typed wins and a difference is flagged); Patch and Position columns, cables in the input and instrument lists, number wedges.
 - **Lights:** aim by dragging with the beam wedge, work notes, equipment count, summary sheet, bar plan, magic sheet with its own layout, rack builder.
 - **Production:** schedule counted back from the curfew.
 - **Documents:** channel list in landscape and in blocks, logo on the cover, own document templates, comparing two revisions, cables report, power table, Greek and Cyrillic in the PDF.
-- **Warnings:** 24 rules (`duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate`, `stageCrossing` added); any warning can be muted.
+- **Warnings:** 28 rules (`duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate`, `stageCrossing`, `portTaken`, `portRange`, `patchMismatch`, `cableLinesShort` added); any warning can be muted.
 - **Lights as RP-2 symbols:** a view toggle that draws luminaires as top-view outlines on the plot and in the PDF; on in the theatre example; the DXF always uses them.
 - **Examples:** the 7 packages rewritten with complete data (cables, PA, desk, power, production); the rock band's keyboard goes through a stereo DI, the hi-hat has a small-diaphragm condenser and the DMX runs as one chain.
 - **Interface:** app defaults and grid settings; phone in landscape with a view rail.

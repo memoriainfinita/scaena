@@ -4,6 +4,7 @@ import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
 import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
+import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
 import { circuitLoads, dimmerLoads, luminaires, powered, riggingPlan } from '../model/lights.ts';
@@ -172,7 +173,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const rows = channelList(show).map((c) => {
       const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
       const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
-      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, c.patch, c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
+      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, effectivePatch(show, c), c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
     });
     return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note, D.cables], rows };
   }

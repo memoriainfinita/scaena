@@ -6,6 +6,7 @@ import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
 import { channelList, outputList, wedgesInOrder } from '../model/audio.ts';
+import { patchAnalysis } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { cableText } from '../reports/reports.ts';
 import type { InputChannel, Output, PlanElement, Show } from '../model/schema.ts';
@@ -19,8 +20,8 @@ function sourceOptions(show: Show): { id: string; name: string }[] {
     .sort((a, b) => a.name.localeCompare(b.name, lang.value));
 }
 
-function Cell({ value, label, onCommit, list, max, mono }: { value: string; label: string; onCommit: (v: string) => void; list?: string; max?: number; mono?: boolean }) {
-  return <input class={`input cell${mono ? ' mono' : ''}`} aria-label={label} list={list} maxLength={max} value={value} onChange={(e) => onCommit((e.currentTarget as HTMLInputElement).value)} />;
+function Cell({ value, label, onCommit, list, max, mono, placeholder, title }: { value: string; label: string; onCommit: (v: string) => void; list?: string; max?: number; mono?: boolean; placeholder?: string; title?: string }) {
+  return <input class={`input cell${mono ? ' mono' : ''}`} aria-label={label} list={list} maxLength={max} value={value} placeholder={placeholder} title={title} onChange={(e) => onCommit((e.currentTarget as HTMLInputElement).value)} />;
 }
 
 function RowButtons({ row, onUp, onDown, onRemove, first, last }: { row: string; onUp: () => void; onDown: () => void; onRemove: () => void; first: boolean; last: boolean }) {
@@ -110,7 +111,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show
         <Cell value={c.stand} label={tag('table.stand')} max={80} onCommit={(v) => setChannel(c.id, { stand: v })} />
       </td>
       <td>
-        <Cell value={c.patch} label={tag('table.patch')} max={24} mono onCommit={(v) => setChannel(c.id, { patch: v })} />
+        <Cell value={c.patch} label={tag('table.patch')} max={24} mono placeholder={patchAnalysis(show).derived.get(c.id)} title={!c.patch && patchAnalysis(show).derived.has(c.id) ? t('inputs.patchDerived') : undefined} onCommit={(v) => setChannel(c.id, { patch: v })} />
       </td>
       <td class="center">
         <input type="checkbox" aria-label={tag('table.phantom')} checked={c.phantom} onChange={(e) => setChannel(c.id, { phantom: (e.currentTarget as HTMLInputElement).checked })} />

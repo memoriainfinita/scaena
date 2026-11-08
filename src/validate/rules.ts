@@ -5,6 +5,7 @@ import { incompatiblePrograms } from '../library/programs.ts';
 import { channelList, drawnWedges, outputList, wedgeOrder } from '../model/audio.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { handlesSignal, maxCableM } from '../model/compat.ts';
+import { effectivePatch, patchAnalysis } from '../model/patch.ts';
 import { isClock } from '../model/production.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 
@@ -35,7 +36,11 @@ export type RuleId =
   | 'connectionMismatch'
   | 'cableTooLong'
   | 'ipDuplicate'
-  | 'stageCrossing';
+  | 'stageCrossing'
+  | 'portTaken'
+  | 'portRange'
+  | 'patchMismatch'
+  | 'cableLinesShort';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -82,6 +87,10 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   cableTooLong: 'warning',
   ipDuplicate: 'error',
   stageCrossing: 'warning',
+  portTaken: 'error',
+  portRange: 'warning',
+  patchMismatch: 'warning',
+  cableLinesShort: 'warning',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -270,11 +279,12 @@ const duplicatePatch: Rule = (show) => {
   const seen = new Map<string, number>();
   const out: Issue[] = [];
   for (const c of channelList(show)) {
-    const p = c.patch.trim().toLowerCase();
+    const shown = effectivePatch(show, c);
+    const p = shown.toLowerCase();
     if (!p) continue;
     const first = seen.get(p);
     if (first === undefined) seen.set(p, c.number);
-    else out.push(issue('duplicatePatch', { kind: 'channel', id: c.id }, { patch: c.patch.trim(), other: first, n: c.number }));
+    else out.push(issue('duplicatePatch', { kind: 'channel', id: c.id }, { patch: shown, other: first, n: c.number }));
   }
   return out;
 };
@@ -335,7 +345,25 @@ const stageCrossing: Rule = (show) => {
   return [];
 };
 
-export const RULES: Record<RuleId, Rule> = { stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+const elementNamed = (show: Show, id: string): string => (show.elements[id] ? elName(show.elements[id]!) : id);
+
+const portTaken: Rule = (show) => (audioOn(show) ? patchAnalysis(show).taken.map((p) => issue('portTaken', { kind: 'element', id: p.element }, { name: elementNamed(show, p.element), port: p.port }, undefined, String(p.port))) : []);
+
+const portRange: Rule = (show) => (audioOn(show) ? patchAnalysis(show).over.map((p) => issue('portRange', { kind: 'element', id: p.element }, { name: elementNamed(show, p.element), port: p.port, max: p.max }, undefined, String(p.port))) : []);
+
+const patchMismatch: Rule = (show) => {
+  if (!audioOn(show)) return [];
+  const { derived } = patchAnalysis(show);
+  return channelList(show).flatMap((c) => {
+    const typed = c.patch.trim();
+    const fromCables = derived.get(c.id);
+    return typed && fromCables && typed.toLowerCase().replace(/\s+/g, ' ') !== fromCables.toLowerCase() ? [issue('patchMismatch', { kind: 'channel', id: c.id }, { n: c.number, typed, cables: fromCables })] : [];
+  });
+};
+
+const cableLinesShort: Rule = (show) => (audioOn(show) ? patchAnalysis(show).short.map((s) => issue('cableLinesShort', { kind: 'element', id: s.element }, { name: elementNamed(show, s.element), channels: s.channels, lines: s.lines })) : []);
+
+export const RULES: Record<RuleId, Rule> = { portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

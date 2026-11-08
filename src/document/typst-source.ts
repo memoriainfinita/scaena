@@ -5,6 +5,7 @@ import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
 import { channelList, outputList } from '../model/audio.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
+import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
@@ -227,7 +228,7 @@ ${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFix
       const rows = list.map((ch) => {
         const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
         const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
-        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, ch.patch, yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
+        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, effectivePatch(show, ch), yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
       });
       const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
       const cfg = show.document.inputs;

@@ -67,7 +67,7 @@ describe('operations', () => {
     s = {
       ...s,
       channels: { c1: { id: 'c1', number: 1, shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: a.id, notes: '' } },
-      connections: { n1: { id: 'n1', from: a.id, to: b.id, signal: 'audio', connector: '', lengthMm: null, label: '' } },
+      connections: { n1: { id: 'n1', from: a.id, to: b.id, signal: 'audio', connector: '', lengthMm: null, label: '', toPort: null, lines: 1 } },
     };
     const out = removeElements(s, [a.id]);
     expect(Object.keys(out.elements)).toEqual([b.id]);
