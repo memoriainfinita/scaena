@@ -18,12 +18,13 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
-- Pruebas (2026-11-08): 456 unitarias; e2e completos, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
+- Auditoría del 2026-11-09 (solo lectura, sobre PDF y capturas generados ese día de teatro, rock y muestra completa): la base técnica es sólida y la amplitud prometida existe, pero la app no está terminada. El plano impreso no llega a nivel profesional y hay funciones aceptadas a medias. Los hallazgos están en TODO, grupos 1 a 4. Sin comprobar en la auditoría: e2e completos, móvil, rendimiento y la versión en inglés
+- Pruebas: 473 unitarias, tipos y lint limpios (2026-11-09); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
 - Patch desde los cables (`docs/design/patch-from-cables-2026-11-08.md`): cada cable de audio lleva entrada de llegada y líneas; lo escrito manda y una diferencia avisa. Solo el ejemplo de rock lo usa; los otros con stagebox llevan el patch escrito
 - Mezclas de monitores (`docs/design/monitor-mixes-2026-11-08.md`): para quién es cada salida y cuánto pide de cada canal, en cuadrícula, documento e informe
 - DMX (`docs/design/dmx-2026-11-08.md`): modos de la Open Fixture Library (653 aparatos), rangos en el aviso de solape, direccionado seguido, protocolo por universo (DMX, sACN, Art-Net), informes DMX, universos e IP y sección del documento
-- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse, en editor y PDF. Las que quedan lejos de su elemento llevan línea guía; cualquiera se puede mover a mano (`labelAt`)
+- Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse entre ellas, en editor y PDF; siguen pisándose con cables, varas y otros elementos (TODO, grupo 2). Las que quedan lejos de su elemento llevan línea guía; cualquiera se puede mover a mano (`labelAt`)
 - Leyenda del plano en el PDF: cede ante el plano (criterio del usuario, 2026-11-09). Tres tamaños, debajo o al lado; solo va a página aparte si ni al mínimo cabe sin quitarle más de un cuarto al plano. En A4 apaisado, rock a 1:65 y la muestra completa a 1:97, en una página
 - A medias: 82 de los 780 elementos tienen medidas de ficha técnica con su URL (67 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
 - Lista de canales en modo automático: elige 1 a 4 bloques estimando la altura de cada fila según cómo se parte su texto en cada columna (medido en el PDF el 2026-11-08: fila de 5,5 mm y 4,4 mm por línea de más), no por número de filas; comprobado con PDF reales de 21 a 40 canales en vertical y horizontal
@@ -88,10 +89,46 @@ Decisiones deducidas de los principios y aceptadas el 2026-10-29:
 
 ## TODO
 
+Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por sesión, diseño antes de código. Antes de empezar, pasar los e2e completos como línea base.
+
+### Grupo 1: plano de luces y cajetín
+
+- [ ] El PDF lleva un solo plano con todas las capas. Falta el plano de luces como página propia. La decisión 1 de interfaz (cada informe es un preajuste de capas más una escala) no está construida: `ReportConfig` (`columns`, `landscape`, `scale`, `layerPreset`) está en `src/model/schema.ts` y nada lo usa. Tampoco existe «diseño de cada informe ajustable»
+- [ ] Las luminarias no llevan unidad, canal ni color en el plano; solo salen en las tablas y en el magic sheet
+- [ ] La página del plano no tiene cajetín; `titleBlock` solo se usa en la portada
+
+### Grupo 2: legibilidad del plano
+
+- [ ] Los cables son rectas que cruzan elementos y textos (el ejemplo de rock es el peor caso)
+- [ ] Etiquetas pisadas por cables, varas y otros elementos (teatro: «Calle derecha» sobre «PC 2», «Suelo 1» tachado por su vara); lo que `plot-labels-2026-11-08.md` deja en «Not done»
+- [ ] Magic sheet: «Calle izquierda» sale cortada y los colores quedan tachados por la línea de la vara
+- [ ] Muestra completa: elementos colocados encima del plano de sala
+- [ ] Pantalla y PDF se dibujan con dos funciones (`src/ui/PlanView.tsx` y `src/document/plan-svg.ts`) y ya divergen: en el editor las etiquetas se pisan más que en el PDF. La decisión aceptada el 2026-10-29 era una sola función
+
+### Grupo 3: números y unidades
+
+- [ ] Decimales con punto en documentos en español (19.13 A, 19.2 kg)
+- [ ] Peso sin dato impreso como « / 250» en el recuento por montaje
+- [ ] Unidades imperiales a medias: cambian las medidas del plano y la barra de escala; el inspector, los montajes y el PDF siguen en metros y kilos
+- [ ] Escalas de impresión imperiales: solo existen 1:25, 1:50, 1:100 y 1:200
+- [ ] El modelo no distingue un enlace inalámbrico de un cable: las diademas del ejemplo de teatro salen con un «cable» de 10 m y la columna Cables queda irregular
+
+### Grupo 4: restos, registro y versión
+
+- [ ] Botón «Importar PDF o DXF como fondo» desactivado para siempre en la pantalla de inicio (`src/ui/Start.tsx`), con tooltip de un paso anterior
+- [ ] Textos residuales `view.soon` y `export.soon`; comentarios huérfanos en `src/app/state.ts`
+- [ ] La zona principal se anuncia como «Plano del escenario» en todas las vistas
+- [ ] `scripts/live-check.mjs` y `scripts/live-look.mjs` fallan con PDF de 10 páginas o más: buscan «Página 1» sin `exact`
+- [ ] Versión 0.1.0 sin tag ni release, con todo lo «Unreleased» del CHANGELOG ya publicado
+- [ ] `docs/design/plan-2026-11-05.md` habla de 15 reglas de validación; hay 34
+
+### Fuera de los grupos
+
+- [ ] Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
 - [ ] Icono de `effect.co2`: en la próxima hoja de iconos que haga falta
 - [ ] Medidas de ficha técnica para el resto de la biblioteca
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
 - [ ] Sin comprobar todavía: un PDF real escaneado (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
 - [ ] Glosario: confirmar con una fuente la lista de siglas de posición y contrastar con un diccionario técnico de teatro (`docs/research/glosario-escena.md`)
-- [ ] Ideas anotadas y no hechas: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos, unificar el dibujo de pantalla y el de PDF en una sola función
+- [ ] Idea anotada y no hecha: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos
