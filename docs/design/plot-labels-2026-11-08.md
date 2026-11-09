@@ -38,13 +38,15 @@ Placement runs once per change of the show (`useMemo` on `show` and the language
 
 Added the same day, for what placement alone cannot solve: on a dense plan a label can land nearer another element than its own. `leaderFor` draws a thin line from the text to the edge of its element when the text is at least 2 font sizes away, or at least 0.8 and another element stands nearer than its own. An element that contains the owner, or the text, does not count as nearer (a drum kit on its riser). Only element labels get one. On screen the line travels with its element while dragging; on paper it is written with the texts, over the elements.
 
-## Legend beside the plan
+## The plan comes first
 
-The space the texts have depends on the print scale. On a landscape page the legend under the plan cost as much height as the plan itself: the rock example printed at 1:142. When the legend beside the plan gives a scale at least 10 % larger, `planSvgIn` puts it there, filled top to bottom.
+The space the texts have depends on the print scale, so the legend gives way to the plan. On a landscape page fixed cells of 46 × 10 mm cost as much height as the plan itself: the rock example printed at 1:142, the full example at 1:208.
+
+Cells now measure what their names need, and the legend has three sizes (symbol 7, 5 and 3.8 mm; text 2.2, 2 and 1.8 mm). `fitLegend` tries each one under the plan and beside it, filled top to bottom with each column as wide as its longest name, and keeps the placement that leaves the plan larger. The largest size that leaves the plan at least 95 % of what it would have with no legend wins; with a scale set by the user, the largest size that allows that scale. If none does, the smallest one is used. On landscape A4 every example now prints at the same scale as with no legend: rock at 1:65, the full example at 1:97 with its background image, on one page.
 
 ## Legend on its own page
 
-A legend of many symbols can cost the plan more than either placement can give back: the full example printed at 1:208 with its 37 symbols. When the better of the two placements would leave the plan under 75 % of the size it has with no legend, the legend goes to its own page and the plan keeps its size.
+Only a legend that even at its smallest would leave the plan under 75 % of the size it has with no legend goes to its own page. No example does on A4; it takes a very small page or a very long list of symbols.
 
 ## Moved by hand
 

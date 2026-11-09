@@ -63,9 +63,33 @@ describe('names, outlines and the legend of the exported plan', () => {
     expect(planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, portrait).scaleN).toBeLessThanOrEqual(planSvg(show, {}, portrait).scaleN);
   });
 
-  test('a legend too long for the page of the plan gets its own, and the plan keeps its size', () => {
+  for (const page of [{ availWidthMm: 267, availHeightMm: 156 }, { availWidthMm: 180, availHeightMm: 250 }]) {
+    for (const pkg of PACKAGES) {
+      test(`${pkg.id}: on ${page.availWidthMm}×${page.availHeightMm} the legend shrinks before the plan does, and everything fits`, () => {
+        const show = showFromPackage(pkg, pkg.id, 'es');
+        const with_ = planSvg(show, {}, { ...opts, ...page });
+        const without = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, { ...opts, ...page });
+        expect(with_.legend).toBeUndefined();
+        expect(with_.scaleN).toBeLessThanOrEqual(Math.ceil(without.scaleN / 0.95));
+        expect(with_.widthMm).toBeLessThanOrEqual(page.availWidthMm + 0.01);
+        expect(with_.heightMm).toBeLessThanOrEqual(page.availHeightMm + 0.01);
+      });
+    }
+  }
+
+  test('a scale that fits with a large legend keeps it large', () => {
+    const show = showFromPackage(PACKAGES[0]!, 'rock', 'es');
+    const asked = planSvg(show, {}, { ...opts, planScale: 200 });
+    const fitted = planSvg(show, {}, opts);
+    const size = (svg: string, name: string) => Number(new RegExp(`font-size="([\\d.]+)"[^>]*>${name}<`).exec(svg)![1]);
+    const name = /font-size="[\d.]+" fill="#000" font-family="Inter">([^<]+)<\/text><\/svg>/.exec(fitted.svg)![1]!;
+    expect(asked.scaleN).toBe(200);
+    expect(size(asked.svg, name) * (1 / 200)).toBeCloseTo(2.2, 1);
+  });
+
+  test('only a legend that cannot fit even at its smallest gets a page of its own', () => {
     const show = showFromPackage(PACKAGES.find((p) => p.id === 'showcase')!, 'x', 'es');
-    const page = { ...opts, availWidthMm: 267, availHeightMm: 160 };
+    const page = { ...opts, availWidthMm: 110, availHeightMm: 70 };
     const with_ = planSvg(show, {}, page);
     const without = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, page);
     expect(with_.legend).toBeDefined();
