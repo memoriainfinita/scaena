@@ -112,3 +112,30 @@ describe('plan sheets', () => {
     expect(text('plan-0').length).not.toBe(text('plan-1').length);
   });
 });
+
+describe('units in the document', () => {
+  test('the count by mount shows a dash for a weight nobody stated, not a lone slash', () => {
+    const show = theatre();
+    const stripped = { ...show, elements: Object.fromEntries(Object.entries(show.elements).map(([k, e]) => [k, { ...e, weightKg: null }])), mounts: Object.fromEntries(Object.entries(show.mounts).map(([k, m]) => [k, { ...m, maxLoadKg: 250 }])) };
+    const b = buildDocument({ ...stripped, document: { ...stripped.document, template: 'custom', sections: ['lights'] } }, {});
+    expect(b.source).toContain('— / 250');
+    expect(b.source).not.toMatch(/\[ \/ 250\]|\[\/ 250\]/);
+  });
+
+  test('an imperial show writes its scale, its headers and its weights in feet and pounds', () => {
+    const show = { ...theatre(), units: 'imperial' as const };
+    const b = buildDocument({ ...show, reports: [{ id: 'a', kind: PLAN, title: '', columns: [], landscape: false, scale: 96, layerPreset: [] }], document: { ...show.document, template: 'custom', sections: [PLAN, 'lights'] } }, {});
+    expect(b.source).toContain('⅛″ = 1′ (1:96)');
+    expect(b.source).toContain('(ft)');
+    expect(b.source).toContain('(lb)');
+    expect(b.source).not.toContain('(kg)');
+  });
+
+  test('a wireless link is drawn straight and dotted, in the colour of its signal', () => {
+    const show = bare(showFromPackage(packageById('conference')!, 'Congreso', 'es'));
+    const radio = Object.values(show.connections).find((c) => c.wireless)!;
+    const svg = planSvg(show, {}, opts).svg;
+    expect(svg).toMatch(/<line [^>]*stroke="#0b6e78"[^>]*stroke-dasharray="[\d. ]+"/);
+    expect(radio.signal).toBe('audio');
+  });
+});

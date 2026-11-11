@@ -80,7 +80,11 @@ export function build() {
   const link = (from: number, to: number, signal: PackageLink['signal'] = 'audio', connector?: string, toPort?: number, lines?: number): void => {
     links.push({ from, to, signal, ...(connector === undefined ? {} : { connector }), ...(toPort === undefined ? {} : { toPort }), ...(lines === undefined ? {} : { lines }) });
   };
-  return { elements, channels, links, el, ch, link };
+  /** A radio link between two elements, such as a bodypack to its receiver: not a cable. */
+  const radio = (from: number, to: number, connector?: string): void => {
+    links.push({ from, to, signal: 'audio', wireless: true, ...(connector === undefined ? {} : { connector }) });
+  };
+  return { elements, channels, links, el, ch, link, radio };
 }
 
 export const BAND: Extra = { suppliedBy: 'band' };

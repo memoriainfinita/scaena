@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
 import { applyDocTemplate, deleteDocTemplate, docTemplates, MAX_TEMPLATES, saveDocTemplate } from '../app/doc-templates.ts';
 import { addPlanSheet, removePlanSheet, setInputsLayout, setPaper, setPlanLegend, setTemplate, toggleSection, updatePlanSheet } from '../app/document-actions.ts';
+import { printScales, scaleText } from '../model/units.ts';
 import { planReports, reportLayerIds, reportTags, type SheetKind } from '../document/plan-reports.ts';
 import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
@@ -20,7 +21,11 @@ interface Result {
   ms: number;
 }
 
-const SCALES = [25, 50, 100, 200];
+/** The scales of the show's units, plus the one a sheet already has when it is not among them. */
+const scaleChoices = (units: Show['units'], current: number | null): number[] => {
+  const list = printScales(units);
+  return current !== null && !list.includes(current) ? [...list, current].sort((a, b) => a - b) : list;
+};
 const blocksOf = (v: string): Show['document']['inputs']['blocks'] => (v === '1' ? 1 : v === '2' ? 2 : v === '3' ? 3 : v === '4' ? 4 : 'auto');
 const fileName = (name: string) => `${name.trim().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'rider'}.pdf`;
 
@@ -361,9 +366,9 @@ function PlanSheets({ show, kind }: { show: Show; kind: SheetKind }) {
               {t('doc.scale')}
               <select class="input" value={rep.scale ?? ''} onChange={(e) => patch(rep.id, { scale: (e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null })}>
                 <option value="">{t('doc.scale.fit')}</option>
-                {SCALES.map((n) => (
+                {scaleChoices(show.units, rep.scale).map((n) => (
                   <option key={n} value={n}>
-                    1:{n}
+                    {scaleText(n, show.units)}
                   </option>
                 ))}
               </select>

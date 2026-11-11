@@ -354,7 +354,7 @@ const dj = (): ShowPackage => {
 
 const conference = (): ShowPackage => {
   const b = build();
-  const { el, ch, link } = b;
+  const { el, ch, link, radio } = b;
   const lectern = el('furniture.lectern', 1600, 3000, 'Atril');
   el('furniture.table', 5900, 3200, 'Mesa de ponentes');
   const tableMics = [5000, 5600, 6200, 6800].map((x, i) => el('vocals.mic-stand', x, 3200, `Micro ${i + 1}`));
@@ -374,7 +374,7 @@ const conference = (): ShowPackage => {
   link(lectern, sb, 'audio', 'XLR');
   for (const m of tableMics) link(m, sb, 'audio', 'XLR');
   link(sb, desk, 'audio', 'Cat6');
-  link(h1, wl, 'audio', 'Inalámbrico');
+  radio(h1, wl, 'Inalámbrico');
   link(h2, wl, 'audio', '');
   link(wl, desk, 'audio', 'XLR');
   link(laptop, desk, 'audio', 'Jack');
@@ -433,7 +433,7 @@ const conference = (): ShowPackage => {
 
 const theatre = (): ShowPackage => {
   const b = build();
-  const { el, ch, link } = b;
+  const { el, ch, link, radio } = b;
   const actors = Array.from({ length: 8 }, (_, i) => el('vocals.headset', 1500 + i * 700, 4000, `Actor ${i + 1}`));
   el('scenery.curtain', 800, 300, 'Pata izquierda');
   el('scenery.curtain', 7200, 300, 'Pata derecha');
@@ -457,7 +457,7 @@ const theatre = (): ShowPackage => {
   lamp('light.scoop', 2000, 600, 'Suelo 1', 15, 6, 'altman.scoop-153', 'R80');
   lamp('light.scoop', 6000, 600, 'Suelo 2', 16, 6, 'altman.scoop-153', 'R80');
 
-  actors.forEach((a, i) => link(a, wl, 'audio', i === 0 ? 'Inalámbrico' : ''));
+  actors.forEach((a, i) => radio(a, wl, i === 0 ? 'Inalámbrico' : ''));
   link(wl, desk, 'audio', 'Dante');
   link(computer, desk, 'audio', 'Jack');
   link(desk, paL, 'audio', 'XLR');

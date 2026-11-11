@@ -25,7 +25,7 @@ const CASE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><
 
 export function showcase(): ShowPackage {
   const b = build();
-  const { el, ch, link } = b;
+  const { el, ch, link, radio } = b;
 
   // Stage: the riser and what stands on it, the backline, then the front line.
   el('furniture.riser', 5000, 1600, 'Tarima de batería', { ...VENUE, size: { w: 2600, d: 2000, height: 300 } });
@@ -115,7 +115,7 @@ export function showcase(): ShowPackage {
   link(drums, sb, 'audio', 'XLR', 1, 8);
   [v1, v2, v3].forEach((v, i) => link(v, sb, 'audio', 'XLR', 15 + i));
   link(sax, sb, 'audio', 'XLR', 18);
-  link(headset, wl, 'audio', 'Inalámbrico');
+  radio(headset, wl, 'Inalámbrico');
   link(wl, desk, 'audio', 'Dante');
   link(sb, rack, 'audio', 'Cat6');
   link(rack, desk, 'audio', 'Cat6');

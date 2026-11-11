@@ -133,6 +133,8 @@ export interface PackageLink {
   to: number;
   signal: 'audio' | 'video' | 'lightControl' | 'network';
   connector?: string;
+  /** A radio link: no cable, no length. */
+  wireless?: boolean;
   /** Numbered input the cable arrives at, and the lines it carries from there. */
   toPort?: number;
   lines?: number;

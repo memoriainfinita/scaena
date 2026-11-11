@@ -5,6 +5,7 @@ import { setElementNumber, setElementPhase } from '../app/lights-actions.ts';
 import { createLayer, moveCustomLayer, moveCustomLayerTo, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
 import { activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
+import { inUnits, lengthScale, lengthUnit } from '../model/units.ts';
 import { CATEGORY_ORDER, ITEMS, isCustomItem, itemById, searchItems } from '../library/items.ts';
 import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
 import { symbolSvg } from '../library/symbols.ts';
@@ -277,6 +278,7 @@ function PaneSplit({ pane, side }: { pane: Pane; side: 'left' | 'right' }) {
 const POWERED_CATEGORIES = new Set(['amp', 'keys', 'pa', 'monitor', 'desk', 'rack', 'dj', 'video', 'control', 'effect', 'network', 'machinery']);
 
 function Inspector({ show }: { show: Show }) {
+  const L = lengthScale(show.units);
   const sel = selection.value[0];
   const el = sel ? show.elements[sel] : undefined;
   const it = el ? itemById(el.type.id) : undefined;
@@ -340,20 +342,20 @@ function Inspector({ show }: { show: Show }) {
           <div class="panel">
             <h2>{t('inspector.position')}</h2>
             <div class="grid2">
-              <NumberField label="X (m)" value={el.x / 1000} onCommit={(v) => setElementField(el.id, { x: Math.round(v * 1000) })} />
-              <NumberField label="Y (m)" value={el.y / 1000} onCommit={(v) => setElementField(el.id, { y: Math.round(v * 1000) })} />
+              <NumberField label={`X (${lengthUnit(show.units)})`} value={el.x / L} onCommit={(v) => setElementField(el.id, { x: Math.round(v * L) })} />
+              <NumberField label={`Y (${lengthUnit(show.units)})`} value={el.y / L} onCommit={(v) => setElementField(el.id, { y: Math.round(v * L) })} />
               <NumberField label={t('inspector.rotation')} value={el.rotation} step={5} onCommit={(v) => setElementField(el.id, { rotation: v })} />
               <span class="muted mono" style="align-self:end">
                 {t('inspector.zone', { code: stagePosition(show, el) })}
               </span>
-              <NumberField label={t('inspector.width')} value={elementSize(el).w / 1000} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { width: Math.round(v * 1000) })} />
-              <NumberField label={t('inspector.depth')} value={elementSize(el).d / 1000} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { depth: Math.round(v * 1000) })} />
+              <NumberField label={inUnits(t('inspector.width'), show.units)} value={elementSize(el).w / L} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { width: Math.round(v * L) })} />
+              <NumberField label={inUnits(t('inspector.depth'), show.units)} value={elementSize(el).d / L} step={0.05} onCommit={(v) => v > 0 && setElementField(el.id, { depth: Math.round(v * L) })} />
               {(el.width !== null || el.depth !== null) && (
                 <button type="button" class="btn" style="align-self:end" onClick={() => setElementField(el.id, { width: null, depth: null })}>
                   {t('inspector.sizeReset')}
                 </button>
               )}
-              {isLevel(el) &&<NumberField label={t('inspector.height')} value={levelHeight(el) / 1000} step={0.1} onCommit={(v) => setElementField(el.id, { height: Math.max(0, Math.round(v * 1000)) })} />}
+              {isLevel(el) &&<NumberField label={inUnits(t('inspector.height'), show.units)} value={levelHeight(el) / L} step={0.1} onCommit={(v) => setElementField(el.id, { height: Math.max(0, Math.round(v * L)) })} />}
             </div>
           </div>
           {!el.luminaire && (el.powerW !== null || POWERED_CATEGORIES.has(it.category)) && (

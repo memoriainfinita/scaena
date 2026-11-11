@@ -18,11 +18,12 @@ import { symbolBody } from '../library/symbols.ts';
 import { footprintBody, iconData, iconKeyOf, iconUse, iconsVersion, loadIcons } from '../library/icons.ts';
 import { drawnSymbolOf, iconKeyFor } from '../library/light-symbols.ts';
 import { SIGNALS } from '../model/connections.ts';
-import { LINK_STYLE } from '../plan/style.ts';
+import { LINK_STYLE, linkDash } from '../plan/style.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { stageFrame, stagePoints } from '../model/stage.ts';
 import { addStagePointAfter, deleteStagePoint, moveStagePointTo, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
+import { barText, inUnits, lengthScale, niceLengths } from '../model/units.ts';
 import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 import { elementKey, SCREEN_TEXT, type PlacedText } from '../plan/labels.ts';
 import { buildScene, type SceneLink, type SceneMount } from '../plan/scene.ts';
@@ -275,7 +276,7 @@ function Connections({ links, hidden }: { links: SceneLink[]; hidden: Set<string
           const st = LINK_STYLE[c.signal];
           return (
             <g key={c.id}>
-              <polyline points={route.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke={st.stroke} stroke-width="2" stroke-linejoin="round" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
+              <polyline points={route.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke={st.stroke} stroke-width="2" stroke-linejoin="round" stroke-dasharray={linkDash(c) || undefined} vector-effect="non-scaling-stroke" />
               {c.connector && at && (
                 <text class="detail" x={at.x} y={at.y} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                   {c.connector}
@@ -412,11 +413,11 @@ function FocusOverlay({ show, ids, world }: { show: Show; ids: string[]; world: 
 /** A bar that shows a round length at the current zoom. */
 function ScaleBar({ cam, units }: { cam: Signal<Camera>; units: Show['units'] }) {
   const k = cam.value.k;
-  const nice = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].find((mm) => mm * k >= 60) ?? 50000;
+  const nice = niceLengths(units).find((mm) => mm * k >= 60) ?? 50000;
   return (
     <div class="scalebar" aria-hidden="true">
       <span style={`width:${Math.round(nice * k)}px`} />
-      {formatLength(nice, units, lang.value)}
+      {units === 'imperial' ? barText(nice, units, lang.value) : formatLength(nice, units, lang.value)}
     </div>
   );
 }
@@ -466,13 +467,13 @@ function Btn({ icon, label, onClick, pressed, disabled }: { icon: string; label:
 }
 
 /** Asks for the real distance between the two clicked points and rescales the background to match. */
-function CalibrateBar({ measure, onDone }: { measure: Signal<Measure | null>; onDone: () => void }) {
+function CalibrateBar({ measure, units, onDone }: { measure: Signal<Measure | null>; units: Show['units']; onDone: () => void }) {
   const [real, setReal] = useState('');
   const m = measure.value;
   const submit = (e: Event) => {
     e.preventDefault();
     if (!m?.b) return;
-    const mm = Number(real.replace(',', '.')) * 1000;
+    const mm = Number(real.replace(',', '.')) * lengthScale(units);
     if (calibrateBackground(m.a, m.b, mm)) onDone();
   };
   return (
@@ -480,7 +481,7 @@ function CalibrateBar({ measure, onDone }: { measure: Signal<Measure | null>; on
       {m?.done && m.b ? (
         <>
           <label class="pad-s">
-            {t('bg.distance')}
+            {inUnits(t('bg.distance'), units)}
             <input class="input mono" style="width:90px;margin-left:8px" inputMode="decimal" value={real} onInput={(e) => setReal((e.currentTarget as HTMLInputElement).value)} />
           </label>
           <button type="submit" class="btn primary" disabled={!(Number(real.replace(',', '.')) > 0)}>
@@ -1028,6 +1029,7 @@ export function PlanView({ show }: { show: Show }) {
       {mode === 'background' && (
         <CalibrateBar
           measure={measure}
+          units={show.units}
           onDone={() => {
             measure.value = null;
             tool.value = 'select';

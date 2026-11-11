@@ -50,6 +50,7 @@ export function estimateCableMm(show: Show, c: Pick<Connection, 'from' | 'to'>):
 
 /** The length to use: the one the user typed, or the estimate when there is none. */
 export function cableLength(show: Show, c: Connection): { mm: number; estimated: boolean } | null {
+  if (c.wireless) return null;
   if (c.lengthMm !== null) return { mm: c.lengthMm, estimated: false };
   const mm = estimateCableMm(show, c);
   return mm === null ? null : { mm, estimated: true };

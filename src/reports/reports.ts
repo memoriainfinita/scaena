@@ -11,6 +11,7 @@ import { rackLayout, racks, rackUsed } from '../model/racks.ts';
 import { circuitLoads, dimmerLoads, luminaires, powered, riggingPlan } from '../model/lights.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
+import { inUnits, lengthValue, lengthWithUnit, numberText, weightValue } from '../model/units.ts';
 
 export const REPORT_IDS = ['hookup', 'instruments', 'circuits', 'dimmers', 'colors', 'focus', 'labels', 'equipment', 'cheat', 'rigging', 'racks', 'worknotes', 'cables', 'power', 'dmx', 'universes', 'network', 'inputs', 'outputs'] as const;
 export type ReportId = (typeof REPORT_IDS)[number];
@@ -24,7 +25,8 @@ export interface ReportTable {
   rows: string[][];
 }
 
-const num = (n: number | null, digits = 0) => (n === null ? '' : String(Math.round(n * 10 ** digits) / 10 ** digits));
+/** A number the way the language writes it, at most `digits` decimals; empty when there is none. */
+const fmt = (n: number | null, lang: Lang, digits = 0) => (n === null ? '' : numberText(n, lang, digits, false));
 const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemById(e.type.id)?.name[lang] || e.type.id : '');
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
@@ -35,17 +37,19 @@ export function cableText(show: Show, elementId: string, signals: readonly Signa
     .map((c) => {
       const len = cableLength(show, c);
       const other = show.elements[c.from === elementId ? c.to : c.from];
-      return [c.connector, len ? `${len.estimated ? '≈ ' : ''}${num(len.mm / 1000, 1)} m` : '', other ? `→ ${name(other, lang)}` : ''].filter(Boolean).join(' ');
+      return [c.connector || (c.wireless ? docStrings(lang).wireless : ''), len ? `${len.estimated ? '≈ ' : ''}${lengthWithUnit(len.mm, show.units, lang)}` : '', other ? `→ ${name(other, lang)}` : ''].filter(Boolean).join(' ');
     })
     .join('; ');
 }
 
 export function availableReports(show: Show): ReportId[] {
-  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.keys(show.connections).length > 0) && (id !== 'power' || powered(show).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0) && (id !== 'dmx' || luminaires(show).some((e) => e.luminaire!.address !== null)) && (id !== 'universes' || universesInUse(show).length > 0) && (id !== 'network' || Object.values(show.elements).some((e) => e.ip.trim())));
+  return REPORT_IDS.filter((id) => (REPORT_MODULE[id] === 'any' || show.modules.includes(REPORT_MODULE[id])) && (id !== 'cables' || Object.values(show.connections).some((c) => !c.wireless)) && (id !== 'power' || powered(show).length > 0) && (id !== 'racks' || racks(show).length > 0) && (id !== 'worknotes' || show.workNotes.length > 0) && (id !== 'dmx' || luminaires(show).some((e) => e.luminaire!.address !== null)) && (id !== 'universes' || universesInUse(show).length > 0) && (id !== 'network' || Object.values(show.elements).some((e) => e.ip.trim())));
 }
 
 export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): ReportTable {
   const D = docStrings(lang);
+  const num = (n: number | null, digits = 0) => fmt(n, lang, digits);
+  const kgv = (kg: number | null) => (kg === null ? '' : weightValue(kg, show.units, lang));
   const lum = luminaires(show);
   const model = (e: PlanElement) => {
     const f = e.luminaire?.modelId ? fixtureById(e.luminaire.modelId) : undefined;
@@ -66,8 +70,8 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   if (id === 'instruments') {
     const rows = [...lum]
       .sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit) || a.id.localeCompare(b.id, 'en', { numeric: true }))
-      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), modeLabel(e.luminaire!), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW), e.notes, cableText(show, e.id, ['lightControl', 'network'], lang)]);
-    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.dmxMode, D.color, D.weight, D.power, D.note, D.cables], rows };
+      .map((e) => [num(e.luminaire!.unit), name(e, lang), model(e), mount(e), num(e.luminaire!.channel), num(e.luminaire!.dimmer), num(e.luminaire!.circuit), num(e.luminaire!.universe), num(e.luminaire!.address), modeLabel(e.luminaire!), e.luminaire!.color, kgv(e.weightKg), num(e.powerW), e.notes, cableText(show, e.id, ['lightControl', 'network'], lang)]);
+    return { id, header: [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.universe, D.address, D.dmxMode, D.color, inUnits(D.weight, show.units), D.power, D.note, D.cables], rows };
   }
   if (id === 'circuits') {
     const rows = circuitLoads(show).map((c) => [String(c.circuit), String(c.count), unitList(lum.filter((e) => e.luminaire!.circuit === c.circuit)), num(c.powerW), num(c.amps, 2), c.phase === null ? '' : `L${c.phase}`]);
@@ -89,8 +93,8 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     return { id, header: [D.color, D.count, D.unit], rows };
   }
   if (id === 'focus') {
-    const rows = [...lum].sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit)).map((e) => [num(e.luminaire!.unit), name(e, lang), mount(e), e.luminaire!.focus ? num(e.luminaire!.focus.x / 1000, 2) : '', e.luminaire!.focus ? num(e.luminaire!.focus.y / 1000, 2) : '', e.luminaire!.notes]);
-    return { id, header: [D.unit, D.element, D.mount, 'X (m)', 'Y (m)', D.note], rows };
+    const rows = [...lum].sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit)).map((e) => [num(e.luminaire!.unit), name(e, lang), mount(e), e.luminaire!.focus ? lengthValue(e.luminaire!.focus.x, show.units, lang, 2) : '', e.luminaire!.focus ? lengthValue(e.luminaire!.focus.y, show.units, lang, 2) : '', e.luminaire!.notes]);
+    return { id, header: [D.unit, D.element, D.mount, inUnits('X (m)', show.units), inUnits('Y (m)', show.units), D.note], rows };
   }
   if (id === 'labels') {
     const rows = [...lum].sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit)).map((e) => {
@@ -111,9 +115,9 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       groups.set(key, g);
     }
     const sum = (els: PlanElement[], f: (e: PlanElement) => number | null) => els.reduce((a, e) => a + (f(e) ?? 0), 0);
-    const rows = [...groups.values()].sort((a, b) => b.els.length - a.els.length || a.label.localeCompare(b.label, lang)).map((g) => [g.label, String(g.els.length), num(sum(g.els, (e) => e.weightKg), 1), num(sum(g.els, (e) => e.powerW))]);
-    if (rows.length > 0) rows.push([D.total, String(lum.length), num(sum(lum, (e) => e.weightKg), 1), num(sum(lum, (e) => e.powerW))]);
-    return { id, header: [D.model, D.count, D.weight, D.power], rows };
+    const rows = [...groups.values()].sort((a, b) => b.els.length - a.els.length || a.label.localeCompare(b.label, lang)).map((g) => [g.label, String(g.els.length), kgv(sum(g.els, (e) => e.weightKg)), num(sum(g.els, (e) => e.powerW))]);
+    if (rows.length > 0) rows.push([D.total, String(lum.length), kgv(sum(lum, (e) => e.weightKg)), num(sum(lum, (e) => e.powerW))]);
+    return { id, header: [D.model, D.count, inUnits(D.weight, show.units), D.power], rows };
   }
   if (id === 'cheat') {
     // The one-page summary at the board: each channel with what it controls, where, and in which colour.
@@ -130,10 +134,10 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const rows: string[][] = [];
     for (const g of riggingPlan(show)) {
       const mname = g.mount?.name ?? D.none;
-      g.lights.forEach((e, i) => rows.push([mname, String(i + 1), num(e.luminaire!.unit), name(e, lang), model(e), num(e.luminaire!.channel), e.luminaire!.color, num(e.weightKg, 1), num(e.powerW)]));
-      rows.push([mname, '', '', D.total, '', '', '', num(g.weightKg, 1), num(g.powerW)]);
+      g.lights.forEach((e, i) => rows.push([mname, String(i + 1), num(e.luminaire!.unit), name(e, lang), model(e), num(e.luminaire!.channel), e.luminaire!.color, kgv(e.weightKg), num(e.powerW)]));
+      rows.push([mname, '', '', D.total, '', '', '', kgv(g.weightKg), num(g.powerW)]);
     }
-    return { id, header: [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows };
+    return { id, header: [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, inUnits(D.weight, show.units), D.power], rows };
   }
   if (id === 'racks') {
     const rows: string[][] = [];
@@ -169,13 +173,15 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   }
   if (id === 'cables') {
     const order = ['audio', 'video', 'lightControl', 'network'];
+    // A wireless link is not a cable to pull, so it is not in the list.
     const rows = Object.values(show.connections)
+      .filter((c) => !c.wireless)
       .sort((a, b) => order.indexOf(a.signal) - order.indexOf(b.signal) || a.connector.localeCompare(b.connector, 'en') || a.id.localeCompare(b.id, 'en', { numeric: true }))
       .map((c, i) => {
         const len = cableLength(show, c);
-        return [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, len === null ? '' : `${len.estimated ? '≈ ' : ''}${num(len.mm / 1000, 1)}`];
+        return [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, len === null ? '' : `${len.estimated ? '≈ ' : ''}${lengthValue(len.mm, show.units, lang)}`];
       });
-    return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows };
+    return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, inUnits(D.cableLength, show.units)], rows };
   }
   if (id === 'power') {
     const volts = show.region.voltage;

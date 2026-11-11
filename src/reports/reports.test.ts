@@ -11,6 +11,8 @@ import { diffShows } from '../model/diff.ts';
 import { addWorkNote, removeWorkNote, updateLuminaire, updateWorkNote } from '../model/lights.ts';
 import { availableReports, buildReport, inputsAsText, REPORT_IDS, toCsv, toTsv } from './reports.ts';
 import type { Show } from '../model/schema.ts';
+import { cableLength } from '../model/connections.ts';
+import { validate } from '../validate/rules.ts';
 
 /** The package's lights come with a model and a channel; these tests start from bare ones. */
 const theatre = () => {
@@ -37,8 +39,10 @@ describe('reports', () => {
     const total = t.rows[t.rows.length - 1]!;
     expect(total[0]).toBe('Total');
     const sum = Object.values(show.elements).reduce((a, e) => a + (e.powerW ?? 0), 0);
-    expect(Number(total[1])).toBe(sum);
-    expect(Number(total[2])).toBeCloseTo(sum / show.region.voltage, 1);
+    // Spanish writes the thousands with a point and the decimals with a comma.
+    const read = (cell: string | undefined) => Number(cell!.replace(/\./g, '').replace(',', '.'));
+    expect(read(total[1])).toBe(sum);
+    expect(read(total[2])).toBeCloseTo(sum / show.region.voltage, 1);
     expect(t.rows.length).toBeGreaterThan(5);
   });
 
@@ -249,5 +253,39 @@ describe('cables on the input and instrument lists', () => {
     expect(withCable[0]![withCable[0]!.length - 1]).toMatch(/→/);
     const lights = buildReport(show, 'instruments');
     for (const row of lights.rows) expect(row).toHaveLength(lights.header.length);
+  });
+});
+
+describe('numbers and units in the documents', () => {
+  const conference = () => bare(showFromPackage(packageById('conference')!, 'Congreso', 'es'));
+
+  test('a Spanish document writes decimals with a comma, an English one with a point', () => {
+    const es = buildReport(rock(), 'power');
+    const decimals = es.rows.flatMap((r) => r.slice(1)).filter((c) => /\d[,.]\d/.test(c));
+    expect(decimals.length).toBeGreaterThan(0);
+    expect(decimals.every((c) => c.includes(',') && !/\d\.\d{1,2}$/.test(c))).toBe(true);
+    const en = buildReport({ ...rock(), lang: 'en' }, 'power', 'en');
+    expect(en.rows.flatMap((r) => r.slice(1)).some((c) => /\d\.\d/.test(c))).toBe(true);
+  });
+
+  test('an imperial show has feet and pounds in the headers and in the values', () => {
+    const metric = buildReport(theatre(), 'rigging');
+    const imperial = buildReport({ ...theatre(), units: 'imperial' }, 'rigging');
+    expect(metric.header).toContain('Peso (kg)');
+    expect(imperial.header).toContain('Peso (lb)');
+    const cables = buildReport({ ...rock(), units: 'imperial' }, 'cables');
+    expect(cables.header[5]).toBe('Longitud (ft)');
+  });
+
+  test('a wireless link is not a cable: no length, not in the cable list, and not too long', () => {
+    const show = conference();
+    const radio = Object.values(show.connections).find((c) => c.wireless);
+    expect(radio).toBeTruthy();
+    expect(cableLength(show, radio!)).toBeNull();
+    const list = buildReport(show, 'cables').rows;
+    expect(list.length).toBe(Object.values(show.connections).filter((c) => !c.wireless).length);
+    const longer = (wireless: boolean) => validate({ ...show, connections: { ...show.connections, [radio!.id]: { ...radio!, connector: 'XLR', wireless, lengthMm: 500000 } } }).some((i) => i.rule === 'cableTooLong');
+    expect(longer(false)).toBe(true);
+    expect(longer(true)).toBe(false);
   });
 });

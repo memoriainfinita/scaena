@@ -1,6 +1,7 @@
 // Plan geometry: sizes, boxes, snapping and fitting. Everything in millimetres, y growing towards the audience.
 import { itemById } from '../library/items.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
+import { lengthText } from '../model/units.ts';
 
 export interface Size {
   w: number;
@@ -88,15 +89,7 @@ export function zoomAt(c: Camera, sx: number, sy: number, factor: number): Camer
 export const toWorld = (c: Camera, sx: number, sy: number): { x: number; y: number } => ({ x: (sx - c.x) / c.k, y: (sy - c.y) / c.k });
 
 /** Distance in a readable unit: metres, or feet and inches for imperial shows. */
-export function formatLength(mm: number, units: 'metric' | 'imperial', locale: string): string {
-  if (units === 'imperial') {
-    const inches = mm / 25.4;
-    const ft = Math.floor(inches / 12);
-    const inch = Math.round(inches - ft * 12);
-    return inch === 12 ? `${ft + 1}′ 0″` : `${ft}′ ${inch}″`;
-  }
-  return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(mm / 1000)} m`;
-}
+export const formatLength = lengthText;
 
 /** The wall segments of the proscenium line: the whole width when there is no opening, else the two sides of it. */
 export function prosceniumWalls(width: number, opening: number | null): [number, number][] {

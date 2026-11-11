@@ -6,6 +6,7 @@ import { session } from '../app/state.ts';
 import { decodeDxf, DxfError, parseDxf, renderDxf } from '../background/dxf.ts';
 import { openPdf, type PdfDoc } from '../background/pdf.ts';
 import { t } from '../i18n/index.ts';
+import { inUnits, lengthScale } from '../model/units.ts';
 import { Modal } from './Dialogs.tsx';
 
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -13,6 +14,7 @@ const MAX_BYTES = 25 * 1024 * 1024;
 export function BackgroundDialog({ onClose }: { onClose: () => void }) {
   const show = session.value!.show.value;
   const bg = show.stage.background;
+  const F = lengthScale(show.units);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pdf, setPdf] = useState<PdfDoc | null>(null);
@@ -122,12 +124,12 @@ export function BackgroundDialog({ onClose }: { onClose: () => void }) {
             </label>
             <div class="grid2">
               <label class="field">
-                {t('bg.x')}
-                <input class="input mono" type="number" step="0.1" disabled={bg.locked} value={Math.round(bg.x) / 1000} onChange={(e) => updateBackground({ x: Math.round(Number((e.currentTarget as HTMLInputElement).value) * 1000) })} />
+                {inUnits(t('bg.x'), show.units)}
+                <input class="input mono" type="number" step="0.1" disabled={bg.locked} value={Math.round((bg.x / F) * 1000) / 1000} onChange={(e) => updateBackground({ x: Math.round(Number((e.currentTarget as HTMLInputElement).value) * F) })} />
               </label>
               <label class="field">
-                {t('bg.y')}
-                <input class="input mono" type="number" step="0.1" disabled={bg.locked} value={Math.round(bg.y) / 1000} onChange={(e) => updateBackground({ y: Math.round(Number((e.currentTarget as HTMLInputElement).value) * 1000) })} />
+                {inUnits(t('bg.y'), show.units)}
+                <input class="input mono" type="number" step="0.1" disabled={bg.locked} value={Math.round((bg.y / F) * 1000) / 1000} onChange={(e) => updateBackground({ y: Math.round(Number((e.currentTarget as HTMLInputElement).value) * F) })} />
               </label>
             </div>
             <div class="sub wrap">

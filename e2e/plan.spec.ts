@@ -317,3 +317,28 @@ test('a selected element keeps its label where it is dragged, and the inspector 
   await page.getByRole('button', { name: 'Colocar la etiqueta automáticamente' }).click();
   await expect.poll(async () => Math.round((await label.boundingBox())!.x)).toBe(Math.round(before.x));
 });
+
+test('a show in feet and pounds reads its fields in them', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  await expect(page.locator('g.el').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Ajustes del montaje' }).click();
+  const dlg = page.getByRole('dialog', { name: 'Ajustes del montaje' });
+  await expect(dlg.getByLabel('Ancho (m)')).toBeVisible();
+  await dlg.getByLabel('Unidades').selectOption('imperial');
+  await dlg.getByRole('button', { name: 'Aplicar' }).click();
+  await page.locator('g.el').filter({ has: page.locator('text[data-label]') }).first().click({ position: { x: 4, y: 4 }, force: true });
+  await expect(page.getByLabel('Ancho (ft)')).toBeVisible();
+  await expect(page.getByLabel('Ancho (m)')).toHaveCount(0);
+  expect(Number(await page.getByLabel('X (ft)').inputValue())).not.toBeNaN();
+
+});
+
+test('a wireless link has no length', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Conferencia/ }).click();
+  await page.locator('g.el[aria-label="Rack inalámbrico"] rect.hit').click();
+  const radio = page.getByRole('checkbox', { name: /^Inalámbrico · / }).first();
+  await expect(radio).toBeChecked();
+  await expect(page.getByLabel(/^Longitud \(m\) · /).first()).toBeDisabled();
+});

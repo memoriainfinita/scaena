@@ -8,10 +8,11 @@ import { footprintBody, iconData, iconDefs, iconUse } from '../library/icons.ts'
 import { drawnSymbolOf, iconKeyFor } from '../library/light-symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { stageFrame } from '../model/stage.ts';
+import { barText, niceLengths, scaleText } from '../model/units.ts';
 import { elementSize, formatLength, planBox, prosceniumWalls, unionBox, type Box } from '../plan/geometry.ts';
 import { TAG_ABOVE, TAG_RADIUS, luminaireTag, paperText, textWidth } from '../plan/labels.ts';
 import { buildScene, elementsDrawn, layersDrawn } from '../plan/scene.ts';
-import { LINK_STYLE } from '../plan/style.ts';
+import { LINK_STYLE, linkDash } from '../plan/style.ts';
 import { docStrings } from './strings.ts';
 
 export interface PlanSvgOptions {
@@ -70,7 +71,6 @@ function backgroundBox(show: Show, images: Record<string, Uint8Array>): { box: B
   return { box: { x0: bg.x, y0: bg.y, x1: bg.x + dims.w * bg.scale, y1: bg.y + dims.h * bg.scale }, dims };
 }
 
-const NICE = [500, 1000, 2000, 5000, 10000, 20000, 50000];
 
 /** Height of the scale bar under the plan, in paper millimetres. */
 const BAR_MM = 7;
@@ -199,7 +199,8 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
 
   for (const { link: c, route, text } of scene.links) {
     const st = LINK_STYLE[c.signal];
-    const dash = st.dash ? ` stroke-dasharray="${st.dash.split(' ').map((x) => r(Number(x) * f)).join(' ')}"` : '';
+    const dashes = linkDash(c);
+    const dash = dashes ? ` stroke-dasharray="${dashes.split(' ').map((x) => r(Number(x) * f)).join(' ')}"` : '';
     const first = route[0]!;
     const end = route[route.length - 1]!;
     out.push(route.length === 2 ? `<line x1="${first.x}" y1="${first.y}" x2="${end.x}" y2="${end.y}" stroke="${st.stroke}" stroke-width="${r(0.3 / k)}"${dash}/>` : `<polyline points="${route.map((p) => `${r(p.x)},${r(p.y)}`).join(' ')}" fill="none" stroke="${st.stroke}" stroke-width="${r(0.3 / k)}" stroke-linejoin="round"${dash}/>`);
@@ -217,11 +218,11 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
 
   // Scale bar and legend, below the plan.
   const y0 = box.y1 + 1.5 / k;
-  const bar = NICE.find((n) => n * k >= 15) ?? 50000;
+  const bar = niceLengths(show.units, 500).find((n) => n * k >= 15) ?? 50000;
   const bx = box.x0 + 2 / k;
   out.push(`<g stroke="#000" stroke-width="${r(0.3 / k)}"><line x1="${bx}" y1="${y0 + 3 / k}" x2="${bx + bar}" y2="${y0 + 3 / k}"/><line x1="${bx}" y1="${y0 + 2 / k}" x2="${bx}" y2="${y0 + 4 / k}"/><line x1="${bx + bar}" y1="${y0 + 2 / k}" x2="${bx + bar}" y2="${y0 + 4 / k}"/></g>`);
-  const barLabel = bar >= 1000 ? `${bar / 1000} m` : `${bar} mm`;
-  out.push(`<text x="${bx + bar + 2 / k}" y="${y0 + 4 / k}" font-size="${r(2.4 / k)}" fill="#000" font-family="Inter">${esc(`${barLabel} · ${D.scaleLabel} 1:${Math.round(1 / k)}`)}</text>`);
+  const barLabel = barText(bar, show.units, opts.lang);
+  out.push(`<text x="${bx + bar + 2 / k}" y="${y0 + 4 / k}" font-size="${r(2.4 / k)}" fill="#000" font-family="Inter">${esc(`${barLabel} · ${D.scaleLabel} ${scaleText(Math.round(1 / k), show.units)}`)}</text>`);
 
   /** One symbol with its name, at a place given in the units of the drawing it goes into; `u` is paper mm per unit. */
   const legendCell = (id: string, face: LegendFace, cx: number, cy: number, u: number, stroke: number): string => {

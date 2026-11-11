@@ -14,10 +14,11 @@ import { levels } from '../model/levels.ts';
 import { cableText } from '../reports/reports.ts';
 import { circuitLoads, defaultFocus, dimmerLoads, luminaires, magicPosition, mountList, mountStats, phaseLoads } from '../model/lights.ts';
 import type { Mount, PlanElement, Show } from '../model/schema.ts';
+import { inUnits, lengthScale, lengthUnit, lengthWithUnit, weightScale, weightWithUnit } from '../model/units.ts';
 
 const name = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
 const MOUNT_KINDS: Mount['kind'][] = ['bar', 'pipe', 'truss', 'boom', 'floor'];
-const kg = (v: number) => `${formatNumber(Math.round(v * 10) / 10, lang.value, 1)} kg`;
+const kg = (show: Show, v: number) => weightWithUnit(v, show.units, lang.value, 1, true);
 const kw = (w: number) => `${formatNumber(w / 1000, lang.value, 2)} kW`;
 const mountName = (show: Show, id: string | null): string => (id && show.mounts[id]?.name) || t('lights.unmounted');
 
@@ -279,12 +280,12 @@ function MountCount({ show }: { show: Show }) {
       <ul>
         {stats.map((s) => (
           <li key={s.mountId ?? 'none'}>
-            <strong>{mountName(show, s.mountId)}</strong> · {t('lights.instruments', { n: s.count })} · {kg(s.weightKg)} · {kw(s.powerW)}
+            <strong>{mountName(show, s.mountId)}</strong> · {t('lights.instruments', { n: s.count })} · {kg(show, s.weightKg)} · {kw(s.powerW)}
             {s.overloaded && (
               <span class="warn" role="note">
                 {' '}
                 <span aria-hidden="true">⚠ </span>
-                {t('lights.overload')} ({kg(s.maxLoadKg ?? 0)})
+                {t('lights.overload')} ({kg(show, s.maxLoadKg ?? 0)})
               </span>
             )}
           </li>
@@ -312,19 +313,19 @@ function Mounts({ show }: { show: Show }) {
             <tr>
               <th>{t('mount.name')}</th>
               <th>{t('table.kind')}</th>
-              <th>{t('mount.x1')}</th>
-              <th>{t('mount.y1')}</th>
-              <th>{t('mount.x2')}</th>
-              <th>{t('mount.y2')}</th>
-              <th>{t('mount.height')}</th>
-              <th>{t('mount.maxLoad')}</th>
+              <th>{inUnits(t('mount.x1'), show.units)}</th>
+              <th>{inUnits(t('mount.y1'), show.units)}</th>
+              <th>{inUnits(t('mount.x2'), show.units)}</th>
+              <th>{inUnits(t('mount.y2'), show.units)}</th>
+              <th>{inUnits(t('mount.height'), show.units)}</th>
+              <th>{inUnits(t('mount.maxLoad'), show.units)}</th>
               <th>{t('lights.count')}</th>
               <th />
             </tr>
           </thead>
           <tbody>
             {rows.map((m) => {
-              const tag = (k: Key) => `${t(k)} · ${m.name}`;
+              const tag = (k: Key) => `${inUnits(t(k), show.units)} · ${m.name}`;
               const st = stats.get(m.id);
               return (
                 <tr key={m.id}>
@@ -341,25 +342,25 @@ function Mounts({ show }: { show: Show }) {
                     </select>
                   </td>
                   <td>
-                    <NumCell value={m.from.x} scale={1000} step={0.1} min={-1000} label={tag('mount.x1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, x: v } })} />
+                    <NumCell value={m.from.x} scale={lengthScale(show.units)} step={0.1} min={-1000} label={tag('mount.x1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, x: v } })} />
                   </td>
                   <td>
-                    <NumCell value={m.from.y} scale={1000} step={0.1} min={-1000} label={tag('mount.y1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, y: v } })} />
+                    <NumCell value={m.from.y} scale={lengthScale(show.units)} step={0.1} min={-1000} label={tag('mount.y1')} onCommit={(v) => v !== null && setMount(m.id, { from: { ...m.from, y: v } })} />
                   </td>
                   <td>
-                    <NumCell value={m.to.x} scale={1000} step={0.1} min={-1000} label={tag('mount.x2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, x: v } })} />
+                    <NumCell value={m.to.x} scale={lengthScale(show.units)} step={0.1} min={-1000} label={tag('mount.x2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, x: v } })} />
                   </td>
                   <td>
-                    <NumCell value={m.to.y} scale={1000} step={0.1} min={-1000} label={tag('mount.y2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, y: v } })} />
+                    <NumCell value={m.to.y} scale={lengthScale(show.units)} step={0.1} min={-1000} label={tag('mount.y2')} onCommit={(v) => v !== null && setMount(m.id, { to: { ...m.to, y: v } })} />
                   </td>
                   <td>
-                    <NumCell value={m.heightMm} scale={1000} step={0.1} label={tag('mount.height')} onCommit={(v) => setMount(m.id, { heightMm: v ?? 0 })} />
+                    <NumCell value={m.heightMm} scale={lengthScale(show.units)} step={0.1} label={tag('mount.height')} onCommit={(v) => setMount(m.id, { heightMm: v ?? 0 })} />
                   </td>
                   <td>
-                    <NumCell value={m.maxLoadKg} step={5} label={tag('mount.maxLoad')} onCommit={(v) => setMount(m.id, { maxLoadKg: v })} />
+                    <NumCell value={m.maxLoadKg} scale={weightScale(show.units)} step={5} label={tag('mount.maxLoad')} onCommit={(v) => setMount(m.id, { maxLoadKg: v })} />
                   </td>
                   <td>
-                    {st ? `${t('lights.instruments', { n: st.count })} · ${kg(st.weightKg)}` : ''}
+                    {st ? `${t('lights.instruments', { n: st.count })} · ${kg(show, st.weightKg)}` : ''}
                     {st?.overloaded && (
                       <span class="warn" role="note">
                         {' '}
@@ -645,14 +646,14 @@ function Section({ show }: { show: Show }) {
         {deck > 0 && <rect x={X(0)} y={Z(deck)} width={X(depth) - X(0)} height={Z(0) - Z(deck)} class="flbox desk" />}
         {deck > 0 && (
           <text x={X(depth / 2)} y={(Z(0) + Z(deck)) / 2 + 4} text-anchor="middle" class="fltext">
-            {t('section.deck')} · {formatNumber(deck / 1000, lang.value, 1)} m
+            {t('section.deck')} · {lengthWithUnit(deck, show.units, lang.value, 1, true)}
           </text>
         )}
         {raised.map((l) => (
           <g key={l.element.id}>
             <rect x={X(l.from)} y={Z(deck + l.heightMm)} width={Math.max(2, X(l.to) - X(l.from))} height={Math.max(1, Z(deck) - Z(deck + l.heightMm))} class="flbox desk" />
             <text x={(X(l.from) + X(l.to)) / 2} y={Z(deck + l.heightMm) - 4} text-anchor="middle" class="fltext">
-              {formatNumber((deck + l.heightMm) / 1000, lang.value, 1)} m
+              {lengthWithUnit((deck + l.heightMm), show.units, lang.value, 1, true)}
             </text>
           </g>
         ))}
@@ -661,7 +662,7 @@ function Section({ show }: { show: Show }) {
             <line x1={X(depth)} y1={Z(deck + opening)} x2={X(depth)} y2={Z(top)} class="fl main" />
             <line x1={X(depth) - 12} y1={Z(deck + opening)} x2={X(depth) + 12} y2={Z(deck + opening)} class="fl main" />
             <text x={X(depth) - 8} y={Z(deck + opening) - 6} text-anchor="end" class="fltext">
-              {t('section.proscenium')} · {formatNumber(opening / 1000, lang.value, 1)} m
+              {t('section.proscenium')} · {lengthWithUnit(opening, show.units, lang.value, 1, true)}
             </text>
           </g>
         )}
@@ -686,7 +687,7 @@ function Section({ show }: { show: Show }) {
                 <circle key={e.id} cx={x - 18 + (i % 4) * 12} cy={z + 14 + Math.floor(i / 4) * 12} r="4.5" class="dot" />
               ))}
               <text x={x} y={z - 12} text-anchor="middle" class="flbox-t">
-                {m.name} · {m.heightMm > 0 ? `${formatNumber(m.heightMm / 1000, lang.value, 1)} m` : t('section.noHeight')}
+                {m.name} · {m.heightMm > 0 ? `${lengthWithUnit(m.heightMm, show.units, lang.value, 1, true)}` : t('section.noHeight')}
               </text>
             </g>
           );
@@ -738,8 +739,8 @@ export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
           <NumCell value={l.circuit} label={t('table.circuit')} onCommit={(v) => setLuminaire(el.id, { circuit: v })} />
         </label>
         <label class="field">
-          {t('table.weight')}
-          <NumCell value={el.weightKg} step={0.1} label={t('table.weight')} onCommit={(v) => setElementNumber(el.id, 'weightKg', v)} />
+          {inUnits(t('table.weight'), show.units)}
+          <NumCell value={el.weightKg} scale={weightScale(show.units)} step={0.1} label={inUnits(t('table.weight'), show.units)} onCommit={(v) => setElementNumber(el.id, 'weightKg', v)} />
         </label>
         <label class="field">
           {t('table.power')}
@@ -752,11 +753,11 @@ export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
           <div class="grid2">
             <label class="field">
               X (m)
-              <NumCell value={l.focus.x} scale={1000} step={0.1} min={-1000} label={`${t('focus.title')} X (m)`} onCommit={(v) => setFocusPoint(el.id, { x: v ?? 0, y: l.focus!.y })} />
+              <NumCell value={l.focus.x} scale={lengthScale(show.units)} step={0.1} min={-1000} label={`${t('focus.title')} X (${lengthUnit(show.units)})`} onCommit={(v) => setFocusPoint(el.id, { x: v ?? 0, y: l.focus!.y })} />
             </label>
             <label class="field">
               Y (m)
-              <NumCell value={l.focus.y} scale={1000} step={0.1} min={-1000} label={`${t('focus.title')} Y (m)`} onCommit={(v) => setFocusPoint(el.id, { x: l.focus!.x, y: v ?? 0 })} />
+              <NumCell value={l.focus.y} scale={lengthScale(show.units)} step={0.1} min={-1000} label={`${t('focus.title')} Y (${lengthUnit(show.units)})`} onCommit={(v) => setFocusPoint(el.id, { x: l.focus!.x, y: v ?? 0 })} />
             </label>
             <button type="button" class="btn" onClick={() => setFocusPoint(el.id, null)}>
               {t('focus.clear')}

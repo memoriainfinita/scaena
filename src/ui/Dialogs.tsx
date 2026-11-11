@@ -4,6 +4,7 @@ import { applySettings, applyShowSettings, dialog, session, settings, type Dialo
 import { allIssues, goToIssue, issues, issueText, setIssueMuted } from '../app/issues.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { parsePolygon } from '../plan/geometry.ts';
+import { inUnits, lengthScale } from '../model/units.ts';
 import { SEVERITIES, type Severity } from '../validate/rules.ts';
 import { CustomItemDialog } from './CustomItem.tsx';
 import { BackgroundDialog } from './Background.tsx';
@@ -96,21 +97,25 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
   const [paper, setPaper] = useState(show.paper);
   const [units, setUnits] = useState(show.units);
   const [docLang, setDocLang] = useState(show.lang);
-  const [w, setW] = useState((shape.kind === 'rect' ? shape.width : (bounds?.x ?? 8000)) / 1000);
-  const [dpt, setD] = useState((shape.kind === 'rect' ? shape.depth : (bounds?.y ?? 5000)) / 1000);
-  const [stageH, setStageH] = useState(show.stage.height / 1000);
+  // The length fields are in the units the show had when the dialog opened; they become metres when applied.
+  const F = lengthScale(show.units);
+  const round3 = (n: number) => Math.round(n * 1000) / 1000;
+  const [w, setW] = useState(round3((shape.kind === 'rect' ? shape.width : (bounds?.x ?? 8000)) / F));
+  const [dpt, setD] = useState(round3((shape.kind === 'rect' ? shape.depth : (bounds?.y ?? 5000)) / F));
+  const [stageH, setStageH] = useState(round3(show.stage.height / F));
   const [freeForm, setFreeForm] = useState(shape.kind === 'polygon');
-  const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${q.x / 1000}; ${q.y / 1000}`).join('\n'));
-  const [proscenium, setProscenium] = useState(shape.prosceniumWidth !== null ? String(shape.prosceniumWidth / 1000) : '');
-  const [proscH, setProscH] = useState(show.stage.prosceniumHeight !== null ? String(show.stage.prosceniumHeight / 1000) : '');
+  const [polyText, setPolyText] = useState(() => (shape.kind === 'polygon' ? shape.points : [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }]).map((q) => `${round3(q.x / F)}; ${round3(q.y / F)}`).join('\n'));
+  const [proscenium, setProscenium] = useState(shape.prosceniumWidth !== null ? String(round3(shape.prosceniumWidth / F)) : '');
+  const [proscH, setProscH] = useState(show.stage.prosceniumHeight !== null ? String(round3(show.stage.prosceniumHeight / F)) : '');
   const [refs, setRefs] = useState(show.stage.referenceLines);
   const [gridMm, setGridMm] = useState(show.view.gridMm);
   const polygon = parsePolygon(polyText);
   const region = regionByCode(regionCode);
   const toggle = (m: Module) => setModules((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]));
   const apply = () => {
-    const prosc = Number(proscenium.replace(',', '.'));
-    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w, stageDepthM: dpt, stageHeightM: stageH, stagePolygonM: freeForm ? polygon : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, prosceniumHeightM: proscH.trim() !== '' && Number(proscH.replace(',', '.')) > 0 ? Number(proscH.replace(',', '.')) : null, referenceLines: refs, gridMm });
+    const m = F / 1000;
+    const prosc = Number(proscenium.replace(',', '.')) * m;
+    applyShowSettings({ modules, regionCode, voltage, paper, units, lang: docLang, stageWidthM: w * m, stageDepthM: dpt * m, stageHeightM: stageH * m, stagePolygonM: freeForm && polygon ? polygon.map((q) => ({ x: q.x * m, y: q.y * m })) : null, prosceniumM: proscenium.trim() !== '' && prosc > 0 ? prosc : null, prosceniumHeightM: proscH.trim() !== '' && Number(proscH.replace(',', '.')) > 0 ? Number(proscH.replace(',', '.')) * m : null, referenceLines: refs, gridMm });
     onClose();
   };
   return (
@@ -154,27 +159,27 @@ function ShowSettingsDialog({ onClose }: { onClose: () => void }) {
         ) : (
           <div class="grid2">
             <label class="field">
-              {t('settings.stage.width')}
+              {inUnits(t('settings.stage.width'), show.units)}
               <input class="input mono" type="number" min="1" step="0.1" value={w} onChange={(e) => setW(Math.max(1, Number((e.currentTarget as HTMLInputElement).value) || 1))} />
             </label>
             <label class="field">
-              {t('settings.stage.depth')}
+              {inUnits(t('settings.stage.depth'), show.units)}
               <input class="input mono" type="number" min="1" step="0.1" value={dpt} onChange={(e) => setD(Math.max(1, Number((e.currentTarget as HTMLInputElement).value) || 1))} />
             </label>
           </div>
         )}
         <div class="grid2">
           <label class="field">
-            {t('settings.stage.proscenium')}
+            {inUnits(t('settings.stage.proscenium'), show.units)}
             <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscenium} onInput={(e) => setProscenium((e.currentTarget as HTMLInputElement).value)} />
           </label>
           <label class="field">
-            {t('settings.stage.prosceniumHeight')}
+            {inUnits(t('settings.stage.prosceniumHeight'), show.units)}
             <input class="input mono" inputMode="decimal" placeholder={t('settings.stage.prosceniumNone')} value={proscH} onInput={(e) => setProscH((e.currentTarget as HTMLInputElement).value)} />
           </label>
         </div>
         <label class="field">
-          {t('settings.stage.height')}
+          {inUnits(t('settings.stage.height'), show.units)}
           <input class="input mono" type="number" min="0" step="0.1" value={stageH} onChange={(e) => setStageH(Math.max(0, Number((e.currentTarget as HTMLInputElement).value) || 0))} />
         </label>
         <div class="mods" role="group" aria-label={t('settings.refs')}>

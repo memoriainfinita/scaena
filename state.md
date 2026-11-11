@@ -21,8 +21,9 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Grupo 1 de la auditoría hecho el 2026-11-11 (`docs/design/group-1-light-plot-2026-11-11.md`): plano de luces como hoja propia del PDF (informe `lightPlan` con capas, escala y título; varias hojas), rótulo por luminaria (unidad en círculo, canal y color debajo) y cajetín bajo cada hoja de plano. El cajetín resta 14 mm de alto: el plano de la muestra completa pasó de 1:97 a 1:107. Commit `de4aa02`
 - Grupo 2 de la auditoría hecho el 2026-11-11 (`docs/design/grupo-2-legibilidad-2026-11-11.md`): escena común para editor y PDF, cables enrutados en ángulo recto alrededor de los elementos (`view.linkStyle`, botón «Cables rectos»), textos que evitan cables y varas, halo blanco en el PDF, magic sheet sin cortes, varas según la capa de luces, y las salas laterales de la muestra completa fuera de sus butacas. Cruces cable-elemento en el editor: de 106 a 0 en rock, de 81 a 0 en teatro. Commit del 2026-11-11
 - Hojas de plano por capas hechas el 2026-11-11 (`docs/design/plan-sheets-2026-11-11.md`): `plan` y `lightPlan` usan el mismo informe y el mismo panel (`PlanSheets`), cualquier número de hojas, `tags` por hoja; el archivo sin informes `plan` imprime la hoja única de siempre. Commit del 2026-11-11
+- Grupo 3 hecho el 2026-11-11 (`docs/design/grupo-3-numeros-2026-11-11.md`): módulo `src/model/units.ts` (unidades y números por idioma en inspector, diálogos, avisos, informes y PDF), escalas de arquitectura en imperial, recuento de montaje sin barra suelta, `Connection.wireless`. Commit del 2026-11-11
 - Auditoría del 2026-11-09 (solo lectura, sobre PDF y capturas generados ese día de teatro, rock y muestra completa): la base técnica es sólida y la amplitud prometida existe, pero la app no está terminada. El plano impreso no llega a nivel profesional y hay funciones aceptadas a medias. Los hallazgos están en TODO, grupos 1 a 4. Sin comprobar en la auditoría: e2e completos, móvil, rendimiento y la versión en inglés
-- Pruebas: 503 unitarias, tipos y lint limpios (2026-11-09); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
+- Pruebas: 513 unitarias, tipos y lint limpios (2026-11-09); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
 - Patch desde los cables (`docs/design/patch-from-cables-2026-11-08.md`): cada cable de audio lleva entrada de llegada y líneas; lo escrito manda y una diferencia avisa. Solo el ejemplo de rock lo usa; los otros con stagebox llevan el patch escrito
 - Mezclas de monitores (`docs/design/monitor-mixes-2026-11-08.md`): para quién es cada salida y cuánto pide de cada canal, en cuadrícula, documento e informe
@@ -109,13 +110,13 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 - [x] (hecho 2026-11-11, el equipo de control sigue entre las butacas) Muestra completa: elementos colocados encima del plano de sala
 - [x] (hecho 2026-11-11) Pantalla y PDF se dibujan con dos funciones (`src/ui/PlanView.tsx` y `src/document/plan-svg.ts`) y ya divergen: en el editor las etiquetas se pisan más que en el PDF. La decisión aceptada el 2026-10-29 era una sola función
 
-### Grupo 3: números y unidades
+### Grupo 3: números y unidades (hecho 2026-11-11, `docs/design/grupo-3-numeros-2026-11-11.md`)
 
-- [ ] Decimales con punto en documentos en español (19.13 A, 19.2 kg)
-- [ ] Peso sin dato impreso como « / 250» en el recuento por montaje
-- [ ] Unidades imperiales a medias: cambian las medidas del plano y la barra de escala; el inspector, los montajes y el PDF siguen en metros y kilos
-- [ ] Escalas de impresión imperiales: solo existen 1:25, 1:50, 1:100 y 1:200
-- [ ] El modelo no distingue un enlace inalámbrico de un cable: las diademas del ejemplo de teatro salen con un «cable» de 10 m y la columna Cables queda irregular
+- [x] Decimales con punto en documentos en español (19.13 A, 19.2 kg)
+- [x] Peso sin dato impreso como « / 250» en el recuento por montaje
+- [x] Unidades imperiales a medias: cambian las medidas del plano y la barra de escala; el inspector, los montajes y el PDF siguen en metros y kilos
+- [x] Escalas de impresión imperiales: solo existen 1:25, 1:50, 1:100 y 1:200
+- [x] El modelo no distingue un enlace inalámbrico de un cable: las diademas del ejemplo de teatro salen con un «cable» de 10 m y la columna Cables queda irregular
 
 ### Grupo 4: restos, registro y versión
 

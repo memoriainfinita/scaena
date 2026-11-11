@@ -83,6 +83,7 @@ function routeAll(show: Show, links: Connection[], layerOn: ReadonlySet<string>,
   const obstacles = elementsDrawn(show, layerOn)
     .filter((e) => itemById(e.type.id)?.symbol !== 'dimension')
     .map((e) => ({ id: e.id, box: elementBox(e) }));
-  const requests = links.map((c) => ({ id: c.id, fromId: c.from, toId: c.to, from: { x: show.elements[c.from]!.x, y: show.elements[c.from]!.y }, to: { x: show.elements[c.to]!.x, y: show.elements[c.to]!.y } }));
+  // A wireless link is not a cable: it is not routed, and is drawn straight.
+  const requests = links.filter((c) => !c.wireless).map((c) => ({ id: c.id, fromId: c.from, toId: c.to, from: { x: show.elements[c.from]!.x, y: show.elements[c.from]!.y }, to: { x: show.elements[c.to]!.x, y: show.elements[c.to]!.y } }));
   return routeLinks(requests, obstacles, { bounds });
 }

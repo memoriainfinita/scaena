@@ -342,7 +342,7 @@ const cableTooLong: Rule = (show) =>
   Object.values(show.connections).flatMap((c) => {
     const max = maxCableM(c.connector);
     const from = show.elements[c.from];
-    if (c.lengthMm === null || max === null || c.lengthMm / 1000 <= max || !from) return [];
+    if (c.wireless || c.lengthMm === null || max === null || c.lengthMm / 1000 <= max || !from) return [];
     return [issue('cableTooLong', { kind: 'element', id: from.id }, { name: elName(from), connector: c.connector.trim(), m: Math.round(c.lengthMm / 100) / 10, max }, undefined, c.id)];
   });
 

@@ -18,6 +18,8 @@ import { buildReport, cableText } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
 import { docStrings, prodStrings, type DocStrings } from './strings.ts';
+import { inUnits, lengthValue, numberText, scaleText, weightValue } from '../model/units.ts';
+import type { Lang } from '../i18n/index.ts';
 
 export interface DocWarning {
   kind: 'overflow' | 'scale';
@@ -118,9 +120,9 @@ class Collector {
 const yn = (D: DocStrings, b: boolean) => (b ? D.yes : D.no);
 const supplier = (D: DocStrings, s: PlanElement['suppliedBy']) => ({ unset: D.unset, band: D.band, venue: D.venueSupplies, rental: D.rental })[s];
 const elName = (e: PlanElement | undefined, lang: 'es' | 'en'): string => (e ? e.label || itemById(e.type.id)?.name[lang] || e.type.id : '');
-const num = (n: number | null, digits = 0) => (n === null ? '' : String(Math.round(n * 10 ** digits) / 10 ** digits));
+const numIn = (lang: Lang, n: number | null, digits = 0) => (n === null ? '' : numberText(n, lang, digits, false));
 /** Like num, but zero reads as nothing: an unstated weight or height is not a measurement of zero. */
-const numNZ = (n: number | null, digits = 0) => (n === null || n === 0 ? '' : num(n, digits));
+const numNZIn = (lang: Lang, n: number | null, digits = 0) => (n === null || n === 0 ? '' : numIn(lang, n, digits));
 
 /** From the top of the page's content to the first row of the channel list (heading, desk line, header row), and the position legend under it. */
 const LIST_TOP_MM = 18.5;
@@ -152,6 +154,8 @@ export const buildDocument = (show: Show, images: Record<string, Uint8Array> = {
 function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built {
   const D = docStrings(show.lang);
   const P = prodStrings(show.lang);
+  const num = (n: number | null, digits = 0) => numIn(show.lang, n, digits);
+  const numNZ = (n: number | null, digits = 0) => numNZIn(show.lang, n, digits);
   const paper = PAPERS[show.paper];
   const contentMm = paper.w - 2 * MARGIN;
   const c = new Collector(contentMm, D);
@@ -194,7 +198,7 @@ function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built 
       [D.date, show.date],
       [D.revision, String(show.revision)],
       [D.sheet, sheet],
-      [D.scaleLabel, `1:${scaleN}`],
+      [D.scaleLabel, scaleText(scaleN, show.units)],
     ] as [string, string][]).filter(([, v]) => v);
     const cells = fields.map(([k, v]) => `[#text(size: 6pt, fill: luma(100))[${txt(k)}] \\ #text(size: 8.5pt)[${txt(v)}]]`);
     if (logo) cells.unshift(`[#image(${lit(logo)}, height: 9mm, fit: "contain", alt: ${lit(D.logo)})]`);
@@ -209,7 +213,7 @@ function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built 
     const availW = paper.h - 2 * MARGIN;
     const availH = paper.w - 2 * MARGIN - 14 - 10 - TITLE_BLOCK_MM;
     const plan = planSvg(show, images, { availWidthMm: availW, availHeightMm: availH, lang: show.lang, ...opts });
-    if (!plan.fits) c.warnings.push({ kind: 'scale', text: `1:${opts.planScale} → 1:${plan.scaleN}` });
+    if (!plan.fits) c.warnings.push({ kind: 'scale', text: `${scaleText(opts.planScale!, show.units)} → ${scaleText(plan.scaleN, show.units)}` });
     files[`/${key}.svg`] = new TextEncoder().encode(plan.svg);
     const alt = `${sheet}: ${elements.length}`;
     if (plan.legend) files[`/${key}-legend.svg`] = new TextEncoder().encode(plan.legend.svg);
@@ -331,16 +335,18 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       const lightCables = rows.some((r) => r[9]);
       let md = heading(D.lights) + c.table(D.lights, [{ mm: 13 }, { fr: 1.25 }, { fr: 1.1 }, { fr: 1.2 }, { mm: 13 }, { mm: 16 }, { mm: 17 }, { fr: 0.7 }, { mm: 17 }, ...(lightCables ? [{ fr: 1.1 }] : [])], [D.unit, D.element, D.model, D.mount, D.channel, D.dimmer, D.circuit, D.color, D.power, ...(lightCables ? [D.cables] : [])], lightCables ? rows : rows.map((r) => r.slice(0, 9)));
       const stats = mountStats(show);
+      // The weight on a mount and what it can carry; a weight nobody stated is a dash, not a zero.
+      const loadText = (st: (typeof stats)[number]): string => `${st.weightKg ? weightValue(st.weightKg, show.units, show.lang) : st.maxLoadKg !== null ? '—' : ''}${st.maxLoadKg !== null ? ` / ${weightValue(st.maxLoadKg, show.units, show.lang, 0)}` : ''}`;
       if (stats.length > 0) {
-        md += `\n== ${txt(D.count)}\n` + c.table(D.count, [{ fr: 1.4 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.mount, D.kind, D.height, D.element, D.weight, D.power], stats.map((st) => {
+        md += `\n== ${txt(D.count)}\n` + c.table(D.count, [{ fr: 1.4 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.mount, D.kind, inUnits(D.height, show.units), D.element, inUnits(D.weight, show.units), D.power], stats.map((st) => {
           const m = st.mountId ? show.mounts[st.mountId] : undefined;
-          return [m?.name ?? D.none, m ? D.mountKinds[m.kind] : '', m ? numNZ(m.heightMm / 1000, 1) : '', String(st.count), `${numNZ(st.weightKg, 1)}${st.maxLoadKg !== null ? ` / ${num(st.maxLoadKg)}` : ''}`, numNZ(st.powerW)];
+          return [m?.name ?? D.none, m ? D.mountKinds[m.kind] : '', m && m.heightMm ? lengthValue(m.heightMm, show.units, show.lang) : '', String(st.count), loadText(st), numNZ(st.powerW)];
         }));
       }
       parts.push(md + '\n');
     } else if (s === 'rigging') {
       const rows = buildReport(show, 'rigging').rows;
-      parts.push(heading(D.rigging) + c.table(D.rigging, [{ fr: 1.2 }, { mm: 9 }, { mm: 14 }, { fr: 1.2 }, { fr: 1.4 }, { mm: 15 }, { fr: 0.8 }, { mm: 17 }, { mm: 17 }], [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, D.weight, D.power], rows) + '\n');
+      parts.push(heading(D.rigging) + c.table(D.rigging, [{ fr: 1.2 }, { mm: 9 }, { mm: 14 }, { fr: 1.2 }, { fr: 1.4 }, { mm: 15 }, { fr: 0.8 }, { mm: 17 }, { mm: 17 }], [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, inUnits(D.weight, show.units), D.power], rows) + '\n');
     } else if (s === 'racks') {
       // The report closes every rack with a total, whose unit column is empty.
       const blocks: string[][][] = [[]];
@@ -352,7 +358,7 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       parts.push(heading(D.racks) + named.join('\n\n') + '\n');
     } else if (s === 'cables') {
       const rows = buildReport(show, 'cables').rows;
-      parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, D.cableLength], rows) + '\n');
+      parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, inUnits(D.cableLength, show.units)], rows) + '\n');
     } else if (s === 'dmx') {
       const dmx = buildReport(show, 'dmx').rows;
       const net = buildReport(show, 'network').rows;

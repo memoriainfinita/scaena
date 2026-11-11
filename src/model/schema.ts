@@ -159,6 +159,8 @@ export const Connection = v.object({
   signal: SignalType,
   connector: text(40),
   lengthMm: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
+  /** A radio or other link with no cable: it has no length, is not in the cable list and is drawn dotted. */
+  wireless: v.optional(v.boolean()),
   label: text(80),
   /** The numbered input an audio cable arrives at; the channels it carries take their patch from it. */
   toPort: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))), null),

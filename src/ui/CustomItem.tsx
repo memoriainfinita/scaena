@@ -1,7 +1,8 @@
 import { useState } from 'preact/hooks';
 import { createCustomItem, deleteCustomItem, readDrawing } from '../app/custom-item-actions.ts';
 import { session } from '../app/state.ts';
-import { t, type Key } from '../i18n/index.ts';
+import { inUnits, lengthScale, lengthUnit, lengthValue, weightScale } from '../model/units.ts';
+import { lang, t, type Key } from '../i18n/index.ts';
 import type { CleanError, CleanSvg } from '../library/svg-clean.ts';
 import { customItemUses } from '../model/custom-items.ts';
 import { Modal } from './Dialogs.tsx';
@@ -23,6 +24,7 @@ export function CustomItemDialog({ onClose }: { onClose: () => void }) {
   const [layer, setLayer] = useState<(typeof LAYERS)[number]>('stage');
   const [saved, setSaved] = useState('');
   const own = Object.values(show.customItems);
+  const F = lengthScale(show.units);
 
   const onFile = async (file: File | undefined) => {
     setSaved('');
@@ -47,7 +49,7 @@ export function CustomItemDialog({ onClose }: { onClose: () => void }) {
   const valid = !!svg && name.trim() !== '' && wm !== null && wm >= 0.01 && dm !== null && dm >= 0.01 && hm !== null && hm >= 0;
   const save = () => {
     if (!svg || !valid) return;
-    const id = createCustomItem({ name, svg, w: wm! * 1000, d: dm! * 1000, h: hm! * 1000, weightKg: num(weight), powerW: num(power), layer });
+    const id = createCustomItem({ name, svg, w: Math.round(wm! * F), d: Math.round(dm! * F), h: Math.round(hm! * F), weightKg: num(weight) === null ? null : num(weight)! * weightScale(show.units), powerW: num(power), layer });
     if (id) {
       setSaved(t('custom.saved', { name: name.trim() }));
       setSvg(null);
@@ -84,19 +86,19 @@ export function CustomItemDialog({ onClose }: { onClose: () => void }) {
             </label>
             <div class="grid2">
               <label class="field">
-                {t('custom.w')}
+                {inUnits(t('custom.w'), show.units)}
                 <input class="input mono" type="number" min="0.01" step="0.01" value={w} onInput={(e) => setW((e.currentTarget as HTMLInputElement).value)} />
               </label>
               <label class="field">
-                {t('custom.d')}
+                {inUnits(t('custom.d'), show.units)}
                 <input class="input mono" type="number" min="0.01" step="0.01" value={d} onInput={(e) => setD((e.currentTarget as HTMLInputElement).value)} />
               </label>
               <label class="field">
-                {t('custom.h')}
+                {inUnits(t('custom.h'), show.units)}
                 <input class="input mono" type="number" min="0" step="0.01" value={h} onInput={(e) => setH((e.currentTarget as HTMLInputElement).value)} />
               </label>
               <label class="field">
-                {t('custom.weight')}
+                {inUnits(t('custom.weight'), show.units)}
                 <input class="input mono" type="number" min="0" step="0.1" value={weight} onInput={(e) => setWeight((e.currentTarget as HTMLInputElement).value)} />
               </label>
               <label class="field">
@@ -128,7 +130,7 @@ export function CustomItemDialog({ onClose }: { onClose: () => void }) {
               return (
                 <div class="layer" key={c.id}>
                   <span style="flex:1">
-                    {c.name} · {c.w / 1000} × {c.d / 1000} m
+                    {c.name} · {lengthValue(c.w, show.units, lang.value, 2)} × {lengthValue(c.d, show.units, lang.value, 2)} {lengthUnit(show.units)}
                   </span>
                   <button type="button" class="btn" disabled={uses > 0} title={uses > 0 ? t('custom.inUse', { name: c.name, n: uses }) : undefined} aria-label={t('custom.remove', { name: c.name })} onClick={() => deleteCustomItem(c.id)}>
                     {t('custom.delete')}

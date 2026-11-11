@@ -2,6 +2,7 @@
 import { computed } from '@preact/signals';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { validate, type Issue, type Severity } from '../validate/rules.ts';
+import { lengthWithUnit, weightWithUnit } from '../model/units.ts';
 import { lightsTab } from './lights-actions.ts';
 import { prodTab } from './production-actions.ts';
 import { dialog, selection, session, view } from './state.ts';
@@ -35,12 +36,21 @@ const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 export const worst = (list: Issue[]): Severity | null => (list.length === 0 ? null : list.reduce((a, i) => (RANK[i.severity] < RANK[a] ? i.severity : a), list[0]!.severity));
 
 /** The finding in words, in the interface language. */
+/** The weights and lengths of a finding, written in the units of the show: the rules count in kilograms and metres. */
+function measures(i: Issue): Record<string, string> {
+  const units = session.value?.show.value.units ?? 'metric';
+  const l = lang.value;
+  if (i.rule === 'mountOverload') return { kg: weightWithUnit(Number(i.vars.kg), units, l), max: weightWithUnit(Number(i.vars.max), units, l) };
+  if (i.rule === 'cableTooLong') return { m: lengthWithUnit(Number(i.vars.m) * 1000, units, l), max: lengthWithUnit(Number(i.vars.max) * 1000, units, l) };
+  return {};
+}
+
 export function issueText(i: Issue): string {
   const key = `issue.${i.rule}${i.rule === 'wedgeMismatch' ? `.${i.vars.side}` : ''}` as Key;
   const items = (i.list ?? []).map((x) => (i.rule === 'programOs' ? t(`os.${x}` as Key) : t(`issue.field.${x}` as Key)));
   const list = new Intl.ListFormat(lang.value, { style: 'long', type: 'conjunction' }).format(items);
   const signal = typeof i.vars.signal === 'string' ? t(`signal.${i.vars.signal}` as Key) : undefined;
-  return t(key, { ...i.vars, ...(signal ? { signal } : {}), list });
+  return t(key, { ...i.vars, ...(signal ? { signal } : {}), ...measures(i), list });
 }
 
 /** Opens the place where the finding can be fixed and selects what it is about. */

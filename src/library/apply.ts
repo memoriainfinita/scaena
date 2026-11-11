@@ -70,6 +70,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     let made: Connection | null;
     [show, made] = addConnection(show, a.id, b.id, link.signal, link.connector === undefined ? undefined : translatePackageText(link.connector, lang));
     if (made && link.toPort !== undefined) show = updateConnection(show, made.id, { toPort: link.toPort, lines: link.lines ?? 1 });
+    if (made && link.wireless) show = updateConnection(show, made.id, { wireless: true });
   }
   // Racks, with what is mounted in them.
   pkg.elements.forEach((pe, i) => {

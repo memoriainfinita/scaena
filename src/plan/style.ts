@@ -9,6 +9,9 @@ export const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = 
   network: { stroke: '#3a6e1a', dash: '2 5' },
 };
 
+/** The dash of a link: its signal's, or short dots for a wireless one. */
+export const linkDash = (c: { signal: SignalType; wireless?: boolean | undefined }): string => (c.wireless ? '1 3' : LINK_STYLE[c.signal].dash);
+
 /** Whether the mounts (bars, pipes, trusses) and their names are drawn: they belong to the lights layer. A show with no such layer shows them. */
 export const mountsShown = (show: Show, isOn: (layerId: string) => boolean): boolean => {
   const layer = show.layers.find((l) => l.subject === 'lights');

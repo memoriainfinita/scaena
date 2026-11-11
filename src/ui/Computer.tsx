@@ -2,6 +2,7 @@
 import { useState } from 'preact/hooks';
 import { addComputerOutput, addProgram, dropConnection, removeComputerOutput, removeProgram, setComputerOutput, setConnection, setFunction, setProgramUse, changeComputer } from '../app/computer-actions.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
+import { inUnits, lengthScale } from '../model/units.ts';
 import { itemById } from '../library/items.ts';
 import { incompatiblePrograms, suggestPrograms } from '../library/programs.ts';
 import { connectionsOf, DEFAULT_CONNECTOR, estimateCableMm, SIGNALS, type SignalType } from '../model/connections.ts';
@@ -169,19 +170,24 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
                 ))}
               </select>
               <input class="input" list={`cables-${c.signal}`} aria-label={`${t('connections.connector')} · ${name}`} value={c.connector} maxLength={40} onChange={(e) => setConnection(c.id, { connector: (e.currentTarget as HTMLInputElement).value })} />
+              <label class="check">
+                <input type="checkbox" checked={!!c.wireless} aria-label={`${t('connections.wireless')} · ${name}`} onChange={(e) => setConnection(c.id, { wireless: (e.currentTarget as HTMLInputElement).checked })} />
+                {t('connections.wireless')}
+              </label>
               <input
                 class="input mono"
                 type="number"
                 min="0"
                 step="0.5"
-                aria-label={`${t('connections.length')} · ${name}`}
-                placeholder={c.lengthMm === null && est !== null ? `≈ ${est / 1000}` : ''}
+                disabled={!!c.wireless}
+                aria-label={`${inUnits(t('connections.length'), show.units)} · ${name}`}
+                placeholder={c.lengthMm === null && est !== null ? `≈ ${Math.round((est / lengthScale(show.units)) * 10) / 10}` : ''}
                 title={c.lengthMm === null ? t('connections.estimate') : undefined}
-                value={c.lengthMm === null ? '' : Math.round(c.lengthMm) / 1000}
+                value={c.lengthMm === null ? '' : Math.round((c.lengthMm / lengthScale(show.units)) * 1000) / 1000}
                 onChange={(e) => {
                   const raw = (e.currentTarget as HTMLInputElement).value;
                   const v = Number(raw);
-                  setConnection(c.id, { lengthMm: raw === '' || !Number.isFinite(v) || v < 0 ? null : Math.round(v * 1000) });
+                  setConnection(c.id, { lengthMm: raw === '' || !Number.isFinite(v) || v < 0 ? null : Math.round(v * lengthScale(show.units)) });
                 }}
               />
               <button type="button" class="pbtn" aria-label={t('connections.remove', { name })} title={t('connections.remove', { name })} onClick={() => dropConnection(c.id)}>
