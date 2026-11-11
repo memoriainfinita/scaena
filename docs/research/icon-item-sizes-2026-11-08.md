@@ -150,3 +150,18 @@ People (`vocals.*`, `person.*`) and rooms (`room.*`) keep their sizes on purpose
 
 The other items those packages use without a size are people, furniture, curtains or notes, which have no datasheet to read.
 
+
+## Fourth pass (2026-11-11): lights
+
+| Item | Size now | Reference product | Source |
+|---|---|---|---|
+| `light.led-panel` | 515 × 196 × 304 | Chauvet COLORado Panel Q40 | https://chauvetprofessional.com/wp-content/uploads/pdf/en/COLORADOPANELQ40.pdf |
+
+Looked up and left as estimates, because the maker's sheet could not be read as text or the figures disagree:
+
+- `light.beam`: Robe Pointe, 575 high with the head vertical, 365 wide, 250 deep (a search summary of Robe's sheet; the PDF at https://cdn.aws.robe.cz/print/en_product_2.pdf is an image and could not be checked)
+- `light.led-profile`: ETC Source Four LED Series 3, 721 × 340 × 478 in one retailer listing (SoundPro) and no axis labels; the ETC sheet came without its dimensions table
+- `light.followspot`: Robert Juliat Lancelot 1021, head 2005 long; height and width did not come through, and the power supply is a separate box (829 × 239 × 535)
+- `light.pc`, `light.scoop`: no sheet found for a specific model (the Altman 153 search returned nothing relevant)
+
+Not looked up: arrangements of several things (`light.ground-row`, `light.tbar`, `light.tree`, `light.footlight`, `light.work`, `light.strip`).

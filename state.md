@@ -136,9 +136,9 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 
 - [ ] Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
 - [ ] Icono de `effect.co2`: en la próxima hoja de iconos que haga falta
-- [ ] Medidas de ficha técnica para el resto de la biblioteca
+- [ ] Medidas de ficha técnica para el resto de la biblioteca. Cuarta pasada (2026-11-11): solo `light.led-panel` se pudo confirmar (Chauvet Q40). Las fichas de Robe y ETC son PDF de imagen o sin tabla de medidas: hace falta leerlas a mano o con OCR. Sin tocar: rack, teclados y percusión
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
 - [ ] Sin comprobar todavía: un PDF real escaneado (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
-- [ ] Glosario: confirmar con una fuente la lista de siglas de posición y contrastar con un diccionario técnico de teatro (`docs/research/glosario-escena.md`)
+- [ ] Glosario: las siglas de posición están confirmadas con fuentes (2026-11-11; la leyenda del PDF explica CS y las combinaciones). Falta contrastar con un manual de escenotecnia en español (`docs/research/glosario-escena.md`)
 - [ ] Idea anotada y no hecha: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos

@@ -55,10 +55,11 @@ Sin fuente hallada. Lectura mía; el usuario corrige.
 
 ## Etiquetas de posición
 
-- Siglas en inglés (DSL, DSR, USL, USR, DSC, USC, SL, SR, CS), con leyenda completa en español
-- [PENDIENTE: confirmar la lista exacta de siglas; no la he leído de una fuente en esta sesión]
+- Siglas en inglés (USR, USC, USL, SR, CS, SL, DSR, DSC, DSL), con leyenda completa en español. Cuadrícula de nueve zonas: profundidad (US fondo, centro, DS proscenio) por lateralidad (derecha, centro, izquierda del artista)
+- Izquierda y derecha se miran desde el artista de cara al público; la sala usa la perspectiva contraria (house left/right). Fuentes: Control Booth (https://www.controlbooth.com/wiki/Up-Stage), Encore Script Notation (https://encore-a-z.pages.dev/01_Production/Guides/Show-Bible/Encore-Script-Notation), AutoCAD for the Theatre (https://autocadtheatre.ccdmd.qc.ca/glossary), Wikipedia (https://en.wikipedia.org/wiki/Stage_directions), consultadas el 2026-11-11
+- Las fuentes no coinciden en el centro: unas usan SR, CC, SL en la fila central y otras CSR, C, CSL. Decisión (2026-11-11, recomendación aceptada): se mantiene la convención de la app (`src/model/position.ts`: SR, CS, SL en la fila central) y las otras quedan como sinónimos. La leyenda del PDF explica CS y cómo se combinan las siglas
 
 ## Pendientes
 
-- [PENDIENTE: contraste con un diccionario técnico de teatro o un manual de tramoya]
+- [PENDIENTE: contraste con un diccionario técnico de teatro o un manual de tramoya en español; candidato sin abrir: Manual de escenotecnia, https://fondosdecultura.cl/wp-content/uploads/2024/05/Manual_escenotecnia.pdf]
 - Tabla de iluminación y sonido: el usuario confirmó el resto de filas el 2026-11-02 («el resto ok»)

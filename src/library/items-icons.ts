@@ -139,7 +139,7 @@ export const ICON_DEFS: Def[] = [
   { id: 'site.bus', category: 'site', layer: 'stage', name: b('Autobús de gira', 'Tour bus'), tags: ['autobús de gira', 'bus', 'tour bus'], w: 2500, d: 12000, h: 2500, symbol: 'generic' },
   { id: 'site.trailer', category: 'site', layer: 'stage', name: b('Remolque', 'Trailer'), tags: ['remolque', 'trailer'], w: 2500, d: 6000, h: 2500, symbol: 'generic' },
   { id: 'light.par64', category: 'light', layer: 'lights', name: b('PAR 64', 'PAR 64'), tags: ['par 64', 'par64'], w: 265, d: 410, h: 345, symbol: 'generic' },
-  { id: 'light.led-panel', category: 'light', layer: 'lights', name: b('Panel LED wash', 'LED wash panel'), tags: ['led panel', 'led wash panel', 'panel led wash'], w: 400, d: 150, h: 300, symbol: 'generic' },
+  { id: 'light.led-panel', category: 'light', layer: 'lights', name: b('Panel LED wash', 'LED wash panel'), tags: ['led panel', 'led wash panel', 'panel led wash'], w: 515, d: 196, h: 304, symbol: 'generic' },
   { id: 'light.led-fresnel', category: 'light', layer: 'lights', name: b('Fresnel LED', 'LED fresnel'), tags: ['fresnel led', 'led fresnel'], w: 250, d: 300, h: 300, symbol: 'generic' },
   { id: 'light.pinspot', category: 'light', layer: 'lights', name: b('Pinspot', 'Pinspot'), tags: ['pinspot'], w: 100, d: 150, h: 300, symbol: 'generic' },
   { id: 'light.uv', category: 'light', layer: 'lights', name: b('Barra de luz negra UV', 'UV blacklight bar'), tags: ['barra de luz negra uv', 'uv', 'uv blacklight bar'], w: 500, d: 150, h: 300, symbol: 'generic' },
