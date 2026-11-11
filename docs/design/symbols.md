@@ -9,4 +9,4 @@ Every library icon is one SVG file: `symbols/<category>/<item id>.svg`.
 - A new item that exists for its icon: add the SVG, add its line in `src/library/items-icons.ts` (id, category, names es/en, real size in mm), run `pnpm symbols`. Two items must not share a drawing.
 - `docs/design/icons-catalog.md` lists every item and whether it has a symbol: `python scripts/build-catalog.py`.
 
-How the first 775 were produced (678 from sheets 1 to 66, 97 from sheets 67 to 74) (GPT sheets, cut and traced) is archived in `archive/symbol-ingest/`; the prompts that worked are in `symbols-gpt-batches-2026-11-07.md` and `symbols-gpt-batches-2026-11-08.md`.
+How the first 843 were produced (678 from sheets 1 to 66, 97 from sheets 67 to 74, 68 from sheets 75 to 81) (GPT sheets, cut and traced) is archived in `archive/symbol-ingest/`; the prompts that worked are in `symbols-gpt-batches-2026-11-07.md` and `symbols-gpt-batches-2026-11-08.md`.
