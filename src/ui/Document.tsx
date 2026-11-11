@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
 import { applyDocTemplate, deleteDocTemplate, docTemplates, MAX_TEMPLATES, saveDocTemplate } from '../app/doc-templates.ts';
-import { addLightPlan, removeLightPlan, setInputsLayout, setPaper, setPlanLegend, setPlanScale, setTemplate, toggleSection, updateLightPlan } from '../app/document-actions.ts';
-import { lightPlanReports, reportLayerIds } from '../document/plan-reports.ts';
+import { addPlanSheet, removePlanSheet, setInputsLayout, setPaper, setPlanLegend, setTemplate, toggleSection, updatePlanSheet } from '../app/document-actions.ts';
+import { planReports, reportLayerIds, reportTags, type SheetKind } from '../document/plan-reports.ts';
 import { session } from '../app/state.ts';
 import { openPdf } from '../background/pdf.ts';
 import { compilePdf, fixPdf } from '../document/compile.ts';
@@ -121,22 +121,12 @@ export function DocumentView({ show }: { show: Show }) {
             ))}
           </select>
         </label>
-        <label class="field">
-          {t('doc.scale')}
-          <select class="input" value={show.document.planScale ?? ''} onChange={(e) => setPlanScale((e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null)}>
-            <option value="">{t('doc.scale.fit')}</option>
-            {SCALES.map((n) => (
-              <option key={n} value={n}>
-                1:{n}
-              </option>
-            ))}
-          </select>
-        </label>
         <label class="check">
           <input type="checkbox" checked={show.document.planLegend !== false} onChange={(e) => setPlanLegend((e.currentTarget as HTMLInputElement).checked)} />
           {t('doc.legend')}
         </label>
-        {sections.includes('lightPlan') && <LightPlanPages show={show} />}
+        {sections.includes('plan') && <PlanSheets show={show} kind="plan" />}
+        {sections.includes('lightPlan') && <PlanSheets show={show} kind="lightPlan" />}
         {sections.includes('inputs') && (
           <>
             <label class="field">
@@ -350,9 +340,11 @@ function DocData({ show }: { show: Show }) {
   );
 }
 
-/** One group of settings per light plot page: its title, scale and the layers it draws. */
-function LightPlanPages({ show }: { show: Show }) {
-  const reports = lightPlanReports(show);
+/** One group of settings per plan sheet: its title, scale, luminaire tags and the layers it draws. */
+function PlanSheets({ show, kind }: { show: Show; kind: SheetKind }) {
+  const reports = planReports(show, kind);
+  const name = t(`sec.${kind}` as Key);
+  const patch = (id: string, p: Parameters<typeof updatePlanSheet>[2]) => updatePlanSheet(kind, id, p);
   return (
     <div class="stackS">
       {reports.map((rep, i) => {
@@ -360,14 +352,14 @@ function LightPlanPages({ show }: { show: Show }) {
         const own = show.reports.some((r) => r.id === rep.id);
         return (
           <fieldset key={rep.id} class="checks col">
-            <legend>{`${t('sec.lightPlan')} ${i + 1}`}</legend>
+            <legend>{`${name} ${i + 1}`}</legend>
             <label class="field">
               {t('doc.lp.title')}
-              <input class="input" type="text" maxLength={80} value={rep.title} onChange={(e) => updateLightPlan(rep.id, { title: (e.currentTarget as HTMLInputElement).value })} />
+              <input class="input" type="text" maxLength={80} value={rep.title} onChange={(e) => patch(rep.id, { title: (e.currentTarget as HTMLInputElement).value })} />
             </label>
             <label class="field">
               {t('doc.scale')}
-              <select class="input" value={rep.scale ?? ''} onChange={(e) => updateLightPlan(rep.id, { scale: (e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null })}>
+              <select class="input" value={rep.scale ?? ''} onChange={(e) => patch(rep.id, { scale: (e.currentTarget as HTMLSelectElement).value ? Number((e.currentTarget as HTMLSelectElement).value) : null })}>
                 <option value="">{t('doc.scale.fit')}</option>
                 {SCALES.map((n) => (
                   <option key={n} value={n}>
@@ -375,6 +367,10 @@ function LightPlanPages({ show }: { show: Show }) {
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              <input type="checkbox" checked={reportTags(rep)} onChange={(e) => patch(rep.id, { tags: (e.currentTarget as HTMLInputElement).checked })} />
+              {t('doc.lp.tags')}
             </label>
             <span class="muted">{t('doc.lp.layers')}</span>
             {show.layers.map((l) => (
@@ -387,22 +383,22 @@ function LightPlanPages({ show }: { show: Show }) {
                     const next = new Set(drawn);
                     if (on) next.add(l.id);
                     else next.delete(l.id);
-                    updateLightPlan(rep.id, { layerPreset: show.layers.filter((x) => next.has(x.id)).map((x) => x.id) });
+                    patch(rep.id, { layerPreset: show.layers.filter((x) => next.has(x.id)).map((x) => x.id) });
                   }}
                 />
                 {l.name}
               </label>
             ))}
             {own && (
-              <button type="button" class="btn" onClick={() => removeLightPlan(rep.id)}>
-                {t('doc.lp.remove')}
+              <button type="button" class="btn" onClick={() => removePlanSheet(rep.id)}>
+                {`${t('doc.lp.remove')} ${name} ${i + 1}`}
               </button>
             )}
           </fieldset>
         );
       })}
-      <button type="button" class="btn" onClick={addLightPlan}>
-        {t('doc.lp.add')}
+      <button type="button" class="btn" onClick={() => addPlanSheet(kind)}>
+        {`${t('doc.lp.add')}: ${name}`}
       </button>
     </div>
   );

@@ -216,6 +216,8 @@ export const ReportConfig = v.object({
   landscape: v.optional(v.boolean(), false),
   scale: v.optional(v.nullable(v.number()), null),
   layerPreset: v.optional(v.array(id), []),
+  /** Luminaire tags on a plan sheet; unset takes the default of the kind. */
+  tags: v.optional(v.boolean()),
 });
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
 export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), linkStyle: v.optional(v.picklist(['routed', 'straight']), 'routed'), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true), rp2Lights: v.optional(v.boolean(), false) });

@@ -74,7 +74,7 @@ describe('Typst source', () => {
     expect(b.sections).not.toContain('schedule');
     expect(b.sections).not.toContain('revisions');
     expect(b.sections).toEqual(expect.arrayContaining(['cover', 'plan', 'inputs', 'outputs']));
-    expect(b.files['/plan.svg']).toBeDefined();
+    expect(b.files['/plan-0.svg']).toBeDefined();
   });
 
   test('hidden contact fields print as a dash and never leak', () => {

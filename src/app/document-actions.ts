@@ -1,6 +1,6 @@
 // Edits of the document settings: template, sections, print scale and paper.
 import { ALL_SECTIONS, effectiveSections, type SectionId, type Template } from '../document/sections.ts';
-import { LIGHT_PLAN, lightPlanReports } from '../document/plan-reports.ts';
+import { planReports, type SheetKind } from '../document/plan-reports.ts';
 import type { ReportConfig, Show } from '../model/schema.ts';
 import { session } from './state.ts';
 
@@ -19,14 +19,13 @@ export const toggleSection = (id: SectionId, on: boolean): void =>
   });
 
 export const setPlanLegend = (planLegend: boolean): void => commit((show) => ({ ...show, document: { ...show.document, planLegend } }));
-export const setPlanScale = (planScale: number | null): void => commit((show) => ({ ...show, document: { ...show.document, planScale } }));
 export const setInputsLayout = (patch: Partial<Show['document']['inputs']>): void => commit((show) => ({ ...show, document: { ...show.document, inputs: { ...show.document.inputs, ...patch } } }));
 export const setPaper = (paper: Show['paper']): void => commit((show) => ({ ...show, paper }));
 
-/** Light plot pages: a report of kind `lightPlan` each. Editing the one a show has by default writes it into the show. */
-export function updateLightPlan(id: string, patch: Partial<Omit<ReportConfig, 'id' | 'kind'>>): void {
+/** Plan sheets: a report of kind `plan` or `lightPlan` each. Editing the one a show has by default writes it into the show. */
+export function updatePlanSheet(kind: SheetKind, id: string, patch: Partial<Omit<ReportConfig, 'id' | 'kind'>>): void {
   commit((show) => {
-    const current = lightPlanReports(show).find((r) => r.id === id);
+    const current = planReports(show, kind).find((r) => r.id === id);
     if (!current) return show;
     const next = { ...current, ...patch };
     const own = show.reports.some((r) => r.id === id);
@@ -34,18 +33,21 @@ export function updateLightPlan(id: string, patch: Partial<Omit<ReportConfig, 'i
   });
 }
 
-export function addLightPlan(): void {
+export function addPlanSheet(kind: SheetKind): void {
   commit((show) => {
-    const used = new Set(show.reports.map((r) => r.id));
-    let n = 1;
-    while (used.has(`lightPlan-${n}`)) n++;
+    const freeId = (taken: Set<string>): string => {
+      let n = 1;
+      while (taken.has(`${kind}-${n}`)) n++;
+      return `${kind}-${n}`;
+    };
     // The default one is written out first, so adding a second keeps the first as it was.
-    const base = show.reports.some((r) => r.kind === LIGHT_PLAN) ? show.reports : [...show.reports, ...lightPlanReports(show).map((r) => ({ ...r, id: `lightPlan-${n++}` }))];
-    const taken = new Set(base.map((r) => r.id));
-    let m = 1;
-    while (taken.has(`lightPlan-${m}`)) m++;
-    return { ...show, reports: [...base, { id: `lightPlan-${m}`, kind: LIGHT_PLAN, title: '', columns: [], landscape: false, scale: null, layerPreset: [] }] };
+    let base = show.reports;
+    if (!base.some((r) => r.kind === kind)) {
+      const taken = new Set(base.map((r) => r.id));
+      base = [...base, ...planReports(show, kind).map((r) => { const id = freeId(taken); taken.add(id); return { ...r, id }; })];
+    }
+    return { ...show, reports: [...base, { id: freeId(new Set(base.map((r) => r.id))), kind, title: '', columns: [], landscape: false, scale: null, layerPreset: [] }] };
   });
 }
 
-export const removeLightPlan = (id: string): void => commit((show) => ({ ...show, reports: show.reports.filter((r) => r.id !== id) }));
+export const removePlanSheet = (id: string): void => commit((show) => ({ ...show, reports: show.reports.filter((r) => r.id !== id) }));

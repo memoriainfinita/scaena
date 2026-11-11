@@ -38,8 +38,28 @@ test.describe('PDF rider', () => {
     const before = await pagesOf();
     await expect(page.getByRole('group', { name: 'Plano de luces 1' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Plano de luces 1' }).getByRole('checkbox', { name: 'Audio' })).not.toBeChecked();
-    await page.getByRole('button', { name: 'Añadir una hoja de plano de luces' }).click();
+    await page.getByRole('button', { name: 'Añadir una hoja: Plano de luces' }).click();
     await expect(page.getByRole('group', { name: 'Plano de luces 2' })).toBeVisible();
+    await expect.poll(pagesOf, { timeout: 90_000 }).toBe(before + 1);
+    expect((await axe(page)).violations).toEqual([]);
+  });
+
+  test('the stage plan can be split in sheets with their own layers, and editing the default one writes it out @a11y', async ({ page }) => {
+    await open(page, /Banda de rock/);
+    const status = page.getByRole('status').filter({ hasText: /\d+ páginas/ });
+    await expect(status).toBeVisible({ timeout: 90_000 });
+    const pagesOf = async () => Number(/(\d+) páginas/.exec((await status.textContent()) ?? '')![1]);
+    const before = await pagesOf();
+    const one = page.getByRole('group', { name: 'Plano del escenario 1' });
+    await expect(one).toBeVisible();
+    await expect(one.getByRole('checkbox', { name: 'Rótulos de luminaria' })).not.toBeChecked();
+    await page.getByRole('button', { name: 'Añadir una hoja: Plano del escenario' }).click();
+    await expect(page.getByRole('group', { name: 'Plano del escenario 2' })).toBeVisible();
+    await expect.poll(pagesOf, { timeout: 90_000 }).toBe(before + 1);
+    await page.getByRole('button', { name: 'Añadir una hoja: Plano del escenario' }).click();
+    await expect(page.getByRole('group', { name: 'Plano del escenario 3' })).toBeVisible();
+    await expect.poll(pagesOf, { timeout: 90_000 }).toBe(before + 2);
+    await page.getByRole('button', { name: 'Quitar la hoja Plano del escenario 3' }).click();
     await expect.poll(pagesOf, { timeout: 90_000 }).toBe(before + 1);
     expect((await axe(page)).violations).toEqual([]);
   });
@@ -143,6 +163,7 @@ test('the document details are edited in the document view and clear the matchin
 });
 
 test('the full example opens with its venue plan, logo and revisions, and prints every section', async ({ page }) => {
+  test.setTimeout(240_000); // The full example is 15 pages: compiling it takes a while.
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');

@@ -13,7 +13,7 @@ import { fixtureById } from '../library/models.ts';
 import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
 import { planSvg, type PlanSvgOptions } from './plan-svg.ts';
-import { LIGHT_PLAN, lightPlanReports, reportLayerIds } from './plan-reports.ts';
+import { LIGHT_PLAN, PLAN, planReports, reportLayerIds, reportTags, sheetTitle } from './plan-reports.ts';
 import { buildReport, cableText } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
@@ -265,10 +265,8 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       parts.push(heading(P.hospitality) + keyValueTable(hospitalityRows(show, P)) + '\n');
     } else if (s === 'contract') {
       parts.push(heading(P.contract) + keyValueTable(contractRows(show, P)) + '\n');
-    } else if (s === 'plan') {
-      parts.push(planPage('plan', D.plan, { planScale: show.document.planScale }));
-    } else if (s === LIGHT_PLAN) {
-      lightPlanReports(show).forEach((rep, n) => parts.push(planPage(`lightplan-${n}`, rep.title || D.lightPlan, { planScale: rep.scale, layerIds: reportLayerIds(show, rep), fixtureTags: true })));
+    } else if (s === PLAN || s === LIGHT_PLAN) {
+      planReports(show, s).forEach((rep, n) => parts.push(planPage(`${s}-${n}`, sheetTitle(rep, s === PLAN ? D.plan : D.lightPlan, n), { planScale: rep.scale, layerIds: reportLayerIds(show, rep), fixtureTags: reportTags(rep) })));
     } else if (s === 'inputs') {
       const list = channelList(show);
       const rows = list.map((ch) => {

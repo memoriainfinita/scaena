@@ -7,7 +7,7 @@ import { paperText, plotTexts, tagKey } from '../plan/labels.ts';
 import { planBox } from '../plan/geometry.ts';
 import { effectiveSections } from './sections.ts';
 import { planSvg } from './plan-svg.ts';
-import { LIGHT_PLAN, lightPlanReports, reportLayerIds } from './plan-reports.ts';
+import { LIGHT_PLAN, PLAN, planReports, reportLayerIds, reportTags, sheetTitle } from './plan-reports.ts';
 import { buildDocument } from './typst-source.ts';
 
 const theatre = () => bare(showFromPackage(packageById('theatre')!, 'Teatro', 'es'));
@@ -17,13 +17,13 @@ const opts = { availWidthMm: 267, availHeightMm: 150, planScale: null, lang: 'es
 describe('light plot reports', () => {
   test('a show with none has the default one, and a preset keeps only layers the show has', () => {
     const show = theatre();
-    expect(lightPlanReports(show)).toHaveLength(1);
+    expect(planReports(show, LIGHT_PLAN)).toHaveLength(1);
     const lights = show.layers.find((l) => l.subject === 'lights')!;
     const audio = show.layers.find((l) => l.subject === 'audio')!;
-    const defaults = reportLayerIds(show, lightPlanReports(show)[0]!);
+    const defaults = reportLayerIds(show, planReports(show, LIGHT_PLAN)[0]!);
     expect(defaults.has(lights.id)).toBe(true);
     expect(defaults.has(audio.id)).toBe(false);
-    const own = { ...lightPlanReports(show)[0]!, layerPreset: [audio.id, 'gone'] };
+    const own = { ...planReports(show, LIGHT_PLAN)[0]!, layerPreset: [audio.id, 'gone'] };
     expect([...reportLayerIds(show, own)]).toEqual([audio.id]);
   });
 
@@ -73,10 +73,42 @@ describe('the document', () => {
     const show = { ...theatre(), date: '2026-11-11', titleBlock: { production: 'Obra X', author: 'Oficina', venue: 'Sala Y', logo: null } };
     const two = { ...show, reports: [{ id: 'a', kind: LIGHT_PLAN, title: 'Luces sala', columns: [], landscape: false, scale: null, layerPreset: [] }, { id: 'b', kind: LIGHT_PLAN, title: '', columns: [], landscape: false, scale: 100, layerPreset: [] }] };
     const b = buildDocument({ ...two, document: { ...two.document, template: 'custom', sections: ['plan', LIGHT_PLAN] } }, {});
-    expect(Object.keys(b.files)).toEqual(expect.arrayContaining(['/plan.svg', '/lightplan-0.svg', '/lightplan-1.svg']));
+    expect(Object.keys(b.files)).toEqual(expect.arrayContaining(['/plan-0.svg', '/lightPlan-0.svg', '/lightPlan-1.svg']));
     expect(b.source).toContain('Luces sala');
     expect(b.source).toContain('Plano de luces');
     for (const text of ['Obra X', 'Sala Y', 'Oficina', '2026-11-11']) expect(b.source.split(text).length - 1).toBeGreaterThanOrEqual(3);
     expect(b.source).toContain('1:100');
+  });
+});
+
+describe('plan sheets', () => {
+  const sheet = (id: string, over: Record<string, unknown> = {}) => ({ id, kind: PLAN, title: '', columns: [], landscape: false, scale: null, layerPreset: [], ...over });
+
+  test('a show with no stage plan reports has the single sheet older files print, with its scale and the visible layers', () => {
+    const show = { ...rock(), document: { ...rock().document, planScale: 50 }, layers: rock().layers.map((l, i) => ({ ...l, visible: i === 0 })) };
+    const [only, ...rest] = planReports(show, PLAN);
+    expect(rest).toEqual([]);
+    expect(only!.scale).toBe(50);
+    expect([...reportLayerIds(show, only!)]).toEqual([show.layers[0]!.id]);
+    expect(reportTags(only!)).toBe(false);
+    expect(reportTags(planReports(show, LIGHT_PLAN)[0]!)).toBe(true);
+    expect(reportTags({ ...only!, tags: true })).toBe(true);
+  });
+
+  test('sheets of the same kind are numbered from the second on, unless they have a title', () => {
+    expect([0, 1, 2].map((n) => sheetTitle(sheet('x'), 'Plano', n))).toEqual(['Plano', 'Plano 2', 'Plano 3']);
+    expect(sheetTitle(sheet('x', { title: 'Sonido' }), 'Plano', 1)).toBe('Sonido');
+  });
+
+  test('three stage plan sheets with different layers make three pages, each drawing only its layers', () => {
+    const show = rock();
+    const by = (subject: string) => show.layers.filter((l) => l.subject === subject).map((l) => l.id);
+    const reports = [sheet('p1', { title: 'Solo sonido', layerPreset: by('audio') }), sheet('p2', { layerPreset: by('stage') }), sheet('p3', { scale: 100 })];
+    const b = buildDocument({ ...show, reports, document: { ...show.document, template: 'custom', sections: [PLAN] } }, {});
+    expect(Object.keys(b.files).filter((f) => /^\/plan-\d\.svg$/.test(f)).sort()).toEqual(['/plan-0.svg', '/plan-1.svg', '/plan-2.svg']);
+    expect(b.source).toContain('Solo sonido');
+    expect(b.source).toContain('Plano del escenario 2');
+    const text = (k: string) => new TextDecoder().decode(b.files[`/${k}.svg`] as Uint8Array);
+    expect(text('plan-0').length).not.toBe(text('plan-1').length);
   });
 });
