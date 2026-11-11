@@ -24,6 +24,15 @@ Fuentes: glosario de la cualificación IMS442_3, Regiduría de espectáculos en 
 | Practicable | Elemento de decorado tridimensional, ligero, que soporta personas u objetos | INCUAL |
 | Rider | Documento con las necesidades técnicas de iluminación y sonido: planta de iluminación, distribución de instrumentos y lista de canales de audio y focos | INCUAL |
 | Cámara negra | Conjunto de patas, bambalinas y telón de fondo en tela negra | Wikipedia (Aforada) |
+| Hombros | Zonas laterales del escenario que el público no ve | Manual de escenotecnia (CNCA, Chile) |
+| Foso | Espacio que suele ocupar la orquesta que acompaña en vivo | Manual de escenotecnia |
+| Trampas o escotillas | Accesos temporales desde debajo del escenario | Manual de escenotecnia |
+| Telón de boca | Telón principal que cubre toda la boca y separa sala y escenario | Manual de escenotecnia |
+| Telón de fondo | Telón negro del fondo del escenario, que permite circular detrás | Manual de escenotecnia |
+| Ciclorama | Telón de fondo blanco o gris para proyectar luz y dar profundidad | Manual de escenotecnia |
+| Tul | Telón de velo: opaco iluminado por delante, translúcido con luz detrás | Manual de escenotecnia |
+| Telón cortafuegos | Telón corpóreo de hierro que sella la caja escénica en un incendio | Manual de escenotecnia |
+| Puente frontal, portal y laterales | Frontal: luz para las caras, a unos 45° del actor en la boca. Portal: justo detrás de la embocadura, cubre la mitad trasera. Laterales: trabajo y apoyo a las maniobras | Manual de escenotecnia |
 | Telón griego / alemán | Griego se abre por los lados; alemán sube y baja | Wikipedia (Telón) |
 
 ## Sinónimos regionales (para la búsqueda)
@@ -61,5 +70,6 @@ Sin fuente hallada. Lectura mía; el usuario corrige.
 
 ## Pendientes
 
-- [PENDIENTE: contraste con un diccionario técnico de teatro o un manual de tramoya en español; candidato sin abrir: Manual de escenotecnia, https://fondosdecultura.cl/wp-content/uploads/2024/05/Manual_escenotecnia.pdf]
+- Contrastado el 2026-11-11 con el Manual de escenotecnia del CNCA de Chile (https://fondosdecultura.cl/wp-content/uploads/2024/05/Manual_escenotecnia.pdf): confirma los términos del escenario y añade los de las filas anteriores. No da siglas de posición y dice que en Chile los lados no tienen nombre común (se usan referencias geográficas), y que la nomenclatura de izquierda y derecha cambia por país: respalda mantener las siglas en inglés con leyenda
+- [PENDIENTE: contraste de la parte de luminarias y sonido con un diccionario técnico en español]
 - Tabla de iluminación y sonido: el usuario confirmó el resto de filas el 2026-11-02 («el resto ok»)
