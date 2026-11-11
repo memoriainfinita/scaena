@@ -14,6 +14,6 @@ await page.locator('svg.plansvg').waitFor();
 await page.mouse.move(5, 5);
 await page.screenshot({ path: 'test-results/live-plot-en-dark.png' });
 await page.getByRole('button', { name: 'Document', exact: true }).click();
-await page.getByRole('img', { name: 'Page 1' }).waitFor({ timeout: 120000 });
+await page.getByRole('img', { name: 'Page 1', exact: true }).waitFor({ timeout: 120000 });
 await page.screenshot({ path: 'test-results/live-document-en-dark.png' });
 await browser.close();

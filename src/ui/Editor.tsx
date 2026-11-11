@@ -47,7 +47,7 @@ export function Editor() {
       <div class="body">
         {onPlan && <Toolbar />}
         {onPlan && <Library />}
-        <main class="canvas" aria-label={t('canvas.label')} tabIndex={-1}>
+        <main class="canvas" aria-label={onPlan ? t('canvas.label') : t(`view.${view.value}` as Key)} tabIndex={-1}>
           <MainView show={s.show.value} />
         </main>
         {onPlan && <Inspector show={s.show.value} />}
@@ -133,18 +133,18 @@ function Tabs({ show }: { show: Show }) {
 }
 
 function Toolbar() {
-  const tools: { id: ToolId; key: Key; icon: preact.JSX.Element; enabled: boolean }[] = [
-    { id: 'select', key: 'tool.select', icon: <IconSelect />, enabled: true },
-    { id: 'pan', key: 'tool.pan', icon: <IconPan />, enabled: true },
-    { id: 'connect', key: 'tool.connect', icon: <IconConnect />, enabled: true },
-    { id: 'text', key: 'tool.text', icon: <IconText />, enabled: true },
-    { id: 'measure', key: 'tool.measure', icon: <IconMeasure />, enabled: true },
-    { id: 'background', key: 'tool.background', icon: <IconBackground />, enabled: true },
+  const tools: { id: ToolId; key: Key; icon: preact.JSX.Element }[] = [
+    { id: 'select', key: 'tool.select', icon: <IconSelect /> },
+    { id: 'pan', key: 'tool.pan', icon: <IconPan /> },
+    { id: 'connect', key: 'tool.connect', icon: <IconConnect /> },
+    { id: 'text', key: 'tool.text', icon: <IconText /> },
+    { id: 'measure', key: 'tool.measure', icon: <IconMeasure /> },
+    { id: 'background', key: 'tool.background', icon: <IconBackground /> },
   ];
   return (
     <div class="toolbar" role="toolbar" aria-label={t('tools.label')} aria-orientation="vertical">
       {tools.map((x) => (
-        <button key={x.id} type="button" class="tool" aria-pressed={tool.value === x.id} aria-label={t(x.key)} title={x.enabled ? t(x.key) : `${t(x.key)} · ${t('export.soon')}`} disabled={!x.enabled} onClick={() => (x.id === 'background' ? (dialog.value = 'background') : (tool.value = x.id))}>
+        <button key={x.id} type="button" class="tool" aria-pressed={tool.value === x.id} aria-label={t(x.key)} title={t(x.key)} onClick={() => (x.id === 'background' ? (dialog.value = 'background') : (tool.value = x.id))}>
           {x.icon}
         </button>
       ))}
@@ -225,13 +225,7 @@ function MainView({ show }: { show: Show }) {
   if (v === 'lights') return <LightsView show={show} />;
   if (v === 'document') return <DocumentView show={show} />;
   if (v === 'reports') return <ReportsView show={show} />;
-  if (v === 'production') return <ProductionView show={show} />;
-  return (
-    <div class="placeholder">
-      <strong>{t(`view.${v}` as Key)}</strong>
-      <span class="muted">{t('view.soon')}</span>
-    </div>
-  );
+  return <ProductionView show={show} />;
 }
 
 const DEFAULT_LAYER_IDS = new Set(['l-stage', 'l-audio', 'l-lights', 'l-electrical', 'l-control', 'l-notes', 'l-background']);

@@ -342,3 +342,13 @@ test('a wireless link has no length', async ({ page }) => {
   await expect(radio).toBeChecked();
   await expect(page.getByLabel(/^Longitud \(m\) · /).first()).toBeDisabled();
 });
+
+test('the main region is named after the view that is open', async ({ page }) => {
+  await rock(page);
+  await expect(page.getByRole('main', { name: 'Plano del escenario' })).toBeVisible();
+  await page.getByRole('button', { name: 'Entradas', exact: true }).click();
+  await expect(page.getByRole('main', { name: 'Entradas' })).toBeVisible();
+  await expect(page.getByRole('main', { name: 'Plano del escenario' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Luces', exact: true }).click();
+  await expect(page.getByRole('main', { name: 'Luces' })).toBeVisible();
+});

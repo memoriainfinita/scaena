@@ -22,6 +22,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Grupo 2 de la auditoría hecho el 2026-11-11 (`docs/design/grupo-2-legibilidad-2026-11-11.md`): escena común para editor y PDF, cables enrutados en ángulo recto alrededor de los elementos (`view.linkStyle`, botón «Cables rectos»), textos que evitan cables y varas, halo blanco en el PDF, magic sheet sin cortes, varas según la capa de luces, y las salas laterales de la muestra completa fuera de sus butacas. Cruces cable-elemento en el editor: de 106 a 0 en rock, de 81 a 0 en teatro. Commit del 2026-11-11
 - Hojas de plano por capas hechas el 2026-11-11 (`docs/design/plan-sheets-2026-11-11.md`): `plan` y `lightPlan` usan el mismo informe y el mismo panel (`PlanSheets`), cualquier número de hojas, `tags` por hoja; el archivo sin informes `plan` imprime la hoja única de siempre. Commit del 2026-11-11
 - Grupo 3 hecho el 2026-11-11 (`docs/design/grupo-3-numeros-2026-11-11.md`): módulo `src/model/units.ts` (unidades y números por idioma en inspector, diálogos, avisos, informes y PDF), escalas de arquitectura en imperial, recuento de montaje sin barra suelta, `Connection.wireless`. Commit del 2026-11-11
+- Grupo 4 hecho el 2026-11-11 (`docs/design/grupo-4-restos-2026-11-11.md`): botón de importar fondo en el inicio activo, `view.soon`/`export.soon` fuera, comentarios de `state.ts` en su sitio, la zona principal con el nombre de la vista, scripts `live-*` con `exact`. Commit del 2026-11-11
 - Auditoría del 2026-11-09 (solo lectura, sobre PDF y capturas generados ese día de teatro, rock y muestra completa): la base técnica es sólida y la amplitud prometida existe, pero la app no está terminada. El plano impreso no llega a nivel profesional y hay funciones aceptadas a medias. Los hallazgos están en TODO, grupos 1 a 4. Sin comprobar en la auditoría: e2e completos, móvil, rendimiento y la versión en inglés
 - Pruebas: 513 unitarias, tipos y lint limpios (2026-11-09); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
@@ -41,7 +42,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - [principios] Para la humanidad, por la humanidad. Sin límites de presupuesto ni de tiempo. Open source y gratuito. Sin MVP: app profesional, pulida y completa desde el principio. Confirmed 2026-10.
 - [docs] `docs/design/`, `docs/research/` e `investigacion.md`, y todo documento escrito antes del 2026-11-07 (como `grupo-e` y `grupo-f`), se quedan en español; toda documentación nueva va en inglés. Confirmed 2026-11.
 - [pruebas] Playwright sirve `dist`: `pnpm build` antes de cada e2e; nunca dos ejecuciones de Playwright a la vez (comparten el puerto 4184). Confirmed 2026-11.
-- [pruebas por niveles] Mientras se escribe: `pnpm typecheck` y `vitest` de los archivos afectados. Al cerrar un paso: unitarias completas y solo el e2e del área tocada (`playwright test e2e/<archivo>.spec.ts --project=app`). Al cerrar un grupo, antes de commit o push: todo Firefox. Chrome, móvil y `app-light`, solo antes de una versión o si el cambio toca el dibujo del plano. La CI lo pasa todo. Confirmed 2026-11-11.
+- [pruebas por niveles] Mientras se escribe: `pnpm typecheck` y `vitest` de los archivos afectados. Al cerrar un paso: unitarias completas y solo el e2e del área tocada (`playwright test e2e/<archivo>.spec.ts --project=app`). Al cerrar un grupo, antes de commit o push: si el grupo cambia el modelo, el plano o el documento, todo Firefox; si solo toca cosas aisladas, el e2e de las áreas tocadas más unas pocas pruebas de humo, y el completo queda para la CI tras el push (cambio del 2026-11-11). Chrome, móvil y `app-light`, solo antes de una versión o si el cambio toca el dibujo del plano. La CI lo pasa todo. Confirmed 2026-11-11.
 - [capturas] `node scripts/screenshots.mjs en|es` regenera las de la guía tras `pnpm build`; `node scripts/readme-shots.mjs`, las del README. Confirmed 2026-11.
 
 ## Preferences
@@ -118,14 +119,14 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 - [x] Escalas de impresión imperiales: solo existen 1:25, 1:50, 1:100 y 1:200
 - [x] El modelo no distingue un enlace inalámbrico de un cable: las diademas del ejemplo de teatro salen con un «cable» de 10 m y la columna Cables queda irregular
 
-### Grupo 4: restos, registro y versión
+### Grupo 4: restos, registro y versión (hecho 2026-11-11 salvo publicar, `docs/design/grupo-4-restos-2026-11-11.md`)
 
-- [ ] Botón «Importar PDF o DXF como fondo» desactivado para siempre en la pantalla de inicio (`src/ui/Start.tsx`), con tooltip de un paso anterior
-- [ ] Textos residuales `view.soon` y `export.soon`; comentarios huérfanos en `src/app/state.ts`
-- [ ] La zona principal se anuncia como «Plano del escenario» en todas las vistas
-- [ ] `scripts/live-check.mjs` y `scripts/live-look.mjs` fallan con PDF de 10 páginas o más: buscan «Página 1» sin `exact`
-- [ ] Versión 0.1.0 sin tag ni release, con todo lo «Unreleased» del CHANGELOG ya publicado
-- [ ] `docs/design/plan-2026-11-05.md` habla de 15 reglas de validación; hay 34
+- [x] Botón «Importar PDF o DXF como fondo» desactivado para siempre en la pantalla de inicio (`src/ui/Start.tsx`), con tooltip de un paso anterior
+- [x] Textos residuales `view.soon` y `export.soon`; comentarios huérfanos en `src/app/state.ts`
+- [x] La zona principal se anuncia como «Plano del escenario» en todas las vistas
+- [x] `scripts/live-check.mjs` y `scripts/live-look.mjs` fallan con PDF de 10 páginas o más: buscan «Página 1» sin `exact`
+- [ ] Publicar 0.1.0: el CHANGELOG ya lo recoge como `0.1.0 (2026-11-11)`; falta el tag `v0.1.0` (local tras el commit), subirlo y crear la release en GitHub, cuando el usuario lo diga
+- [x] `docs/design/plan-2026-11-05.md` habla de 15 reglas de validación; hay 34
 
 ### Ampliación del grupo 1: hojas de plano por capas (hecha 2026-11-11, `docs/design/plan-sheets-2026-11-11.md`)
 

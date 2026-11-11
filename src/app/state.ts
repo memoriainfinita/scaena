@@ -288,11 +288,6 @@ export async function goHome(): Promise<void> {
 
 // ---- edits used by the shell ----
 
-/**
- * Places a library item: where the user dropped it, or in the first free spot near the middle of the stage. An item that
- * comes with suggested channels (a drum kit, a vocal mic) also adds them to the input list, tied to it, in the same undo step.
- */
-/** Layer that receives new library items; null means each item goes to the layer of its own kind. */
 /** Width in pixels of a side panel on wide screens: dragged from its edge, remembered in this browser. */
 export interface Pane {
   width: { value: number };
@@ -329,8 +324,13 @@ export const libraryPane = pane('scaena.libraryWidth', 280, 200, 480);
 
 /** Custom layer being dragged in the layers list. */
 export const dragLayer = signal<string | null>(null);
+/** Layer that receives new library items; null means each item goes to the layer of its own kind. */
 export const activeLayer = signal<string | null>(null);
 
+/**
+ * Places a library item: where the user dropped it, or in the first free spot near the middle of the stage. An item that
+ * comes with suggested channels (a drum kit, a vocal mic) also adds them to the input list, tied to it, in the same undo step.
+ */
 export function addFromLibrary(itemId: string, at?: { x: number; y: number }): string | null {
   const s = session.value;
   const item = itemById(itemId);

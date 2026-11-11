@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 (2026-11-11)
+
+First public version: the first complete version of 2026-11-05 and everything added since.
+
+### Added since 2026-11-05
 
 - **Plot:** cables go around the elements in right angles (or straight, from the bottom bar), texts keep clear of cables and bars and have a white edge in the PDF, and the editor and the PDF share one scene; labels, mount names and connector texts place themselves so they do not collide, on screen and in the PDF, with a leader line when a label lands far from its element; any element label can be dragged to where you want it; venue DXF import draws ellipses, splines, curved polylines, scaled and mirrored blocks, rotated and aligned text, and leaves out hidden layers and paper space; the symbol legend goes beside the plan when that prints it larger; free-form stage with draggable points, proscenium, reference lines and permanent dimensions; venue background moved with the mouse; plot export to DXF; view toggles for labels, outlines and connection lines; resizable library and inspector panels; elements resized from the inspector; "swap for another of the same kind".
 - **Library:** 775 line-art symbols, one SVG per item in `symbols/<category>/`, with a category filter; own layers and own items (SVG cleaned by a closed list); 653 fixtures from the Open Fixture Library with their DMX modes; dragging from the library to the plot; placing an element with suggested channels creates them; typical power for everything that plugs in; datasheet sizes with their source for the most-used items.
@@ -12,11 +16,9 @@
 - **Warnings:** 34 rules (`channelNotCabled`, `outputNotCabled`, `dmxChainLong`, `networkLoop`, `universeRepeated`, `dmxBeyond`, `duplicatePatch`, `connectionMismatch`, `cableTooLong`, `ipDuplicate`, `stageCrossing`, `portTaken`, `portRange`, `patchMismatch`, `cableLinesShort` added); any warning can be muted.
 - **Lights as RP-2 symbols:** a view toggle that draws luminaires as top-view outlines on the plot and in the PDF; on in the theatre example; the DXF always uses them.
 - **Examples:** a full showcase that uses every feature, checked by a test so it stays complete, with a venue plan, a logo and two saved revisions; the 7 packages rewritten with complete data (cables, PA, desk, power, production, mixes, DMX addresses and universes, IPs); the rock band's keyboard goes through a stereo DI, the hi-hat has a small-diaphragm condenser and the DMX runs as one chain.
-- **Interface:** app defaults and grid settings; phone in landscape with a view rail.
+- **Interface:** the start screen imports a PDF or DXF as the background of a new show, and the main region is named after the view that is open; app defaults and grid settings; phone in landscape with a view rail.
 
-## 0.1.0 (published 2026-11-05)
-
-First complete version.
+### First complete version (2026-11-05)
 
 - **Plot:** interactive 2D plan (camera, selection, drag with grid snap, align and distribute, groups, layers with dim and lock, measure, text), cables between elements, venue plan background from PDF or DXF with two-point calibration.
 - **Library:** 48 symbols drawn for scaena, 29 lighting models and 28 audio models with sources, 7 show packages, 16 electrical regions, 62 programs.

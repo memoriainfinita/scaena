@@ -126,3 +126,11 @@ test('a locked background cannot be moved with the mouse', async ({ page }) => {
   await page.getByLabel('Bloqueado').check();
   await expect(page.getByRole('button', { name: 'Mover con el ratón' })).toBeDisabled();
 });
+
+test('the start screen imports a plan as background into a new empty show', async ({ page }) => {
+  await page.goto('/');
+  const button = page.getByRole('button', { name: 'Importar PDF o DXF como fondo' });
+  await expect(button).toBeEnabled();
+  await button.click();
+  await expect(page.getByRole('dialog', { name: 'Fondo de plano' })).toBeVisible();
+});

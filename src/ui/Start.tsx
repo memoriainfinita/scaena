@@ -105,7 +105,16 @@ export function Start() {
             <button type="button" class="btn primary" style="height:40px;justify-content:center" onClick={() => fileInput.current?.click()}>
               {t('start.open')}
             </button>
-            <button type="button" class="btn" style="height:40px;justify-content:center" disabled title={t('start.import.tip')}>
+            <button
+              type="button"
+              class="btn"
+              style="height:40px;justify-content:center"
+              onClick={() => {
+                // A new empty show to put the plan on, with the background dialog already open.
+                startEmpty(t('top.untitled'));
+                dialog.value = 'background';
+              }}
+            >
               {t('start.import')}
             </button>
             {err && (

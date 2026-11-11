@@ -132,7 +132,6 @@ textarea.input { height: auto; padding: 8px 10px; resize: vertical; }
 .scalebar span { height: 4px; border: 1.5px solid currentColor; border-top: 0; display: block; }
 .el:focus-visible { outline: none; }
 .el:focus-visible .hit { stroke: #0b6e78; stroke-width: 3; stroke-dasharray: 8 5; }
-.placeholder { max-width: 460px; padding: 28px; background: var(--panel); border: 1px dashed var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 8px; }
 .inspector { position: relative; flex: 0 0 var(--pane-w, 360px); background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; overflow: auto; }
 .panel { padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 .panel h2 { margin: 0; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
