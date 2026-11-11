@@ -9,13 +9,13 @@ const ch = (name: string, mic: string, stand: string, phantom = false): Suggeste
 export const MORE_DEFS: Def[] = [
   // Percussion
   { id: 'perc.congas', category: 'drums', layer: 'audio', name: b('Congas', 'Congas'), tags: ['congas', 'percusión', 'percussion'], w: 900, d: 700, h: 762, symbol: 'congas', channels: [ch('Congas', 'sennheiser.e604', 'Pinza')] },
-  { id: 'perc.cajon', category: 'drums', layer: 'audio', name: b('Cajón', 'Cajón'), tags: ['cajón', 'percusión', 'percussion'], w: 500, d: 600, h: 500, symbol: 'cajon', channels: [ch('Cajón', 'shure.sm57', 'Pie corto')] },
+  { id: 'perc.cajon', category: 'drums', layer: 'audio', name: b('Cajón', 'Cajón'), tags: ['cajón', 'percusión', 'percussion'], w: 305, d: 305, h: 457, symbol: 'cajon', channels: [ch('Cajón', 'shure.sm57', 'Pie corto')] },
   { id: 'perc.table', category: 'drums', layer: 'audio', name: b('Mesa de percusión', 'Percussion table'), tags: ['percusión', 'mesa', 'shaker', 'percussion'], w: 1800, d: 900, h: 900, symbol: 'percussionTable', channels: [ch('Percusión L', 'akg.c414xlii', 'Pie largo', true), ch('Percusión R', 'akg.c414xlii', 'Pie largo', true)] },
   { id: 'kit.drums-electronic', category: 'drums', layer: 'audio', name: b('Batería electrónica', 'Electronic drum kit'), tags: ['batería electrónica', 'pads', 'electronic'], w: 1315, d: 1100, h: 1200, symbol: 'drumsElectronic', channels: [ch('Batería L', 'radial.jdi', ''), ch('Batería R', 'radial.jdi', '')] },
 
   // Guitars, bass and pedals
-  { id: 'guitar.electric', category: 'guitar', layer: 'audio', name: b('Guitarrista eléctrico', 'Electric guitarist'), tags: ['guitarra eléctrica', 'guitarrista', 'electric guitar'], w: 900, d: 900, h: 1000, symbol: 'guitarist' },
-  { id: 'guitar.bass', category: 'guitar', layer: 'audio', name: b('Bajista', 'Bass player'), tags: ['bajo', 'bajista', 'bass'], w: 900, d: 900, h: 1000, symbol: 'bassist' },
+  { id: 'guitar.electric', category: 'guitar', layer: 'audio', name: b('Guitarrista eléctrico', 'Electric guitarist'), tags: ['guitarra eléctrica', 'guitarrista', 'electric guitar'], w: 900, d: 900, h: 1700, symbol: 'guitarist' },
+  { id: 'guitar.bass', category: 'guitar', layer: 'audio', name: b('Bajista', 'Bass player'), tags: ['bajo', 'bajista', 'bass'], w: 900, d: 900, h: 1700, symbol: 'bassist' },
   { id: 'guitar.pedalboard', category: 'guitar', layer: 'audio', name: b('Pedalera', 'Pedalboard'), tags: ['pedalera', 'pedales', 'pedalboard'], w: 700, d: 350, h: 100, symbol: 'pedalboard' },
   { id: 'amp.stack', category: 'amp', layer: 'audio', name: b('Pantalla de guitarra 4×12', 'Guitar cabinet 4×12'), tags: ['pantalla', 'cabinet', 'stack', 'marshall', '4x12'], w: 770, d: 365, h: 755, symbol: 'ampStack', channels: [ch('Guitarra', 'shure.sm57', 'Pie corto')] },
 
@@ -25,18 +25,18 @@ export const MORE_DEFS: Def[] = [
   { id: 'keys.organ', category: 'keys', layer: 'audio', name: b('Órgano', 'Organ'), tags: ['órgano', 'hammond', 'organ'], w: 1308, d: 711, h: 965, symbol: 'organ', channels: [ch('Órgano L', 'radial.jdi', ''), ch('Órgano R', 'radial.jdi', '')] },
 
   // Strings
-  { id: 'strings.violin', category: 'strings', layer: 'audio', name: b('Violín o viola', 'Violin or viola'), tags: ['violín', 'viola', 'violin'], w: 700, d: 700, h: 1000, symbol: 'violin', channels: [ch('Violín', 'shure.sm81', 'Pie recto', true)] },
+  { id: 'strings.violin', category: 'strings', layer: 'audio', name: b('Violín o viola', 'Violin or viola'), tags: ['violín', 'viola', 'violin'], w: 700, d: 700, h: 1700, symbol: 'violin', channels: [ch('Violín', 'shure.sm81', 'Pie recto', true)] },
   { id: 'strings.cello', category: 'strings', layer: 'audio', name: b('Violonchelo', 'Cello'), tags: ['violonchelo', 'chelo', 'cello'], w: 700, d: 900, h: 1100, symbol: 'cello', channels: [ch('Chelo', 'shure.sm81', 'Pie recto', true)] },
   { id: 'strings.harp', category: 'strings', layer: 'audio', name: b('Arpa', 'Harp'), tags: ['arpa', 'harp'], w: 900, d: 1000, h: 1800, symbol: 'harp', channels: [ch('Arpa', 'akg.c414xlii', 'Pie recto', true)] },
 
   // Winds
-  { id: 'winds.sax', category: 'winds', layer: 'audio', name: b('Saxofón', 'Saxophone'), tags: ['saxofón', 'saxo', 'sax'], w: 600, d: 700, h: 1000, symbol: 'sax', channels: [ch('Saxo', 'sennheiser.e906', 'Pie recto')] },
-  { id: 'winds.brass', category: 'winds', layer: 'audio', name: b('Trompeta', 'Trumpet'), tags: ['trompeta', 'metal', 'trumpet', 'brass'], w: 500, d: 700, h: 1000, symbol: 'brass', channels: [ch('Trompeta', 'sennheiser.e906', 'Pie recto')] },
-  { id: 'winds.trombone', category: 'winds', layer: 'audio', name: b('Trombón', 'Trombone'), tags: ['trombón', 'metal', 'trombone', 'brass'], w: 600, d: 900, h: 1000, symbol: 'trombone', channels: [ch('Trombón', 'sennheiser.e906', 'Pie recto')] },
-  { id: 'winds.flute', category: 'winds', layer: 'audio', name: b('Flauta o clarinete', 'Flute or clarinet'), tags: ['flauta', 'clarinete', 'flute', 'clarinet'], w: 600, d: 600, h: 1000, symbol: 'flute', channels: [ch('Flauta', 'shure.sm81', 'Pie recto', true)] },
+  { id: 'winds.sax', category: 'winds', layer: 'audio', name: b('Saxofón', 'Saxophone'), tags: ['saxofón', 'saxo', 'sax'], w: 600, d: 700, h: 1700, symbol: 'sax', channels: [ch('Saxo', 'sennheiser.e906', 'Pie recto')] },
+  { id: 'winds.brass', category: 'winds', layer: 'audio', name: b('Trompeta', 'Trumpet'), tags: ['trompeta', 'metal', 'trumpet', 'brass'], w: 500, d: 700, h: 1700, symbol: 'brass', channels: [ch('Trompeta', 'sennheiser.e906', 'Pie recto')] },
+  { id: 'winds.trombone', category: 'winds', layer: 'audio', name: b('Trombón', 'Trombone'), tags: ['trombón', 'metal', 'trombone', 'brass'], w: 600, d: 900, h: 1700, symbol: 'trombone', channels: [ch('Trombón', 'sennheiser.e906', 'Pie recto')] },
+  { id: 'winds.flute', category: 'winds', layer: 'audio', name: b('Flauta o clarinete', 'Flute or clarinet'), tags: ['flauta', 'clarinete', 'flute', 'clarinet'], w: 600, d: 600, h: 1700, symbol: 'flute', channels: [ch('Flauta', 'shure.sm81', 'Pie recto', true)] },
 
   // Voices
-  { id: 'vocals.handheld', category: 'vocals', layer: 'audio', name: b('Voz con micro de mano', 'Handheld vocal'), tags: ['micro de mano', 'inalámbrico', 'handheld', 'wireless'], w: 700, d: 700, h: 1000, symbol: 'handheld', channels: [ch('Voz', 'shure.ulxd', '')] },
+  { id: 'vocals.handheld', category: 'vocals', layer: 'audio', name: b('Voz con micro de mano', 'Handheld vocal'), tags: ['micro de mano', 'inalámbrico', 'handheld', 'wireless'], w: 700, d: 700, h: 1700, symbol: 'handheld', channels: [ch('Voz', 'shure.ulxd', '')] },
   { id: 'vocals.choir', category: 'vocals', layer: 'audio', name: b('Coro en gradas', 'Choir on risers'), tags: ['coro', 'gradas', 'choir'], w: 4000, d: 2000, h: 1200, symbol: 'choir', channels: [ch('Coro L', 'akg.c414xlii', 'Pie largo', true), ch('Coro R', 'akg.c414xlii', 'Pie largo', true)] },
 
   // PA and monitors
@@ -71,7 +71,7 @@ export const MORE_DEFS: Def[] = [
   { id: 'dj.turntables', category: 'dj', layer: 'audio', name: b('Giradiscos y mezclador', 'Turntables and mixer'), tags: ['giradiscos', 'vinilo', 'turntables', 'cdj'], w: 1300, d: 450, h: 150, symbol: 'turntables' },
 
   // People and furniture
-  { id: 'person.seated', category: 'person', layer: 'stage', name: b('Persona sentada', 'Seated person'), tags: ['sentada', 'persona', 'seated'], w: 600, d: 600, h: 1000, symbol: 'seated' },
+  { id: 'person.seated', category: 'person', layer: 'stage', name: b('Persona sentada', 'Seated person'), tags: ['sentada', 'persona', 'seated'], w: 600, d: 600, h: 1300, symbol: 'seated' },
   { id: 'person.presenter', category: 'person', layer: 'stage', name: b('Presentador', 'Presenter'), tags: ['presentador', 'ponente', 'presenter', 'speaker'], w: 600, d: 600, h: 1700, symbol: 'presenter' },
   { id: 'furniture.stool', category: 'furniture', layer: 'stage', name: b('Taburete', 'Stool'), tags: ['taburete', 'banqueta', 'stool'], w: 400, d: 400, h: 650, symbol: 'stool' },
   { id: 'furniture.bench', category: 'furniture', layer: 'stage', name: b('Banco', 'Bench'), tags: ['banco', 'bench'], w: 1200, d: 400, h: 450, symbol: 'bench' },
@@ -86,10 +86,10 @@ export const MORE_DEFS: Def[] = [
   // Lights and effects
   { id: 'light.moving-spot', category: 'light', layer: 'lights', name: b('Móvil spot', 'Moving spot'), tags: ['móvil', 'spot', 'moving head', 'cabeza móvil'], w: 343, d: 409, h: 489, symbol: 'movingSpot' },
   { id: 'light.moving-wash', category: 'light', layer: 'lights', name: b('Móvil wash', 'Moving wash'), tags: ['móvil', 'wash', 'moving head', 'cabeza móvil'], w: 302, d: 302, h: 360, symbol: 'movingWash' },
-  { id: 'light.beam', category: 'light', layer: 'lights', name: b('Beam', 'Beam'), tags: ['beam', 'haz', 'móvil'], w: 300, d: 350, h: 450, symbol: 'beam' },
+  { id: 'light.beam', category: 'light', layer: 'lights', name: b('Beam', 'Beam'), tags: ['beam', 'haz', 'móvil'], w: 365, d: 250, h: 575, symbol: 'beam' },
   { id: 'light.led-bar', category: 'light', layer: 'lights', name: b('Barra LED', 'LED bar'), tags: ['barra led', 'led bar', 'tira led'], w: 1047, d: 185, h: 166, symbol: 'ledBar' },
   { id: 'light.blinder', category: 'light', layer: 'lights', name: b('Blinder', 'Blinder'), tags: ['blinder', 'deslumbrador', 'público'], w: 400, d: 220, h: 220, symbol: 'blinder' },
-  { id: 'light.led-profile', category: 'light', layer: 'lights', name: b('Perfil LED', 'LED profile'), tags: ['perfil led', 'recorte led', 'led profile', 'ellipsoidal led'], w: 250, d: 500, h: 300, symbol: 'ledProfile' },
+  { id: 'light.led-profile', category: 'light', layer: 'lights', name: b('Perfil LED', 'LED profile'), tags: ['perfil led', 'recorte led', 'led profile', 'ellipsoidal led'], w: 340, d: 637, h: 601, symbol: 'ledProfile' },
   { id: 'effect.laser', category: 'effect', layer: 'lights', name: b('Láser', 'Laser'), tags: ['láser', 'laser'], w: 400, d: 300, h: 250, symbol: 'laser' },
   { id: 'effect.mirror-ball', category: 'effect', layer: 'lights', name: b('Bola de espejos', 'Mirror ball'), tags: ['bola de espejos', 'espejos', 'mirror ball'], w: 500, d: 500, h: 500, symbol: 'mirrorBall' },
   { id: 'effect.co2', category: 'effect', layer: 'lights', name: b('Jet de CO2', 'CO2 jet'), tags: ['co2', 'jet', 'criogenia'], w: 250, d: 250, h: 250, symbol: 'co2Jet' },

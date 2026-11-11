@@ -41,26 +41,43 @@ Fuentes: glosario de la cualificación IMS442_3, Regiduría de espectáculos en 
 - Cámara: en un plano de Bahía Blanca (Argentina), «Cámara de fondo» y «Cámara 1/2» para paños del escenario
 - Peine: en inglés, grid o gridiron (ProZ)
 
-## Iluminación y sonido: propuesta mía, a verificar
+## Iluminación y sonido
 
-Sin fuente hallada. Lectura mía; el usuario corrige.
+Fuentes (leídas el 2026-11-11), todas del INCUAL (España):
 
-| Inglés | Propuesta en español | Estado |
+- UC0211_3, unidad de competencia de la cualificación IMS075_3 «Luminotecnia para el espectáculo en vivo» (https://incual.educacion.gob.es/documents/20195/1873863/UC0211_3_RV+-+A_GE_Documento+publicado.pdf/d100ed3e-34a1-4238-9327-ef8482006846) y la propia IMS075_3 (https://incual.educacion.gob.es/documents/20195/94271/IMS075_3+-+Q_Documento+publicado/3ec30ef0-f2ba-4af5-bdb3-abecc64fbcfa)
+- Glosario de IMS076_3, que describe el plano de iluminación (https://incual.educacion.gob.es/documents/20195/1873855/IMS076_3_RV+-+A_GL_Documento+publicado/b0a29bf8-979d-4f94-bdea-7513ecb27731)
+- Glosario de IMS438_3, sonido (https://incual.educacion.gob.es/documents/20195/1873855/GLOSARIO_IMS438_3.pdf/1780a0a1-3986-4138-81f0-37503d884403)
+- Para el inglés, el glosario de sonido de USITT (https://www.usitt.org/sites/default/files/2020-03/eSETterms-AudioSound.pdf), solo como equivalencia
+
+| Inglés | En español | Estado |
 |---|---|---|
-| Ellipsoidal (ERS) | proyector de recorte | a verificar |
-| Fresnel | fresnel | a verificar |
-| PAR | PAR | a verificar |
-| Followspot | seguidor (alias: cañón de seguimiento) | confirmado por el usuario 2026-11-02 |
-| Cyc / cyclorama | ciclorama | el término aparece en el glosario INCUAL |
-| Scoop | scoop | a verificar |
-| Boom (de luces, no de micro) | torre lateral (alias: torre de calle) | el usuario dice «torre lateral», no universal; «torres de calle» aparece en un rider de Donostia y la iluminación «de calle» se describe en apuntes argentinos (UNAD 2020) |
-| FOH | FOH (posición frontal de sala) | a verificar |
-| Plaster line | línea de proscenio (alias: línea de boca, plaster line) | el usuario: «línea de proscenio o boca»; definición en español: línea que cruza el escenario sobre la cara anterior de la pared del proscenio, perpendicular a la línea central; de ella se miden las distancias de profundidad (Control Booth, https://www.controlbooth.com/wiki/Plaster-line) |
-| Dimmer | dimmer (regulador) | a verificar |
-| Wedge / cuña | cuña | a verificar |
-| In-ear | in-ear (monitorización personal) | a verificar |
-| Truss | truss | a verificar |
+| Ellipsoidal (ERS) | recorte; «proyector de recorte» como forma completa | confirmado: el INCUAL lista «panoramas, PC, Fresnel, recortes, proyectores robotizados, de efectos y de imágenes» como tipos de proyector |
+| Fresnel | fresnel | confirmado (INCUAL) |
+| PC | PC (plano convexo) | confirmado como sigla (INCUAL); «plano convexo» es el nombre de la lente |
+| Strip / flood | panorama | confirmado (INCUAL); la biblioteca lo llama «tira o panorama» |
+| PAR | PAR | sin fuente en español: la sigla se usa tal cual en las fuentes consultadas |
+| Scoop | scoop | sin fuente en español: ningún documento consultado lo recoge; se mantiene el término inglés |
+| Followspot | seguidor; alias cañón de seguimiento | confirmado: «seguidor» por el usuario (2026-11-02), «cañón de seguimiento» en el INCUAL (IMS075_3 y UC0211_3) |
+| Cyc / cyclorama | ciclorama | confirmado (INCUAL y manual del CNCA) |
+| Boom (de luces, no de micro) | torre lateral; alias torre de calle | «torres de calles» confirmado en el glosario de IMS076_3 («varas de luces, torres de calles, soportes de suelo»); «torre lateral» es la forma del usuario. El INCUAL también lista «booms» entre los sistemas de suspensión |
+| Truss | truss | confirmado: «trusses» en IMS075_3 |
+| Dimmer | dimmer; alias regulador | confirmado: «equipos de regulación (dimmers)» y «reguladores» en el INCUAL |
+| FOH | FOH | en sonido en directo es la posición de mezcla en la zona del público (USITT: Front of House Mix Position). Cuidado: el manual de escenotecnia del CNCA llama FOH al vestíbulo y la recepción del teatro. No está en el glosario de sonido del INCUAL. La app lo usa para la posición de mezcla |
+| Wedge | cuña; alias monitor de suelo | «cuña» no aparece en el INCUAL, que define «monitor» como «caja acústica utilizada para la reproducción de sonido para referencia de músicos y técnicos de sonido». «Cuña» confirmado por el usuario (2026-11-02) |
+| In-ear | in-ear; alias sistema de monitorización personal | confirmado: el INCUAL remite de «in-ear» a «sistema de monitorización personal» |
 | Channel hookup | relación de canales | confirmado por el usuario 2026-11-02 |
+| P.A. | P.A.; sistema de refuerzo de sonido principal | confirmado (INCUAL) |
+| Front fill | front-fills; altavoces de las primeras filas | confirmado (INCUAL: «sistema de altavoces destinado para la cobertura de las primeras filas de la audiencia») |
+| Array | array | confirmado (INCUAL: «formación de dos o más cajas acústicas») |
+| Splitter | spliter (sic) o divisor | el INCUAL escribe «spliter»; la app usa «splitter» |
+| Patch panel | patch o panel de conexiones | confirmado (INCUAL) |
+| Aux send | envío auxiliar | confirmado (INCUAL: salida de la mesa hacia un monitor de escenario) |
+| Preamp | previo | confirmado (INCUAL) |
+| Rack | rack | confirmado (INCUAL: «mueble de dimensiones estándar usado para la colocación de equipos de audio») |
+| Mic boom stand | boom (soporte con jirafa) | confirmado (INCUAL): distinto del boom de luces de arriba |
+| Headset mic | diadema | confirmado (INCUAL) |
+| Rider | rider | confirmado: especificación de requisitos del artista, con equipamiento, plano de escenario y lista de canales (INCUAL) |
 
 ## Etiquetas de posición
 
@@ -68,8 +85,7 @@ Sin fuente hallada. Lectura mía; el usuario corrige.
 - Izquierda y derecha se miran desde el artista de cara al público; la sala usa la perspectiva contraria (house left/right). Fuentes: Control Booth (https://www.controlbooth.com/wiki/Up-Stage), Encore Script Notation (https://encore-a-z.pages.dev/01_Production/Guides/Show-Bible/Encore-Script-Notation), AutoCAD for the Theatre (https://autocadtheatre.ccdmd.qc.ca/glossary), Wikipedia (https://en.wikipedia.org/wiki/Stage_directions), consultadas el 2026-11-11
 - Las fuentes no coinciden en el centro: unas usan SR, CC, SL en la fila central y otras CSR, C, CSL. Decisión (2026-11-11, recomendación aceptada): se mantiene la convención de la app (`src/model/position.ts`: SR, CS, SL en la fila central) y las otras quedan como sinónimos. La leyenda del PDF explica CS y cómo se combinan las siglas
 
-## Pendientes
+## Contraste y pendientes
 
 - Contrastado el 2026-11-11 con el Manual de escenotecnia del CNCA de Chile (https://fondosdecultura.cl/wp-content/uploads/2024/05/Manual_escenotecnia.pdf): confirma los términos del escenario y añade los de las filas anteriores. No da siglas de posición y dice que en Chile los lados no tienen nombre común (se usan referencias geográficas), y que la nomenclatura de izquierda y derecha cambia por país: respalda mantener las siglas en inglés con leyenda
-- [PENDIENTE: contraste de la parte de luminarias y sonido con un diccionario técnico en español]
-- Tabla de iluminación y sonido: el usuario confirmó el resto de filas el 2026-11-02 («el resto ok»)
+- Luminarias y sonido contrastados el 2026-11-11 con los documentos del INCUAL (tabla de arriba). Sin fuente en español: PAR y scoop. Tabla de iluminación y sonido: el usuario confirmó el resto de filas el 2026-11-02 («el resto ok»)

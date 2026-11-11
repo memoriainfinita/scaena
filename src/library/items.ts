@@ -27,14 +27,14 @@ export const ch = (name: string, mic: string, stand: string, phantom = false): S
 const DEFS: Def[] = [
   { id: 'kit.drums5', category: 'drums', layer: 'audio', name: b('Batería de 5 piezas', '5-piece drum kit'), tags: ['batería', 'drums', 'percusión'], w: 1800, d: 1500, h: 1100, symbol: 'drums',
     channels: [ch('Bombo', 'shure.beta52a', 'Pie corto'), ch('Caja', 'shure.sm57', 'Pinza'), ch('Charles', 'akg.c414xlii', 'Pie recto', true), ch('Tom 1', 'sennheiser.e604', 'Pinza'), ch('Tom 2', 'sennheiser.e604', 'Pinza'), ch('Tom suelo', 'sennheiser.e604', 'Pinza'), ch('OH I', 'akg.c414xlii', 'Pie largo', true), ch('OH D', 'akg.c414xlii', 'Pie largo', true)] },
-  { id: 'kit.drums-small', category: 'drums', layer: 'audio', name: b('Batería reducida', 'Small drum kit'), tags: ['batería', 'jazz'], w: 1400, d: 1200, h: 1000, symbol: 'drums',
+  { id: 'kit.drums-small', category: 'drums', layer: 'audio', name: b('Batería reducida', 'Small drum kit'), tags: ['batería', 'jazz'], w: 1400, d: 1200, h: 1200, symbol: 'drums',
     channels: [ch('Bombo', 'shure.beta52a', 'Pie corto'), ch('Caja', 'shure.sm57', 'Pinza'), ch('OH I', 'akg.c414xlii', 'Pie largo', true), ch('OH D', 'akg.c414xlii', 'Pie largo', true)] },
   { id: 'amp.guitar', category: 'amp', layer: 'audio', name: b('Ampli de guitarra', 'Guitar amp'), tags: ['guitarra', 'ampli'], w: 700, d: 350, h: 650, symbol: 'guitarAmp', channels: [ch('Guitarra', 'shure.sm57', 'Pie corto')] },
   { id: 'amp.bass', category: 'amp', layer: 'audio', name: b('Ampli de bajo', 'Bass amp'), tags: ['bajo', 'ampli'], w: 482, d: 355, h: 584, symbol: 'bassAmp', channels: [ch('Bajo DI', 'radial.jdi', ''), ch('Bajo ampli', 'shure.sm57', 'Pie corto')] },
   { id: 'keys.keyboard', category: 'keys', layer: 'audio', name: b('Teclado', 'Keyboard'), tags: ['teclado', 'sintetizador'], w: 1393, d: 354, h: 138, symbol: 'keyboard', channels: [ch('Teclado L', 'radial.jdi', ''), ch('Teclado R', 'radial.jdi', '')] },
   { id: 'keys.piano', category: 'keys', layer: 'audio', name: b('Piano de cola', 'Grand piano'), tags: ['piano'], w: 1490, d: 1860, h: 1010, symbol: 'piano', channels: [ch('Piano L', 'akg.c414xlii', 'Pie largo', true), ch('Piano R', 'akg.c414xlii', 'Pie largo', true)] },
   { id: 'strings.doublebass', category: 'strings', layer: 'audio', name: b('Contrabajo', 'Double bass'), tags: ['contrabajo'], w: 600, d: 600, h: 1900, symbol: 'doubleBass', channels: [ch('Contrabajo DI', 'radial.jdi', ''), ch('Contrabajo micro', 'shure.sm57', 'Pie corto')] },
-  { id: 'strings.guitar-acoustic', category: 'guitar', layer: 'audio', name: b('Guitarra acústica', 'Acoustic guitar'), tags: ['guitarra', 'acústica'], w: 500, d: 500, h: 1000, symbol: 'person', channels: [ch('Guitarra DI', 'radial.jdi', ''), ch('Guitarra micro', 'shure.sm81', 'Pie recto', true)] },
+  { id: 'strings.guitar-acoustic', category: 'guitar', layer: 'audio', name: b('Guitarra acústica', 'Acoustic guitar'), tags: ['guitarra', 'acústica'], w: 500, d: 500, h: 1700, symbol: 'person', channels: [ch('Guitarra DI', 'radial.jdi', ''), ch('Guitarra micro', 'shure.sm81', 'Pie recto', true)] },
   { id: 'winds.player', category: 'winds', layer: 'audio', name: b('Viento', 'Wind player'), tags: ['viento', 'saxo', 'trompeta'], w: 500, d: 500, h: 1700, symbol: 'person', channels: [ch('Viento', 'sennheiser.e906', 'Pie recto')] },
   { id: 'vocals.mic-stand', category: 'vocals', layer: 'audio', name: b('Voz con pie', 'Vocal mic with stand'), tags: ['voz', 'cantante', 'micro'], w: 500, d: 500, h: 1600, symbol: 'micStand', channels: [ch('Voz', 'shure.sm58', 'Pie recto')] },
   { id: 'vocals.headset', category: 'vocals', layer: 'audio', name: b('Diadema inalámbrica', 'Wireless headset'), tags: ['diadema', 'actor'], w: 500, d: 500, h: 1700, symbol: 'person', channels: [ch('Diadema', 'sennheiser.ew-dx', '')] },
@@ -83,7 +83,7 @@ const LIGHT_DEFS: Def[] = [
   { id: 'light.followspot', category: 'light', layer: 'lights', name: b('Seguidor', 'Followspot'), tags: ['seguidor', 'cañón'], w: 450, d: 1200, h: 1500, symbol: 'followspot' },
   { id: 'effect.haze', category: 'effect', layer: 'lights', name: b('Máquina de haze', 'Hazer'), tags: ['haze', 'niebla'], w: 515, d: 375, h: 355, symbol: 'haze' },
   { id: 'effect.smoke', category: 'effect', layer: 'lights', name: b('Máquina de humo', 'Smoke machine'), tags: ['humo', 'partículas'], w: 450, d: 300, h: 250, symbol: 'smoke' },
-  { id: 'effect.strobe', category: 'effect', layer: 'lights', name: b('Estroboscopio', 'Strobe'), tags: ['estrobo', 'strobe'], w: 450, d: 200, h: 150, symbol: 'strobe' },
+  { id: 'effect.strobe', category: 'effect', layer: 'lights', name: b('Estroboscopio', 'Strobe'), tags: ['estrobo', 'strobe'], w: 425, d: 245, h: 240, symbol: 'strobe' },
 ];
 
 /** Typical draw in watts of the equipment that needs mains, as a starting point the user edits. Items not listed here have none. */

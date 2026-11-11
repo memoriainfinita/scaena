@@ -31,7 +31,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - DMX (`docs/design/dmx-2026-11-08.md`): modos de la Open Fixture Library (653 aparatos), rangos en el aviso de solape, direccionado seguido, protocolo por universo (DMX, sACN, Art-Net), informes DMX, universos e IP y sección del documento
 - Etiquetas del plano (`docs/design/plot-labels-2026-11-08.md`): se colocan solas sin pisarse entre ellas, en editor y PDF; siguen pisándose con cables, varas y otros elementos (TODO, grupo 2). Las que quedan lejos de su elemento llevan línea guía; cualquiera se puede mover a mano (`labelAt`)
 - Leyenda del plano en el PDF: cede ante el plano (criterio del usuario, 2026-11-09). Tres tamaños, debajo o al lado; solo va a página aparte si ni al mínimo cabe sin quitarle más de un cuarto al plano. En A4 apaisado, rock a 1:65 y la muestra completa a 1:97, en una página
-- A medias: 82 de los 847 elementos tienen medidas de ficha técnica con su URL (67 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación; `effect.co2` no tiene icono
+- A medias: 116 de los 847 elementos tienen medidas de ficha técnica con su URL (90 completas, 15 parciales; `docs/research/icon-item-sizes-2026-11-08.md`), el resto son estimación
 - Lista de canales en modo automático: elige 1 a 4 bloques estimando la altura de cada fila según cómo se parte su texto en cada columna (medido en el PDF el 2026-11-08: fila de 5,5 mm y 4,4 mm por línea de más), no por número de filas; comprobado con PDF reales de 21 a 40 canales en vertical y horizontal
 - DXF real de una sala importado y comprobado: Meany Studio Theatre, 7,8 MB, en 1 s en Firefox y a escala (`docs/research/importar-pdf-dxf.md`)
 - DXF con 1000 elementos con icono: 66 ms y 754 KB (2026-11-08)
@@ -135,9 +135,8 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 ### Fuera de los grupos
 
 - [ ] Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
-- [ ] Medidas de ficha técnica para el resto de la biblioteca. Cuarta pasada (2026-11-11): solo `light.led-panel` se pudo confirmar (Chauvet Q40). Las fichas de Robe y ETC son PDF de imagen o sin tabla de medidas: hace falta leerlas a mano o con OCR. Sin tocar: rack, teclados y percusión
+- [ ] Medidas de ficha técnica para el resto de la biblioteca. Cuarta pasada (2026-11-11): confirmadas `light.led-panel`, `light.beam`, `light.led-profile`, `rack.compressor` y `rack.power-conditioner`, y el 2026-11-12 seis de Roland (sintes, acordeón, sampler); los PDF de dibujo se leen renderizando la página como imagen. Faltan luces con fichas sin texto, rack, teclados y percusión (`docs/research/icon-item-sizes-2026-11-08.md`)
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
 - [ ] Sin comprobar todavía: un PDF real escaneado (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
-- [ ] Glosario: las siglas de posición están confirmadas con fuentes (2026-11-11; la leyenda del PDF explica CS y las combinaciones). Contrastada la parte de escenario con el Manual de escenotecnia del CNCA de Chile (2026-11-11); falta la de luminarias y sonido (`docs/research/glosario-escena.md`)
 - [ ] Idea anotada y no hecha: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos

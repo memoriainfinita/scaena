@@ -151,17 +151,94 @@ People (`vocals.*`, `person.*`) and rooms (`room.*`) keep their sizes on purpose
 The other items those packages use without a size are people, furniture, curtains or notes, which have no datasheet to read.
 
 
-## Fourth pass (2026-11-11): lights
+## Fourth pass (2026-11-11): lights and rack
+
+Method note: the maker's PDFs that looked empty were read by rendering the page as an image (PyMuPDF), which shows dimension drawings that carry no text; text-only extraction missed them.
 
 | Item | Size now | Reference product | Source |
 |---|---|---|---|
 | `light.led-panel` | 515 × 196 × 304 | Chauvet COLORado Panel Q40 | https://chauvetprofessional.com/wp-content/uploads/pdf/en/COLORADOPANELQ40.pdf |
+| `light.beam` | 365 × 250 × 575 | Robe Pointe, 575 high with the head vertical | https://cdn.aws.robe.cz/print/en_product_2.pdf |
+| `light.led-profile` | 340 × 637 × 601 | ETC Source Four LED Series 3; length 637 minimum to 700 maximum depending on the lens tube; height with the C-clamp, 601 maximum; width 340 maximum (298 across the yoke) | https://goknight.com/content/documentation/S4LEDS3LS%20Spec%20Sheet.pdf (page 10, physical drawing) |
+| `rack.compressor` | 483 × 146 × 44 | dbx 266xs, 1U, 5.75 in deep | retailer listings agree: https://fullcompass.com/prod/183113-dbx-266xs-dual-channel-compressor-expander-and-gate |
+| `rack.power-conditioner` | 483 × 267 × 44 | Furman PL-Plus C, 1U, 10.5 in deep | https://furmanpower.com/products/pl-plusc and retailer listings |
 
-Looked up and left as estimates, because the maker's sheet could not be read as text or the figures disagree:
+Fifth pass (2026-11-12): Roland, whose specification pages give the figures as text.
 
-- `light.beam`: Robe Pointe, 575 high with the head vertical, 365 wide, 250 deep (a search summary of Robe's sheet; the PDF at https://cdn.aws.robe.cz/print/en_product_2.pdf is an image and could not be checked)
-- `light.led-profile`: ETC Source Four LED Series 3, 721 × 340 × 478 in one retailer listing (SoundPro) and no axis labels; the ETC sheet came without its dimensions table
-- `light.followspot`: Robert Juliat Lancelot 1021, head 2005 long; height and width did not come through, and the power supply is a separate box (829 × 239 × 535)
-- `light.pc`, `light.scoop`: no sheet found for a specific model (the Altman 153 search returned nothing relevant)
+| Item | Size now | Reference product | Source |
+|---|---|---|---|
+| `synth.drum-machine` | 409 × 263 × 58 | Roland TR-8S | https://www.roland.com/global/products/tr-8s/specifications/ |
+| `synth.groovebox` | 426 × 263 × 60 | Roland MC-707 | https://www.roland.com/global/products/mc-707/specifications/ |
+| `synth.desktop` | 360 × 195 × 66 | Roland SH-4d | https://www.roland.com/global/products/sh-4d/specifications/ |
+| `keys.accordion-alone` | 481 × 270 × 430 | Roland FR-4x | https://www.roland.com/global/products/fr-4x/specifications/ |
+| `synth.vocoder` | 300 × 128 × 46 | Roland VP-03 (a small vocoder keyboard; the item's old 800 mm width was a full keyboard) | https://www.roland.com/global/products/vp-03/specifications/ |
+| `perc.sampler` | 360 × 330 × 93 | Roland SPD-SX PRO | https://www.roland.com/global/products/spd-sx_pro/specifications/ |
 
-Not looked up: arrangements of several things (`light.ground-row`, `light.tbar`, `light.tree`, `light.footlight`, `light.work`, `light.strip`).
+Thomann pages for racks (dbx DriveRack PA2, dbx 231s) give only the rack units and the weight, not the depth, so those stay estimates. No page found for the SPD-30 (`perc.octapad`) or the TD-17 module (`kit.module`).
+
+Looked up and left as estimates:
+
+- `light.followspot`: Robert Juliat Lancelot 1021TM, unit 2005 long, 635 wide, 580 high without its stand (https://goknight.com/content/documentation/DSEN149_1021TM.pdf). The item's 1500 height includes a stand and a 4 kW unit is bigger than a generic followspot, so it stays an estimate
+- `rack.power-amp`: Crown XLS 2002 is 483 × 89 wide and high, but retailers give the depth as 272 mm and as 212 mm
+- `light.pc`, `light.scoop`: no sheet found for a specific model; the library's scoop model is correctly the Altman 153 (10 in), and the 14 in scoop is the 154
+- `light.led-zoom`: the Altman PHX sheet found is the tungsten zoom, not an LED fixture
+
+Not looked up: arrangements of several things (`light.ground-row`, `light.tbar`, `light.tree`, `light.footlight`, `light.work`, `light.strip`) and the rest of the rack and keys lists above.
+
+## Sixth pass (2026-11-12): rack and percussion, retailer consensus
+
+Only figures where the manufacturer datasheet or at least two retailers agree. Retailer-based, not measured.
+
+| Item | Product | w/d/h (mm) | Sources |
+|---|---|---|---|
+| rack.geq | dbx 231s (2U) | 483/152/89 | dbx datasheet (files.hdtvsupply.com/dbx-dbx231sv-datasheet.pdf), Sweetwater, Markertek, zZounds |
+| rack.speaker-proc | dbx DriveRack PA2 | 483/146/44 | Markertek, Juno, zZounds, Reverb |
+| rack.preamp | dbx 286s | 483/146/44 | zZounds, Reverb, Harman catalog |
+| perc.octapad | Roland SPD-30 | 541/272/88 (height of the unit itself) | Boullard, Greentoe, zZounds; the generic item previously assumed a stand |
+| perc.cajon | Meinl Headliner | 305/305/457 | Bax-shop, desertcart, Musician's Friend (variants differ by a few mm) |
+
+Left out for conflicting sources: Behringer P16-M (63/134 mm height disagreement), HA8000 (original 217 mm deep vs V2 150 mm), LP Matador bongos (only package sizes).
+
+## Seventh pass (2026-11-12): rack, module and celesta
+
+| Item | Product | w/d/h (mm) | Sources |
+|---|---|---|---|
+| rack.interface | Focusrite Scarlett 18i20 (3rd/4th gen, 1U) | 483/260/47 | Thomann, Woodbrass, Vintage Digital, Adorama |
+| rack.recorder | Tascam SS-R200 (1U) | 483/301/44 | Teac SS-CDR200 manual (same chassis), Bax-shop |
+| rack.fx-unit | Yamaha SPX2000 (1U) | 480/373/45 | Yamaha spec page and datasheet, manual |
+| kit.module | Roland TD-17 (module only) | 223/196/65 | Guitar Center, Chuck Levin's, Drum Center NH |
+| keys.celesta | Schiedmayer 5 octaves | 1230/590/1080 | two dealer listings (rsons, malletshop) |
+
+Left out: personal mixer P16-M (axes still contradictory), antenna combiner (only distribution UA844+SWB found, 483/172/44), clavinet (one translated 1973 catalogue: 1190/380/150 without legs), harmonium (no source), hi-hat (only electronic VH-14D 356/356/160), keys.epiano and keys.toy (generic items with no single product).
+Also seen and consistent: Nord Piano 5 88 1287/342/120, Yamaha P-125 1326/295/166, X32 Rack 483/287/132, Yamaha DTX-MULTI 12 345/319/96, DTX-PRO module 303/196/66; no generic item maps to them.
+
+## Eighth pass (2026-11-12): effects, network, controller and pedals
+
+Same rule: datasheet or at least two sources that agree. Pedal heights replace a placeholder of 1000 mm.
+
+| Item | Product | w/d/h (mm) | Sources |
+|---|---|---|---|
+| effect.bubble | Antari B-100X | 341/170/172 | Antari manual, Elation, retailers (a few list 217 high) |
+| effect.strobe | Martin Atomic 3000 DMX, no bracket | 425/245/240 | Martin spec sheet, dealers |
+| effect.lowfog | Antari ICE-101 | 670/355/506 | dealers agree (one lists 618/355/359) |
+| net.artnet | Enttec ODE Mk3 | 129/58/40 | Enttec datasheet, Thomann |
+| net.wifi-ap | Ubiquiti U6 Pro | 197/197/35 (round) | Ubiquiti tech specs and datasheet |
+| control.pad | Ableton Push 3 | 380/318/45 | Thomann listings |
+| pedal.drive, pedal.looper, pedal.tuner | Boss DS-1, RC-1, TU-3 (same chassis) | 73/129/59 | American Musical, zZounds, GAK, others |
+| pedal.wah | Dunlop Cry Baby GCB95 | 102/254/64 | Thomann, Effects Database |
+| pedal.volume | Boss FV-500H | 110/289/72 | Adorama, GAK |
+| pedal.multi | Boss GT-1000 | 462/248/70 | zZounds |
+| pedal.loop-station | Boss RC-300 | 536/231/76 | Boss manual, retailers |
+
+Left out: effect.smoke (Z-1500II: height 188 from Elation, 257 from dealers), effect.snow (S-200X only one source), effect.co2 (W-715 is a fog jet, not a CO2 cryo jet), control.dmx and power.ups and power.generator (the library items are generic or a different form factor than the products found), video.ptz (PTZ with tripod), pedal.board-large, pedal.switch. Pedal and device figures that applied to no generic item: Helix LT 530/303/93, HX Stomp 178/126/66, Panasonic AW-UE80 170/171/211.
+
+## Ninth pass (2026-11-12): placeholder heights
+
+103 items had a height of exactly 1000 mm, a default and not a measurement. 86 were changed to an estimate by kind of object, not from a datasheet:
+
+- People and player figures (`guitar.bass`, `guitar.electric`, `vocals.handheld`, `person.seated`, `winds.brass`, `winds.flute`, `winds.sax`, `winds.trombone`, `strings.violin`, `strings.guitar-acoustic`): 1700, as the other `person.*` items; seated person 1300
+- Instrument length for upright instruments (bass guitars 1100 to 1200, ukulele 600, banjo 880, mandolin 650, oud, lute, kora, sitar, harp 1300, double bass 1800); instruments laid flat get their thickness or stand height (koto 300, guzheng 700, cimbalom 800, zither 100, pedal steel 900, lap steel 800)
+- Cases and boards laid flat: 60 to 120
+- Video gear by type (projectors 130 to 400, screens 1700 to 2500, tripod camera 1500, small boxes 30 to 60); rigging (truss 300, light stand and boom 3000, crank-up tower 3500, ground tower 6000, hoist 400, sandbag 200, marks 0)
+
+Left at 1000 because it is plausible: guitars (length on a stand), `dj.booth`, `effect.foam`, `effect.balloon-drop`, `rack.dimmer`, `rig.handrail`, `rig.roof`, `rig.skirt`, `room.foh`, `video.confidence`, `video.mapping`, `strings.stick`, `strings.saz`, `strings.nyckelharpa`, `strings.santoor`, `strings.pipa`, `strings.sarod`, `strings.veena`, `strings.erhu`, `strings.tanpura`. These and the 86 changed ones are estimates and not counted as datasheet sizes.
