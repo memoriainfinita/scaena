@@ -136,6 +136,11 @@ export function setLinks(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, links: on } }));
 }
 
+/** Cables as straight lines between the elements, or as right-angled paths around them. */
+export function setLinkStyle(style: 'routed' | 'straight'): void {
+  session.value?.commit((show) => ({ ...show, view: { ...show.view, linkStyle: style } }));
+}
+
 /** Shows or hides the names written under the elements, on the plan and in the PDF. */
 export function setLabels(on: boolean): void {
   session.value?.commit((show) => ({ ...show, view: { ...show.view, labels: on } }));

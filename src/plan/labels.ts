@@ -4,6 +4,7 @@ import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { boxContains, elementBox, elementSize, formatLength, type Box } from './geometry.ts';
+import { pointAlong, segmentBoxes, type Pt } from './routes.ts';
 
 /** A text position: `x` is its centre (it is drawn with text-anchor="middle") and `y` its baseline. */
 export interface Slot {
@@ -27,7 +28,11 @@ export interface PlacedText extends Slot {
 export interface Solid {
   id: string;
   box: Box;
+  /** How much covering it costs against covering an element (1, the default): a text may cross a thin line when there is no better place. */
+  weight?: number;
 }
+/** What crossing a cable or a bar costs, against covering an element. */
+export const LINE_WEIGHT = 0.002;
 export interface TextRequest {
   id: string;
   /** Lower groups are placed first; inside a group the id decides, so the order of the input does not matter. */
@@ -75,6 +80,7 @@ function overlap(a: Box, b: Box): number {
 
 interface Entry {
   box: Box;
+  weight: number;
   /** Null for a text already placed. */
   solid: string | null;
   seen: number;
@@ -94,8 +100,8 @@ class Buckets {
   private key = (ix: number, iy: number) => (ix + 0x8000) * 0x10000 + (iy + 0x8000);
   private cell = (v: number) => Math.floor(v / this.size);
 
-  add(box: Box, solid: string | null): void {
-    const entry: Entry = { box, solid, seen: 0 };
+  add(box: Box, solid: string | null, weight = 1): void {
+    const entry: Entry = { box, weight, solid, seen: 0 };
     const [ix0, ix1, iy0, iy1] = [this.cell(box.x0), this.cell(box.x1), this.cell(box.y0), this.cell(box.y1)];
     if ((ix1 - ix0 + 1) * (iy1 - iy0 + 1) > MAX_CELLS) {
       this.large.push(entry);
@@ -139,25 +145,32 @@ export function placeTexts(solids: Solid[], texts: TextRequest[], bounds?: Box):
   const placed = new Map<string, PlacedText>();
   if (texts.length === 0) return placed;
   const buckets = new Buckets(Math.max(1, 6 * Math.max(...texts.map((t) => t.fontSize))));
-  for (const s of [...solids].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) buckets.add(s.box, s.id);
+  for (const s of [...solids].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) buckets.add(s.box, s.id, s.weight);
 
   const ordered = [...texts].sort((a, b) => a.group - b.group || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   for (const t of ordered) {
     let best: Slot | null = null;
+    // Covering an element or a text always comes before crossing a line: a slot is judged by the first, and the second only breaks ties.
     let bestCost = Infinity;
+    let bestLines = Infinity;
     for (const slot of t.slots) {
       const box = textBox(slot, t.width, t.fontSize, t.above);
       const reach = { x0: box.x0 - t.fontSize * AIR_X, y0: box.y0 - t.fontSize * AIR_Y, x1: box.x1 + t.fontSize * AIR_X, y1: box.y1 + t.fontSize * AIR_Y };
       const area = (box.x1 - box.x0) * (box.y1 - box.y0);
       let cost = (bounds ? (area - overlap(box, bounds)) * EDGE_WEIGHT : 0) + Math.max(0, (slot.ring ?? 0) - 1) * RING_WEIGHT * area;
+      let lines = 0;
       buckets.forEachNear(reach, (e) => {
         if (e.solid === null) cost += overlap(box, e.box) * TEXT_WEIGHT + overlap(reach, e.box) * 0.1;
-        else if (e.solid !== t.owner && !(t.ownerBox && boxContains(e.box, t.ownerBox))) cost += overlap(box, e.box);
+        else if (e.solid !== t.owner && !(t.ownerBox && boxContains(e.box, t.ownerBox))) {
+          if (e.weight < 1) lines += overlap(box, e.box);
+          else cost += overlap(box, e.box);
+        }
       });
-      if (cost < bestCost) {
+      if (cost < bestCost || (cost === bestCost && lines < bestLines)) {
         best = slot;
         bestCost = cost;
-        if (cost <= 0) break;
+        bestLines = lines;
+        if (cost <= 0 && lines <= 0) break;
       }
     }
     if (!best) continue;
@@ -211,12 +224,20 @@ export function mountSlots(from: Slot, to: Slot, width: number, fontSize: number
 
 /** Above, below and to each side of the line, from its middle towards its ends; the same again further from the line. */
 export function linkSlots(a: Slot, b: Slot, width: number, fontSize: number, lift: number): Slot[] {
+  return slotsAlong((t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }), width, fontSize, lift);
+}
+
+/** The same along a path of several segments. */
+export function routeSlots(path: Pt[], width: number, fontSize: number, lift: number): Slot[] {
+  return slotsAlong((t) => pointAlong(path, t), width, fontSize, lift);
+}
+
+function slotsAlong(at: (t: number) => Pt, width: number, fontSize: number, lift: number): Slot[] {
   const out: Slot[] = [];
-  for (let ring = 0; ring < 6; ring++) {
+  for (let ring = 0; ring < 9; ring++) {
     const g = lift + ring * fontSize * 1.1;
     for (const t of [0.5, 0.35, 0.65, 0.25, 0.75, 0.15, 0.85]) {
-      const x = a.x + (b.x - a.x) * t;
-      const y = a.y + (b.y - a.y) * t;
+      const { x, y } = at(t);
       const middle = y + fontSize * DESCENT;
       out.push({ x, y: y - g }, { x, y: y + g + fontSize * ASCENT }, { x: x + g + width / 2, y: middle }, { x: x - g - width / 2, y: middle });
     }
@@ -268,10 +289,12 @@ export interface PlotTextOptions {
   layerIds?: ReadonlySet<string>;
   /** Luminaires carry a tag (unit, channel, colour) in place of their name: the light plot. */
   fixtureTags?: boolean;
+  /** The path of each cable by id; a cable that has none is a straight line between its ends. Texts keep clear of the cables and of the mounts. */
+  routes?: ReadonlyMap<string, Pt[]>;
 }
 
 /** The solids and texts of a show, as one renderer draws them. Exported for the tests. */
-export function plotInput(show: Show, { sizes, lang, mounts, layerIds, fixtureTags }: PlotTextOptions): { solids: Solid[]; texts: TextRequest[] } {
+export function plotInput(show: Show, { sizes, lang, mounts, layerIds, fixtureTags, routes }: PlotTextOptions): { solids: Solid[]; texts: TextRequest[] } {
   const visibleLayers = layerIds ?? new Set(show.layers.filter((l) => l.visible).map((l) => l.id));
   const shown = Object.values(show.elements).filter((e) => visibleLayers.has(e.layerId));
   const solids: Solid[] = [];
@@ -306,17 +329,22 @@ export function plotInput(show: Show, { sizes, lang, mounts, layerIds, fixtureTa
   if (mounts) {
     for (const m of Object.values(show.mounts)) {
       const width = textWidth(m.name, sizes.mount);
-      texts.push({ id: mountKey(m.id), group: GROUP.mount, width, fontSize: sizes.mount, slots: mountSlots(m.from, m.to, width, sizes.mount) });
+      for (const box of segmentBoxes([m.from, m.to], sizes.mount * 0.25, sizes.mount * 6)) solids.push({ id: `bar:${m.id}`, box, weight: LINE_WEIGHT });
+      texts.push({ id: mountKey(m.id), group: GROUP.mount, width, fontSize: sizes.mount, owner: `bar:${m.id}`, slots: mountSlots(m.from, m.to, width, sizes.mount) });
     }
   }
   if (show.view.links) {
     const live = new Set(shown.map((e) => e.id));
     for (const c of Object.values(show.connections)) {
-      if (!c.connector || !live.has(c.from) || !live.has(c.to)) continue;
+      if (!live.has(c.from) || !live.has(c.to)) continue;
       const a = show.elements[c.from]!;
       const b = show.elements[c.to]!;
+      const path = routes?.get(c.id);
+      // The cable is something the texts keep clear of; its own text may touch it.
+      for (const box of segmentBoxes(path ?? [a, b], sizes.link * 0.25, sizes.link * 6)) solids.push({ id: `cable:${c.id}`, box, weight: LINE_WEIGHT });
+      if (!c.connector) continue;
       const width = textWidth(c.connector, sizes.link);
-      texts.push({ id: linkKey(c.id), group: GROUP.link, width, fontSize: sizes.link, slots: linkSlots(a, b, width, sizes.link, sizes.linkLift) });
+      texts.push({ id: linkKey(c.id), group: GROUP.link, width, fontSize: sizes.link, owner: `cable:${c.id}`, slots: path ? routeSlots(path, width, sizes.link, sizes.linkLift) : linkSlots(a, b, width, sizes.link, sizes.linkLift) });
     }
   }
   return { solids, texts };

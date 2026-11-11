@@ -78,7 +78,8 @@ test('your own element: a drawing is cleaned, saved, placed, and kept while it i
 test('a luminaire can be given a model from the Open Fixture Library, with its source and a note @a11y', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Teatro con micros/ }).click();
-  await page.getByRole('button', { name: /^Fresnel 1$/ }).first().click();
+  // The element itself, not the middle of its box: its label and leader line make the box wider than the symbol.
+  await page.locator('svg.plansvg g.el[aria-label="Fresnel 1"] rect.hit').first().click();
   const model = page.getByLabel('Modelo', { exact: true });
   await model.selectOption('ofl.etc.colorsource-par');
   await expect(page.getByText(/Datos aportados por voluntarios/)).toBeVisible();

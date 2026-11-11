@@ -5,7 +5,7 @@ import { memo } from 'preact/compat';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
-import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setLinkStyle, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -17,13 +17,15 @@ import { itemById } from '../library/items.ts';
 import { symbolBody } from '../library/symbols.ts';
 import { footprintBody, iconData, iconKeyOf, iconUse, iconsVersion, loadIcons } from '../library/icons.ts';
 import { drawnSymbolOf, iconKeyFor } from '../library/light-symbols.ts';
-import { SIGNALS, type SignalType } from '../model/connections.ts';
+import { SIGNALS } from '../model/connections.ts';
+import { LINK_STYLE } from '../plan/style.ts';
 import { expandGroups, type AlignMode } from '../model/ops.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { stageFrame, stagePoints } from '../model/stage.ts';
 import { addStagePointAfter, deleteStagePoint, moveStagePointTo, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
-import { elementKey, linkKey, mountKey, plotTexts, SCREEN_TEXT, type PlacedText } from '../plan/labels.ts';
+import { elementKey, SCREEN_TEXT, type PlacedText } from '../plan/labels.ts';
+import { buildScene, type SceneLink, type SceneMount } from '../plan/scene.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -242,15 +244,12 @@ function StageHandles({ show, cam }: { show: Show; cam: Signal<Camera> }) {
 }
 
 /** Mounting positions: bars and pipes as thick lines with their name, floor positions dotted. */
-function Mounts({ show, texts }: { show: Show; texts: Map<string, PlacedText> }) {
-  const visible = show.layers.find((l) => l.subject === 'lights')?.visible ?? true;
-  const list = Object.values(show.mounts);
-  if (!visible || list.length === 0) return null;
+function Mounts({ mounts }: { mounts: SceneMount[] }) {
+  if (mounts.length === 0) return null;
   return (
     <g aria-hidden="true" pointer-events="none">
-      {list.map((m) => {
+      {mounts.map(({ mount: m, text: at }) => {
         const floor = m.kind === 'floor';
-        const at = texts.get(mountKey(m.id));
         return (
           <g key={m.id}>
             <line x1={m.from.x} y1={m.from.y} x2={m.to.x} y2={m.to.y} stroke="#555" stroke-width={floor ? 2 : 4} stroke-dasharray={floor ? '2 6' : m.kind === 'truss' ? '12 4' : undefined} vector-effect="non-scaling-stroke" />
@@ -266,32 +265,17 @@ function Mounts({ show, texts }: { show: Show; texts: Map<string, PlacedText> })
   );
 }
 
-const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = {
-  audio: { stroke: '#0b6e78', dash: '' },
-  video: { stroke: '#7a3db8', dash: '10 5' },
-  lightControl: { stroke: '#b36b00', dash: '10 4 2 4' },
-  network: { stroke: '#3a6e1a', dash: '2 5' },
-};
-
 /** Cables between elements: the colour is always backed by a different dash and the connector name. */
-function Connections({ show, hidden, texts }: { show: Show; hidden: Set<string>; texts: Map<string, PlacedText> }) {
-  const layers = new Map(show.layers.map((l) => [l.id, l]));
-  const shown = (id: string) => {
-    const el = show.elements[id];
-    return !!el && !hidden.has(id) && !!layers.get(el.layerId)?.visible;
-  };
+function Connections({ links, hidden }: { links: SceneLink[]; hidden: Set<string> }) {
   return (
     <g aria-hidden="true" pointer-events="none">
-      {Object.values(show.connections)
-        .filter((c) => shown(c.from) && shown(c.to))
-        .map((c) => {
-          const a = show.elements[c.from]!;
-          const b = show.elements[c.to]!;
+      {links
+        .filter((l) => !hidden.has(l.link.from) && !hidden.has(l.link.to))
+        .map(({ link: c, route, text: at }) => {
           const st = LINK_STYLE[c.signal];
-          const at = texts.get(linkKey(c.id));
           return (
             <g key={c.id}>
-              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={st.stroke} stroke-width="2" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
+              <polyline points={route.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke={st.stroke} stroke-width="2" stroke-linejoin="round" stroke-dasharray={st.dash || undefined} vector-effect="non-scaling-stroke" />
               {c.connector && at && (
                 <text class="detail" x={at.x} y={at.y} text-anchor="middle" font-size="150" fill={st.stroke} stroke="#fff" stroke-width="40" paint-order="stroke" font-family="Inter Variable, sans-serif">
                   {c.connector}
@@ -457,6 +441,7 @@ const ICONS: Record<string, string> = {
   fit: 'M3 7V3h4M11 3h4v4M15 11v4h-4M7 15H3v-4',
   grid: 'M3 3h12v12H3zM9 3v12M3 9h12',
   links: 'M3 14L15 4M3 14h0M15 4h0',
+  linkStraight: 'M3 15L15 3M3 15h0M15 3h0M7 15h4',
   labels: 'M3 5h12M9 5v9M6 14h6',
   rp2: 'M4 6h10v6H4zM6 12v3M12 12v3M9 3v3',
   outlines: 'M3 3h3M8 3h2M12 3h3M15 3v3M15 8v2M15 12v3M3 15h3M8 15h2M12 15h3M3 3v3M3 8v2M3 12v3',
@@ -926,21 +911,18 @@ export function PlanView({ show }: { show: Show }) {
   };
 
   const layers = new Map(show.layers.map((l) => [l.id, l]));
-  const layerIndex = new Map(show.layers.map((l, i) => [l.id, i]));
   const sel = new Set(selection.value);
   // The list is sorted errors first, so the first finding per element is its worst.
   const elementSev = new Map<string, Severity>();
   for (const i of issues.value) if (i.ref.kind === 'element' && !elementSev.has(i.ref.id)) elementSev.set(i.ref.id, i.severity);
   const dragSet = dragIds.value ? new Set(dragIds.value) : null;
-  const texts = useMemo(() => plotTexts(show, { sizes: SCREEN_TEXT, bounds: planBox(show), lang: lang.value, mounts: show.layers.find((l) => l.subject === 'lights')?.visible ?? true }), [show, lang.value]);
-  textsRef.current = texts;
+  const scene = useMemo(() => buildScene(show, { sizes: SCREEN_TEXT, bounds: planBox(show), lang: lang.value }), [show, lang.value]);
+  textsRef.current = scene.texts;
   const labelMove = labelDrag.value;
-  const rows = Object.values(show.elements)
-    .filter((e) => layers.get(e.layerId)?.visible)
-    .sort((a, b) => (layerIndex.get(a.layerId) ?? 0) - (layerIndex.get(b.layerId) ?? 0));
+  const rows = scene.elements.map((x) => x.el);
   const mk = (e: PlanElement) => {
     const l = layers.get(e.layerId)!;
-    const at = texts.get(elementKey(e.id));
+    const at = scene.texts.get(elementKey(e.id));
     const moving = labelMove?.id === e.id ? labelMove : null;
     return <PlanEl key={e.id} el={e} selected={sel.has(e.id)} locked={l.locked} dim={l.dim ?? 0} sev={elementSev.get(e.id) ?? null} lx={moving ? moving.x : at && at.x - e.x} ly={moving ? moving.y : at && at.y - e.y} lead={!moving && at?.leader ? `M${at.leader.x1 - e.x} ${at.leader.y1 - e.y}L${at.leader.x2 - e.x} ${at.leader.y2 - e.y}` : undefined} />;
   };
@@ -992,8 +974,8 @@ export function PlanView({ show }: { show: Show }) {
         <g transform={camT}>
           <Stage show={show} />
           <BackgroundImage show={show} />
-          <Mounts show={show} texts={texts} />
-          {show.view.links && <Connections show={show} hidden={dragSet ?? new Set()} texts={texts} />}
+          <Mounts mounts={scene.mounts} />
+          {show.view.links && <Connections links={scene.links} hidden={dragSet ?? new Set()} />}
           <g>{resting}</g>
           <g class="moving" transform={dragT}>
             {moving}
@@ -1071,6 +1053,7 @@ export function PlanView({ show }: { show: Show }) {
         <Btn icon="fit" label={`${t('plan.fit')} (0)`} onClick={fit} />
         <Btn icon="grid" label={t('plan.grid')} pressed={show.view.grid} onClick={() => setGrid(!show.view.grid)} />
         <Btn icon="links" label={t('plan.links')} pressed={show.view.links} onClick={() => setLinks(!show.view.links)} />
+        <Btn icon="linkStraight" label={t('plan.linkStraight')} pressed={show.view.linkStyle === 'straight'} onClick={() => setLinkStyle(show.view.linkStyle === 'straight' ? 'routed' : 'straight')} disabled={!show.view.links} />
         <Btn icon="labels" label={t('plan.labels')} pressed={show.view.labels} onClick={() => setLabels(!show.view.labels)} />
         <Btn icon="outlines" label={t('plan.outlines')} pressed={show.view.outlines} onClick={() => setOutlines(!show.view.outlines)} />
         <Btn icon="rp2" label={t('plan.rp2Lights')} pressed={show.view.rp2Lights} onClick={() => setRp2Lights(!show.view.rp2Lights)} />

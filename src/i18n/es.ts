@@ -611,6 +611,7 @@ export const es = {
   'canvas.alt': 'Plano del escenario con {n} elementos',
   'plan.grid': 'Cuadrícula',
   'plan.links': 'Líneas de conexión',
+  'plan.linkStraight': 'Cables rectos',
   'plan.labels': 'Nombres de los elementos',
   'inspector.label.tip': 'Con el elemento seleccionado, arrastra su nombre en el plano para moverlo, o usa Alt y las flechas',
   'inspector.labelAuto': 'Colocar la etiqueta automáticamente',

@@ -607,6 +607,7 @@ export const en: Messages = {
   'canvas.alt': 'Stage plan with {n} elements',
   'plan.grid': 'Grid',
   'plan.links': 'Connection lines',
+  'plan.linkStraight': 'Straight cables',
   'plan.labels': 'Element names',
   'inspector.label.tip': 'With the element selected, drag its name on the plan to move it, or use Alt and the arrows',
   'inspector.labelAuto': 'Place the label automatically',

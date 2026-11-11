@@ -67,8 +67,10 @@ describe('names, outlines and the legend of the exported plan', () => {
     for (const pkg of PACKAGES) {
       test(`${pkg.id}: on ${page.availWidthMm}×${page.availHeightMm} the legend shrinks before the plan does, and everything fits`, () => {
         const show = showFromPackage(pkg, pkg.id, 'es');
-        const with_ = planSvg(show, {}, { ...opts, ...page });
-        const without = planSvg({ ...show, document: { ...show.document, planLegend: false } }, {}, { ...opts, ...page });
+        // As it prints: the venue plan of an example is part of what the plan has to fit.
+        const images = pkg.images?.() ?? {};
+        const with_ = planSvg(show, images, { ...opts, ...page });
+        const without = planSvg({ ...show, document: { ...show.document, planLegend: false } }, images, { ...opts, ...page });
         expect(with_.legend).toBeUndefined();
         expect(with_.scaleN).toBeLessThanOrEqual(Math.ceil(without.scaleN / 0.95));
         expect(with_.widthMm).toBeLessThanOrEqual(page.availWidthMm + 0.01);

@@ -117,7 +117,8 @@ describe('the example shows', () => {
     if (onlyTexts) return found;
     for (const t of texts) {
       const p = placed.get(t.id)!;
-      for (const s of solids) {
+      // Cables and bars are thin lines: a text may cross one when there is nowhere else (scene.test.ts counts how often).
+      for (const s of solids.filter((x) => !x.id.startsWith('cable:') && !x.id.startsWith('bar:'))) {
         const stands = t.ownerBox && boxContains(s.box, t.ownerBox);
         if (s.id !== t.owner && !stands && overlaps(p.box, s.box)) found.push(`${t.id} × ${s.id}`);
       }

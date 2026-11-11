@@ -80,10 +80,10 @@ export function showcase(): ShowPackage {
   const net = el('rack.network', 9850, 8000, 'Switch', { ...BAND, ip: '192.168.1.1', rack: { units: 2, slots: [[bi('Conmutador de 24 puertos', '24-port switch'), 1], [bi('Panel de parcheo', 'Patch panel'), 1]] } });
 
   // The room, furniture and notes on the plan.
-  el('room.seats-block', 5000, 9000, 'Butacas', { size: { w: 4000, d: 800 } });
-  el('room.booth', 8000, 9000, '', { size: { w: 1600, d: 800 } });
-  el('room.dressing', 800, 9000, 'Camerino', { size: { w: 1400, d: 800 } });
-  el('room.dock', 2500, 9000, 'Muelle de carga', { size: { w: 1400, d: 800 } });
+  // The venue plan already draws the house, so these stand in its side rooms and not on its seats.
+  el('room.dressing', -1200, 1200, 'Camerino', { size: { w: 1400, d: 800 } });
+  el('room.booth', -1200, 3600, '', { size: { w: 1400, d: 800 } });
+  el('room.dock', 11200, 2400, 'Muelle de carga', { size: { w: 1400, d: 800 } });
   el('furniture.chair', 8700, 4950, 'Silla');
   el('furniture.table', 3400, 6800, 'Mesa de producción');
   el('scenery.curtain', 5000, 120);

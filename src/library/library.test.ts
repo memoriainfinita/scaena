@@ -124,8 +124,8 @@ describe('packages', () => {
       const roomTypes = new Set(['desk.digital', 'desk.analog', 'control.laptop', 'control.videomixer', 'control.lightdesk', 'control.server', 'rack.network', 'video.projector', 'video.camera', 'light.ellipsoidal', 'note.text', 'power.outlet']);
       for (const e of pkg.elements) {
         expect(itemById(e.type), e.type).toBeDefined();
+        if (pkg.id === 'showcase') continue; // a wider, free-form stage, in a room of its own, with side rooms on the venue plan
         expect(e.x).toBeGreaterThanOrEqual(0);
-        if (pkg.id === 'showcase') continue; // a wider, free-form stage, in a room of its own
         expect(e.x).toBeLessThanOrEqual(8000);
         expect(e.y).toBeGreaterThanOrEqual(0);
         // The stage is 5000 deep; beyond that only control-position equipment may sit.

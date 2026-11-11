@@ -3,6 +3,7 @@
 import type { Lang } from '../i18n/index.ts';
 import { luminaires, magicPosition } from '../model/lights.ts';
 import type { Show } from '../model/schema.ts';
+import { textWidth } from '../plan/labels.ts';
 import { docStrings } from './strings.ts';
 
 export interface MagicSheet {
@@ -32,6 +33,12 @@ export function magicSheet(show: Show, lang: Lang = show.lang, opts: MagicOption
   const xs = [0, sw, ...lum.map((p) => p.x), ...(arranged ? [] : Object.values(show.mounts).flatMap((m) => [m.from.x, m.to.x]))];
   const ys = [0, sd, ...lum.map((p) => p.y), ...(arranged ? [] : Object.values(show.mounts).flatMap((m) => [m.from.y, m.to.y]))];
   const u = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / 55; // one "type unit"
+  // What is written beside the instruments and the mounts is part of the sheet: it must not be cut by its edge.
+  for (const m of arranged ? [] : Object.values(show.mounts)) xs.push(Math.min(m.from.x, m.to.x) - u * 0.8 - textWidth(m.name, u * 1.5));
+  for (const p of lum) {
+    const half = textWidth(p.e.luminaire!.color.trim(), u * 1.2) / 2;
+    xs.push(p.x - half, p.x + half);
+  }
   const pad = u * 6;
   const x0 = Math.min(...xs) - pad;
   const y0 = Math.min(...ys) - pad;
@@ -42,7 +49,7 @@ export function magicSheet(show: Show, lang: Lang = show.lang, opts: MagicOption
   out.push(sh.kind === 'rect' ? `<rect x="0" y="0" width="${sh.width}" height="${sh.depth}" fill="none" ${stroke}/>` : `<polygon points="${sh.points.map((p) => `${p.x},${p.y}`).join(' ')}" fill="none" ${stroke}/>`);
   for (const m of arranged ? [] : Object.values(show.mounts)) {
     out.push(`<line x1="${m.from.x}" y1="${m.from.y}" x2="${m.to.x}" y2="${m.to.y}" stroke="#777" stroke-width="${r(u * 0.1)}" stroke-dasharray="${r(u * 0.8)} ${r(u * 0.5)}"/>`);
-    out.push(`<text x="${r(Math.min(m.from.x, m.to.x) - u * 0.8)}" y="${r((m.from.y + m.to.y) / 2 + u * 0.4)}" text-anchor="end" font-size="${r(u * 1.5)}" fill="#444" font-family="Inter">${esc(m.name)}</text>`);
+    out.push(`<text x="${r(Math.min(m.from.x, m.to.x) - u * 0.8)}" y="${r((m.from.y + m.to.y) / 2 + u * 0.4)}" text-anchor="end" font-size="${r(u * 1.5)}" fill="#444" font-family="Inter" stroke="#fff" stroke-width="${r(u * 0.5)}" stroke-linejoin="round" paint-order="stroke">${esc(m.name)}</text>`);
   }
   const rad = u * 1.6;
   for (const { e, x, y } of lum) {
@@ -51,7 +58,7 @@ export function magicSheet(show: Show, lang: Lang = show.lang, opts: MagicOption
     const body = [
       `<circle cx="${x}" cy="${y}" r="${r(rad)}" fill="#fff" ${stroke}/>`,
       `<text x="${x}" y="${r(y + u * 0.6)}" text-anchor="middle" font-size="${r(u * (ch.length > 2 ? 1.4 : 1.8))}" font-weight="700" fill="#000" font-family="Inter">${esc(ch)}</text>`,
-      l.color.trim() ? `<text x="${x}" y="${r(y + rad + u * 1.5)}" text-anchor="middle" font-size="${r(u * 1.2)}" fill="#333" font-family="Inter">${esc(l.color.trim())}</text>` : '',
+      l.color.trim() ? `<text x="${x}" y="${r(y + rad + u * 1.5)}" text-anchor="middle" font-size="${r(u * 1.2)}" fill="#333" font-family="Inter" stroke="#fff" stroke-width="${r(u * 0.5)}" stroke-linejoin="round" paint-order="stroke">${esc(l.color.trim())}</text>` : '',
     ].join('');
     out.push(opts.interactive ? `<g class="mi" data-id="${esc(e.id)}" tabindex="0" role="button" aria-label="${esc(opts.interactive.label(ch))}">${body}</g>` : body);
   }

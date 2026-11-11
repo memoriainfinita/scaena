@@ -161,7 +161,7 @@ test('an item dragged from the library lands where it is dropped, and the other 
 test('the connection lines can be hidden and shown again', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
-  const lines = page.locator('svg.plansvg line[stroke="#0b6e78"]');
+  const lines = page.locator('svg.plansvg polyline[stroke="#0b6e78"]');
   await expect(lines.first()).toBeVisible();
   const button = page.getByRole('button', { name: 'Líneas de conexión' });
   await expect(button).toHaveAttribute('aria-pressed', 'true');
@@ -170,6 +170,22 @@ test('the connection lines can be hidden and shown again', async ({ page }) => {
   await expect(button).toHaveAttribute('aria-pressed', 'false');
   await button.click();
   await expect(lines.first()).toBeVisible();
+});
+
+test('cables go around the elements in right angles, and can be drawn straight', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Banda de rock/ }).click();
+  const cables = page.locator('svg.plansvg polyline[stroke="#0b6e78"]');
+  await expect(cables.first()).toBeVisible();
+  const corners = () => cables.evaluateAll((els) => els.map((e) => (e.getAttribute('points') ?? '').split(' ').length));
+  expect(Math.max(...(await corners()))).toBeGreaterThan(2);
+  const straight = page.getByRole('button', { name: 'Cables rectos' });
+  await expect(straight).toHaveAttribute('aria-pressed', 'false');
+  await straight.click();
+  await expect(straight).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(async () => Math.max(...(await corners()))).toBe(2);
+  await straight.click();
+  await expect.poll(async () => Math.max(...(await corners()))).toBeGreaterThan(2);
 });
 
 test('the library lists by category with headings, and a layer made active receives new elements', async ({ page }) => {
