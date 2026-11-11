@@ -30,6 +30,20 @@ test.describe('PDF rider', () => {
     expect(text).toContain('/Tabs /S');
   });
 
+  test('the light plot is a page of its own, and each added one adds a page @a11y', async ({ page }) => {
+    await open(page, /Teatro con micros/);
+    const status = page.getByRole('status').filter({ hasText: /\d+ páginas/ });
+    await expect(status).toBeVisible({ timeout: 90_000 });
+    const pagesOf = async () => Number(/(\d+) páginas/.exec((await status.textContent()) ?? '')![1]);
+    const before = await pagesOf();
+    await expect(page.getByRole('group', { name: 'Plano de luces 1' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Plano de luces 1' }).getByRole('checkbox', { name: 'Audio' })).not.toBeChecked();
+    await page.getByRole('button', { name: 'Añadir una hoja de plano de luces' }).click();
+    await expect(page.getByRole('group', { name: 'Plano de luces 2' })).toBeVisible();
+    await expect.poll(pagesOf, { timeout: 90_000 }).toBe(before + 1);
+    expect((await axe(page)).violations).toEqual([]);
+  });
+
   test('a show named in Cyrillic and Greek compiles with the wide fonts and keeps its letters', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: /Banda de rock/ }).click();

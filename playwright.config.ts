@@ -10,6 +10,8 @@ const firefox = (theme: 0 | 1 = 0) => ({
 export default defineConfig({
   testDir: 'e2e',
   forbidOnly: !!process.env.CI,
+  // Tests tagged @slow (the axe sweep of every view and dialog) run in CI, or locally with E2E_ALL=1.
+  grepInvert: process.env.CI || process.env.E2E_ALL ? undefined : /@slow/,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: { trace: 'retain-on-failure' },

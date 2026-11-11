@@ -9,7 +9,7 @@ import { drawnSymbolOf, iconKeyFor } from '../library/light-symbols.ts';
 import type { Connection, PlanElement, Show } from '../model/schema.ts';
 import { stageFrame } from '../model/stage.ts';
 import { elementSize, formatLength, planBox, prosceniumWalls, unionBox, type Box } from '../plan/geometry.ts';
-import { elementKey, linkKey, mountKey, paperText, plotTexts, textWidth } from '../plan/labels.ts';
+import { TAG_ABOVE, TAG_RADIUS, elementKey, linkKey, luminaireTag, mountKey, paperText, plotTexts, tagKey, textWidth } from '../plan/labels.ts';
 import { docStrings } from './strings.ts';
 
 export interface PlanSvgOptions {
@@ -19,6 +19,10 @@ export interface PlanSvgOptions {
   /** Print scale as 1:N, or null to fit the area. */
   planScale: number | null;
   lang: Lang;
+  /** The layers to draw; absent means the ones the show has visible. A report of the plan is a preset of layers and a scale. */
+  layerIds?: ReadonlySet<string>;
+  /** Luminaires carry a tag (unit in a circle, channel and colour under it) in place of their name: the light plot. */
+  fixtureTags?: boolean;
 }
 
 export interface PlanSvg {
@@ -146,9 +150,9 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const worldW = box.x1 - box.x0;
   const worldH = box.y1 - box.y0;
 
-  const layers = new Map(show.layers.map((l, i) => [l.id, { l, i }]));
+  const layers = new Map(show.layers.map((l, i) => [l.id, { l, i, on: opts.layerIds ? opts.layerIds.has(l.id) : l.visible }]));
   const els = Object.values(show.elements)
-    .filter((e) => layers.get(e.layerId)?.l.visible)
+    .filter((e) => layers.get(e.layerId)?.on)
     .sort((a, b) => (layers.get(a.layerId)?.i ?? 0) - (layers.get(b.layerId)?.i ?? 0));
 
   // Legend: one cell per distinct item on the plan.
@@ -167,7 +171,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const inPlan = apart ? null : layout;
   const f = 0.17 / k; // paper-pixel unit: 1.5 becomes 0.26 mm
 
-  const texts = plotTexts(show, { sizes: paperText(k), bounds: box, lang: opts.lang, mounts: true });
+  const texts = plotTexts(show, { sizes: paperText(k), bounds: box, lang: opts.lang, mounts: true, layerIds: new Set([...layers.values()].filter((x) => x.on).map((x) => x.l.id)), fixtureTags: opts.fixtureTags });
 
   const out: string[] = [];
   // Written after every element: on a plan too full to give each text a free place, a text still shows over what it touches.
@@ -176,7 +180,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   const stageAttrs = `fill="#f1f1ee" stroke="#000" stroke-width="${r(0.35 / k)}"`;
   out.push(stage.kind === 'rect' ? `<rect x="0" y="0" width="${stage.width}" height="${stage.depth}" ${stageAttrs}/>` : `<polygon points="${stage.points.map((p) => `${p.x},${p.y}`).join(' ')}" ${stageAttrs}/>`);
 
-  if (bgInfo && show.stage.background && layers.get([...layers.keys()].find((id) => layers.get(id)!.l.subject === 'background') ?? '')?.l.visible !== false) {
+  if (bgInfo && show.stage.background && layers.get([...layers.keys()].find((id) => layers.get(id)!.l.subject === 'background') ?? '')?.on !== false) {
     const bg = show.stage.background;
     const bytes = images[bg.file]!;
     out.push(`<image href="data:image/png;base64,${toBase64(bytes)}" x="${bg.x}" y="${bg.y}" width="${r(bgInfo.dims.w * bg.scale)}" height="${r(bgInfo.dims.h * bg.scale)}" opacity="${bg.opacity}" preserveAspectRatio="none"/>`);
@@ -195,7 +199,7 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
     if (name) written.push(`<text x="${r(name.x)}" y="${r(name.y)}" text-anchor="middle" font-size="${r(2.2 / k)}" fill="#444" font-family="Inter">${esc(m.name)}</text>`);
   }
 
-  const visible = (id: string) => !!show.elements[id] && !!layers.get(show.elements[id]!.layerId)?.l.visible;
+  const visible = (id: string) => !!show.elements[id] && !!layers.get(show.elements[id]!.layerId)?.on;
   for (const c of show.view.links ? Object.values(show.connections) : []) {
     if (!visible(c.from) || !visible(c.to)) continue;
     const a = show.elements[c.from]!;
@@ -210,6 +214,8 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   for (const e of els) {
     const dim = layers.get(e.layerId)?.l.dim ?? 0;
     out.push(elementSvg(e, f, k, dim, show.units, opts.lang, show.view.outlines, show.view.rp2Lights));
+    const tag = texts.get(tagKey(e.id));
+    if (tag && e.luminaire) written.push(tagSvg(e, tag, k, dim));
     const label = texts.get(elementKey(e.id));
     if (label?.leader) written.push(`<line x1="${r(label.leader.x1)}" y1="${r(label.leader.y1)}" x2="${r(label.leader.x2)}" y2="${r(label.leader.y2)}" stroke="#555" stroke-width="${r(0.12 / k)}"${dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : ''}/>`);
     if (label) written.push(`<text x="${r(label.x)}" y="${r(label.y)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter"${dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : ''}>${esc(e.label)}</text>`);
@@ -258,6 +264,20 @@ function planSvgIn(show: Show, images: Record<string, Uint8Array>, opts: PlanSvg
   }).join('');
   const legend = { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${legendW} ${legendH}" width="${legendW}" height="${legendH}">${iconDefs(used.map((id) => iconKeyFor(itemById(id)!, show.view.rp2Lights)).filter((x): x is string => !!x))}${cells}</svg>`, widthMm: legendW, heightMm: legendH };
   return { svg, widthMm: width * k, heightMm: height * k, scaleN: Math.round(1 / k), fits, legend };
+}
+
+/** The tag of a luminaire as drawn on paper: the unit in a circle, the channel and colour under it. `at` is the baseline of the second line. */
+function tagSvg(e: PlanElement, at: { x: number; y: number; leader?: { x1: number; y1: number; x2: number; y2: number } }, k: number, dim: number): string {
+  const f = 2.3 / k;
+  const tag = luminaireTag(e);
+  const opacity = dim > 0 ? ` opacity="${r(1 - dim * 0.7)}"` : '';
+  const rad = TAG_RADIUS * f;
+  // The block starts at.y - 0.85 f - TAG_ABOVE f; the circle sits against its top.
+  const cyc = at.y - 0.85 * f - TAG_ABOVE * f + rad;
+  const leader = at.leader ? `<line x1="${r(at.leader.x1)}" y1="${r(at.leader.y1)}" x2="${r(at.leader.x2)}" y2="${r(at.leader.y2)}" stroke="#555" stroke-width="${r(0.12 / k)}"${opacity}/>` : '';
+  const circle = `<circle cx="${r(at.x)}" cy="${r(cyc)}" r="${r(rad)}" fill="#fff" stroke="#000" stroke-width="${r(0.25 / k)}"${opacity}/><text x="${r(at.x)}" y="${r(cyc + 0.33 * f)}" text-anchor="middle" font-size="${r(f * (tag.unit.length > 2 ? 0.75 : 0.95))}" font-weight="700" fill="#000" font-family="Inter"${opacity}>${esc(tag.unit)}</text>`;
+  const line = tag.line ? `<text x="${r(at.x)}" y="${r(at.y)}" text-anchor="middle" font-size="${r(f)}" fill="#000" font-family="Inter"${opacity}>${esc(tag.line)}</text>` : '';
+  return leader + circle + line;
 }
 
 function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Show['units'], lang: Lang, outlines: boolean, rp2: boolean): string {

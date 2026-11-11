@@ -12,7 +12,8 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { fixtureById } from '../library/models.ts';
 import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
-import { planSvg } from './plan-svg.ts';
+import { planSvg, type PlanSvgOptions } from './plan-svg.ts';
+import { LIGHT_PLAN, lightPlanReports, reportLayerIds } from './plan-reports.ts';
 import { buildReport, cableText } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
@@ -38,6 +39,8 @@ export const PAPERS: Record<Show['paper'], { typst: string; w: number; h: number
   Tabloid: { typst: 'us-tabloid', w: 279.4, h: 431.8 },
 };
 const MARGIN = 15;
+/** Height the title block under a plan page takes, in millimetres. */
+const TITLE_BLOCK_MM = 14;
 const BODY_PT = 9;
 
 /** A Typst string literal that evaluates to the given text. */
@@ -171,6 +174,56 @@ function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built 
   };
   const printed = sections.filter((s) => hasData[s] !== false);
 
+  /** The logo as a file of the document, or null when the show has none the compiler can read. */
+  const logoFile = (): string | null => {
+    const name = show.titleBlock.logo;
+    const bytes = name ? images[name] : undefined;
+    const ext = name ? logoKind(name) : null;
+    if (!bytes || !ext) return null;
+    files[`/logo.${ext}`] = bytes;
+    return `/logo.${ext}`;
+  };
+
+  /** The block under a plan page: who, where, when, which revision, which sheet and at what scale. */
+  const titleBlock = (sheet: string, scaleN: number): string => {
+    const logo = logoFile();
+    const fields: [string, string][] = ([
+      [D.production, show.titleBlock.production],
+      [D.venue, show.titleBlock.venue],
+      [D.author, show.titleBlock.author],
+      [D.date, show.date],
+      [D.revision, String(show.revision)],
+      [D.sheet, sheet],
+      [D.scaleLabel, `1:${scaleN}`],
+    ] as [string, string][]).filter(([, v]) => v);
+    const cells = fields.map(([k, v]) => `[#text(size: 6pt, fill: luma(100))[${txt(k)}] \\ #text(size: 8.5pt)[${txt(v)}]]`);
+    if (logo) cells.unshift(`[#image(${lit(logo)}, height: 9mm, fit: "contain", alt: ${lit(D.logo)})]`);
+    return `#v(2mm)
+#align(right)[#table(columns: ${cells.length}, inset: 3pt, stroke: 0.4pt + luma(120), align: horizon, ${cells.join(', ')})]
+`;
+  };
+
+  /** One page of the plan: the drawing, the title block, and the legend on a page of its own when it does not fit. */
+  const planPage = (key: string, sheet: string, opts: Pick<PlanSvgOptions, 'planScale' | 'layerIds' | 'fixtureTags'>): string => {
+    const flipped = paper.h > paper.w;
+    const availW = paper.h - 2 * MARGIN;
+    const availH = paper.w - 2 * MARGIN - 14 - 10 - TITLE_BLOCK_MM;
+    const plan = planSvg(show, images, { availWidthMm: availW, availHeightMm: availH, lang: show.lang, ...opts });
+    if (!plan.fits) c.warnings.push({ kind: 'scale', text: `1:${opts.planScale} → 1:${plan.scaleN}` });
+    files[`/${key}.svg`] = new TextEncoder().encode(plan.svg);
+    const alt = `${sheet}: ${elements.length}`;
+    if (plan.legend) files[`/${key}-legend.svg`] = new TextEncoder().encode(plan.legend.svg);
+    const legendPage = plan.legend ? `#page(flipped: ${flipped})[
+== ${txt(D.legend)}
+#align(center)[#image("/${key}-legend.svg", width: ${(plan.legend.widthMm * Math.min(1, availH / plan.legend.heightMm)).toFixed(2)}mm, alt: ${lit(D.legend)})]
+]
+` : '';
+    return `#page(flipped: ${flipped})[
+${heading(sheet)}#align(center)[#image("/${key}.svg", width: ${plan.widthMm.toFixed(2)}mm, alt: ${lit(alt)})]
+${titleBlock(sheet, plan.scaleN)}]
+${legendPage}`;
+  };
+
   for (const s of printed) {
     if (s === 'cover') {
       const meta: [string, string][] = [
@@ -213,23 +266,9 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
     } else if (s === 'contract') {
       parts.push(heading(P.contract) + keyValueTable(contractRows(show, P)) + '\n');
     } else if (s === 'plan') {
-      const flipped = paper.h > paper.w;
-      const availW = paper.h - 2 * MARGIN;
-      const availH = paper.w - 2 * MARGIN - 14 - 10;
-      const plan = planSvg(show, images, { availWidthMm: availW, availHeightMm: availH, planScale: show.document.planScale, lang: show.lang });
-      if (!plan.fits) c.warnings.push({ kind: 'scale', text: `1:${show.document.planScale} → 1:${plan.scaleN}` });
-      files['/plan.svg'] = new TextEncoder().encode(plan.svg);
-      const alt = `${D.plan}: ${elements.length}`;
-      if (plan.legend) files['/legend.svg'] = new TextEncoder().encode(plan.legend.svg);
-      const legendPage = plan.legend ? `#page(flipped: ${flipped})[
-== ${txt(D.legend)}
-#align(center)[#image("/legend.svg", width: ${(plan.legend.widthMm * Math.min(1, availH / plan.legend.heightMm)).toFixed(2)}mm, alt: ${lit(D.legend)})]
-]
-` : '';
-      parts.push(`#page(flipped: ${flipped})[
-${heading(D.plan)}#align(center)[#image("/plan.svg", width: ${plan.widthMm.toFixed(2)}mm, alt: ${lit(alt)})]
-]
-${legendPage}`);
+      parts.push(planPage('plan', D.plan, { planScale: show.document.planScale }));
+    } else if (s === LIGHT_PLAN) {
+      lightPlanReports(show).forEach((rep, n) => parts.push(planPage(`lightplan-${n}`, rep.title || D.lightPlan, { planScale: rep.scale, layerIds: reportLayerIds(show, rep), fixtureTags: true })));
     } else if (s === 'inputs') {
       const list = channelList(show);
       const rows = list.map((ch) => {

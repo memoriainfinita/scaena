@@ -16,7 +16,7 @@ async function theatre(page: Page) {
   await expect(page.locator('g.el').first()).toBeVisible();
 }
 
-test('every view and each of its sections has no violations @a11y', async ({ page }) => {
+test('every view and each of its sections has no violations @a11y @slow', async ({ page }) => {
   test.setTimeout(120_000);
   await theatre(page);
   await clean(page);
@@ -48,7 +48,7 @@ test('every view and each of its sections has no violations @a11y', async ({ pag
   await clean(page);
 });
 
-test('every dialog has no violations @a11y', async ({ page }) => {
+test('every dialog has no violations @a11y @slow', async ({ page }) => {
   test.setTimeout(120_000);
   await theatre(page);
   for (const [opener, title] of [
@@ -69,7 +69,7 @@ test('every dialog has no violations @a11y', async ({ page }) => {
   await clean(page);
 });
 
-test('the plan can be used with the keyboard alone @a11y', async ({ page }) => {
+test('the plan can be used with the keyboard alone @a11y @slow', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Banda de rock/ }).click();
   await expect(page.locator('g.el').first()).toBeVisible();

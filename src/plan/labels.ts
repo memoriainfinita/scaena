@@ -2,7 +2,7 @@
 // `placeTexts` is the algorithm; `plotTexts` turns a show into its input. Both are plain functions over plan millimetres, for the screen and the PDF.
 import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
-import type { Show } from '../model/schema.ts';
+import type { PlanElement, Show } from '../model/schema.ts';
 import { boxContains, elementBox, elementSize, formatLength, type Box } from './geometry.ts';
 
 /** A text position: `x` is its centre (it is drawn with text-anchor="middle") and `y` its baseline. */
@@ -40,12 +40,14 @@ export interface TextRequest {
   owner?: string;
   /** The box of the owner: a solid that contains it whole is what it stands on, so it does not count (a drum kit on its riser). */
   ownerBox?: Box;
+  /** Height the text block has above its first line, for a block of several lines whose baseline is the last one; 0 for one line. */
+  above?: number;
 }
 
 const ASCENT = 0.85;
 const DESCENT = 0.25;
 
-const textBox = (s: Slot, width: number, fontSize: number): Box => ({ x0: s.x - width / 2, y0: s.y - fontSize * ASCENT, x1: s.x + width / 2, y1: s.y + fontSize * DESCENT });
+const textBox = (s: Slot, width: number, fontSize: number, above = 0): Box => ({ x0: s.x - width / 2, y0: s.y - fontSize * ASCENT - above, x1: s.x + width / 2, y1: s.y + fontSize * DESCENT });
 
 const NARROW = new Set(" .,:;'|!ijlI");
 const SLIM = new Set('frt()-/[]');
@@ -144,7 +146,7 @@ export function placeTexts(solids: Solid[], texts: TextRequest[], bounds?: Box):
     let best: Slot | null = null;
     let bestCost = Infinity;
     for (const slot of t.slots) {
-      const box = textBox(slot, t.width, t.fontSize);
+      const box = textBox(slot, t.width, t.fontSize, t.above);
       const reach = { x0: box.x0 - t.fontSize * AIR_X, y0: box.y0 - t.fontSize * AIR_Y, x1: box.x1 + t.fontSize * AIR_X, y1: box.y1 + t.fontSize * AIR_Y };
       const area = (box.x1 - box.x0) * (box.y1 - box.y0);
       let cost = (bounds ? (area - overlap(box, bounds)) * EDGE_WEIGHT : 0) + Math.max(0, (slot.ring ?? 0) - 1) * RING_WEIGHT * area;
@@ -159,7 +161,7 @@ export function placeTexts(solids: Solid[], texts: TextRequest[], bounds?: Box):
       }
     }
     if (!best) continue;
-    const box = textBox(best, t.width, t.fontSize);
+    const box = textBox(best, t.width, t.fontSize, t.above);
     placed.set(t.id, { x: best.x, y: best.y, box });
     buckets.add(box, null);
   }
@@ -167,20 +169,20 @@ export function placeTexts(solids: Solid[], texts: TextRequest[], bounds?: Box):
 }
 
 /** Below, above, right, left of the box; the same a little to each side; the same again further out. */
-export function elementSlots(b: Box, width: number, fontSize: number, gap: number): Slot[] {
+export function elementSlots(b: Box, width: number, fontSize: number, gap: number, above = 0): Slot[] {
   const cx = (b.x0 + b.x1) / 2;
   const cy = (b.y0 + b.y1) / 2;
   const step = fontSize * 1.1;
   const out: Slot[] = [];
   for (let ring = 0; ring < 6; ring++) {
     const g = gap + ring * step;
-    const below = b.y1 + g + fontSize * ASCENT;
-    const above = b.y0 - g - fontSize * DESCENT;
+    const below = b.y1 + g + fontSize * ASCENT + above;
+    const over = b.y0 - g - fontSize * DESCENT;
     const right = b.x1 + g + width / 2;
     const left = b.x0 - g - width / 2;
-    const middle = cy + fontSize * DESCENT;
-    out.push({ x: cx, y: below, ring }, { x: cx, y: above, ring }, { x: right, y: middle, ring }, { x: left, y: middle, ring });
-    for (const shift of [-0.5, 0.5, -1, 1]) out.push({ x: cx + shift * width, y: below, ring }, { x: cx + shift * width, y: above, ring });
+    const middle = cy + fontSize * DESCENT + above / 2;
+    out.push({ x: cx, y: below, ring }, { x: cx, y: over, ring }, { x: right, y: middle, ring }, { x: left, y: middle, ring });
+    for (const shift of [-0.5, 0.5, -1, 1]) out.push({ x: cx + shift * width, y: below, ring }, { x: cx + shift * width, y: over, ring });
     for (const side of [-1, 1]) out.push({ x: right, y: middle + side * step, ring }, { x: left, y: middle + side * step, ring });
   }
   return out;
@@ -242,6 +244,16 @@ export const paperText = (k: number): TextSizes => ({ element: 2.3 / k, elementG
 export const elementKey = (id: string) => `el:${id}`;
 export const mountKey = (id: string) => `mount:${id}`;
 export const linkKey = (id: string) => `link:${id}`;
+export const tagKey = (id: string) => `tag:${id}`;
+
+/** What a luminaire's tag says: its unit number in a circle, and under it the channel and the colour. */
+export function luminaireTag(e: PlanElement): { unit: string; line: string } {
+  const l = e.luminaire!;
+  return { unit: l.unit === null ? '–' : String(l.unit), line: [l.channel === null ? '' : String(l.channel), l.color.trim()].filter(Boolean).join(' / ') };
+}
+/** Radius of the circle of a tag, and the height the tag has above its second line, in font sizes. */
+export const TAG_RADIUS = 0.8;
+export const TAG_ABOVE = 1.8;
 
 const GROUP = { pinned: -1, mount: 0, element: 1, link: 2 };
 
@@ -252,11 +264,15 @@ export interface PlotTextOptions {
   lang: Lang;
   /** Whether this renderer writes the names of the mounts. */
   mounts: boolean;
+  /** The layers drawn; absent means the ones the show has visible. */
+  layerIds?: ReadonlySet<string>;
+  /** Luminaires carry a tag (unit, channel, colour) in place of their name: the light plot. */
+  fixtureTags?: boolean;
 }
 
 /** The solids and texts of a show, as one renderer draws them. Exported for the tests. */
-export function plotInput(show: Show, { sizes, lang, mounts }: PlotTextOptions): { solids: Solid[]; texts: TextRequest[] } {
-  const visibleLayers = new Set(show.layers.filter((l) => l.visible).map((l) => l.id));
+export function plotInput(show: Show, { sizes, lang, mounts, layerIds, fixtureTags }: PlotTextOptions): { solids: Solid[]; texts: TextRequest[] } {
+  const visibleLayers = layerIds ?? new Set(show.layers.filter((l) => l.visible).map((l) => l.id));
   const shown = Object.values(show.elements).filter((e) => visibleLayers.has(e.layerId));
   const solids: Solid[] = [];
   const texts: TextRequest[] = [];
@@ -276,6 +292,11 @@ export function plotInput(show: Show, { sizes, lang, mounts }: PlotTextOptions):
       const cx = e.x + up * Math.sin(a);
       const cy = e.y - up * Math.cos(a);
       solids.push({ id: `${e.id}#text`, box: { x0: cx - hw, y0: cy - hh, x1: cx + hw, y1: cy + hh } });
+    } else if (fixtureTags && e.luminaire) {
+      const tag = luminaireTag(e);
+      const width = Math.max(2 * TAG_RADIUS * sizes.element, textWidth(tag.line, sizes.element));
+      const above = TAG_ABOVE * sizes.element;
+      texts.push({ id: tagKey(e.id), group: e.labelAt ? GROUP.pinned : GROUP.element, width, fontSize: sizes.element, owner: e.id, ownerBox: box, above, slots: e.labelAt ? [{ x: e.x + e.labelAt.x, y: e.y + e.labelAt.y }] : elementSlots(box, width, sizes.element, sizes.elementGap, above) });
     } else if (it.symbol !== 'textbox' && e.label && show.view.labels) {
       const width = textWidth(e.label, sizes.element);
       // A label the user moved has one place and goes first, so the others make room for it.

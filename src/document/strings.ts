@@ -27,6 +27,8 @@ export interface DocStrings {
   time: string;
   what: string;
   scaleLabel: string;
+  lightPlan: string;
+  sheet: string;
   channel: string;
   shortName: string;
   mic: string;
@@ -117,7 +119,7 @@ const es: DocStrings = {
   rider: 'Rider técnico', date: 'Fecha', revision: 'Revisión', venue: 'Sala', production: 'Producción', author: 'Autoría', page: 'Pág.', of: 'de',
   contacts: 'Contactos', schedule: 'Horario', plan: 'Plano del escenario', inputs: 'Lista de entradas', outputs: 'Lista de salidas', computers: 'Ordenadores y programas',
   lights: 'Instrumentos de luz', electrical: 'Eléctrica', notes: 'Notas', revisions: 'Revisiones',
-  role: 'Función', name: 'Nombre', phone: 'Teléfono', email: 'Correo', time: 'Hora', what: 'Qué', scaleLabel: 'Escala',
+  role: 'Función', name: 'Nombre', phone: 'Teléfono', email: 'Correo', time: 'Hora', what: 'Qué', scaleLabel: 'Escala', lightPlan: 'Plano de luces', sheet: 'Hoja',
   channel: 'Canal', shortName: 'Nombre', mic: 'Micro o DI', stand: 'Pie', phantom: '48 V', pair: 'Par', source: 'Fuente', yes: 'Sí', no: 'No',
   kind: 'Tipo', stereo: 'Estéreo', aux: 'Aux', mixes: 'Mezclas de monitores', who: 'Para', mix: 'Mezcla', mixWords: { low: 'poco', high: 'más' }, supplier: 'Lo aporta', unset: 'Sin indicar', band: 'Banda', venueSupplies: 'Sala', rental: 'Alquiler',
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
@@ -138,7 +140,7 @@ const en: DocStrings = {
   rider: 'Technical rider', date: 'Date', revision: 'Revision', venue: 'Venue', production: 'Production', author: 'Author', page: 'Page', of: 'of',
   contacts: 'Contacts', schedule: 'Schedule', plan: 'Stage plan', inputs: 'Input list', outputs: 'Output list', computers: 'Computers and software',
   lights: 'Lighting instruments', electrical: 'Electrical', notes: 'Notes', revisions: 'Revisions',
-  role: 'Role', name: 'Name', phone: 'Phone', email: 'Email', time: 'Time', what: 'What', scaleLabel: 'Scale',
+  role: 'Role', name: 'Name', phone: 'Phone', email: 'Email', time: 'Time', what: 'What', scaleLabel: 'Scale', lightPlan: 'Light plot', sheet: 'Sheet',
   channel: 'Ch.', shortName: 'Name', mic: 'Mic or DI', stand: 'Stand', phantom: '48 V', pair: 'Pair', source: 'Source', yes: 'Yes', no: 'No',
   kind: 'Type', stereo: 'Stereo', aux: 'Aux', mixes: 'Monitor mixes', who: 'For', mix: 'Mix', mixWords: { low: 'a little', high: 'more' }, supplier: 'Supplied by', unset: 'Not stated', band: 'Band', venueSupplies: 'Venue', rental: 'Rental',
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',

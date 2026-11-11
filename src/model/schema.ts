@@ -210,6 +210,8 @@ export const WorkNote = v.object({ id, text: text(), done: v.optional(v.boolean(
 export const ReportConfig = v.object({
   id,
   kind: v.pipe(v.string(), v.maxLength(40)),
+  /** Heading of the page; empty uses the name of the report kind. */
+  title: text(80),
   columns: v.optional(v.array(v.pipe(v.string(), v.maxLength(40))), []),
   landscape: v.optional(v.boolean(), false),
   scale: v.optional(v.nullable(v.number()), null),
@@ -252,7 +254,7 @@ export const Contract = v.object({
 /** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'lightPlan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */
@@ -316,6 +318,8 @@ export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type CustomItem = v.InferOutput<typeof CustomItem>;
 export type Layer = v.InferOutput<typeof Layer>;
+export type Subject = v.InferOutput<typeof Subject>;
+export type ReportConfig = v.InferOutput<typeof ReportConfig>;
 export type InputChannel = v.InferOutput<typeof InputChannel>;
 export type Output = v.InferOutput<typeof Output>;
 export type MixLevel = v.InferOutput<typeof MixLevel>;

@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-09
+last_updated: 2026-11-11
 ---
 
 # scaena — state
@@ -18,6 +18,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 775 símbolos, uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
+- Grupo 1 de la auditoría hecho el 2026-11-11 (`docs/design/group-1-light-plot-2026-11-11.md`): plano de luces como hoja propia del PDF (informe `lightPlan` con capas, escala y título; varias hojas), rótulo por luminaria (unidad en círculo, canal y color debajo) y cajetín bajo cada hoja de plano. El cajetín resta 14 mm de alto: el plano de la muestra completa pasó de 1:97 a 1:107. Sin commit
 - Auditoría del 2026-11-09 (solo lectura, sobre PDF y capturas generados ese día de teatro, rock y muestra completa): la base técnica es sólida y la amplitud prometida existe, pero la app no está terminada. El plano impreso no llega a nivel profesional y hay funciones aceptadas a medias. Los hallazgos están en TODO, grupos 1 a 4. Sin comprobar en la auditoría: e2e completos, móvil, rendimiento y la versión en inglés
 - Pruebas: 473 unitarias, tipos y lint limpios (2026-11-09); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
@@ -37,6 +38,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - [principios] Para la humanidad, por la humanidad. Sin límites de presupuesto ni de tiempo. Open source y gratuito. Sin MVP: app profesional, pulida y completa desde el principio. Confirmed 2026-10.
 - [docs] `docs/design/`, `docs/research/` e `investigacion.md`, y todo documento escrito antes del 2026-11-07 (como `grupo-e` y `grupo-f`), se quedan en español; toda documentación nueva va en inglés. Confirmed 2026-11.
 - [pruebas] Playwright sirve `dist`: `pnpm build` antes de cada e2e; nunca dos ejecuciones de Playwright a la vez (comparten el puerto 4184). Confirmed 2026-11.
+- [pruebas por niveles] Mientras se escribe: `pnpm typecheck` y `vitest` de los archivos afectados. Al cerrar un paso: unitarias completas y solo el e2e del área tocada (`playwright test e2e/<archivo>.spec.ts --project=app`). Al cerrar un grupo, antes de commit o push: todo Firefox. Chrome, móvil y `app-light`, solo antes de una versión o si el cambio toca el dibujo del plano. La CI lo pasa todo. Confirmed 2026-11-11.
 - [capturas] `node scripts/screenshots.mjs en|es` regenera las de la guía tras `pnpm build`; `node scripts/readme-shots.mjs`, las del README. Confirmed 2026-11.
 
 ## Preferences
@@ -93,9 +95,9 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 
 ### Grupo 1: plano de luces y cajetín
 
-- [ ] El PDF lleva un solo plano con todas las capas. Falta el plano de luces como página propia. La decisión 1 de interfaz (cada informe es un preajuste de capas más una escala) no está construida: `ReportConfig` (`columns`, `landscape`, `scale`, `layerPreset`) está en `src/model/schema.ts` y nada lo usa. Tampoco existe «diseño de cada informe ajustable»
-- [ ] Las luminarias no llevan unidad, canal ni color en el plano; solo salen en las tablas y en el magic sheet
-- [ ] La página del plano no tiene cajetín; `titleBlock` solo se usa en la portada
+- [x] (hecho 2026-11-11, queda sin usar `columns` y `landscape` de `ReportConfig`) El PDF llevaba un solo plano con todas las capas. Falta el plano de luces como página propia. La decisión 1 de interfaz (cada informe es un preajuste de capas más una escala) no está construida: `ReportConfig` (`columns`, `landscape`, `scale`, `layerPreset`) está en `src/model/schema.ts` y nada lo usa. Tampoco existe «diseño de cada informe ajustable»
+- [x] (hecho 2026-11-11, solo en el plano de luces) Las luminarias no llevan unidad, canal ni color en el plano; solo salen en las tablas y en el magic sheet
+- [x] (hecho 2026-11-11) La página del plano no tiene cajetín; `titleBlock` solo se usa en la portada
 
 ### Grupo 2: legibilidad del plano
 

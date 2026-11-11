@@ -241,7 +241,7 @@ export function showcase(): ShowPackage {
           crew: tx(bi('Sonido, monitores, luces, vídeo y backline', 'Sound, monitors, lights, video and backline')), other: tx(bi('Mesa y PA de la sala', 'House desk and PA')),
         },
         event: { venueAddress: tx(bi('Plaza del Teatro 1, 00000 Ciudad (ejemplo)', '1 Theatre Square, 00000 City (example)')), parking: tx(bi('Camión en el muelle de carga', 'Truck at the loading dock')), notes: tx(bi('Aforo de 450 personas', 'Capacity of 450')) },
-        document: { template: 'custom', sections: ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'], planScale: null, planLegend: true, inputs: { landscape: false, blocks: 2 } },
+        document: { template: 'custom', sections: ['cover', 'contacts', 'schedule', 'build', 'plan', 'lightPlan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'], planScale: null, planLegend: true, inputs: { landscape: false, blocks: 2 } },
       };
 
       show = addContacts(show, tx, [
