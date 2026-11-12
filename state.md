@@ -135,7 +135,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 ### Fuera de los grupos
 
 - [ ] Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
-- [ ] Medidas de ficha técnica para el resto de la biblioteca. Cuarta pasada (2026-11-11): confirmadas `light.led-panel`, `light.beam`, `light.led-profile`, `rack.compressor` y `rack.power-conditioner`, y el 2026-11-12 seis de Roland (sintes, acordeón, sampler); los PDF de dibujo se leen renderizando la página como imagen. Faltan luces con fichas sin texto, rack, teclados y percusión (`docs/research/icon-item-sizes-2026-11-08.md`)
+- [x] (hecho 2026-11-12) Medidas de ficha técnica: 120 de 847 con fuente; el resto son estimaciones por tipo de objeto, también las alturas (`docs/research/icon-item-sizes-2026-11-08.md`, pasadas 4 a 11)
 - [ ] Probar en Safari de iOS e instalar la aplicación de verdad en un móvil
 - [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
 - [ ] Sin comprobar todavía: un PDF real escaneado (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
