@@ -2,12 +2,12 @@
 
 Technical riders for live shows, in the browser: stage plot, input and output lists, light plot, one event's production sheets, reports and a PDF rider, all views of one model. Free, open source (GPL-3.0), no accounts and no servers: everything stays in your browser and in the files you save. Spanish and English. **Live: https://memoriainfinita.github.io/scaena/**
 
-![The stage plot of a rock band, with the library on the left and the inspector on the right](docs/img/plot.png)
+![The stage plot of a rock band, with the library on the left and the inspector on the right](docs/scaena-demo.png)
 
 | | |
 |---|---|
-| ![Input list](docs/img/inputs.png) | ![Light plot lists](docs/img/lights.png) |
-| ![The rider PDF, previewed](docs/img/document.png) | ![Start screen with the show packages](docs/img/start.png) |
+| ![Input list](docs/scaena-inputs.png) | ![Light plot lists](docs/scaena-lights.png) |
+| ![The rider PDF, previewed](docs/scaena-document.png) | ![Start screen with the show packages](docs/scaena-start.png) |
 
 - **Plot:** a 2D plan with a library of 775 line-art symbols (one SVG per item, filtered by category), luminaires as icons or as RP-2 top-view outlines, your own items and layers, alignment, groups, measuring, permanent dimensions, a rectangular or free-form stage with reference lines, a PDF or DXF venue plan as a calibrated background, cables between elements with an estimated length, and export to DXF.
 - **Sound:** input and output lists edited in place, the patch taken from the cables and their numbered ports, stereo pairs, phantom power from the microphone's type, signal flow.
@@ -46,3 +46,11 @@ The code is organised by what it does: `src/model` (the data and its pure operat
 ## Publishing
 
 The workflow in `.github/workflows/ci.yml` lints, tests, builds, runs the browser tests and checks the structure of a generated PDF; on a push to `main` it deploys `dist/` to GitHub Pages. See `docs/publishing.md`.
+
+## License
+
+GNU General Public License v3.0 only. See [LICENSE](LICENSE).
+
+## Credits
+
+Developed by [@memoriainfinita](https://github.com/memoriainfinita) with the assistance of Claude (Anthropic).
