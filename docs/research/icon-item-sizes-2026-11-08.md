@@ -242,3 +242,26 @@ Left out: effect.smoke (Z-1500II: height 188 from Elation, 257 from dealers), ef
 - Video gear by type (projectors 130 to 400, screens 1700 to 2500, tripod camera 1500, small boxes 30 to 60); rigging (truss 300, light stand and boom 3000, crank-up tower 3500, ground tower 6000, hoist 400, sandbag 200, marks 0)
 
 Left at 1000 because it is plausible: guitars (length on a stand), `dj.booth`, `effect.foam`, `effect.balloon-drop`, `rack.dimmer`, `rig.handrail`, `rig.roof`, `rig.skirt`, `room.foh`, `video.confidence`, `video.mapping`, `strings.stick`, `strings.saz`, `strings.nyckelharpa`, `strings.santoor`, `strings.pipa`, `strings.sarod`, `strings.veena`, `strings.erhu`, `strings.tanpura`. These and the 86 changed ones are estimates and not counted as datasheet sizes.
+
+## Tenth pass (2026-11-12): last lookups and percussion heights
+
+Datasheet or agreeing sources:
+
+| Item | Product | w/d/h (mm) | Sources |
+|---|---|---|---|
+| light.uv | Showtec UV LED Bar 100 cm (18x3W; the ADJ Eco UV Bar has the same size) | 1000/60/115 | Thomann, Knight Sound and Light, muziker |
+| light.pinspot | Chauvet DJ LED Pinspot 2 | 105/193/148 | two retailer listings |
+| perc.djembe | Meinl 12 in djembe (Alpine and Floatune, 61 cm tall) | 305/305/610 | Musician's Friend, Bax-shop |
+| perc.vibraphone | Yamaha YV-2700, frame height 810 to 890 | 1430/820/890 | Yamaha Australia, Starland, Thomann |
+
+Also 36 percussion and drum-kit items had a placeholder height of 800 mm. They now get an estimate by kind of instrument (small hand drums 50 to 450, cowbell 150, gong 1500, tubular bells 2000, cymbal stand 1500, hi-hat 1000, snare on stand 600, drum rug 10). These are estimates, not datasheet sizes.
+
+Looked up and left: PC and Fresnel (only the ETC Source Four Fresnel 750 W, 315/277/342, one listing); LED cyc (Altman Spectra Cyc 100 about 297/284/191, axis order unclear); outdoor flood (COLORado 1 Quad Zoom 357 or 334 by 236 by 190, sources disagree); glockenspiel (Yamaha YG-250D 730/460/80 includes its case); timpani (retailers disagree on 26 in); xylophone, marimba and tubular bells (no source found); Altman 153 scoop (no listing).
+
+## Eleventh pass (2026-11-12): all category-default heights
+
+Every item whose height was a category default (300, 400, 500, 800, 1500, 2500, 100) was reviewed. 248 more were given an estimate by kind of object, not from a datasheet: venue and site (door 2100, fence 2000, flag 6000, light mast 8000, truck 3200, bus 3500, orchestra pit 0), conference (tables 750, rostrum 1150, interpretation booth 2300), safety (cone 700, barrier 1100, exit door 2100, signs 300 to 2000), scenery (sofa 850, door 2100, bookcase 1800, tree 3500, lamps 300 to 4000), machinery (scissor lift 1800, forklift 2100, revolve 300, hoist controller 400), effects, microphones (20 to 2000 by kind and mount), rack and network units (44 for 1U, 88 for 2U, 50 for small boxes), controllers, winds (length upright or thickness lying flat), keys, stands, furniture, production, orchestra, gamelan.
+
+Left as they were, because the value is plausible: guitar and bass stands, cabinets and amp stacks (600), lights whose body is about 300 (Fresnel, PC, scoop, gobo projector, LED Fresnel, flood), strings at 1000 to 1200, pedal steel, people (1700) and rooms (0), `rig.*` items already reviewed, and the datasheet items from the earlier passes.
+
+None of these 248 changes, nor those of the ninth and tenth passes, counts as a datasheet size.
