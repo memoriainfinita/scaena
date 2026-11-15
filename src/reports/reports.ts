@@ -172,7 +172,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     return { id, header: [D.element, D.model, 'IP', D.position, D.note], rows };
   }
   if (id === 'cables') {
-    const order = ['audio', 'video', 'lightControl', 'network'];
+    const order = ['audio', 'video', 'lightControl', 'network', 'usb'];
     // A wireless link is not a cable to pull, so it is not in the list.
     const rows = Object.values(show.connections)
       .filter((c) => !c.wireless)

@@ -111,7 +111,7 @@ export interface DocStrings {
   mountKinds: Record<'bar' | 'pipe' | 'truss' | 'boom' | 'floor', string>;
   fn: Record<'sound' | 'video' | 'lights' | 'network', string>;
   oses: Record<'windows' | 'macos' | 'linux' | 'other', string>;
-  signals: Record<'audio' | 'video' | 'lightControl' | 'network', string>;
+  signals: Record<'audio' | 'video' | 'lightControl' | 'network' | 'usb', string>;
   stageFront: string;
   stageBack: string;
 }
@@ -133,7 +133,7 @@ const es: DocStrings = {
   mountKinds: { bar: 'Vara', pipe: 'Tubo', truss: 'Truss', boom: 'Calle lateral', floor: 'Suelo' },
   fn: { sound: 'Sonido', video: 'Vídeo', lights: 'Luces', network: 'Red' },
   oses: { windows: 'Windows', macos: 'macOS', linux: 'Linux', other: 'Sin indicar' },
-  signals: { audio: 'Audio', video: 'Vídeo', lightControl: 'Control de luces', network: 'Red' },
+  signals: { audio: 'Audio', video: 'Vídeo', lightControl: 'Control de luces', network: 'Red', usb: 'USB' },
   stageFront: 'Público', stageBack: 'Fondo',
 };
 
@@ -154,7 +154,7 @@ const en: DocStrings = {
   mountKinds: { bar: 'Bar', pipe: 'Pipe', truss: 'Truss', boom: 'Boom', floor: 'Floor' },
   fn: { sound: 'Sound', video: 'Video', lights: 'Lights', network: 'Network' },
   oses: { windows: 'Windows', macos: 'macOS', linux: 'Linux', other: 'Not stated' },
-  signals: { audio: 'Audio', video: 'Video', lightControl: 'Light control', network: 'Network' },
+  signals: { audio: 'Audio', video: 'Video', lightControl: 'Light control', network: 'Network', usb: 'USB' },
   stageFront: 'Audience', stageBack: 'Back',
 };
 

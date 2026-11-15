@@ -128,6 +128,7 @@ export function showcase(): ShowPackage {
   link(paL, subL, 'audio', 'Speakon');
   link(paR, subR, 'audio', 'Speakon');
   link(desk, fill, 'audio', 'XLR');
+  link(soundPc, desk, 'usb', 'USB-B');
 
   // Video.
   link(videoPc, mixer, 'video', 'HDMI');

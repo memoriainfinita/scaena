@@ -3,10 +3,10 @@ import { nextId } from './ids.ts';
 import type { Connection, Show } from './schema.ts';
 
 export type SignalType = Connection['signal'];
-export const SIGNALS: readonly SignalType[] = ['audio', 'video', 'lightControl', 'network'];
+export const SIGNALS: readonly SignalType[] = ['audio', 'video', 'lightControl', 'network', 'usb'];
 
 /** The connector a new connection of each type starts with; the user edits it. */
-export const DEFAULT_CONNECTOR: Record<SignalType, string> = { audio: 'XLR', video: 'HDMI', lightControl: 'DMX', network: 'Ethernet' };
+export const DEFAULT_CONNECTOR: Record<SignalType, string> = { audio: 'XLR', video: 'HDMI', lightControl: 'DMX', network: 'Ethernet', usb: 'USB-B' };
 
 /** Adds a connection; null when it would link an element to itself, point at a missing one, or repeat an existing pair and signal. */
 export function addConnection(show: Show, from: string, to: string, signal: SignalType, connector = DEFAULT_CONNECTOR[signal]): [Show, Connection | null] {
@@ -14,7 +14,7 @@ export function addConnection(show: Show, from: string, to: string, signal: Sign
   const same = Object.values(show.connections).some((c) => c.signal === signal && ((c.from === from && c.to === to) || (c.from === to && c.to === from)));
   if (same) return [show, null];
   const [id, s] = nextId(show, 'cn');
-  const c: Connection = { id, from, to, signal, connector, lengthMm: null, label: '', toPort: null, lines: 1 };
+  const c: Connection = { id, from, to, signal, connector, lengthMm: null, label: '', toPort: null, fromPortId: null, toPortId: null, channels: null, stereo: false, lines: 1 };
   return [{ ...s, connections: { ...s.connections, [id]: c } }, c];
 }
 

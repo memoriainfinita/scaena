@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { unpackShow, packShow } from './archive.ts';
 import { History } from './history.ts';
 import { nextId } from './ids.ts';
-import { loadShow, MIGRATIONS, UnsupportedFormat } from './migrate.ts';
+import { loadShow, UnsupportedFormat } from './migrate.ts';
 import { newShow } from './new.ts';
 import { addElement, moveElements, removeElements, updateElement } from './ops.ts';
 import { restore, saveRevision } from './revisions.ts';
@@ -66,8 +66,8 @@ describe('operations', () => {
     s = s2;
     s = {
       ...s,
-      channels: { c1: { id: 'c1', number: 1, shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: a.id, notes: '' } },
-      connections: { n1: { id: 'n1', from: a.id, to: b.id, signal: 'audio', connector: '', lengthMm: null, label: '', toPort: null, lines: 1 } },
+      channels: { c1: { id: 'c1', number: 1, shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', assign: {}, stereoPairWith: null, sourceElementId: a.id, notes: '' } },
+      connections: { n1: { id: 'n1', from: a.id, to: b.id, signal: 'audio', connector: '', lengthMm: null, label: '', toPort: null, fromPortId: null, toPortId: null, channels: null, stereo: false, lines: 1 } },
     };
     const out = removeElements(s, [a.id]);
     expect(Object.keys(out.elements)).toEqual([b.id]);
@@ -125,18 +125,16 @@ describe('format', () => {
   test('rejects a missing, newer or unreadable format', () => {
     expect(() => loadShow(null)).toThrow(UnsupportedFormat);
     expect(() => loadShow({ name: 'x' })).toThrow(UnsupportedFormat);
-    expect(() => loadShow({ ...newShow('x'), formatVersion: 2 })).toThrow(/newer/);
+    expect(() => loadShow({ ...newShow('x'), formatVersion: 3 })).toThrow(/newer/);
   });
 
-  test('applies migrations in order up to the target', () => {
-    MIGRATIONS.push((raw) => ({ ...raw, name: `${String(raw.name)}-v2` }));
-    try {
-      // Pretend format 2 is the target and the schema accepts format 1 fields: only the chain is under test.
-      expect(() => loadShow({ ...newShow('a'), formatVersion: 1 }, 2)).toThrow(); // parse fails on formatVersion 2 literal
-      expect(MIGRATIONS).toHaveLength(1);
-    } finally {
-      MIGRATIONS.pop();
-    }
+  test('a format 1 file loads as format 2 with the new fields at their defaults', () => {
+    const old: Record<string, unknown> = { ...newShow('Antiguo'), formatVersion: 1 };
+    delete old.desks;
+    const show = loadShow(old);
+    expect(show.formatVersion).toBe(2);
+    expect(show.desks).toEqual([]);
+    expect(show.name).toBe('Antiguo');
   });
 });
 

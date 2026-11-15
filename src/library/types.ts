@@ -131,7 +131,7 @@ export interface PackageChannel {
 export interface PackageLink {
   from: number;
   to: number;
-  signal: 'audio' | 'video' | 'lightControl' | 'network';
+  signal: 'audio' | 'video' | 'lightControl' | 'network' | 'usb';
   connector?: string;
   /** A radio link: no cable, no length. */
   wireless?: boolean;

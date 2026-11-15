@@ -7,6 +7,7 @@ export const LINK_STYLE: Record<SignalType, { stroke: string; dash: string }> = 
   video: { stroke: '#7a3db8', dash: '10 5' },
   lightControl: { stroke: '#b36b00', dash: '10 4 2 4' },
   network: { stroke: '#3a6e1a', dash: '2 5' },
+  usb: { stroke: '#8a2a2a', dash: '6 3 1 3' },
 };
 
 /** The dash of a link: its signal's, or short dots for a wireless one. */

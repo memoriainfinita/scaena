@@ -3,7 +3,7 @@
 import * as v from 'valibot';
 import { isCleanMarkup, MAX_SVG_BYTES } from '../library/svg-clean.ts';
 
-export const FORMAT_VERSION = 1;
+export const FORMAT_VERSION = 2;
 
 const id = v.pipe(v.string(), v.minLength(1), v.maxLength(64));
 const mm = v.pipe(v.number(), v.finite());
@@ -15,7 +15,7 @@ export const Lang = v.picklist(['es', 'en']);
 export const Module = v.picklist(['audio', 'lights', 'computers', 'video', 'room', 'power', 'document', 'production']);
 export const Subject = v.picklist(['stage', 'audio', 'lights', 'electrical', 'control', 'notes', 'background', 'custom']);
 export const SuppliedBy = v.picklist(['band', 'venue', 'rental', 'unset']);
-export const SignalType = v.picklist(['audio', 'video', 'lightControl', 'network']);
+export const SignalType = v.picklist(['audio', 'video', 'lightControl', 'network', 'usb']);
 
 export const TypeRef = v.object({ id: v.pipe(v.string(), v.minLength(1), v.maxLength(80)), version: v.pipe(v.number(), v.integer(), v.minValue(1)) });
 const Point = v.object({ x: mm, y: mm });
@@ -77,6 +77,30 @@ export const Luminaire = v.object({
   notes: text(),
 });
 
+/** A connector group of a piece of equipment: what it takes in or puts out, in which format, and how many channels. */
+export const Port = v.object({
+  id,
+  name: v.pipe(v.string(), v.maxLength(60)),
+  dir: v.picklist(['in', 'out', 'io']),
+  signal: SignalType,
+  /** Short free text with suggestions: analogue, AES, Dante, MADI, USB, HDMI, SDI, DMX... */
+  format: text(40),
+  channels: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(512)), 1),
+  note: text(120),
+});
+
+export const DeskRole = v.picklist(['foh', 'monitors', 'broadcast', 'other']);
+/** A mixing desk of the show. The first of `Show.desks` is the main one; each keeps its own numbering and patch. */
+export const Desk = v.object({
+  id,
+  name: v.pipe(v.string(), v.maxLength(60)),
+  role: v.optional(DeskRole, 'foh'),
+  model: text(80),
+  showFile: text(120),
+  /** The console drawn on the plan, when there is one. */
+  elementId: v.optional(v.nullable(id), null),
+});
+
 export const RackSlot = v.object({ id, name: v.pipe(v.string(), v.maxLength(80)), u: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(20)) });
 /** A rack and what is mounted in it, from the top, in rack units. */
 export const Rack = v.object({ units: v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(60)), slots: v.optional(v.array(RackSlot), []) });
@@ -105,6 +129,8 @@ export const PlanElement = v.object({
   phase: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(3))), null),
   computer: v.optional(v.nullable(Computer), null),
   luminaire: v.optional(v.nullable(Luminaire), null),
+  /** What the equipment takes in and puts out; empty until the user (or the library) declares it. */
+  ports: v.optional(v.array(Port), []),
   rack: v.optional(v.nullable(Rack), null),
   /** Network address of a computer, switch or desk. */
   ip: v.optional(v.pipe(v.string(), v.maxLength(45)), ''),
@@ -122,6 +148,8 @@ export const InputChannel = v.object({
   insert: text(80),
   /** Where it plugs in: stagebox and port, for example "SB A 12". */
   patch: v.optional(v.pipe(v.string(), v.maxLength(24)), ''),
+  /** The row on each desk but the main one (or instead of the main one's default): its channel number there, null when it is not sent, and where it plugs in. */
+  assign: v.optional(v.record(id, v.object({ number: v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))), patch: v.optional(v.pipe(v.string(), v.maxLength(24)), '') })), {}),
   stereoPairWith: v.optional(v.nullable(id), null),
   sourceElementId: v.optional(v.nullable(id), null),
   notes: text(),
@@ -141,6 +169,8 @@ export const UniverseInfo = v.object({
 export const Output = v.object({
   id,
   number: v.pipe(v.number(), v.integer(), v.minValue(1)),
+  /** The desk the mix comes out of; absent is the main desk. */
+  deskId: v.optional(v.nullable(id), null),
   kind: v.picklist(['wedge', 'iem', 'main', 'send']),
   stereo: v.optional(v.boolean(), false),
   aux: text(40),
@@ -164,6 +194,13 @@ export const Connection = v.object({
   label: text(80),
   /** The numbered input an audio cable arrives at; the channels it carries take their patch from it. */
   toPort: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1))), null),
+  /** The ports of the two elements it joins, when they declare them. */
+  fromPortId: v.optional(v.nullable(id), null),
+  toPortId: v.optional(v.nullable(id), null),
+  /** How many channels travel (2 is a stereo pair, 8 a drum loom); null means `lines`. */
+  channels: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(512))), null),
+  /** The channels are left and right pairs. */
+  stereo: v.optional(v.boolean(), false),
   /** Lines the cable carries from that port on: a drum loom is one cable with 8 lines. */
   lines: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(64)), 1),
 });
@@ -281,7 +318,9 @@ export const Show = v.object({
   date: v.optional(v.string(), ''),
   revision: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1)), 1),
   region: Region,
+  /** Model and show file of the main desk; mirrors `desks[0]` when there is one. */
   desk: v.optional(v.object({ model: text(80), showFile: text(120) }), {}),
+  desks: v.optional(v.array(Desk), []),
   stage: Stage,
   layers: v.array(Layer),
   customItems: v.optional(v.record(id, CustomItem), {}),
@@ -321,6 +360,8 @@ export type Contract = v.InferOutput<typeof Contract>;
 export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type CustomItem = v.InferOutput<typeof CustomItem>;
+export type Port = v.InferOutput<typeof Port>;
+export type Desk = v.InferOutput<typeof Desk>;
 export type Layer = v.InferOutput<typeof Layer>;
 export type Subject = v.InferOutput<typeof Subject>;
 export type ReportConfig = v.InferOutput<typeof ReportConfig>;

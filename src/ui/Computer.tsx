@@ -18,6 +18,7 @@ const CABLES: Record<SignalType, string[]> = {
   video: ['HDMI', 'SDI', 'DisplayPort', 'USB-C', 'NDI'],
   lightControl: ['DMX', 'DMX 5 pin', 'Art-Net', 'sACN'],
   network: ['Ethernet', 'Cat6', 'Fibre'],
+  usb: ['USB-A', 'USB-B', 'USB-C', 'USB audio', 'USB MIDI'],
 };
 
 export const elementName = (el: PlanElement | undefined): string => (el ? el.label || itemById(el.type.id)?.name[lang.value] || el.type.id : '');

@@ -45,7 +45,7 @@ export function numberWedges(show: Show): Show {
 
 export function addChannel(show: Show, init: Partial<Omit<InputChannel, 'id' | 'number'>> = {}): [Show, InputChannel] {
   const [id, s] = nextId(show, 'ch');
-  const ch: InputChannel = { shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: null, notes: '', ...init, id, number: Object.keys(show.channels).length + 1 };
+  const ch: InputChannel = { shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: null, notes: '', assign: {}, ...init, id, number: Object.keys(show.channels).length + 1 };
   return [{ ...s, channels: { ...s.channels, [id]: ch } }, ch];
 }
 
@@ -103,7 +103,7 @@ export function sortChannels(show: Show, rank: (c: InputChannel) => number): Sho
 
 export function addOutput(show: Show, init: Partial<Omit<Output, 'id' | 'number'>> = {}): [Show, Output] {
   const [id, s] = nextId(show, 'out');
-  const out: Output = { kind: 'wedge', stereo: false, aux: '', sourceElementId: null, who: '', mix: {}, notes: '', ...init, id, number: Object.keys(show.outputs).length + 1 };
+  const out: Output = { deskId: null, kind: 'wedge', stereo: false, aux: '', sourceElementId: null, who: '', mix: {}, notes: '', ...init, id, number: Object.keys(show.outputs).length + 1 };
   return [{ ...s, outputs: { ...s.outputs, [id]: out } }, out];
 }
 

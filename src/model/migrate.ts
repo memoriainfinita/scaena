@@ -2,8 +2,11 @@ import { FORMAT_VERSION, parseShow, type Show } from './schema.ts';
 
 type Migration = (raw: Record<string, unknown>) => Record<string, unknown>;
 
-/** Index n - 1 migrates format n to n + 1. Empty while there is only one format. */
-export const MIGRATIONS: Migration[] = [];
+/** Index n - 1 migrates format n to n + 1. Format 2 only adds optional fields. */
+export const MIGRATIONS: Migration[] = [
+  // 1 to 2: ports, desks, per-desk assignments and multichannel connections, all optional; nothing to rewrite.
+  (raw) => raw,
+];
 
 export class UnsupportedFormat extends Error {
   constructor(

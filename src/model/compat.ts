@@ -8,7 +8,7 @@ const LIGHT_CONTROL_IDS = new Set(['control.lightdesk', 'net.dmx-splitter', 'net
 
 /** True when the element plausibly takes part in that kind of signal. Network is not judged. */
 export function handlesSignal(el: PlanElement, signal: SignalType): boolean {
-  if (signal === 'network') return true;
+  if (signal === 'network' || signal === 'usb') return true;
   const it = itemById(el.type.id);
   if (!it) return true;
   const fns = el.computer?.functions ?? [];

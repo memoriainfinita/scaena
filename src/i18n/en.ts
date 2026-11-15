@@ -432,6 +432,7 @@ export const en: Messages = {
   'signal.video': 'Video',
   'signal.lightControl': 'Light control',
   'signal.network': 'Network',
+  'signal.usb': 'USB',
   'connections.title': 'Connections',
   'connections.none': 'No connections',
   'connections.connector': 'Connector',

@@ -436,6 +436,7 @@ export const es = {
   'signal.video': 'Vídeo',
   'signal.lightControl': 'Control de luces',
   'signal.network': 'Red',
+  'signal.usb': 'USB',
   'connections.title': 'Conexiones',
   'connections.none': 'Sin conexiones',
   'connections.connector': 'Conector',
