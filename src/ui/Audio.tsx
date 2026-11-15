@@ -1,11 +1,13 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
-import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setMix, setOutput, sortByInstrument } from '../app/audio-actions.ts';
+import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, moveOutputToDesk, sendChannelToDesk, setChannelDeskPatch, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setMix, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
+import { currentDesk, DeskBar, deskLabel } from './Desks.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { AUDIO, audioLabel } from '../library/models.ts';
 import { channelList, mixOutputs, outputList, wedgesInOrder } from '../model/audio.ts';
+import { channelOn, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { patchAnalysis } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { cableText } from '../reports/reports.ts';
@@ -42,16 +44,23 @@ function RowButtons({ row, onUp, onDown, onRemove, first, last }: { row: string;
 }
 
 export function InputsView({ show }: { show: Show }) {
-  const rows = channelList(show);
+  const multi = desksOf(show).length > 1;
+  const desk = currentDesk(show);
+  const all = channelList(show);
+  // With several desks the list follows the chosen one: the sources it receives by their number there, then the rest.
+  const rows = multi
+    ? [...all].sort((a, b) => (channelOn(show, a, desk.id)?.number ?? Infinity) - (channelOn(show, b, desk.id)?.number ?? Infinity) || a.number - b.number)
+    : all;
   const sel = new Set(selection.value);
   const sources = sourceOptions(show);
   return (
     <div class="scroll">
+      <DeskBar show={show} />
       <div class="listbar">
-        <button type="button" class="btn" onClick={() => addChannelRow()}>
+        <button type="button" class="btn" onClick={() => addChannelRow(multi ? desk.id : undefined)}>
           {t('inputs.add')}
         </button>
-        <button type="button" class="btn" onClick={() => sortByInstrument()} disabled={rows.length < 2}>
+        <button type="button" class="btn" onClick={() => sortByInstrument()} disabled={rows.length < 2 || (multi && desk.id !== mainDeskId(show))}>
           {t('inputs.sort')}
         </button>
       </div>
@@ -67,6 +76,7 @@ export function InputsView({ show }: { show: Show }) {
           <thead>
             <tr>
               <th>{t('table.number')}</th>
+              {multi && <th title={t('table.onDesk.tip')}>{t('table.onDesk')}</th>}
               <th>{t('table.name')}</th>
               <th title={t('table.mic.tip')}>{t('table.mic')}</th>
               <th title={t('table.stand.tip')}>{t('table.stand')}</th>
@@ -82,7 +92,7 @@ export function InputsView({ show }: { show: Show }) {
           </thead>
           <tbody>
             {rows.map((c, i) => (
-              <ChannelRow key={c.id} show={show} c={c} i={i} count={rows.length} rows={rows} sources={sources} selected={!!c.sourceElementId && sel.has(c.sourceElementId)} />
+              <ChannelRow key={c.id} show={show} c={c} i={i} count={rows.length} rows={rows} sources={sources} deskId={multi ? desk.id : null} selected={!!c.sourceElementId && sel.has(c.sourceElementId)} />
             ))}
           </tbody>
         </table>
@@ -91,16 +101,42 @@ export function InputsView({ show }: { show: Show }) {
   );
 }
 
-function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show; c: InputChannel; i: number; count: number; rows: InputChannel[]; sources: { id: string; name: string }[]; selected: boolean }) {
+function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { show: Show; c: InputChannel; i: number; count: number; rows: InputChannel[]; sources: { id: string; name: string }[]; selected: boolean; deskId: string | null }) {
   const row = t('inputs.row', { n: c.number });
   const tag = (k: Key) => `${t(k)} · ${row}`;
   const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
+  // On a desk of several: the number and patch the source has there, or nothing when it is not sent.
+  const at = deskId ? channelOn(show, c, deskId) : { number: c.number, patch: c.patch };
+  const onMain = deskId === null || deskId === mainDeskId(show);
   return (
-    <tr class={selected ? 'sel' : undefined} onFocusIn={() => selectSource(c.sourceElementId)}>
+    <tr class={[selected ? 'sel' : '', at ? '' : 'unsent'].filter(Boolean).join(' ') || undefined} onFocusIn={() => selectSource(c.sourceElementId)}>
       <td class="mono num">
         <IssueMark refKey={`channel:${c.id}`} />
-        {c.number}
+        {deskId && !onMain && at ? (
+          <input
+            class="input cell mono"
+            type="number"
+            min={1}
+            step={1}
+            aria-label={tag('table.number')}
+            title={t('table.deskNumber.tip')}
+            value={at.number}
+            onChange={(e) => {
+              const n = Math.floor(Number((e.currentTarget as HTMLInputElement).value));
+              if (n >= 1) sendChannelToDesk(c.id, deskId, n);
+            }}
+          />
+        ) : at ? (
+          at.number
+        ) : (
+          '—'
+        )}
       </td>
+      {deskId && (
+        <td class="center">
+          <input type="checkbox" aria-label={tag('table.onDesk')} title={t('table.onDesk.tip')} checked={!!at} onChange={(e) => sendChannelToDesk(c.id, deskId, (e.currentTarget as HTMLInputElement).checked ? undefined : null)} />
+        </td>
+      )}
       <td>
         <Cell value={c.shortName} label={tag('table.name')} max={16} onCommit={(v) => setChannel(c.id, { shortName: v })} />
       </td>
@@ -111,7 +147,15 @@ function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show
         <Cell value={c.stand} label={tag('table.stand')} max={80} onCommit={(v) => setChannel(c.id, { stand: v })} />
       </td>
       <td>
-        <Cell value={c.patch} label={tag('table.patch')} max={24} mono placeholder={patchAnalysis(show).derived.get(c.id)} title={!c.patch && patchAnalysis(show).derived.has(c.id) ? t('inputs.patchDerived') : undefined} onCommit={(v) => setChannel(c.id, { patch: v })} />
+        <Cell
+          value={at?.patch ?? ''}
+          label={tag('table.patch')}
+          max={24}
+          mono
+          placeholder={onMain ? patchAnalysis(show).derived.get(c.id) : undefined}
+          title={onMain && !c.patch && patchAnalysis(show).derived.has(c.id) ? t('inputs.patchDerived') : undefined}
+          onCommit={(v) => (deskId && at ? setChannelDeskPatch(c.id, deskId, v) : setChannel(c.id, { patch: v }))}
+        />
       </td>
       <td class="center">
         <input type="checkbox" aria-label={tag('table.phantom')} checked={c.phantom} onChange={(e) => setChannel(c.id, { phantom: (e.currentTarget as HTMLInputElement).checked })} />
@@ -143,7 +187,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show
         <Cell value={c.notes} label={tag('table.notes')} onCommit={(v) => setChannel(c.id, { notes: v })} />
       </td>
       <td class="cabletext">{src ? cableText(show, src.id, ['audio'], lang.value) : ''}</td>
-      <RowButtons row={row} first={i === 0} last={i === count - 1} onUp={() => moveChannelRow(c.id, -1)} onDown={() => moveChannelRow(c.id, 1)} onRemove={() => removeChannelRow(c.id)} />
+      <RowButtons row={row} first={i === 0 || !onMain} last={i === count - 1 || !onMain} onUp={() => moveChannelRow(c.id, -1)} onDown={() => moveChannelRow(c.id, 1)} onRemove={() => removeChannelRow(c.id)} />
     </tr>
   );
 }
@@ -151,13 +195,17 @@ function ChannelRow({ show, c, i, count, rows, sources, selected }: { show: Show
 const KINDS: Output['kind'][] = ['wedge', 'iem', 'main', 'send'];
 
 export function OutputsView({ show }: { show: Show }) {
-  const rows = outputList(show);
+  const desks = desksOf(show);
+  const multi = desks.length > 1;
+  const desk = currentDesk(show);
+  const rows = multi ? outputsOnDesk(show, desk.id) : outputList(show);
   const sel = new Set(selection.value);
   const sources = sourceOptions(show);
   return (
     <div class="scroll">
+      <DeskBar show={show} />
       <div class="listbar">
-        <button type="button" class="btn" onClick={() => addOutputRow()}>
+        <button type="button" class="btn" onClick={() => addOutputRow('wedge', multi ? desk.id : undefined)}>
           {t('outputs.add')}
         </button>
         <button type="button" class="btn" onClick={() => numberWedgeOutputs()} disabled={wedgesInOrder(show)}>
@@ -171,6 +219,7 @@ export function OutputsView({ show }: { show: Show }) {
           <thead>
             <tr>
               <th>{t('table.outNumber')}</th>
+              {multi && <th title={t('table.desk.tip')}>{t('table.desk')}</th>}
               <th title={t('table.kind.tip')}>{t('table.kind')}</th>
               <th title={t('table.stereo.tip')}>{t('table.stereo')}</th>
               <th title={t('table.aux.tip')}>{t('table.aux')}</th>
@@ -190,6 +239,17 @@ export function OutputsView({ show }: { show: Show }) {
                     <IssueMark refKey={`output:${o.id}`} />
                     {o.number}
                   </td>
+                  {multi && (
+                    <td>
+                      <select class="input cell" aria-label={tag('table.desk')} value={desk.id} onChange={(e) => moveOutputToDesk(o.id, (e.currentTarget as HTMLSelectElement).value)}>
+                        {desks.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {deskLabel(d)}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  )}
                   <td>
                     <select class="input cell" aria-label={tag('table.kind')} value={o.kind} onChange={(e) => setOutput(o.id, { kind: (e.currentTarget as HTMLSelectElement).value as Output['kind'] })}>
                       {KINDS.map((k) => (

@@ -1,8 +1,9 @@
 // Edits of the input and output lists: each one is a single undo step.
 import { itemById } from '../library/items.ts';
 import { audioFromLabel, needsPhantom } from '../library/models.ts';
+import { addDesk, mainDeskId, removeDesk, sendToDesk, setDeskPatch, setOutputDesk, updateDesk } from '../model/desks.ts';
 import { addChannel, addOutput, moveChannel, numberWedges, moveOutput, removeChannel, removeOutput, setMixLevel, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
-import type { InputChannel, MixLevel, Output, Show } from '../model/schema.ts';
+import type { Desk, InputChannel, MixLevel, Output, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
 type ChannelPatch = Partial<Omit<InputChannel, 'id' | 'number'>>;
@@ -10,12 +11,14 @@ type OutputPatch = Partial<Omit<Output, 'id' | 'number'>>;
 
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 
-export function addChannelRow(): string | null {
+/** Adds a source. Added while looking at a desk that is not the main one, it goes to that desk only. */
+export function addChannelRow(deskId?: string): string | null {
   let id: string | null = null;
   commit((show) => {
     const [next, ch] = addChannel(show);
     id = ch.id;
-    return next;
+    if (!deskId || deskId === mainDeskId(show)) return next;
+    return sendToDesk(sendToDesk(next, ch.id, mainDeskId(show), null), ch.id, deskId);
   });
   return id;
 }
@@ -50,12 +53,12 @@ export function sortByInstrument(): void {
   );
 }
 
-export function addOutputRow(kind: Output['kind'] = 'wedge'): string | null {
+export function addOutputRow(kind: Output['kind'] = 'wedge', deskId?: string): string | null {
   let id: string | null = null;
   commit((show) => {
     const [next, o] = addOutput(show, { kind });
     id = o.id;
-    return next;
+    return deskId ? setOutputDesk(next, o.id, deskId) : next;
   });
   return id;
 }
@@ -64,8 +67,32 @@ export const setMix = (output: string, channel: string, level: MixLevel | null):
 export const removeOutputRow = (id: string): void => commit((show) => removeOutput(show, id));
 export const moveOutputRow = (id: string, delta: -1 | 1): void => commit((show) => moveOutput(show, id, delta));
 
-export const setDeskShowFile = (file: string): void => commit((show) => ({ ...show, desk: { ...show.desk, showFile: file.slice(0, 120) } }));
-export const setDeskModel = (model: string): void => commit((show) => ({ ...show, desk: { ...show.desk, model: model.slice(0, 80) } }));
+/** Edits the model or show file of the main desk, keeping the desk list (when there is one) in step. */
+const mainDeskField = (show: Show, patch: { model?: string; showFile?: string }): Show => (show.desks.length > 0 ? updateDesk(show, mainDeskId(show), patch) : { ...show, desk: { ...show.desk, ...patch } });
+export const setDeskShowFile = (file: string): void => commit((show) => mainDeskField(show, { showFile: file.slice(0, 120) }));
+export const setDeskModel = (model: string): void => commit((show) => mainDeskField(show, { model: model.slice(0, 80) }));
+
+/** Adds a desk and returns its id. */
+export function addDeskRow(): string | null {
+  let id: string | null = null;
+  commit((show) => {
+    const [next, desk] = addDesk(show);
+    id = desk.id;
+    return next;
+  });
+  return id;
+}
+export const setDesk = (id: string, patch: Partial<Omit<Desk, 'id'>>): void => commit((show) => updateDesk(show, id, patch));
+export const removeDeskRow = (id: string): void => commit((show) => removeDesk(show, id));
+/** Sends a source to a desk, or stops sending it with `null`. The main desk keeps the row's own number. */
+export const sendChannelToDesk = (channelId: string, deskId: string, number?: number | null): void =>
+  commit((show) => {
+    const ch = show.channels[channelId];
+    if (!ch) return show;
+    return sendToDesk(show, channelId, deskId, number === undefined && deskId === mainDeskId(show) ? ch.number : number);
+  });
+export const setChannelDeskPatch = (channelId: string, deskId: string, patch: string): void => commit((show) => setDeskPatch(show, channelId, deskId, patch.slice(0, 24)));
+export const moveOutputToDesk = (outputId: string, deskId: string): void => commit((show) => setOutputDesk(show, outputId, deskId));
 
 /** Selects the plan element a row comes from, so the plan and the lists stay together. */
 export function selectSource(elementId: string | null | undefined): void {

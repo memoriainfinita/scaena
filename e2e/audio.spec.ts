@@ -173,3 +173,30 @@ test('a power outlet from the library comes labelled with the region voltage', a
   await page.getByRole('button', { name: /^Añadir Toma de corriente/ }).first().click();
   await expect(page.getByLabel('Etiqueta', { exact: true })).toHaveValue(/^230 V/);
 });
+
+test('a second desk has its own channel numbers, patch and outputs @a11y', async ({ page }) => {
+  await inputs(page);
+  await page.getByRole('button', { name: 'Añadir mesa' }).click();
+  await expect(L(page, 'Nombre')).toHaveAttribute('placeholder', 'Monitores');
+  // The new desk receives nothing yet; send the first channel to it and number it there.
+  await expect(L(page, 'En esta mesa · Canal 1')).not.toBeChecked();
+  await L(page, 'En esta mesa · Canal 1').check();
+  await expect(L(page, 'Canal · Canal 1')).toHaveValue('1');
+  await L(page, 'Canal · Canal 1').fill('7');
+  await L(page, 'Patch · Canal 1').fill('SB B 3');
+  await L(page, 'Patch · Canal 1').press('Tab');
+  // Back on the main desk the row keeps its own number and patch.
+  await page.getByRole('button', { name: 'FOH (sala)', exact: true }).click();
+  await expect(L(page, 'Patch · Canal 1')).not.toHaveValue('SB B 3');
+  await expect(page.getByRole('cell', { name: '1', exact: true }).first()).toBeVisible();
+  const results = await axe(page);
+  expect(results.violations).toEqual([]);
+  // An output added on the monitor desk stays there.
+  await page.getByRole('button', { name: 'Salidas', exact: true }).click();
+  const before = await page.getByRole('table').first().locator('tbody tr').count();
+  await page.getByRole('button', { name: 'Monitores', exact: true }).click();
+  await page.getByRole('button', { name: 'Añadir salida' }).click();
+  await expect(page.getByRole('table').first().locator('tbody tr')).toHaveCount(1);
+  await page.getByRole('button', { name: 'FOH (sala)', exact: true }).click();
+  await expect(page.getByRole('table').first().locator('tbody tr')).toHaveCount(before);
+});
