@@ -424,6 +424,8 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
     ['0', 'help.fit'],
     ['+ −', 'help.zoom'],
     [t('key.space'), 'help.pan'],
+    [t('key.drag'), 'help.resize'],
+    [t('key.drag'), 'help.turn'],
     ['Alt', 'help.noAlign'],
     ['?', 'help.help'],
     ['Esc', 'help.close'],

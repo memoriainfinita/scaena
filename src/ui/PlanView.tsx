@@ -5,7 +5,7 @@ import { memo } from 'preact/compat';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { setFocusPoint } from '../app/lights-actions.ts';
 import { beamDegrees } from '../model/lights.ts';
-import { addDimension, addTextAt, alignSelection, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setLinkStyle, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
+import { addDimension, addTextAt, alignSelection, resizeElementTo, turnElementTo, commitDrag, deleteSelection, distributeSelection, duplicateSelection, editable, flipSelection, groupSelection, moveSelection, rotateSelection, selectAll, setGrid, setLabels, setLinks, setLinkStyle, setOutlines, setRp2Lights, targets, tool, ungroupSelection } from '../app/plan-actions.ts';
 import { calibrateBackground, fitRequest, updateBackground } from '../app/background-actions.ts';
 import { pngSize } from '../background/png.ts';
 import { connectSignal, connectTo, linkFrom } from '../app/computer-actions.ts';
@@ -27,6 +27,7 @@ import { barText, inUnits, lengthScale, niceLengths } from '../model/units.ts';
 import { boxesIntersect, clampK, elementBox, elementSize, fitCamera, formatLength, planBox, prosceniumWalls, snap, toWorld, unionBox, zoomAt, type Camera } from '../plan/geometry.ts';
 import { elementKey, SCREEN_TEXT, type PlacedText } from '../plan/labels.ts';
 import { buildScene, type SceneLink, type SceneMount } from '../plan/scene.ts';
+import { HANDLES, handlePoint, resizeTo, rotationAt, turnKnob, turnPoint, type Handle, type Resized } from '../plan/transform.ts';
 
 /** True while the user is zooming: elements are drawn as plain boxes until the gesture settles. */
 const gesture = signal(false);
@@ -506,11 +507,62 @@ type Interaction =
   | { kind: 'marquee'; sx: number; sy: number; add: boolean; base: string[] }
   | { kind: 'bgdrag'; w0: Pt; x0: number; y0: number }
   | { kind: 'label'; id: string; w0: Pt; x0: number; y0: number }
-  | { kind: 'vertex'; index: number };
+  | { kind: 'vertex'; index: number }
+  | { kind: 'resize'; id: string; h: Handle }
+  | { kind: 'turn'; id: string };
 
 /** How far the background has been dragged while the mouse is still down; written to the show on release. */
 const bgDrag = signal<{ dx: number; dy: number } | null>(null);
 const labelDrag = signal<{ id: string; x: number; y: number } | null>(null);
+/** The element being resized or turned with its handles, as it will be when the mouse is let go. */
+const xform = signal<{ id: string; box?: Resized; rotation?: number } | null>(null);
+
+/** The finest size a handle drag snaps to while the grid is on. */
+const SIZE_STEP_MM = 50;
+
+/** Square handles on the sides and corners of the selected element and a round one above it to turn it. */
+function TransformHandles({ show, cam }: { show: Show; cam: Signal<Camera> }) {
+  const ids = selection.value;
+  if (tool.value !== 'select' || stageEdit.value || ids.length !== 1) return null;
+  const base = show.elements[ids[0]!];
+  if (!base || !editable(show, base)) return null;
+  const drag = xform.value;
+  const el: PlanElement = drag && drag.id === base.id ? { ...base, ...(drag.box ? { x: drag.box.x, y: drag.box.y, width: drag.box.width, depth: drag.box.depth } : {}), rotation: drag.rotation ?? base.rotation } : base;
+  const { w, d } = elementSize(el);
+  const k = cam.value.k;
+  const r = 5 / k; // the same size on screen at any zoom
+  const hit = 8 / k; // a little more than the drawn handle: the neighbours' labels and shift-clicks stay reachable
+  const gap = 26 / k;
+  const turn = turnPoint(el, gap, { w, d });
+  const top = handlePoint(el, HANDLES[2]!, { w, d });
+  const readout = drag ? (drag.box ? `${formatLength(w, show.units, lang.value)} × ${formatLength(d, show.units, lang.value)}` : `${Math.round(el.rotation)}°`) : '';
+  return (
+    <g class="xform" aria-hidden="true">
+      {drag && <rect class="xghost" transform={`translate(${el.x} ${el.y}) rotate(${el.rotation})`} x={-w / 2} y={-d / 2} width={w} height={d} />}
+      <line class="xstem" x1={top.x} y1={top.y} x2={turn.x} y2={turn.y} />
+      {HANDLES.map((h) => {
+        const p = handlePoint(el, h, { w, d });
+        return (
+          <g key={h.id} class={`xh ${h.id}`} data-hdl={h.id} transform={`translate(${p.x} ${p.y})`}>
+            <title>{t('plan.handle.resize')}</title>
+            <circle r={hit} fill="transparent" />
+            <rect x={-r} y={-r} width={r * 2} height={r * 2} />
+          </g>
+        );
+      })}
+      <g class="xh turn" data-hdl="turn" transform={`translate(${turn.x} ${turn.y})`}>
+        <title>{t('plan.handle.turn')}</title>
+        <circle r={hit} fill="transparent" />
+        <circle r={r * 1.15} />
+      </g>
+      {drag && (
+        <text class="xread" x={el.x} y={el.y} dy="0.34em" text-anchor="middle" font-size={14 / k} stroke-width={4 / k}>
+          {readout}
+        </text>
+      )}
+    </g>
+  );
+}
 
 /** Keeps the pointer events coming to the plan while a finger or the mouse moves outside it; some environments refuse, and nothing depends on it. */
 const capture = (el: Element, id: number) => {
@@ -769,6 +821,14 @@ export function PlanView({ show }: { show: Show }) {
           act.current = { kind: 'vertex', index };
         }
       }
+    } else if (mode === 'select' && !stageEdit.peek() && (e.target as Element).closest('[data-hdl]')) {
+      const which = (e.target as Element).closest('[data-hdl]')!.getAttribute('data-hdl');
+      const only = selection.peek().length === 1 ? s.elements[selection.peek()[0]!] : undefined;
+      if (only && editable(s, only)) {
+        capture(svg, e.pointerId);
+        const h = HANDLES.find((x) => x.id === which);
+        act.current = which === 'turn' ? { kind: 'turn', id: only.id } : h ? { kind: 'resize', id: only.id, h } : null;
+      }
     } else if (mode === 'select') {
       const id = (e.target as Element).closest('[data-id]')?.getAttribute('data-id');
       const el = id ? s.elements[id] : undefined;
@@ -827,7 +887,13 @@ export function PlanView({ show }: { show: Show }) {
       if (Math.hypot(p.x - a.sx, p.y - a.sy) >= 4) a.moved = true;
       cam.value = { ...a.cam, x: a.cam.x + p.x - a.sx, y: a.cam.y + p.y - a.sy };
     }
-    else if (a.kind === 'vertex') {
+    else if (a.kind === 'resize' || a.kind === 'turn') {
+      const el = showRef.current.elements[a.id];
+      if (!el) return;
+      const w = world(e);
+      if (a.kind === 'resize') xform.value = { id: a.id, box: resizeTo(el, a.h, w, { fromCentre: e.ctrlKey || e.metaKey, keepRatio: e.shiftKey, step: e.altKey || !showRef.current.view.grid ? 0 : SIZE_STEP_MM }) };
+      else xform.value = { id: a.id, rotation: rotationAt(el, w, e.shiftKey ? 15 : 0, turnKnob(elementSize(el), 26 / cam.peek().k)) };
+    } else if (a.kind === 'vertex') {
       const w = world(e);
       const st = e.altKey ? 0 : gridStep();
       vertexDrag.value = { index: a.index, x: snap(w.x, st), y: snap(w.y, st) };
@@ -871,7 +937,14 @@ export function PlanView({ show }: { show: Show }) {
     if (!a) return;
     const s = showRef.current;
     if (a.kind === 'pan' && a.tap && !a.moved && !cancelled) selection.value = [];
-    if (a.kind === 'vertex') {
+    if (a.kind === 'resize' || a.kind === 'turn') {
+      const d = xform.peek();
+      xform.value = null;
+      if (d && !cancelled) {
+        if (d.box) resizeElementTo(a.id, d.box);
+        else if (d.rotation !== undefined) turnElementTo(a.id, d.rotation);
+      }
+    } else if (a.kind === 'vertex') {
       const d = vertexDrag.peek();
       vertexDrag.value = null;
       if (d && !cancelled) moveStagePointTo(d.index, d.x, d.y);
@@ -983,6 +1056,7 @@ export function PlanView({ show }: { show: Show }) {
           </g>
           <FocusOverlay show={show} ids={selection.value} world={world} />
           <StageHandles show={show} cam={cam} />
+          <TransformHandles show={show} cam={cam} />
         </g>
         <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>

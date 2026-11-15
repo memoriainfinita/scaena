@@ -382,3 +382,14 @@ main.canvas:focus { outline: none; }
 .deskcard { margin: 4px 16px 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; }
 .deskcard legend { grid-column: 1 / -1; }
 tr.unsent td { opacity: 0.55; }
+.xh { cursor: pointer; }
+.xh rect, .xh.turn circle:last-child { fill: #fff; stroke: #0b6e78; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.xh.turn circle:last-child { fill: #0b6e78; stroke: #fff; }
+.xh.n, .xh.s { cursor: ns-resize; }
+.xh.e, .xh.w { cursor: ew-resize; }
+.xh.nw, .xh.se { cursor: nwse-resize; }
+.xh.ne, .xh.sw { cursor: nesw-resize; }
+.xh.turn { cursor: grab; }
+.xstem { stroke: #0b6e78; stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
+.xghost { fill: rgba(11, 110, 120, 0.1); stroke: #0b6e78; stroke-width: 2; stroke-dasharray: 8 5; vector-effect: non-scaling-stroke; pointer-events: none; }
+.xread { fill: #0b3d44; stroke: #fff; paint-order: stroke; font-family: var(--font); font-weight: 600; pointer-events: none; }

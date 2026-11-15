@@ -1,7 +1,7 @@
 // Edits of the plan: each one acts on the current selection (or the ids it is given) and is one undo step.
 import { signal } from '@preact/signals';
 import { elementBox } from '../plan/geometry.ts';
-import { addElement, alignElements, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, moveElements, removeElements, rotateElements, ungroupElements, type AlignMode } from '../model/ops.ts';
+import { addElement, updateElement, alignElements, distributeElements, duplicateElements, expandGroups, flipElements, groupElements, moveElements, removeElements, rotateElements, ungroupElements, type AlignMode } from '../model/ops.ts';
 import { addLayer, moveLayer, moveLayerTo, removeLayer, renameLayer, setElementsLayer } from '../model/layers.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
@@ -69,6 +69,20 @@ export function selectAll(): void {
     .filter((e) => editable(show, e))
     .map((e) => e.id);
 }
+
+/** Applies a finished resize: the element's new centre and size, as a single step. */
+export const resizeElementTo = (id: string, box: { x: number; y: number; width: number; depth: number }): void =>
+  session.value?.commit((show) => {
+    const el = show.elements[id];
+    return el && editable(show, el) ? updateElement(show, id, box) : show;
+  });
+
+/** Turns one element to an absolute rotation in degrees, as a single step. */
+export const turnElementTo = (id: string, rotation: number): void =>
+  session.value?.commit((show) => {
+    const el = show.elements[id];
+    return el && editable(show, el) && el.rotation !== rotation ? rotateElements(show, [id], rotation - el.rotation) : show;
+  });
 
 /** Applies a finished drag: the selection moved by (dx, dy), as a single step. */
 export const commitDrag = (ids: string[], dx: number, dy: number): void => {

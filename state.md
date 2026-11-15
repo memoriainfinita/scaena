@@ -137,7 +137,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 
 - [x] (hecho 2026-11-16) Puertos en el inspector y conexión entre puertos con canales y estéreo; validadores `portChannels`, `portShared`, `portSignal`, `portDirection`, `stereoChannelsOdd` y `deskNumberRepeated`. Los puertos no se rellenan solos desde la biblioteca (el diseño lo prevé; queda para cuando se revise el catálogo de mesas)
 - [ ] Tipo de fuente en las entradas (micro, DI, línea, ordenador...) que cambie las sugerencias de la casilla
-- [ ] Asas para redimensionar y girar los elementos en el plano; repasar tooltips de las herramientas
+- [x] (hecho 2026-11-16) Asas para redimensionar (ocho, con Mayús proporción, Ctrl desde el centro, Alt sin ajuste de 50 mm) y para girar (redonda, pasada la esquina superior derecha; Mayús de 15 en 15) en el elemento seleccionado; `src/plan/transform.ts`. Las asas tapan unos píxeles junto a las esquinas y el centro de los lados: una etiqueta pegada al medio de un lado se agarra mejor por un extremo. Los tooltips de los botones con icono existen; si falta alguno, anotar cuál
 - [ ] Panel global Elementos y Conexiones: tabla editable de todo lo del plano; el vídeo con su tabla propia
 - [ ] Notas del montaje (campo general)
 - [ ] Setlist genérico por paquete (escaleta, programa)

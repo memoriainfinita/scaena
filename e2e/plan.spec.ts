@@ -88,7 +88,8 @@ test('two selected elements align to the left edge', async ({ page }) => {
   const b = await hit('Teclado').boundingBox();
   await page.mouse.click(a!.x + a!.width / 2, a!.y + a!.height / 2);
   await page.keyboard.down('Shift');
-  await page.mouse.click(b!.x + b!.width / 2, b!.y + b!.height / 2);
+  // Off the centre: the first element's handles cover a few pixels around its corners and sides.
+  await page.mouse.click(b!.x + b!.width * 0.3, b!.y + b!.height / 2);
   await page.keyboard.up('Shift');
   await expect(page.getByText('2 seleccionados')).toBeVisible();
   await page.getByRole('button', { name: 'Alinear a la izquierda' }).click();
@@ -307,9 +308,11 @@ test('a selected element keeps its label where it is dragged, and the inspector 
   await element.click({ position: { x: 4, y: 4 }, force: true });
   const label = element.locator('text[data-label]');
   const before = (await label.boundingBox())!;
-  await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+  // Grab the label off its middle: the handles of the selected element sit on the middle of its sides.
+  const grab = { x: before.x + before.width * 0.15, y: before.y + before.height / 2 };
+  await page.mouse.move(grab.x, grab.y);
   await page.mouse.down();
-  await page.mouse.move(before.x + before.width / 2 + 70, before.y + before.height / 2 + 40, { steps: 5 });
+  await page.mouse.move(grab.x + 70, grab.y + 40, { steps: 5 });
   await page.mouse.up();
   const after = (await label.boundingBox())!;
   expect(Math.abs(after.x - before.x - 70)).toBeLessThan(4);
@@ -351,4 +354,42 @@ test('the main region is named after the view that is open', async ({ page }) =>
   await expect(page.getByRole('main', { name: 'Plano del escenario' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Luces', exact: true }).click();
   await expect(page.getByRole('main', { name: 'Luces' })).toBeVisible();
+});
+
+test('the handles of a selected element resize and turn it, each as one undo step @a11y', async ({ page }) => {
+  await rock(page);
+  const c = await center(page, 'g.el[data-id] .hit');
+  await page.mouse.click(c.x, c.y);
+  const width = page.getByLabel('Ancho (m)');
+  const turn = page.getByLabel('Giro', { exact: true });
+  await expect(width).toBeVisible();
+  const w0 = Number(await width.inputValue());
+  // The handles are a pointer shortcut; the inspector fields stay the keyboard way and the handles are hidden from assistive technology.
+  expect((await axe(page)).violations).toEqual([]);
+  const east = page.locator('[data-hdl="e"]');
+  await expect(east).toHaveCount(1);
+  const b = (await east.boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(b.x + b.width / 2 + 30, b.y + b.height / 2, { steps: 5 });
+  await page.mouse.move(b.x + b.width / 2 + 80, b.y + b.height / 2, { steps: 5 });
+  await page.mouse.up();
+  const w1 = Number(await width.inputValue());
+  expect(w1).toBeGreaterThan(w0);
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  expect(Number(await width.inputValue())).toBe(w0);
+  // Turning: the round handle past the top-right corner, dragged round to the right of the centre, turns the element.
+  const knob = page.locator('[data-hdl="turn"]');
+  const k = (await knob.boundingBox())!;
+  const centre = await center(page, 'g.el[data-id] .hit');
+  await page.mouse.move(k.x + k.width / 2, k.y + k.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(centre.x + 60, centre.y - 20, { steps: 5 });
+  await page.mouse.move(centre.x + 120, centre.y, { steps: 5 });
+  await page.mouse.up();
+  const turned = Number(await turn.inputValue());
+  expect(turned).toBeGreaterThan(10);
+  expect(turned).toBeLessThan(170);
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  await expect(turn).toHaveValue('0');
 });
