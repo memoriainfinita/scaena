@@ -68,8 +68,8 @@ export function InputsView({ show }: { show: Show }) {
             <tr>
               <th>{t('table.number')}</th>
               <th>{t('table.name')}</th>
-              <th>{t('table.mic')}</th>
-              <th>{t('table.stand')}</th>
+              <th title={t('table.mic.tip')}>{t('table.mic')}</th>
+              <th title={t('table.stand.tip')}>{t('table.stand')}</th>
               <th>{t('table.patch')}</th>
               <th>{t('table.phantom')}</th>
               <th>{t('table.pair')}</th>
@@ -171,11 +171,11 @@ export function OutputsView({ show }: { show: Show }) {
           <thead>
             <tr>
               <th>{t('table.outNumber')}</th>
-              <th>{t('table.kind')}</th>
-              <th>{t('table.stereo')}</th>
-              <th>{t('table.aux')}</th>
+              <th title={t('table.kind.tip')}>{t('table.kind')}</th>
+              <th title={t('table.stereo.tip')}>{t('table.stereo')}</th>
+              <th title={t('table.aux.tip')}>{t('table.aux')}</th>
               <th>{t('table.source')}</th>
-              <th>{t('table.who')}</th>
+              <th title={t('table.who.tip')}>{t('table.who')}</th>
               <th>{t('table.notes')}</th>
               <th />
             </tr>

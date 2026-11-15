@@ -89,6 +89,7 @@ describe('microphones in the list', () => {
   test('free text stays as typed', () => {
     expect(audioLabel('micro de solapa')).toBe('micro de solapa');
     expect(audioFromLabel('micro de solapa')).toBe('micro de solapa');
+    expect(audioFromLabel('micro de ')).toBe('micro de '); // a space typed on the way to the next word is kept
   });
 });
 

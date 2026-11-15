@@ -88,7 +88,7 @@ export const audioLabel = (value: string): string => {
 export function audioFromLabel(text: string): string {
   const q = text.trim().toLowerCase();
   const m = AUDIO.find((a) => a.id === q || `${a.brand} ${a.model}`.toLowerCase() === q);
-  return m ? m.id : text.trim();
+  return m ? m.id : text;
 }
 
 /** Phantom power follows the microphone type; a DI follows its own model; unknown models say nothing. */

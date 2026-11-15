@@ -319,14 +319,26 @@ function DocData({ show }: { show: Show }) {
           return (
             <fieldset class="card" key={c.id}>
               <legend>{t('data.contact', { n })}</legend>
-              <input class="input" aria-label={tag('contact.role')} value={c.role} maxLength={80} onChange={(e) => updateContact(c.id, { role: (e.currentTarget as HTMLInputElement).value })} />
-              <input class="input" aria-label={tag('contact.name')} value={c.name} maxLength={120} onChange={(e) => updateContact(c.id, { name: (e.currentTarget as HTMLInputElement).value })} />
-              <input class="input" aria-label={tag('contact.phone')} type="tel" value={c.phone} maxLength={60} onChange={(e) => updateContact(c.id, { phone: (e.currentTarget as HTMLInputElement).value })} />
+              <label class="field">
+                {t('contact.role')}
+                <input class="input" aria-label={tag('contact.role')} placeholder={t('contact.role.ph')} value={c.role} maxLength={80} onChange={(e) => updateContact(c.id, { role: (e.currentTarget as HTMLInputElement).value })} />
+              </label>
+              <label class="field">
+                {t('contact.name')}
+                <input class="input" aria-label={tag('contact.name')} placeholder={t('contact.name.ph')} value={c.name} maxLength={120} onChange={(e) => updateContact(c.id, { name: (e.currentTarget as HTMLInputElement).value })} />
+              </label>
+              <label class="field">
+                {t('contact.phone')}
+                <input class="input" aria-label={tag('contact.phone')} placeholder={t('contact.phone.ph')} type="tel" value={c.phone} maxLength={60} onChange={(e) => updateContact(c.id, { phone: (e.currentTarget as HTMLInputElement).value })} />
+              </label>
               <label class="check">
                 <input type="checkbox" checked={c.hidden.includes('phone')} onChange={(e) => setContactHidden(c.id, 'phone', (e.currentTarget as HTMLInputElement).checked)} aria-label={tag('contact.hidePhone')} />
                 {t('contact.hidePhone')}
               </label>
-              <input class="input" aria-label={tag('contact.email')} type="email" value={c.email} maxLength={120} onChange={(e) => updateContact(c.id, { email: (e.currentTarget as HTMLInputElement).value })} />
+              <label class="field">
+                {t('contact.email')}
+                <input class="input" aria-label={tag('contact.email')} placeholder={t('contact.email.ph')} type="email" value={c.email} maxLength={120} onChange={(e) => updateContact(c.id, { email: (e.currentTarget as HTMLInputElement).value })} />
+              </label>
               <label class="check">
                 <input type="checkbox" checked={c.hidden.includes('email')} onChange={(e) => setContactHidden(c.id, 'email', (e.currentTarget as HTMLInputElement).checked)} aria-label={tag('contact.hideEmail')} />
                 {t('contact.hideEmail')}
