@@ -2,7 +2,8 @@
 import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel, fixtureById } from '../library/models.ts';
-import { channelList, mixText, outputList } from '../model/audio.ts';
+import { mixText, outputList } from '../model/audio.ts';
+import { channelOn, channelsOnDesk, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
 import { modeLabel, PROTOCOL_NAME, slotsOf, universeInfo, universesInUse } from '../model/dmx.ts';
 import { effectivePatch } from '../model/patch.ts';
@@ -200,16 +201,30 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     const rows = show.workNotes.map((n) => [n.text, n.done ? D.yes : D.no, n.refId && show.elements[n.refId] ? name(show.elements[n.refId], lang) : '']);
     return { id, header: [D.task, D.done, D.element], rows };
   }
+  const desks = desksOf(show);
+  const several = desks.length > 1;
+  const deskName = (d: (typeof desks)[number]) => d.name || D.deskRoles[d.role];
   if (id === 'inputs') {
-    const rows = channelList(show).map((c) => {
-      const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
-      const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
-      return [String(c.number), c.shortName, audioLabel(c.mic), c.stand, effectivePatch(show, c), c.phantom ? D.yes : D.no, pair ? String(pair.number) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
-    });
-    return { id, header: [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note, D.cables], rows };
+    const mainId = mainDeskId(show);
+    // With several desks every desk's list follows the other, led by a column that says which desk it is.
+    const rows = desks.flatMap((d) =>
+      channelsOnDesk(show, d.id).map(({ ch: c, number, patch }) => {
+        const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
+        const pairAt = pair ? channelOn(show, pair, d.id)?.number : undefined;
+        const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
+        const row = [String(number), c.shortName, audioLabel(c.mic), c.stand, d.id === mainId ? effectivePatch(show, c) : patch, c.phantom ? D.yes : D.no, pairAt !== undefined ? String(pairAt) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
+        return several ? [deskName(d), ...row] : row;
+      }),
+    );
+    return { id, header: [...(several ? [D.desk] : []), D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, D.note, D.cables], rows };
   }
-  const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.who, o.kind === 'main' ? '' : mixText(show, o, D.mixWords), o.notes]);
-  return { id, header: ['#', D.kind, D.stereo, D.aux, D.source, D.who, D.mix, D.note], rows };
+  const rows = (several ? desks : [null]).flatMap((d) =>
+    (d ? outputsOnDesk(show, d.id) : outputList(show)).map((o) => {
+      const row = [String(o.number), D.kinds[o.kind], o.stereo ? D.yes : D.no, o.aux, name(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, lang), o.who, o.kind === 'main' ? '' : mixText(show, o, D.mixWords), o.notes];
+      return d ? [deskName(d), ...row] : row;
+    }),
+  );
+  return { id, header: [...(several ? [D.desk] : []), '#', D.kind, D.stereo, D.aux, D.source, D.who, D.mix, D.note], rows };
 }
 
 // ---- Text formats ----
@@ -233,7 +248,13 @@ export function toTsv(t: Pick<ReportTable, 'header' | 'rows'>): string {
 
 /** The input list as plain text lines, for a message or an email. */
 export function inputsAsText(show: Show, lang: Lang = show.lang): string {
-  return buildReport(show, 'inputs', lang)
-    .rows.map((r) => [r[0] + '.', [r[1], r[2], r[3]].filter(Boolean).join(' — '), r[4] === docStrings(lang).yes ? '(48 V)' : ''].filter(Boolean).join(' '))
+  const report = buildReport(show, 'inputs', lang);
+  const skip = report.header.length - 11; // a leading column names the desk when there are several
+  const yes = docStrings(lang).yes;
+  return report.rows
+    .map((r) => {
+      const [n, name, mic, stand, , phantom] = r.slice(skip);
+      return [`${n}.`, [name, mic, stand].filter(Boolean).join(' — '), phantom === yes ? '(48 V)' : ''].filter(Boolean).join(' ');
+    })
     .join('\n');
 }

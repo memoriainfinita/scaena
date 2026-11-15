@@ -3,6 +3,7 @@ import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { addChannel } from '../model/audio.ts';
+import { addDesk, sendToDesk } from '../model/desks.ts';
 import { newShow } from '../model/new.ts';
 import { addElement } from '../model/ops.ts';
 import type { Show } from '../model/schema.ts';
@@ -59,6 +60,19 @@ describe('Typst source', () => {
     expect(b.source).toContain(txt('#panic("boom")'));
     expect(b.source).not.toMatch(/\n#panic/);
     expect(b.source).toContain(txt('*bold* #let x'));
+  });
+
+  test('with two desks the inputs print one table per desk, numbered on that desk', () => {
+    let show = rock();
+    const first = Object.values(show.channels).sort((a, b) => a.number - b.number)[0]!;
+    let mon;
+    [show, mon] = addDesk(show, { name: 'Monitores del escenario' });
+    show = sendToDesk(show, first.id, mon.id, 5);
+    const b = buildDocument({ ...show, document: { ...show.document, template: 'custom', sections: ['inputs', 'outputs'] } });
+    expect(b.source).toContain('Monitores del escenario');
+    expect(b.source.match(/Lista de entradas · /g)).toHaveLength(2);
+    // The single-desk rider keeps its plain heading.
+    expect(buildDocument({ ...rock(), document: { ...rock().document, template: 'custom', sections: ['inputs'] } }).source).not.toContain('Lista de entradas · ');
   });
 
   test('the footer and title carry the show name, and the language follows the show', () => {

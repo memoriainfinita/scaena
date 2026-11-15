@@ -4,6 +4,7 @@ import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { audioLabel } from '../library/models.ts';
 import { channelList, mixOutputs, mixText, outputList } from '../model/audio.ts';
+import { channelOn, channelsOnDesk, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { universeInfo, universesInUse, universeSaysSomething } from '../model/dmx.ts';
 import { circuitLoads, dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { effectivePatch } from '../model/patch.ts';
@@ -272,38 +273,50 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
     } else if (s === PLAN || s === LIGHT_PLAN) {
       planReports(show, s).forEach((rep, n) => parts.push(planPage(`${s}-${n}`, sheetTitle(rep, s === PLAN ? D.plan : D.lightPlan, n), { planScale: rep.scale, layerIds: reportLayerIds(show, rep), fixtureTags: reportTags(rep) })));
     } else if (s === 'inputs') {
-      const list = channelList(show);
-      const rows = list.map((ch) => {
-        const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
-        const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
-        return [String(ch.number), ch.shortName, audioLabel(ch.mic), ch.stand, effectivePatch(show, ch), yn(D, ch.phantom), pair ? String(pair.number) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
-      });
-      const deskLine = [show.desk.model && `${D.desk}: ${show.desk.model}`, show.desk.showFile && `${D.showFile}: ${show.desk.showFile}`].filter(Boolean).join(' · ');
-      const cfg = show.document.inputs;
-      const widthMm = (cfg.landscape ? paper.h : paper.w) - 2 * MARGIN;
-      // The cable column appears only when some channel has a cable to show.
-      const withCables = rows.some((r) => r[9]);
-      const fullCols: Col[] = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }, ...(withCables ? [{ fr: 1.5 }] : [])];
-      const fullRows = withCables ? rows : rows.map((r) => r.slice(0, 9));
-      const compactRows = rows.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]);
-      const blocks = cfg.blocks === 'auto' ? autoBlocks(fullRows, fullCols, compactRows, widthMm, listRoomMm(cfg.landscape ? paper.w : paper.h)) : cfg.blocks;
-      let body: string;
-      if (blocks === 1) {
-        body = c.table(D.inputs, fullCols, [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, ...(withCables ? [D.cables] : [])], fullRows, widthMm) + `\n${txt(D.positionLegend)}\n`;
-      } else {
-        // Several blocks side by side: the compact table, consecutive channels in each.
-        const blockMm = (widthMm - GUTTER_MM * (blocks - 1)) / blocks;
-        const size = Math.ceil(compactRows.length / blocks);
-        const tables = Array.from({ length: blocks }, (_, i) => compactRows.slice(i * size, (i + 1) * size))
-          .filter((chunk) => chunk.length > 0)
-          .map((chunk) => c.table(D.inputs, COMPACT_COLS, ['#', D.shortName, D.mic, D.patch, '48 V'], chunk, blockMm));
-        body = `#grid(columns: (${tables.map(() => '1fr').join(', ')}), column-gutter: ${GUTTER_MM}mm, align: top, ${tables.map((tb) => `[${tb}]`).join(', ')})\n`;
+      // One table per desk when there are several; with one, the list as it always was.
+      const desks = desksOf(show);
+      for (const desk of desks.length > 1 ? desks : [null]) {
+        const mainId = mainDeskId(show);
+        const onDesk = desk ? channelsOnDesk(show, desk.id) : channelList(show).map((ch) => ({ ch, number: ch.number, patch: effectivePatch(show, ch) }));
+        const rows = onDesk.map(({ ch, number, patch }) => {
+          const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
+          const pairAt = pair ? (desk ? channelOn(show, pair, desk.id)?.number : pair.number) : undefined;
+          const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
+          return [String(number), ch.shortName, audioLabel(ch.mic), ch.stand, desk && desk.id !== mainId ? patch : desk ? effectivePatch(show, ch) : patch, yn(D, ch.phantom), pairAt !== undefined ? String(pairAt) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
+        });
+        const model = desk ? desk.model : show.desk.model;
+        const showFile = desk ? desk.showFile : show.desk.showFile;
+        const deskLine = [model && `${D.desk}: ${model}`, showFile && `${D.showFile}: ${showFile}`].filter(Boolean).join(' · ');
+        const cfg = show.document.inputs;
+        const widthMm = (cfg.landscape ? paper.h : paper.w) - 2 * MARGIN;
+        // The cable column appears only when some channel has a cable to show.
+        const withCables = rows.some((r) => r[9]);
+        const fullCols: Col[] = [{ mm: 11 }, { fr: 1 }, { fr: 1.3 }, { fr: 1 }, { mm: 16 }, { mm: 11 }, { mm: 10 }, { fr: 1.1 }, { mm: 12 }, ...(withCables ? [{ fr: 1.5 }] : [])];
+        const fullRows = withCables ? rows : rows.map((r) => r.slice(0, 9));
+        const compactRows = rows.map((r) => [r[0]!, r[1]!, r[2]!, r[4]!, r[5]!]);
+        const blocks = cfg.blocks === 'auto' ? autoBlocks(fullRows, fullCols, compactRows, widthMm, listRoomMm(cfg.landscape ? paper.w : paper.h)) : cfg.blocks;
+        let body: string;
+        if (blocks === 1) {
+          body = c.table(D.inputs, fullCols, [D.channel, D.shortName, D.mic, D.stand, D.patch, D.phantom, D.pair, D.source, D.position, ...(withCables ? [D.cables] : [])], fullRows, widthMm) + `\n${txt(D.positionLegend)}\n`;
+        } else {
+          // Several blocks side by side: the compact table, consecutive channels in each.
+          const blockMm = (widthMm - GUTTER_MM * (blocks - 1)) / blocks;
+          const size = Math.ceil(compactRows.length / blocks);
+          const tables = Array.from({ length: blocks }, (_, i) => compactRows.slice(i * size, (i + 1) * size))
+            .filter((chunk) => chunk.length > 0)
+            .map((chunk) => c.table(D.inputs, COMPACT_COLS, ['#', D.shortName, D.mic, D.patch, '48 V'], chunk, blockMm));
+          body = `#grid(columns: (${tables.map(() => '1fr').join(', ')}), column-gutter: ${GUTTER_MM}mm, align: top, ${tables.map((tb) => `[${tb}]`).join(', ')})\n`;
+        }
+        const inputsMd = heading(desk ? `${D.inputs} · ${desk.name || D.deskRoles[desk.role]}` : D.inputs) + (deskLine ? `${txt(deskLine)}\n\n` : '') + body;
+        parts.push(cfg.landscape ? `#page(flipped: true)[\n${inputsMd}\n]\n` : inputsMd);
       }
-      const inputsMd = heading(D.inputs) + (deskLine ? `${txt(deskLine)}\n\n` : '') + body;
-      parts.push(cfg.landscape ? `#page(flipped: true)[\n${inputsMd}\n]\n` : inputsMd);
     } else if (s === 'outputs') {
-      const rows = outputList(show).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
-      parts.push(heading(D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');
+      const outDesks = desksOf(show);
+      for (const desk of outDesks.length > 1 ? outDesks : [null]) {
+        const rows = (desk ? outputsOnDesk(show, desk.id) : outputList(show)).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
+        if (desk && rows.length === 0) continue;
+        parts.push(heading(desk ? `${D.outputs} · ${desk.name || D.deskRoles[desk.role]}` : D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');
+      }
       const mixes = mixOutputs(show).map((o) => [String(o.number), o.who, mixText(show, o, D.mixWords)]).filter(([, who, mix]) => who || mix);
       if (mixes.length > 0) parts.push(heading(D.mixes) + c.table(D.mixes, [{ mm: 11 }, { fr: 1 }, { fr: 4 }], ['#', D.who, D.mix], mixes) + '\n');
     } else if (s === 'computers') {

@@ -12,6 +12,7 @@ import { addWorkNote, removeWorkNote, updateLuminaire, updateWorkNote } from '..
 import { availableReports, buildReport, inputsAsText, REPORT_IDS, toCsv, toTsv } from './reports.ts';
 import type { Show } from '../model/schema.ts';
 import { cableLength } from '../model/connections.ts';
+import { addDesk, sendToDesk } from '../model/desks.ts';
 import { validate } from '../validate/rules.ts';
 
 /** The package's lights come with a model and a channel; these tests start from bare ones. */
@@ -287,5 +288,21 @@ describe('numbers and units in the documents', () => {
     const longer = (wireless: boolean) => validate({ ...show, connections: { ...show.connections, [radio!.id]: { ...radio!, connector: 'XLR', wireless, lengthMm: 500000 } } }).some((i) => i.rule === 'cableTooLong');
     expect(longer(false)).toBe(true);
     expect(longer(true)).toBe(false);
+  });
+});
+
+describe('reports with two desks', () => {
+  test('the input and output reports say which desk each row is on and number it there', () => {
+    let show = rock();
+    const first = Object.values(show.channels).sort((a, b) => a.number - b.number)[0]!;
+    let mon;
+    [show, mon] = addDesk(show);
+    show = sendToDesk(show, first.id, mon.id, 3);
+    const inputs = buildReport(show, 'inputs');
+    expect(inputs.header[0]).toBe('Mesa');
+    expect(inputs.rows).toHaveLength(Object.keys(show.channels).length + 1);
+    expect(inputs.rows.at(-1)!.slice(0, 2)).toEqual(['Monitores', '3']);
+    expect(buildReport(show, 'outputs').header[0]).toBe('Mesa');
+    expect(inputsAsText(show).split('\n').at(-1)).toMatch(/^3\. /);
   });
 });

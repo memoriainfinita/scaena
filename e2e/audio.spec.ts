@@ -200,3 +200,14 @@ test('a second desk has its own channel numbers, patch and outputs @a11y', async
   await page.getByRole('button', { name: 'FOH (sala)', exact: true }).click();
   await expect(page.getByRole('table').first().locator('tbody tr')).toHaveCount(before);
 });
+
+test('a rider with two desks compiles to a PDF with a list of inputs for each', async ({ page }) => {
+  test.setTimeout(150_000);
+  await inputs(page);
+  await page.getByRole('button', { name: 'Añadir mesa' }).click();
+  await L(page, 'En esta mesa · Canal 1').check();
+  await page.getByRole('button', { name: 'Documento', exact: true }).click();
+  await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole('alert')).toHaveCount(0);
+});
