@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-11
+last_updated: 2026-11-15
 ---
 
 # scaena — state
@@ -23,6 +23,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 - Hojas de plano por capas hechas el 2026-11-11 (`docs/design/plan-sheets-2026-11-11.md`): `plan` y `lightPlan` usan el mismo informe y el mismo panel (`PlanSheets`), cualquier número de hojas, `tags` por hoja; el archivo sin informes `plan` imprime la hoja única de siempre. Commit del 2026-11-11
 - Grupo 3 hecho el 2026-11-11 (`docs/design/grupo-3-numeros-2026-11-11.md`): módulo `src/model/units.ts` (unidades y números por idioma en inspector, diálogos, avisos, informes y PDF), escalas de arquitectura en imperial, recuento de montaje sin barra suelta, `Connection.wireless`. Commit del 2026-11-11
 - Grupo 4 hecho el 2026-11-11 (`docs/design/grupo-4-restos-2026-11-11.md`): botón de importar fondo en el inicio activo, `view.soon`/`export.soon` fuera, comentarios de `state.ts` en su sitio, la zona principal con el nombre de la vista, scripts `live-*` con `exact`. Commit del 2026-11-11
+- Notas del usuario del 2026-11-15 tras probar la app (15 notas). Hecho: espacios en la casilla de micro, etiquetas visibles en contactos, «Artista / compañía» en vez de «Banda», tooltips en entradas y salidas, y varias mesas (formato 2: `Show.desks`, `InputChannel.assign` por mesa, `Output.deskId`, puertos y conexiones multicanal en el esquema, señal USB; selector de mesa en Entradas y Salidas, una tabla por mesa en PDF e informes). Diseño: `docs/design/ports-desks-2026-11-15.md`. Pendiente en el TODO
 - Auditoría del 2026-11-09 (solo lectura, sobre PDF y capturas generados ese día de teatro, rock y muestra completa): la base técnica es sólida y la amplitud prometida existe, pero la app no está terminada. El plano impreso no llega a nivel profesional y hay funciones aceptadas a medias. Los hallazgos están en TODO, grupos 1 a 4. Sin comprobar en la auditoría: e2e completos, móvil, rendimiento y la versión en inglés
 - Pruebas: 513 unitarias, tipos y lint limpios y CI verde en `2827abb` (2026-11-11); e2e completos en Firefox pasados en los grupos 3 y 4 (2026-11-11); e2e completos del 2026-11-08, 150 en Firefox (14 omitidos) y 108 en Chrome (`pnpm e2e:chrome`), con axe sin violaciones
 - Probada en un móvil real (Xiaomi 24094RAD4G) con Chrome y Firefox 158 el 2026-11-07: plano, Entradas, Documento y PDF, gestos y uso sin red; instalable en Chrome. Límite conocido: en horizontal (275 px de alto) el plano queda pequeño
@@ -131,6 +132,17 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 ### Ampliación del grupo 1: hojas de plano por capas (hecha 2026-11-11, `docs/design/plan-sheets-2026-11-11.md`)
 
 - [x] Cualquier número de hojas de plano en un rider, cada una con título, escala, capas y casilla de rótulos de luminaria; separando categorías o combinándolas. Hoy solo el plano de luces admite varias hojas con capas propias; el plano general (`plan`) imprime una hoja con las capas visibles. Diseño: informes `plan` y `lightPlan` con el mismo mecanismo y panel (cambian los valores por defecto: `lightPlan` con capas de luces y rótulos, `plan` con las visibles y sin rótulos); un archivo sin informes `plan` sigue imprimiendo la hoja única; cada hoja con su cajetín y su leyenda de solo sus capas. Sin ordenar las hojas libremente entre secciones
+
+### Notas del usuario del 2026-11-15 (pendiente)
+
+- [ ] Puertos en el inspector (declarar entradas y salidas de cada aparato) y editor de conexión entre puertos con número de canales y estéreo; validadores nuevos del diseño (canales de más, puerto usado dos veces, señales distintas, número repetido en una mesa)
+- [ ] Tipo de fuente en las entradas (micro, DI, línea, ordenador...) que cambie las sugerencias de la casilla
+- [ ] Asas para redimensionar y girar los elementos en el plano; repasar tooltips de las herramientas
+- [ ] Panel global Elementos y Conexiones: tabla editable de todo lo del plano; el vídeo con su tabla propia
+- [ ] Notas del montaje (campo general)
+- [ ] Setlist genérico por paquete (escaleta, programa)
+- [ ] Biblioteca: webcam, trípodes sueltos de todo tipo, palos selfie; iconos de soportes que dibujan el instrumento
+- [ ] Mostrar mesas y puertos en el ejemplo de muestra completa (ya tiene una mesa de monitores como elemento)
 
 ### Fuera de los grupos
 
