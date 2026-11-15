@@ -13,6 +13,7 @@ import type { PlanElement, Show } from '../model/schema.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
+import { PortsPanel } from './Ports.tsx';
 import { DocumentView } from './Document.tsx';
 import { ProductionView } from './Production.tsx';
 import { ReportsView } from './Reports.tsx';
@@ -377,6 +378,7 @@ function Inspector({ show }: { show: Show }) {
           {(el.type.id === RACK_ITEM || el.rack) && <RackPanel el={el} />}
           {el.computer && <ComputerPanel el={el} c={el.computer} />}
           {el.luminaire && <LuminairePanel el={el} show={show} />}
+          <PortsPanel el={el} />
           <ConnectionsPanel show={show} el={el} />
         </>
       ) : (

@@ -29,6 +29,10 @@ All additions are optional with a default, so a format 1 file loads unchanged af
 - New validators: more channels than the port has, a port used by two connections, signals that differ at the two ends, two sources with the same number on one desk, a desk with outputs and no inputs sent to it.
 - PDF: the inputs and outputs sections print one table per desk when there is more than one, titled with the desk name and role, ordered by that desk's number.
 
+## Built (2026-11-16)
+
+Steps 1 to 4 are in. Ports are edited in the inspector of any element (`src/ui/Ports.tsx`, `src/model/ports.ts`); a connection names the port at each end and its channel count and stereo flag in the connections panel. The channel field replaces the old `lines` field in the interface and keeps `lines` in step up to 64, so the patch and the old validator read what they always did. New rules: `portChannels`, `portShared`, `portSignal`, `portDirection`, `stereoChannelsOdd`, `deskNumberRepeated`. Not done: ports that fill in from the library for consoles and stageboxes, and the relaxed one-cable-per-pair rule (still one cable per signal between two elements).
+
 ## Risk and order
 
 1. Schema, identity migration to format 2, `usb`, helpers and tests (nothing visible changes).

@@ -2,7 +2,8 @@
 import { signal } from '@preact/signals';
 import { addConnection, removeConnection, updateConnection, type SignalType } from '../model/connections.ts';
 import { emptyComputer, updateElement } from '../model/ops.ts';
-import type { Computer, Connection, Show } from '../model/schema.ts';
+import { addPort, removePort, updatePort } from '../model/ports.ts';
+import type { Computer, Connection, Port, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
@@ -63,3 +64,9 @@ export function connectTo(to: string): boolean {
 
 export const setConnection = (id: string, patch: Partial<Omit<Connection, 'id' | 'from' | 'to'>>): void => commit((show) => updateConnection(show, id, patch));
 export const dropConnection = (id: string): void => commit((show) => removeConnection(show, id));
+
+// ---- ports ----
+
+export const addElementPort = (elementId: string, init?: Partial<Omit<Port, 'id'>>): void => commit((show) => addPort(show, elementId, init)[0]);
+export const setElementPort = (elementId: string, portId: string, patch: Partial<Omit<Port, 'id'>>): void => commit((show) => updatePort(show, elementId, portId, patch));
+export const removeElementPort = (elementId: string, portId: string): void => commit((show) => removePort(show, elementId, portId));

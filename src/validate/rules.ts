@@ -6,6 +6,7 @@ import { channelList, drawnWedges, outputList, wedgeOrder } from '../model/audio
 import { slotsOf, UNIVERSE_SIZE, universeInfo, universesInUse } from '../model/dmx.ts';
 import { dimmerLoads, luminaires, mountStats, phaseLoads } from '../model/lights.ts';
 import { handlesSignal, maxCableM } from '../model/compat.ts';
+import { channelsOnDesk, desksOf } from '../model/desks.ts';
 import { effectivePatch, patchAnalysis } from '../model/patch.ts';
 import { isClock } from '../model/production.ts';
 import type { PlanElement, Show, SignalType } from '../model/schema.ts';
@@ -47,7 +48,13 @@ export type RuleId =
   | 'channelNotCabled'
   | 'outputNotCabled'
   | 'dmxChainLong'
-  | 'networkLoop';
+  | 'networkLoop'
+  | 'portChannels'
+  | 'portShared'
+  | 'portSignal'
+  | 'portDirection'
+  | 'stereoChannelsOdd'
+  | 'deskNumberRepeated';
 
 export type RefKind = 'element' | 'channel' | 'output' | 'mount' | 'dimmer' | 'phase' | 'show';
 export interface Ref {
@@ -104,6 +111,12 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   outputNotCabled: 'tip',
   dmxChainLong: 'warning',
   networkLoop: 'warning',
+  portChannels: 'warning',
+  portShared: 'warning',
+  portSignal: 'warning',
+  portDirection: 'warning',
+  stereoChannelsOdd: 'warning',
+  deskNumberRepeated: 'error',
 };
 
 const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
@@ -338,6 +351,69 @@ const connectionMismatch: Rule = (show) =>
       .map((e) => issue('connectionMismatch', { kind: 'element', id: e.id }, { name: elName(e), signal: c.signal }, undefined, c.id)),
   );
 
+/** The port a connection names at one of its ends, when that element declares it. */
+const portAt = (show: Show, elementId: string, portId: string | null | undefined) => (portId ? show.elements[elementId]?.ports.find((p) => p.id === portId) : undefined);
+
+/** The two ends of a connection that name a port: the element, its port and which end it is. */
+const portEnds = (show: Show, c: Show['connections'][string]) =>
+  [
+    { end: 'from' as const, el: show.elements[c.from], port: portAt(show, c.from, c.fromPortId) },
+    { end: 'to' as const, el: show.elements[c.to], port: portAt(show, c.to, c.toPortId) },
+  ].flatMap((x) => (x.el && x.port ? [{ end: x.end, el: x.el, port: x.port }] : []));
+
+const portChannels: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) => {
+    const n = c.channels ?? c.lines;
+    return portEnds(show, c)
+      .filter((x) => n > x.port.channels)
+      .map((x) => issue('portChannels', { kind: 'element', id: x.el.id }, { name: elName(x.el), port: x.port.name, channels: n, max: x.port.channels }, undefined, `${c.id}:${x.end}`));
+  });
+
+const portShared: Rule = (show) => {
+  const uses = new Map<string, number>();
+  for (const c of Object.values(show.connections)) for (const x of portEnds(show, c)) uses.set(`${x.el.id}:${x.port.id}`, (uses.get(`${x.el.id}:${x.port.id}`) ?? 0) + 1);
+  return [...uses].flatMap(([key, n]) => {
+    if (n < 2) return [];
+    const [elId, portId] = key.split(':') as [string, string];
+    const el = show.elements[elId]!;
+    return [issue('portShared', { kind: 'element', id: elId }, { name: elName(el), port: el.ports.find((p) => p.id === portId)!.name, n }, undefined, portId)];
+  });
+};
+
+const portSignal: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) =>
+    portEnds(show, c)
+      .filter((x) => x.port.signal !== c.signal)
+      .map((x) => issue('portSignal', { kind: 'element', id: x.el.id }, { name: elName(x.el), port: x.port.name, signal: c.signal }, undefined, `${c.id}:${x.end}`)),
+  );
+
+const portDirection: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) =>
+    portEnds(show, c)
+      .filter((x) => (x.end === 'from' && x.port.dir === 'in') || (x.end === 'to' && x.port.dir === 'out'))
+      .map((x) => issue('portDirection', { kind: 'element', id: x.el.id }, { name: elName(x.el), port: x.port.name, dir: x.end }, undefined, `${c.id}:${x.end}`)),
+  );
+
+const stereoChannelsOdd: Rule = (show) =>
+  Object.values(show.connections).flatMap((c) => {
+    const from = show.elements[c.from];
+    const n = c.channels ?? c.lines;
+    return c.stereo && n % 2 === 1 && from ? [issue('stereoChannelsOdd', { kind: 'element', id: from.id }, { name: elName(from), channels: n }, undefined, c.id)] : [];
+  });
+
+/** Two sources that take the same channel number on one desk (only checked with several desks: with one, the rows number themselves). */
+const deskNumberRepeated: Rule = (show) => {
+  if (!audioOn(show) || show.desks.length < 2) return [];
+  return desksOf(show).flatMap((d) => {
+    const seen = new Map<number, string>();
+    return channelsOnDesk(show, d.id).flatMap(({ ch, number }) => {
+      const first = seen.get(number);
+      seen.set(number, first ?? ch.id);
+      return first ? [issue('deskNumberRepeated', { kind: 'channel', id: ch.id }, { n: number, desk: d.name || d.role }, undefined, d.id)] : [];
+    });
+  });
+};
+
 const cableTooLong: Rule = (show) =>
   Object.values(show.connections).flatMap((c) => {
     const max = maxCableM(c.connector);
@@ -488,7 +564,7 @@ const networkLoop: Rule = (show) => {
   return out;
 };
 
-export const RULES: Record<RuleId, Rule> = { channelNotCabled, outputNotCabled, dmxChainLong, networkLoop, universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+export const RULES: Record<RuleId, Rule> = { portChannels, portShared, portSignal, portDirection, stereoChannelsOdd, deskNumberRepeated, channelNotCabled, outputNotCabled, dmxChainLong, networkLoop, universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

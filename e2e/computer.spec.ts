@@ -95,3 +95,30 @@ test('equipment brings its typical power, it can be changed, and the Power repor
   await expect(table).toContainText('L2');
   await expect(table.getByRole('row').last()).toContainText('Total');
 });
+
+test('a cable names the ports it uses, carries several channels and warns when the port is too small @a11y', async ({ page }) => {
+  await start(page);
+  await addLaptop(page);
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');
+  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
+  await page.getByRole('button', { name: 'Cable o conexión' }).click();
+  await page.getByRole('button', { name: 'Audio', exact: true }).click();
+  const els = page.locator('g.el[data-id] .hit');
+  const n = await els.count();
+  const a = (await els.nth(n - 2).boundingBox())!;
+  const b = (await els.nth(n - 1).boundingBox())!;
+  await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
+  await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+  await expect(page.getByRole('heading', { name: 'Conexiones' })).toBeVisible();
+  // The projector, selected now, gets an input port of two channels.
+  await page.getByRole('button', { name: 'Añadir puerto de entrada' }).click();
+  await page.getByLabel('Canales · Entrada 1', { exact: true }).fill('2');
+  await page.getByLabel('Canales · Entrada 1', { exact: true }).press('Tab');
+  await page.getByLabel(/^Puerto de /).selectOption({ label: 'Entrada 1 · Entrada · 2' });
+  const channels = page.getByLabel(/^Canales · (?!Entrada)/);
+  await channels.fill('4');
+  await channels.press('Tab');
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: /^Avisos/ }).click();
+  await expect(page.getByText(/Un cable lleva 4 canales al puerto «Entrada 1»/)).toBeVisible();
+});

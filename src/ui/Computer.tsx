@@ -211,22 +211,48 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
                     setConnection(c.id, { toPort: Number.isFinite(v) && v >= 1 ? v : null });
                   }}
                 />
+              </div>
+            )}
+            {(c.signal === 'audio' || c.signal === 'usb') && (
+              <div class="sub">
                 <input
                   class="input mono"
                   type="number"
                   min="1"
-                  max="64"
+                  max="512"
                   step="1"
-                  aria-label={`${t('connections.lines')} · ${name}`}
-                  title={t('connections.lines')}
-                  value={c.lines}
+                  aria-label={`${t('connections.channels')} · ${name}`}
+                  title={t('connections.channels')}
+                  value={c.channels ?? c.lines}
                   onChange={(e) => {
                     const v = Math.floor(Number((e.currentTarget as HTMLInputElement).value));
-                    if (Number.isFinite(v) && v >= 1 && v <= 64) setConnection(c.id, { lines: v });
+                    // `lines` keeps the count the patch reads, up to its own limit of 64.
+                    if (Number.isFinite(v) && v >= 1 && v <= 512) setConnection(c.id, { channels: v, lines: Math.min(v, 64) });
                   }}
                 />
+                <label class="check">
+                  <input type="checkbox" checked={c.stereo} aria-label={`${t('connections.stereo')} · ${name}`} onChange={(e) => setConnection(c.id, { stereo: (e.currentTarget as HTMLInputElement).checked })} />
+                  {t('connections.stereo')}
+                </label>
               </div>
             )}
+            {[
+              { el: show.elements[c.from], key: 'fromPortId' as const, id: c.fromPortId },
+              { el: show.elements[c.to], key: 'toPortId' as const, id: c.toPortId },
+            ]
+              .filter((x) => x.el && x.el.ports.length > 0)
+              .map((x) => (
+                <div class="sub" key={x.key}>
+                  <select class="input" aria-label={t('connections.portAt', { name: elementName(x.el) })} value={x.id ?? ''} onChange={(e) => setConnection(c.id, { [x.key]: (e.currentTarget as HTMLSelectElement).value || null })}>
+                    <option value="">{t('connections.noPort')}</option>
+                    {x.el!.ports.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} · {t(`ports.dir.${p.dir}` as Key)} · {p.channels}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
           </div>
         );
       })}

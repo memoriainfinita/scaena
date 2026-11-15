@@ -135,7 +135,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 
 ### Notas del usuario del 2026-11-15 (pendiente)
 
-- [ ] Puertos en el inspector (declarar entradas y salidas de cada aparato) y editor de conexión entre puertos con número de canales y estéreo; validadores nuevos del diseño (canales de más, puerto usado dos veces, señales distintas, número repetido en una mesa)
+- [x] (hecho 2026-11-16) Puertos en el inspector y conexión entre puertos con canales y estéreo; validadores `portChannels`, `portShared`, `portSignal`, `portDirection`, `stereoChannelsOdd` y `deskNumberRepeated`. Los puertos no se rellenan solos desde la biblioteca (el diseño lo prevé; queda para cuando se revise el catálogo de mesas)
 - [ ] Tipo de fuente en las entradas (micro, DI, línea, ordenador...) que cambie las sugerencias de la casilla
 - [ ] Asas para redimensionar y girar los elementos en el plano; repasar tooltips de las herramientas
 - [ ] Panel global Elementos y Conexiones: tabla editable de todo lo del plano; el vídeo con su tabla propia
