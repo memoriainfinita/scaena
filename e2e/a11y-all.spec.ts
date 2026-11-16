@@ -31,7 +31,8 @@ test('every view and each of its sections has no violations @a11y @slow', async 
     await clean(page);
   }
   await page.getByRole('button', { name: 'Producción', exact: true }).click();
-  for (const tab of ['Setlist', 'Horario del día', 'Montaje', 'Hospitalidad', 'Contrato', 'Evento y hoja de ruta']) {
+  // The theatre package starts with a run of show, so its list tab reads «Escaleta».
+  for (const tab of ['Escaleta', 'Horario del día', 'Montaje', 'Hospitalidad', 'Contrato', 'Evento y hoja de ruta']) {
     await page.getByRole('button', { name: tab, exact: true }).click();
     await clean(page);
   }
