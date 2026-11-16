@@ -1,6 +1,6 @@
 // A revision is a compressed snapshot of the whole show, kept beside the file (decided 2026-11-02).
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate';
-import { loadShow } from './migrate.ts';
+import { openShow } from './migrate.ts';
 import type { RevisionMeta, Show } from './schema.ts';
 
 export function snapshot(show: Show): Uint8Array {
@@ -8,7 +8,8 @@ export function snapshot(show: Show): Uint8Array {
 }
 
 export function restore(data: Uint8Array): Show {
-  return loadShow(JSON.parse(strFromU8(gunzipSync(data))));
+  // A snapshot taken before the limits were enforced may break one; it is read like any show that is opened.
+  return openShow(JSON.parse(strFromU8(gunzipSync(data)))).show;
 }
 
 /** Saves a new revision: bumps the number and records it. Returns the new show and the snapshot to store. */

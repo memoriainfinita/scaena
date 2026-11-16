@@ -13,6 +13,7 @@ import { Cell } from './Audio.tsx';
 import { CABLES, CONNECTORS, elementName } from './Computer.tsx';
 import { IssueMark } from './IssueMark.tsx';
 import { NumCell } from './Lights.tsx';
+import { LIMITS } from '../model/limits.ts';
 
 const TABS: EquipTab[] = ['elements', 'connections', 'video'];
 const SUPPLIERS = ['unset', 'band', 'venue', 'rental'] as const;
@@ -127,7 +128,7 @@ function Elements({ show }: { show: Show }) {
                 <tr key={el.id} class={sel.has(el.id) ? 'sel' : undefined} onFocusIn={() => selectElement(el.id)}>
                   <td class="elname">
                     <IssueMark refKey={`element:${el.id}`} />
-                    <Cell value={el.label} label={tag('equip.col.name')} max={120} placeholder={textOf(el).type} onCommit={(v) => setElementField(el.id, { label: v })} />
+                    <Cell value={el.label} label={tag('equip.col.name')} max={LIMITS.label} placeholder={textOf(el).type} onCommit={(v) => setElementField(el.id, { label: v })} />
                   </td>
                   <td>{textOf(el).type}</td>
                   <td>
@@ -169,7 +170,7 @@ function Elements({ show }: { show: Show }) {
                   </td>
                   <td class="mono num">{el.ports.length || ''}</td>
                   <td>
-                    <Cell value={el.notes} label={tag('table.notes')} onCommit={(v) => setElementField(el.id, { notes: v })} />
+                    <Cell value={el.notes} label={tag('table.notes')} max={LIMITS.notes} onCommit={(v) => setElementField(el.id, { notes: v })} />
                   </td>
                 </tr>
               );

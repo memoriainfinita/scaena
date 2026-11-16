@@ -43,6 +43,14 @@ export function App() {
     <>
       {session.value ? <Editor /> : <Start />}
       <Dialogs />
+      {session.value && session.value.trimmed.value > 0 && (
+        <div class="toast upper" role="status">
+          <span>{t('notice.trimmed', { n: session.value.trimmed.value })}</span>
+          <button type="button" class="btn" onClick={() => (session.value!.trimmed.value = 0)}>
+            {t('notice.ok')}
+          </button>
+        </div>
+      )}
       {apply && (
         <div class="toast" role="status">
           <span>{t('update.available')}</span>

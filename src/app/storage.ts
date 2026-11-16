@@ -1,5 +1,5 @@
 // Local library in IndexedDB: shows, their images and their revision snapshots. Nothing leaves the browser.
-import { loadShow } from '../model/migrate.ts';
+import { openShow, UnsupportedFormat } from '../model/migrate.ts';
 import type { Show } from '../model/schema.ts';
 
 const DB_NAME = 'scaena';
@@ -17,7 +17,8 @@ export interface StoredShow {
 }
 
 export type Kind = 'show' | 'template';
-export type Loaded = { ok: true; show: Show; images: Record<string, Uint8Array> } | { ok: false; error: string };
+/** A show read from the library. `repaired` counts the values cut or clamped to fit the format; `newer` tells a show of a later scaena from a damaged one. */
+export type Loaded = { ok: true; show: Show; images: Record<string, Uint8Array>; repaired: number } | { ok: false; error: string; newer: boolean };
 
 const wrap = <T>(req: IDBRequest<T>): Promise<T> =>
   new Promise((resolve, reject) => {
@@ -44,6 +45,17 @@ export async function saveShow(db: IDBDatabase, id: string, show: Show, images: 
   await wrap(db.transaction('shows', 'readwrite').objectStore('shows').put(record));
 }
 
+/**
+ * Starts writing a show, and that it is the last one open, before returning: for the moment the page is being left, when
+ * nothing that waits for a promise is sure to run (see `saveOnLeave` for which moments keep the write).
+ */
+export function writeShowNow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}): void {
+  const tx = db.transaction(['shows', 'meta'], 'readwrite');
+  const record: StoredShow = { id, name: show.name, updated: Date.now(), data: show, images, kind: 'show' };
+  tx.objectStore('shows').put(record);
+  tx.objectStore('meta').put(id, 'last');
+}
+
 export async function listShows(db: IDBDatabase, kind: Kind = 'show'): Promise<{ id: string; name: string; updated: number }[]> {
   const all = (await wrap(db.transaction('shows').objectStore('shows').getAll())) as StoredShow[];
   return all
@@ -57,9 +69,9 @@ export async function readShow(db: IDBDatabase, id: string): Promise<Loaded | nu
   const rec = (await wrap(db.transaction('shows').objectStore('shows').get(id))) as StoredShow | undefined;
   if (!rec) return null;
   try {
-    return { ok: true, show: loadShow(rec.data), images: rec.images };
+    return { ok: true, ...openShow(rec.data), images: rec.images };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+    return { ok: false, error: e instanceof Error ? e.message : String(e), newer: e instanceof UnsupportedFormat && e.newer };
   }
 }
 
@@ -83,23 +95,38 @@ export const getLastShow = (db: IDBDatabase) => wrap(db.transaction('meta').obje
 
 /**
  * Debounced autosave. It refuses to write while `blocked()` is true: a show that could not be read
- * must stay exactly as it is on disk.
+ * must stay exactly as it is on disk. `flush` writes at once what is waiting, and nothing when nothing is.
+ * A save that fails is the business of `save` to report; the next one is tried all the same.
  */
 export function autosave(save: () => Promise<void>, blocked: () => boolean, delayMs = 800) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let running: Promise<void> = Promise.resolve();
+  /** True from a change until the save that carries it starts. */
+  let waiting = false;
+  const start = (): Promise<void> => {
+    const p = running.then(() => {
+      if (blocked() || !waiting) return undefined;
+      waiting = false;
+      return save();
+    });
+    running = p.catch(() => undefined);
+    return p;
+  };
   return {
     schedule() {
       if (blocked()) return;
+      waiting = true;
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        running = running.then(() => (blocked() ? undefined : save())).catch(() => undefined);
-      }, delayMs);
+      timer = setTimeout(() => void start().catch(() => undefined), delayMs);
+    },
+    /** Asks for a save even with nothing new to write: to try again one that failed. */
+    retry() {
+      if (blocked()) return;
+      waiting = true;
     },
     async flush() {
       clearTimeout(timer);
-      if (!blocked()) running = running.then(save);
-      await running;
+      await start();
     },
   };
 }

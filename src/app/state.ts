@@ -11,12 +11,14 @@ import { emptyLuminaire } from '../model/lights.ts';
 import { UnsupportedFormat } from '../model/migrate.ts';
 import { newShow } from '../model/new.ts';
 import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops.ts';
-import type { Module, PlanElement, Show } from '../model/schema.ts';
+import { safeParseShow, type Module, type PlanElement, type Show } from '../model/schema.ts';
+import { repairShow } from '../model/repair.ts';
+import { LIMITS } from '../model/limits.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
 import { setCustomSource } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { fillPortsFromLibrary } from '../library/ports-data.ts';
-import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
+import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow, writeShowNow } from './storage.ts';
 
 export type ViewId = 'plan' | 'equipment' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'equipment', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
@@ -63,33 +65,55 @@ export function applySettings(next: Settings): void {
 }
 lang.value = resolveLang(settings.value.lang, globalThis.navigator?.languages ?? []);
 
+/** Where the open show stands with the local library: `off` when this browser keeps none. */
+export type SaveState = 'saved' | 'pending' | 'saving' | 'error' | 'off';
+
 /** One open show with its history and its place in the local library. */
 export class Session {
   readonly show;
   readonly canUndo = signal(false);
   readonly canRedo = signal(false);
-  readonly saving = signal(false);
+  readonly saveState;
+  /** Why the last save failed, while `saveState` is `error`. */
+  readonly saveError = signal<string | null>(null);
+  /** How many values were cut or clamped to fit the file format, when it was opened or at a save; the editor says so until dismissed. */
+  readonly trimmed;
   private readonly history: History<Show>;
   private readonly saver;
+  /** The library once it is open, to write without waiting when the page is being left. */
+  private dbNow: IDBDatabase | null = null;
 
   constructor(
     initial: Show,
     readonly id: string,
     private readonly db: Promise<IDBDatabase> | null,
     private readonly images: Record<string, Uint8Array> = {},
+    repaired = 0,
   ) {
     this.history = new History(initial);
     this.show = signal(initial);
+    this.trimmed = signal(repaired);
+    this.saveState = signal<SaveState>(db ? 'saved' : 'off');
+    db?.then(
+      (d) => (this.dbNow = d),
+      () => undefined,
+    );
     this.saver = autosave(
       async () => {
         if (!this.db) return;
+        this.saveState.value = 'saving';
         try {
-          this.saving.value = true;
+          const show = this.savable();
           const db = await this.db;
-          await saveShow(db, this.id, this.show.value, this.images);
+          await saveShow(db, this.id, show, this.images);
           await setLastShow(db, this.id);
-        } finally {
-          this.saving.value = false;
+          this.saveError.value = null;
+          // A change made while this one was being written is still waiting for its own save.
+          this.saveState.value = this.history.state === show ? 'saved' : 'pending';
+        } catch (e) {
+          this.saveError.value = e instanceof Error ? e.message : String(e);
+          this.saveState.value = 'error';
+          throw e;
         }
       },
       () => !this.db,
@@ -100,7 +124,29 @@ export class Session {
     this.show.value = this.history.state;
     this.canUndo.value = this.history.canUndo;
     this.canRedo.value = this.history.canRedo;
+    if (this.db) this.saveState.value = 'pending';
     this.saver.schedule();
+  }
+
+  /**
+   * The show as it can be written: nothing leaves for the library or for a file that could not be read back. A show that only
+   * breaks a limit of the format is mended first (as one undo step, counted in `trimmed`); any other fault is an error.
+   */
+  private savable(): Show {
+    const current = this.history.state;
+    const checked = safeParseShow(current);
+    if (checked.success) return current;
+    const mended = repairShow(current);
+    if (!mended) {
+      const issue = checked.issues[0];
+      throw new Error(`${(issue.path ?? []).map((p) => String(p.key)).join('.')}: ${issue.message}`);
+    }
+    this.history.set(mended.show);
+    this.show.value = this.history.state;
+    this.canUndo.value = this.history.canUndo;
+    this.canRedo.value = this.history.canRedo;
+    this.trimmed.value += mended.fixed.length;
+    return mended.show;
   }
 
   /** Apply a change as one undo step. */
@@ -121,12 +167,32 @@ export class Session {
   redo(): void {
     if (this.history.redo()) this.sync();
   }
+  /** Writes at once whatever is waiting to be saved. */
   flush(): Promise<void> {
+    return this.saver.flush();
+  }
+  /**
+   * The page is being hidden or left: a change still waiting is written before this returns, because the browser may not
+   * run anything that waits. The ordinary save follows if the page lives on, and keeps the state in step.
+   */
+  leave(): void {
+    if (this.dbNow && this.saveState.value === 'pending') {
+      try {
+        writeShowNow(this.dbNow, this.id, this.savable(), this.images);
+      } catch {
+        // The ordinary save below reports what went wrong.
+      }
+    }
+    void this.flush().catch(() => undefined);
+  }
+  /** Tries again a save that failed. */
+  retrySave(): Promise<void> {
+    this.saver.retry();
     return this.saver.flush();
   }
   /** The `.scaena` bytes of the current state: only the images the show still uses. */
   toFile(): Uint8Array {
-    const show = this.show.value;
+    const show = this.savable();
     const used = new Set([show.stage.background?.file, show.titleBlock.logo].filter((f): f is string => !!f));
     return packShow(show, Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name))));
   }
@@ -175,7 +241,9 @@ export const dialog = signal<Dialog>(null);
 /** On a narrow screen the library and the inspector are sheets over the plan; at most one is open. */
 export const sheet = signal<'library' | 'inspector' | null>(null);
 export const recents = signal<{ id: string; name: string; updated: number }[]>([]);
-export const startError = signal<string | null>(null);
+/** Why a show did not open: it is of a later scaena, or it is damaged (a file, or a show stored in this browser) with the reason. */
+export type StartError = 'newer' | { stored: boolean; reason: string };
+export const startError = signal<StartError | null>(null);
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 /** The local library, or null when this browser has none (private mode): the app then works without saving. */
@@ -195,8 +263,8 @@ export function setLibrary(p: Promise<IDBDatabase> | null): void {
 
 const newId = () => `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {}): Session {
-  const s = new Session(show, id, library(), images);
+function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {}, repaired = 0): Session {
+  const s = new Session(show, id, library(), images, repaired);
   session.value = s;
   selection.value = [];
   view.value = 'plan';
@@ -233,10 +301,10 @@ export function startEmpty(name: string, modules: Module[] = ['audio', 'document
 
 export function openFileBytes(bytes: Uint8Array): void {
   try {
-    const { show, images } = unpackShow(bytes);
-    open(show, undefined, images);
+    const { show, images, repaired } = unpackShow(bytes);
+    open(show, undefined, images, repaired);
   } catch (e) {
-    startError.value = e instanceof UnsupportedFormat ? 'newer' : e instanceof Error ? e.message : String(e);
+    startError.value = e instanceof UnsupportedFormat && e.newer ? 'newer' : { stored: false, reason: e instanceof Error ? e.message : String(e) };
   }
 }
 
@@ -246,10 +314,10 @@ export async function openStored(id: string): Promise<void> {
   const r = await readShow(await db, id);
   if (!r) return;
   if (!r.ok) {
-    startError.value = 'newer';
+    startError.value = r.newer ? 'newer' : { stored: true, reason: r.error };
     return;
   }
-  open(r.show, id, r.images);
+  open(r.show, id, r.images, r.repaired);
 }
 
 export async function refreshRecents(): Promise<void> {
@@ -271,12 +339,32 @@ export async function reopenLast(): Promise<boolean> {
     const id = await getLastShow(d);
     if (!id) return false;
     const r = await readShow(d, id);
-    if (!r?.ok) return false;
-    open(r.show, id, r.images);
+    if (!r) return false;
+    if (!r.ok) {
+      // The start screen shows instead, and says why the last show did not come back.
+      startError.value = r.newer ? 'newer' : { stored: true, reason: r.error };
+      return false;
+    }
+    open(r.show, id, r.images, r.repaired);
     return true;
   } catch {
     return false;
   }
+}
+
+/**
+ * Saves what is waiting when the page is hidden or left: the last change must not depend on the autosave delay.
+ * Measured on 2026-11-16 in Firefox and Chrome: on a reload, a write to IndexedDB started in `beforeunload` is kept, and one
+ * started in `pagehide` or in the `visibilitychange` of the same unload is dropped. On a phone `beforeunload` may never
+ * come, but the page is hidden first while it is still alive (another app, the home screen), and that write completes.
+ */
+export function saveOnLeave(win: Window = window): void {
+  const now = () => session.value?.leave();
+  win.addEventListener('beforeunload', now);
+  win.addEventListener('pagehide', now);
+  win.document.addEventListener('visibilitychange', () => {
+    if (win.document.visibilityState === 'hidden') now();
+  });
 }
 
 export async function goHome(): Promise<void> {
@@ -397,7 +485,7 @@ export function setLayerFlag(layerId: string, flag: 'visible' | 'locked', value:
 }
 
 export function renameShow(name: string): void {
-  session.value?.commit((show) => ({ ...show, name: name.slice(0, 120) }));
+  session.value?.commit((show) => ({ ...show, name: name.slice(0, LIMITS.showName) }));
 }
 
 export interface ShowSettings {
@@ -443,7 +531,7 @@ export function applyShowSettings(p: ShowSettings): void {
       paper: p.paper,
       units: p.units,
       lang: p.lang,
-      region: { code: p.regionCode, voltage: p.voltage, plug: show.region.code === p.regionCode ? show.region.plug : (region?.plugs.join(', ') ?? '') },
+      region: { code: p.regionCode, voltage: Number.isFinite(p.voltage) ? Math.min(LIMITS.voltage.max, Math.max(LIMITS.voltage.min, p.voltage)) : show.region.voltage, plug: show.region.code === p.regionCode ? show.region.plug : (region?.plugs.join(', ') ?? '') },
       stage: {
         ...show.stage,
         shape: stageShape(shape, p),

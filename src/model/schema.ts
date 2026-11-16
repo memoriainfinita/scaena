@@ -2,12 +2,13 @@
 // Derived data is not stored: only manual adjustments on top of it (see docs/design/modelo-2026-10-29.md).
 import * as v from 'valibot';
 import { isCleanMarkup, MAX_SVG_BYTES } from '../library/svg-clean.ts';
+import { LIMITS } from './limits.ts';
 
 export const FORMAT_VERSION = 2;
 
 const id = v.pipe(v.string(), v.minLength(1), v.maxLength(64));
 const mm = v.pipe(v.number(), v.finite());
-const text = (max = 2000) => v.optional(v.pipe(v.string(), v.maxLength(max)), '');
+const text = (max: number = LIMITS.notes) => v.optional(v.pipe(v.string(), v.maxLength(max)), '');
 
 export const Paper = v.picklist(['A4', 'A3', 'Letter', 'Tabloid']);
 export const Units = v.picklist(['metric', 'imperial']);
@@ -119,7 +120,7 @@ export const PlanElement = v.object({
   /** Top of a riser or platform above the stage deck, in millimetres; null uses the library's. */
   height: v.optional(v.nullable(v.pipe(v.number(), v.minValue(0))), null),
   layerId: id,
-  label: text(120),
+  label: text(LIMITS.label),
   groupId: v.optional(v.nullable(id), null),
   suppliedBy: v.optional(SuppliedBy, 'unset'),
   notes: text(),
@@ -246,7 +247,7 @@ export const Stage = v.object({
 
 export const Region = v.object({
   code: v.pipe(v.string(), v.maxLength(8)),
-  voltage: v.pipe(v.number(), v.minValue(1), v.maxValue(1000)),
+  voltage: v.pipe(v.number(), v.minValue(LIMITS.voltage.min), v.maxValue(LIMITS.voltage.max)),
   plug: text(40),
 });
 
@@ -269,13 +270,13 @@ export const ReportConfig = v.object({
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
 export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), linkStyle: v.optional(v.picklist(['routed', 'straight']), 'routed'), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true), rp2Lights: v.optional(v.boolean(), false) });
 
-export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(86400)), 0) });
+export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(LIMITS.listSeconds)), 0) });
 
 /** What the artist asks of the venue for the day: structured, not free-form (docs/investigacion.md, section on hospitality). */
 export const Hospitality = v.object({
-  dressingRooms: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(99))), null),
+  dressingRooms: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(LIMITS.dressingRooms))), null),
   dressingNotes: text(),
-  meals: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(999))), null),
+  meals: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(LIMITS.meals))), null),
   dietary: text(),
   cateringNotes: text(),
   afterShowMeal: v.optional(v.boolean(), false),
@@ -295,7 +296,7 @@ export const Contract = v.object({
   payment: text(300),
   cancellation: text(500),
   insurance: text(300),
-  setLengthMin: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(1440))), null),
+  setLengthMin: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(LIMITS.setLengthMin))), null),
   crew: text(300),
   other: text(),
 });
@@ -319,7 +320,7 @@ export const DocumentConfig = v.object({
 
 export const Show = v.object({
   formatVersion: v.literal(FORMAT_VERSION),
-  name: v.pipe(v.string(), v.maxLength(120)),
+  name: v.pipe(v.string(), v.maxLength(LIMITS.showName)),
   lang: Lang,
   units: v.optional(Units, 'metric'),
   paper: v.optional(Paper, 'A4'),

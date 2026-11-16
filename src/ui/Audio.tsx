@@ -12,6 +12,7 @@ import { patchAnalysis } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { cableText } from '../reports/reports.ts';
 import type { InputChannel, MixLevel, Output, PlanElement, Show, SourceKind } from '../model/schema.ts';
+import { LIMITS } from '../model/limits.ts';
 
 const SOURCE_KINDS: SourceKind[] = ['mic', 'di', 'line', 'computer', 'other'];
 
@@ -199,7 +200,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { sh
       </td>
       <td class="mono">{src ? stagePosition(show, src) : ''}</td>
       <td>
-        <Cell value={c.notes} label={tag('table.notes')} onCommit={(v) => setChannel(c.id, { notes: v })} />
+        <Cell value={c.notes} label={tag('table.notes')} max={LIMITS.notes} onCommit={(v) => setChannel(c.id, { notes: v })} />
       </td>
       <td class="cabletext">{src ? cableText(show, src.id, ['audio'], lang.value) : ''}</td>
       <RowButtons row={row} first={i === 0 || !onMain} last={i === count - 1 || !onMain} onUp={() => moveChannelRow(c.id, -1)} onDown={() => moveChannelRow(c.id, 1)} onRemove={() => removeChannelRow(c.id)} />
@@ -294,7 +295,7 @@ export function OutputsView({ show }: { show: Show }) {
                     <Cell value={o.who} label={tag('table.who')} max={80} onCommit={(v) => setOutput(o.id, { who: v })} />
                   </td>
                   <td>
-                    <Cell value={o.notes} label={tag('table.notes')} onCommit={(v) => setOutput(o.id, { notes: v })} />
+                    <Cell value={o.notes} label={tag('table.notes')} max={LIMITS.notes} onCommit={(v) => setOutput(o.id, { notes: v })} />
                   </td>
                   <RowButtons row={row} first={i === 0} last={i === rows.length - 1} onUp={() => moveOutputRow(o.id, -1)} onDown={() => moveOutputRow(o.id, 1)} onRemove={() => removeOutputRow(o.id)} />
                 </tr>

@@ -4,13 +4,14 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { setElementNumber, setElementPhase } from '../app/lights-actions.ts';
 import { createLayer, moveCustomLayer, moveCustomLayerTo, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
-import { DEFAULT_LAYER_IDS, activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
+import { DEFAULT_LAYER_IDS, activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type SaveState, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { inUnits, lengthScale, lengthUnit } from '../model/units.ts';
 import { CATEGORY_ORDER, ITEMS, isCustomItem, itemById, searchItems } from '../library/items.ts';
 import { iconKeyOf, iconThumb, iconsVersion, loadAllIcons } from '../library/icons.ts';
 import { symbolSvg } from '../library/symbols.ts';
 import type { PlanElement, Show } from '../model/schema.ts';
+import { LIMITS } from '../model/limits.ts';
 import { IconBackground, IconConnect, IconEye, IconLock, IconMeasure, IconPan, IconRedo, IconSelect, IconText, IconUndo, Logo } from './icons.tsx';
 import { InputsView, OutputsView } from './Audio.tsx';
 import { ComputerPanel, ConnectionsPanel } from './Computer.tsx';
@@ -76,10 +77,8 @@ function TopBar() {
         <Logo />
       </button>
       <span class="sep" />
-      <input class="input name" aria-label={t('top.name')} value={s.show.value.name} onChange={(e) => renameShow((e.currentTarget as HTMLInputElement).value)} />
-      <span class="muted" role="status">
-        {s.saving.value ? t('top.saving') : t('top.saved')}
-      </span>
+      <input class="input name" aria-label={t('top.name')} value={s.show.value.name} maxLength={LIMITS.showName} onChange={(e) => renameShow((e.currentTarget as HTMLInputElement).value)} />
+      <SaveStatus />
       <span class="grow" />
       <button type="button" class="btn icon" aria-label={t('top.undo')} title={`${t('top.undo')} (Ctrl+Z)`} disabled={!s.canUndo.value} onClick={() => s.undo()}>
         <IconUndo />
@@ -107,6 +106,29 @@ function TopBar() {
         ⋯
       </button>
     </header>
+  );
+}
+
+const SAVE_TEXT: Record<Exclude<SaveState, 'error'>, Key> = { saved: 'top.saved', pending: 'top.unsaved', saving: 'top.saving', off: 'top.nosave' };
+
+/** Where the show stands with the local library, in words; a save that failed says why and offers to try again. */
+function SaveStatus() {
+  const s = session.value!;
+  const state = s.saveState.value;
+  if (state !== 'error')
+    return (
+      <span class="muted" role="status" data-save={state}>
+        {t(SAVE_TEXT[state])}
+      </span>
+    );
+  return (
+    <span class="savefail" role="alert" data-save="error">
+      <span aria-hidden="true">⚠ </span>
+      {t('top.saveError', { reason: s.saveError.value ?? '' })}
+      <button type="button" class="btn" onClick={() => void s.retrySave().catch(() => undefined)}>
+        {t('top.saveRetry')}
+      </button>
+    </span>
   );
 }
 
@@ -302,7 +324,7 @@ function Inspector({ show }: { show: Show }) {
             </label>
             <label class="field" title={t('inspector.label.tip')}>
               {t('inspector.label')}
-              <input class="input" data-label-field value={el.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
+              <input class="input" data-label-field value={el.label} maxLength={LIMITS.label} onChange={(e) => setElementField(el.id, { label: (e.currentTarget as HTMLInputElement).value })} />
             </label>
             {el.labelAt && (
               <button type="button" class="btn" title={t('inspector.labelAuto.tip')} onClick={() => setElementField(el.id, { labelAt: null })}>
@@ -331,7 +353,7 @@ function Inspector({ show }: { show: Show }) {
             </label>
             <label class="field">
               {t('inspector.notes')}
-              <textarea class="input" rows={3} value={el.notes} onChange={(e) => setElementField(el.id, { notes: (e.currentTarget as HTMLTextAreaElement).value })} />
+              <textarea class="input" rows={3} value={el.notes} maxLength={LIMITS.notes} onChange={(e) => setElementField(el.id, { notes: (e.currentTarget as HTMLTextAreaElement).value })} />
             </label>
           </div>
           <div class="panel">

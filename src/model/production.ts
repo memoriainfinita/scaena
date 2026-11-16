@@ -1,6 +1,7 @@
 // The one-event production data: setlist, day schedule and build calls. Pure operations like the rest of the model.
 import { nextId } from './ids.ts';
 import type { SetlistItem, SetlistKind, Show } from './schema.ts';
+import { LIMITS } from './limits.ts';
 
 type Slot = Show['schedule'][number];
 
@@ -8,6 +9,12 @@ type Slot = Show['schedule'][number];
 
 /** "4:30" or "4.5" (minutes) or "270s" to seconds; null when it is none of those. */
 export function parseDuration(text: string): number | null {
+  const seconds = readDuration(text);
+  // Longer than the file keeps for one item (a day) is not a length of anything on a stage.
+  return seconds !== null && seconds <= LIMITS.listSeconds ? seconds : null;
+}
+
+function readDuration(text: string): number | null {
   const t = text.trim().replace(',', '.');
   if (t === '') return 0;
   const clock = /^(\d{1,3}):([0-5]?\d)$/.exec(t);

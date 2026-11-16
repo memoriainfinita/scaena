@@ -119,7 +119,7 @@ export function Start() {
             </button>
             {err && (
               <p class="alert" role="alert" style="margin:0">
-                {err === 'newer' ? t('start.error.newer') : t('start.error.read', { reason: err })}
+                {err === 'newer' ? t('start.error.newer') : t(err.stored ? 'start.error.damaged' : 'start.error.read', { reason: err.reason })}
               </p>
             )}
           </div>

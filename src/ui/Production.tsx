@@ -6,6 +6,7 @@ import { lang, t, type Key } from '../i18n/index.ts';
 import { prodStrings } from '../document/strings.ts';
 import { clock, DEFAULT_BACKWARD, formatDuration, isClock, MILESTONES, planBackwards, setlistTotal, sortedSlots, type BackwardInput } from '../model/production.ts';
 import type { SetlistKind, Show } from '../model/schema.ts';
+import { LIMITS } from '../model/limits.ts';
 
 const LIST_KINDS: SetlistKind[] = ['setlist', 'runOrder', 'programme'];
 
@@ -270,7 +271,7 @@ function Text({ label, value, onCommit, rows, max = 300 }: { label: string; valu
   );
 }
 
-function Count({ label, value, onCommit }: { label: string; value: number | null; onCommit: (v: number | null) => void }) {
+function Count({ label, value, max, onCommit }: { label: string; value: number | null; max: number; onCommit: (v: number | null) => void }) {
   return (
     <label class="field">
       {label}
@@ -278,12 +279,13 @@ function Count({ label, value, onCommit }: { label: string; value: number | null
         class="input mono"
         type="number"
         min="0"
+        max={max}
         step="1"
         value={value ?? ''}
         onChange={(e) => {
           const raw = (e.currentTarget as HTMLInputElement).value;
           const v = Number(raw);
-          onCommit(raw === '' || !Number.isFinite(v) || v < 0 ? null : Math.round(v));
+          onCommit(raw === '' || !Number.isFinite(v) || v < 0 ? null : Math.min(max, Math.round(v)));
         }}
       />
     </label>
@@ -295,9 +297,9 @@ function HospitalityForm({ show }: { show: Show }) {
   const P = prodStrings(lang.value);
   return (
     <div class="form">
-      <Count label={P.dressingRooms} value={h.dressingRooms} onCommit={(v) => setHospitality({ dressingRooms: v })} />
+      <Count label={P.dressingRooms} max={LIMITS.dressingRooms} value={h.dressingRooms} onCommit={(v) => setHospitality({ dressingRooms: v })} />
       <Text label={P.dressingNotes} value={h.dressingNotes} rows={3} onCommit={(v) => setHospitality({ dressingNotes: v })} />
-      <Count label={P.meals} value={h.meals} onCommit={(v) => setHospitality({ meals: v })} />
+      <Count label={P.meals} max={LIMITS.meals} value={h.meals} onCommit={(v) => setHospitality({ meals: v })} />
       <Text label={P.dietary} value={h.dietary} onCommit={(v) => setHospitality({ dietary: v })} />
       <Text label={P.cateringNotes} value={h.cateringNotes} rows={2} onCommit={(v) => setHospitality({ cateringNotes: v })} />
       <label class="check">
@@ -331,7 +333,7 @@ function ContractForm({ show }: { show: Show }) {
       <Text label={P.payment} value={c.payment} rows={2} onCommit={(v) => setContract({ payment: v })} />
       <Text label={P.cancellation} value={c.cancellation} rows={3} max={500} onCommit={(v) => setContract({ cancellation: v })} />
       <Text label={P.insurance} value={c.insurance} rows={2} onCommit={(v) => setContract({ insurance: v })} />
-      <Count label={`${P.setLength} (${P.minutes})`} value={c.setLengthMin} onCommit={(v) => setContract({ setLengthMin: v })} />
+      <Count label={`${P.setLength} (${P.minutes})`} max={LIMITS.setLengthMin} value={c.setLengthMin} onCommit={(v) => setContract({ setLengthMin: v })} />
       <Text label={P.crew} value={c.crew} rows={2} onCommit={(v) => setContract({ crew: v })} />
       <Text label={P.other} value={c.other} rows={4} max={2000} onCommit={(v) => setContract({ other: v })} />
     </div>

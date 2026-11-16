@@ -1,6 +1,6 @@
 // `.scaena` file: a zip with show.json and the imported images. Nothing else is read from it.
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { loadShow } from './migrate.ts';
+import { openShow } from './migrate.ts';
 import type { Show } from './schema.ts';
 
 const MAX_UNCOMPRESSED = 256 * 1024 * 1024;
@@ -9,6 +9,8 @@ const MAX_FILES = 500;
 export interface Packed {
   show: Show;
   images: Record<string, Uint8Array>;
+  /** How many values were cut or clamped to fit the format when the file was read. */
+  repaired: number;
 }
 
 export function packShow(show: Show, images: Record<string, Uint8Array> = {}): Uint8Array {
@@ -32,5 +34,6 @@ export function unpackShow(bytes: Uint8Array): Packed {
   if (!json) throw new Error('show.json missing');
   const images: Record<string, Uint8Array> = {};
   for (const [name, data] of Object.entries(files)) if (name.startsWith('images/')) images[name.slice('images/'.length)] = data;
-  return { show: loadShow(JSON.parse(strFromU8(json))), images };
+  const { show, repaired } = openShow(JSON.parse(strFromU8(json)));
+  return { show, images, repaired };
 }

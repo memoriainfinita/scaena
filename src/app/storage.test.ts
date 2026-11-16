@@ -33,6 +33,55 @@ test('a show from a newer format is reported, not thrown, and stays on disk', as
   expect(again).toMatchObject({ ok: false });
 });
 
+test('a damaged show is told apart from a newer one, and one that only breaks a limit is read mended', async () => {
+  await saveShow(db, 'future', { ...newShow('Futuro'), formatVersion: 99 } as never);
+  await saveShow(db, 'bad', { ...newShow('Roto'), paper: 'A7' } as never);
+  await saveShow(db, 'long', { ...newShow('Largo'), name: 'n'.repeat(300) });
+  expect(await readShow(db, 'future')).toMatchObject({ ok: false, newer: true });
+  expect(await readShow(db, 'bad')).toMatchObject({ ok: false, newer: false });
+  const long = await readShow(db, 'long');
+  expect(long).toMatchObject({ ok: true, repaired: 1 });
+  if (long?.ok) expect(long.show.name).toHaveLength(120);
+  expect(await readShow(db, 'a')).toBeNull();
+});
+
+test('flush writes what is waiting at once, and nothing when nothing is', async () => {
+  vi.useFakeTimers();
+  const save = vi.fn(async () => undefined);
+  const a = autosave(save, () => false, 100);
+  await a.flush();
+  expect(save).toHaveBeenCalledTimes(0);
+  a.schedule();
+  await a.flush();
+  expect(save).toHaveBeenCalledTimes(1);
+  await vi.advanceTimersByTimeAsync(500);
+  await a.flush();
+  expect(save).toHaveBeenCalledTimes(1);
+  vi.useRealTimers();
+});
+
+test('a save that fails rejects the flush that asked for it and does not stop the next one', async () => {
+  vi.useFakeTimers();
+  let fail = true;
+  const save = vi.fn(async () => {
+    if (fail) throw new Error('quota');
+  });
+  const a = autosave(save, () => false, 100);
+  a.schedule();
+  await expect(a.flush()).rejects.toThrow('quota');
+  // Nothing new to write: the failed change is not tried again by itself, only when asked.
+  await a.flush();
+  expect(save).toHaveBeenCalledTimes(1);
+  fail = false;
+  a.retry();
+  await a.flush();
+  expect(save).toHaveBeenCalledTimes(2);
+  a.schedule();
+  await vi.advanceTimersByTimeAsync(150);
+  expect(save).toHaveBeenCalledTimes(3);
+  vi.useRealTimers();
+});
+
 test('remembers the last show and its revisions, and deleting clears them', async () => {
   await saveShow(db, 'a', newShow('Uno'));
   await setLastShow(db, 'a');
