@@ -168,6 +168,7 @@ table.list td { padding: 7px 12px; border-top: 1px solid var(--line); }
 kbd { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); }
 
 .listbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px 4px; flex-wrap: wrap; }
+.field-inline { display: inline-flex; align-items: center; gap: 6px; }
 .listbar h2 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
 .pad { padding: 8px 16px; }
 table.editable td { padding: 3px 4px; }

@@ -290,7 +290,7 @@ function ConnectionRow({ show, c, full }: { show: Show; c: Connection; full: boo
         </td>
       )}
       <td>
-        <Cell value={c.format} label={tag('connections.format')} max={40} placeholder="1920x1080 50p" title={t('connections.format.tip')} onCommit={(v) => setConnection(c.id, { format: v })} />
+        {c.signal === 'video' && <Cell value={c.format} label={tag('connections.format')} max={40} placeholder="1920x1080 50p" title={t('connections.format.tip')} onCommit={(v) => setConnection(c.id, { format: v })} />}
       </td>
       <td>
         <LengthCell show={show} c={c} label={`${inUnits(t('connections.length'), show.units)} · ${n}`} />
