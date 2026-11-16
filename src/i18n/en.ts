@@ -518,6 +518,8 @@ export const en: Messages = {
   'connections.connector': 'Connector',
   'connections.signal': 'Signal type',
   'connections.length': 'Length (m)',
+  'ports.fill': 'Fill from the library',
+  'ports.fill.tip': 'Adds the usual inputs and outputs of this type of equipment. They are typical values, not a datasheet: adjust them',
   'ports.title': 'Ports',
   'ports.tip': 'What this equipment takes in and puts out, in which format and how many channels. A cable can then say which port it uses',
   'ports.none': 'No ports declared',

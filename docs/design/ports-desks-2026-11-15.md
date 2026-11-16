@@ -31,7 +31,7 @@ All additions are optional with a default, so a format 1 file loads unchanged af
 
 ## Built (2026-11-16)
 
-Steps 1 to 4 are in. Ports are edited in the inspector of any element (`src/ui/Ports.tsx`, `src/model/ports.ts`); a connection names the port at each end and its channel count and stereo flag in the connections panel. The channel field replaces the old `lines` field in the interface and keeps `lines` in step up to 64, so the patch and the old validator read what they always did. New rules: `portChannels`, `portShared`, `portSignal`, `portDirection`, `stereoChannelsOdd`, `deskNumberRepeated`. Not done: ports that fill in from the library for consoles and stageboxes, and the relaxed one-cable-per-pair rule (still one cable per signal between two elements).
+Steps 1 to 4 are in. Ports are edited in the inspector of any element (`src/ui/Ports.tsx`, `src/model/ports.ts`); a connection names the port at each end and its channel count and stereo flag in the connections panel. The channel field replaces the old `lines` field in the interface and keeps `lines` in step up to 64, so the patch and the old validator read what they always did. New rules: `portChannels`, `portShared`, `portSignal`, `portDirection`, `stereoChannelsOdd`, `deskNumberRepeated`. Ports fill in from the library for consoles and stageboxes (2026-11-16, `src/library/ports-data.ts`): typical analogue inputs and outputs of the type, marked as typical in their note, when the element is placed and with a button in the Ports panel. Not done: the relaxed one-cable-per-pair rule (still one cable per signal between two elements).
 
 ## Risk and order
 

@@ -15,6 +15,7 @@ import type { Module, PlanElement, Show } from '../model/schema.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
 import { setCustomSource } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
+import { fillPortsFromLibrary } from '../library/ports-data.ts';
 import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
 
 export type ViewId = 'plan' | 'equipment' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
@@ -350,7 +351,7 @@ export function addFromLibrary(itemId: string, at?: { x: number; y: number }): s
       luminaire: item.layer === 'lights' && item.category === 'light' ? emptyLuminaire() : null,
     });
     created = el;
-    let out = next;
+    let out = fillPortsFromLibrary(next, el.id);
     if (show.modules.includes('audio')) {
       for (const sc of item.suggestedChannels ?? []) {
         [out] = addChannel(out, { shortName: translatePackageText(sc.name, show.lang).slice(0, 16), mic: translatePackageText(sc.mic, show.lang), stand: translatePackageText(sc.stand, show.lang), phantom: sc.phantom, sourceElementId: el.id });

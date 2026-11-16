@@ -1,6 +1,7 @@
 // The ports of an element: what it takes in and puts out, so cables can say which one they use.
-import { addElementPort, removeElementPort, setElementPort } from '../app/computer-actions.ts';
+import { addElementPort, fillElementPorts, removeElementPort, setElementPort } from '../app/computer-actions.ts';
 import { t, type Key } from '../i18n/index.ts';
+import { hasLibraryPorts } from '../library/ports-data.ts';
 import { SIGNALS } from '../model/connections.ts';
 import { PORT_FORMATS } from '../model/ports.ts';
 import type { PlanElement, Port } from '../model/schema.ts';
@@ -52,6 +53,13 @@ export function PortsPanel({ el }: { el: PlanElement }) {
           </div>
         );
       })}
+      {el.ports.length === 0 && hasLibraryPorts(el.type.id) && (
+        <div class="sub wrap">
+          <button type="button" class="btn" title={t('ports.fill.tip')} onClick={() => fillElementPorts(el.id)}>
+            {t('ports.fill')}
+          </button>
+        </div>
+      )}
       <div class="sub wrap">
         <button type="button" class="btn" onClick={() => addElementPort(el.id, { dir: 'in' })}>
           {t('ports.addIn')}

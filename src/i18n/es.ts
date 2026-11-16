@@ -522,6 +522,8 @@ export const es = {
   'connections.connector': 'Conector',
   'connections.signal': 'Tipo de señal',
   'connections.length': 'Longitud (m)',
+  'ports.fill': 'Rellenar desde la biblioteca',
+  'ports.fill.tip': 'Añade las entradas y salidas habituales de este tipo de equipo. Son valores típicos, no de ficha técnica: ajústalos',
   'ports.title': 'Puertos',
   'ports.tip': 'Lo que este equipo recibe y lo que saca, en qué formato y cuántos canales. Un cable puede entonces decir qué puerto usa',
   'ports.none': 'Sin puertos declarados',

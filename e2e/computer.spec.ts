@@ -122,3 +122,19 @@ test('a cable names the ports it uses, carries several channels and warns when t
   await page.getByRole('button', { name: /^Avisos/ }).click();
   await expect(page.getByText(/Un cable lleva 4 canales al puerto «Entrada 1»/)).toBeVisible();
 });
+
+test('a desk from the library brings its typical ports, and an empty one is filled with a button @a11y', async ({ page }) => {
+  await start(page);
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('mesa de mezclas');
+  await page.getByRole('button', { name: 'Añadir Mesa de mezclas al plano' }).click();
+  await expect(page.getByLabel('Canales · Entradas', { exact: true })).toHaveValue('32');
+  await expect(page.getByLabel('Canales · Salidas', { exact: true })).toHaveValue('16');
+  await expect(page.getByRole('button', { name: 'Rellenar desde la biblioteca' })).toHaveCount(0);
+  await page.getByRole('button', { name: /^Quitar.*Entradas/ }).click();
+  await page.getByRole('button', { name: /^Quitar.*Salidas/ }).click();
+  await page.getByRole('button', { name: 'Rellenar desde la biblioteca' }).click();
+  await expect(page.getByLabel('Canales · Entradas', { exact: true })).toHaveValue('32');
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Deshacer' }).click();
+  await expect(page.getByLabel('Canales · Entradas', { exact: true })).toHaveCount(0);
+});

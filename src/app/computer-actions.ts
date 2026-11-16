@@ -2,6 +2,7 @@
 import { signal } from '@preact/signals';
 import { addConnection, removeConnection, updateConnection, type SignalType } from '../model/connections.ts';
 import { emptyComputer, updateElement } from '../model/ops.ts';
+import { fillPortsFromLibrary } from '../library/ports-data.ts';
 import { addPort, removePort, updatePort } from '../model/ports.ts';
 import type { Computer, Connection, Port, Show } from '../model/schema.ts';
 import { selection, session } from './state.ts';
@@ -67,6 +68,7 @@ export const dropConnection = (id: string): void => commit((show) => removeConne
 
 // ---- ports ----
 
+export const fillElementPorts = (elementId: string): void => commit((show) => fillPortsFromLibrary(show, elementId));
 export const addElementPort = (elementId: string, init?: Partial<Omit<Port, 'id'>>): void => commit((show) => addPort(show, elementId, init)[0]);
 export const setElementPort = (elementId: string, portId: string, patch: Partial<Omit<Port, 'id'>>): void => commit((show) => updatePort(show, elementId, portId, patch));
 export const removeElementPort = (elementId: string, portId: string): void => commit((show) => removePort(show, elementId, portId));
