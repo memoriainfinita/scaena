@@ -6,6 +6,8 @@ Continues `symbols-gpt-batches-2026-11-11.md`. **Read `symbols-gpt-batches-2026-
 2. One item per line with its size in cm; icons must not touch each other.
 3. Sheet 82 **replaces** icons that exist. Cut each icon to the file name of the same id in `symbols/furniture/` (overwrite it) and run `pnpm symbols`. Sheet 83 is for items that already exist and draw a hand-made top-view symbol until their icon arrives: put each SVG in `symbols/video/` (or `symbols/light/`) under the id and run `pnpm symbols`; then add the id to nothing else, the item is already in `items-more.ts`.
 
+**Result (2026-11-16):** both sheets came back and are in the library: the 13 stands were replaced and the 10 new items have their icon (`archive/symbol-ingest/README.md`, round 5). Nothing else needed doing: the items already existed.
+
 ## Why sheet 82
 
 The user found that stand icons draw the instrument as well as the stand, so a plan reads as if the instrument were part of the item. The cause is in the sheet 80 prompts of round 4 ("a keyboard resting on two crossed metal frames", "a clamp holding a tablet", "a platform with pedals on it"). The wording below asks for the **bare stand, with nothing on it**, and says so in every line.
