@@ -7,6 +7,7 @@ import { addRackSlot, makeRack, setRackUnits as updateRackUnits } from '../model
 import { diffShows } from '../model/diff.ts';
 import { saveRevision } from '../model/revisions.ts';
 import type { Computer, Connection, InputChannel, Mount, Output, PlanElement, Show } from '../model/schema.ts';
+import { defaultSetlistKind } from '../model/production.ts';
 import { templateForPackage } from '../document/sections.ts';
 import { itemById } from './items.ts';
 import { audioById, fixtureById } from './models.ts';
@@ -108,6 +109,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
   if (pkg.desk) show = { ...show, desk: { ...show.desk, model: audioById(pkg.desk) ? `${audioById(pkg.desk)!.brand} ${audioById(pkg.desk)!.model}` : pkg.desk } };
   if (lit.length > 0) show = autoNumber(show);
   show = { ...show, channels, outputs, document: { template: templateForPackage(pkg.id), sections: [], planScale: null, inputs: { landscape: false, blocks: 'auto' } } };
+  show = { ...show, setlistKind: defaultSetlistKind(pkg.id) };
   return pkg.finish ? pkg.finish(show, placed, (b) => tx(b, lang)) : show;
 }
 

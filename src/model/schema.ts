@@ -301,6 +301,7 @@ export const Contract = v.object({
 /** Facts about the one event this show is for. Several dates are several shows (decided 2026-10-29). */
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
+export const SetlistKind = v.picklist(['setlist', 'runOrder', 'programme']);
 export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'lightPlan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
@@ -350,7 +351,11 @@ export const Show = v.object({
   revisions: v.optional(v.array(RevisionMeta), []),
   view: v.optional(ViewSettings, {}),
   document: v.optional(DocumentConfig, {}),
+  /** What the list of items is called and for: a band's setlist, a play's run of show or a conference programme. */
+  setlistKind: v.optional(SetlistKind, 'setlist'),
   setlist: v.optional(v.array(SetlistItem), []),
+  /** Notes about the whole show, printed at the start of the Notes section. */
+  notes: text(5000),
   hospitality: v.optional(Hospitality, {}),
   contract: v.optional(Contract, {}),
   event: v.optional(EventInfo, {}),
@@ -367,6 +372,7 @@ export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type CustomItem = v.InferOutput<typeof CustomItem>;
 export type SourceKind = v.InferOutput<typeof SourceKind>;
+export type SetlistKind = v.InferOutput<typeof SetlistKind>;
 export type Port = v.InferOutput<typeof Port>;
 export type Desk = v.InferOutput<typeof Desk>;
 export type Layer = v.InferOutput<typeof Layer>;

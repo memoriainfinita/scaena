@@ -173,7 +173,7 @@ function buildDocumentIn(show: Show, images: Record<string, Uint8Array>): Built 
     setlist: show.setlist.length > 0,
     hospitality: hospitalityRows(show, P).length > 0,
     contract: contractRows(show, P).length > 0,
-    notes: elements.some((e) => e.notes.trim()),
+    notes: elements.some((e) => e.notes.trim()) || show.notes.trim() !== '',
     revisions: show.revisions.length > 0,
   };
   const printed = sections.filter((s) => hasData[s] !== false);
@@ -264,7 +264,7 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
     } else if (s === 'setlist') {
       const rows = show.setlist.map((x, i) => [String(i + 1), x.title, x.comment, x.seconds ? formatDuration(x.seconds) : '']);
       rows.push(['', P.total, '', formatDuration(setlistTotal(show))]);
-      parts.push(heading(P.setlist) + c.table(P.setlist, [{ mm: 12 }, { fr: 1.6 }, { fr: 1.4 }, { mm: 22 }], [P.song, P.songTitle, P.comment, P.duration], rows) + '\n');
+      parts.push(heading(P.lists[show.setlistKind].name) + c.table(P.lists[show.setlistKind].name, [{ mm: 12 }, { fr: 1.6 }, { fr: 1.4 }, { mm: 22 }], [P.song, P.lists[show.setlistKind].title, P.comment, P.duration], rows) + '\n');
     } else if (s === 'hospitality') {
       parts.push(heading(P.hospitality) + keyValueTable(hospitalityRows(show, P)) + '\n');
     } else if (s === 'contract') {
@@ -408,7 +408,8 @@ ${heading(D.magic)}#align(center)[#image("/magic.svg", width: ${width.toFixed(2)
       parts.push(md + '\n');
     } else if (s === 'notes') {
       const rows = elements.filter((e) => e.notes.trim()).map((e) => [elName(e, show.lang), supplier(D, e.suppliedBy), e.notes]);
-      parts.push(heading(D.notes) + (rows.length ? c.table(D.notes, [{ fr: 1 }, { mm: 26 }, { fr: 2.4 }], [D.ref, D.supplier, D.note], rows) : txt(D.none)) + '\n');
+      const general = show.notes.trim() ? `${txt(show.notes.trim())}\n\n` : '';
+      parts.push(heading(D.notes) + general + (rows.length ? c.table(D.notes, [{ fr: 1 }, { mm: 26 }, { fr: 2.4 }], [D.ref, D.supplier, D.note], rows) : general ? '' : txt(D.none)) + '\n');
     } else if (s === 'revisions') {
       const rows = show.revisions.map((rv) => [String(rv.number), rv.date, rv.note, rv.changes.join('; ')]);
       parts.push(heading(D.revisions) + (rows.length ? c.table(D.revisions, [{ mm: 14 }, { mm: 24 }, { fr: 1 }, { fr: 1.6 }], [D.revision, D.date, D.note, D.changes], rows) : txt(D.none)) + '\n');

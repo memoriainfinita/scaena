@@ -7,7 +7,7 @@ import { bare } from '../library/bare.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { RULES } from '../validate/rules.ts';
-import { addSlot, addSong, formatDuration, isClock, moveSong, parseDuration, removeSlot, removeSong, setlistTotal, sortedSlots, toMinutes, updateSlot, updateSong } from './production.ts';
+import { addSlot, addSong, defaultSetlistKind, formatDuration, isClock, moveSong, parseDuration, removeSlot, removeSong, setlistTotal, sortedSlots, toMinutes, updateSlot, updateSong } from './production.ts';
 import type { Show } from './schema.ts';
 
 const rock = (): Show => bare(showFromPackage(packageById('rock')!, 'Mi banda', 'es'));
@@ -101,6 +101,25 @@ describe('document sections for the event', () => {
     expect(b.source).toContain('"3:20"');
     expect(b.source).toContain('"5:00"');
     expect(b.source).toContain(`"${P.total}"`);
+  });
+
+  test('the list is named after its kind and the show notes print in the notes section', () => {
+    let [show] = addSong(rock(), 'Apertura');
+    show = { ...show, setlistKind: 'runOrder', notes: 'Acceso de carga por la puerta lateral' };
+    const b = buildDocument(show);
+    expect(b.source).toContain('"Escaleta"');
+    expect(b.source).toContain('"Punto"');
+    expect(b.sections).toContain('notes');
+    expect(b.source).toContain('Acceso de carga por la puerta lateral');
+    expect(buildDocument({ ...show, lang: 'en' }).source).toContain('"Run of show"');
+  });
+
+  test('each package names its list', () => {
+    expect(defaultSetlistKind('theatre')).toBe('runOrder');
+    expect(defaultSetlistKind('av')).toBe('runOrder');
+    expect(defaultSetlistKind('conference')).toBe('programme');
+    expect(defaultSetlistKind('rock')).toBe('setlist');
+    expect(showFromPackage(packageById('rock')!, 'x', 'es').setlistKind).toBe('setlist');
   });
 
   test('hospitality and contract print only what was filled in', () => {

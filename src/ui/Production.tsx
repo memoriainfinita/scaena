@@ -1,11 +1,13 @@
 // The production view: the setlist, the schedules of the day and of the build, hospitality, contract and the event facts.
 import { useState } from 'preact/hooks';
-import { addSlotRow, addSongRow, applyBackwardPlan, moveSongRow, prodTab, removeSlotRow, removeSongRow, setContract, setEvent, setHospitality, setSlot, setSong, setSongLength, type ProdTab } from '../app/production-actions.ts';
+import { addSlotRow, addSongRow, applyBackwardPlan, moveSongRow, prodTab, removeSlotRow, removeSongRow, setContract, setEvent, setHospitality, setSetlistKind, setSlot, setSong, setSongLength, type ProdTab } from '../app/production-actions.ts';
 import { daySheetFile, saveFile } from '../export/exports.ts';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { prodStrings } from '../document/strings.ts';
 import { clock, DEFAULT_BACKWARD, formatDuration, isClock, MILESTONES, planBackwards, setlistTotal, sortedSlots, type BackwardInput } from '../model/production.ts';
-import type { Show } from '../model/schema.ts';
+import type { SetlistKind, Show } from '../model/schema.ts';
+
+const LIST_KINDS: SetlistKind[] = ['setlist', 'runOrder', 'programme'];
 
 const TABS: ProdTab[] = ['setlist', 'schedule', 'build', 'hospitality', 'contract', 'event'];
 
@@ -16,7 +18,7 @@ export function ProductionView({ show }: { show: Show }) {
       <nav class="subtabs" aria-label={t('prod.tabs')}>
         {TABS.map((x) => (
           <button key={x} type="button" class="chipbtn" aria-pressed={tab === x} aria-current={tab === x ? 'page' : undefined} onClick={() => (prodTab.value = x)}>
-            {t(`prod.tab.${x}` as Key)}
+            {x === 'setlist' ? t(`list.${show.setlistKind}` as Key) : t(`prod.tab.${x}` as Key)}
           </button>
         ))}
       </nav>
@@ -32,24 +34,35 @@ export function ProductionView({ show }: { show: Show }) {
 
 function Setlist({ show }: { show: Show }) {
   const [bad, setBad] = useState<string | null>(null);
+  const kind = show.setlistKind;
   return (
     <>
       <div class="listbar">
         <button type="button" class="btn" onClick={() => addSongRow()}>
-          {t('prod.addSong')}
+          {t(`list.add.${kind}` as Key)}
         </button>
+        <label class="field-inline" title={t('list.kind.tip')}>
+          <span>{t('list.kind')}</span>
+          <select class="input" value={kind} onChange={(e) => setSetlistKind((e.currentTarget as HTMLSelectElement).value as SetlistKind)}>
+            {LIST_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {t(`list.${k}` as Key)}
+              </option>
+            ))}
+          </select>
+        </label>
         <span class="muted" role="status">
           {t('prod.total', { value: formatDuration(setlistTotal(show)) })}
         </span>
       </div>
       {show.setlist.length === 0 ? (
-        <p class="muted pad">{t('prod.setlist.empty')}</p>
+        <p class="muted pad">{t(`list.empty.${kind}` as Key)}</p>
       ) : (
         <table class="list editable">
           <thead>
             <tr>
               <th>{t('table.number')}</th>
-              <th>{t('prod.songTitle')}</th>
+              <th>{t(`list.title.${kind}` as Key)}</th>
               <th>{t('prod.comment')}</th>
               <th>{t('prod.duration')}</th>
               <th />
@@ -63,7 +76,7 @@ function Setlist({ show }: { show: Show }) {
                 <tr key={x.id}>
                   <td class="mono num">{n}</td>
                   <td>
-                    <input class="input cell" aria-label={tag('prod.songTitle')} value={x.title} maxLength={160} onChange={(e) => setSong(x.id, { title: (e.currentTarget as HTMLInputElement).value })} />
+                    <input class="input cell" aria-label={tag(`list.title.${kind}` as Key)} value={x.title} maxLength={160} onChange={(e) => setSong(x.id, { title: (e.currentTarget as HTMLInputElement).value })} />
                   </td>
                   <td>
                     <input class="input cell" aria-label={tag('prod.comment')} value={x.comment} maxLength={200} onChange={(e) => setSong(x.id, { comment: (e.currentTarget as HTMLInputElement).value })} />

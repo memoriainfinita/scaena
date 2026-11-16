@@ -10,8 +10,8 @@ export type Template = (typeof TEMPLATES)[number];
 
 export const TEMPLATE_SECTIONS: Record<Exclude<Template, 'custom'>, SectionId[]> = {
   concert: ['cover', 'contacts', 'schedule', 'plan', 'inputs', 'outputs', 'setlist', 'hospitality', 'contract', 'notes', 'revisions'],
-  theatre: ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'lights', 'electrical', 'hospitality', 'notes', 'revisions'],
-  av: ['cover', 'contacts', 'schedule', 'build', 'plan', 'computers', 'inputs', 'outputs', 'notes', 'revisions'],
+  theatre: ['cover', 'contacts', 'schedule', 'build', 'plan', 'inputs', 'outputs', 'lights', 'electrical', 'setlist', 'hospitality', 'notes', 'revisions'],
+  av: ['cover', 'contacts', 'schedule', 'build', 'plan', 'computers', 'inputs', 'outputs', 'setlist', 'notes', 'revisions'],
 };
 
 const inOrder = (ids: Iterable<SectionId>): SectionId[] => {

@@ -34,6 +34,16 @@ test('the setlist keeps order and total, and a bad length is refused with a mess
   await expect(page.getByLabel('Título · 1', { exact: true })).toHaveValue('Segunda');
 });
 
+test('the list can be a run of show and renames its tab, button and column @a11y', async ({ page }) => {
+  await production(page);
+  await page.getByLabel('Tipo de lista').selectOption('runOrder');
+  await expect(page.getByRole('button', { name: 'Escaleta', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Añadir punto' }).click();
+  await page.getByLabel('Punto · 1', { exact: true }).fill('Apertura de puertas');
+  await expect(page.getByLabel('Punto · 1', { exact: true })).toHaveValue('Apertura de puertas');
+  expect((await axe(page)).violations).toEqual([]);
+});
+
 test('the day schedule starts from usual milestones, sorts by time and flags a bad time @a11y', async ({ page }) => {
   await production(page);
   await page.getByRole('button', { name: 'Horario del día' }).click();

@@ -21,6 +21,8 @@ export function setLogo(bytes: Uint8Array): boolean {
 }
 export const removeLogo = (): void => setTitleBlock({ logo: null });
 export const setDate = (date: string): void => commit((show) => ({ ...show, date }));
+/** The notes about the whole show. */
+export const setShowNotes = (notes: string): void => commit((show) => ({ ...show, notes: notes.slice(0, 5000) }));
 export const setRevisionNumber = (n: number): void => commit((show) => ({ ...show, revision: Math.max(1, Math.round(n)) }));
 
 export const addContact = (): void =>

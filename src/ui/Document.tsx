@@ -1,6 +1,6 @@
 // The document view: choose what goes in the rider, see it compiled to PDF, download it.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
+import { addContact, removeContact, removeLogo, setContactHidden, setDate, setLogo, setRevisionNumber, setShowNotes, setTitleBlock, updateContact } from '../app/document-data-actions.ts';
 import { applyDocTemplate, deleteDocTemplate, docTemplates, MAX_TEMPLATES, saveDocTemplate } from '../app/doc-templates.ts';
 import { addPlanSheet, removePlanSheet, setInputsLayout, setPaper, setPlanLegend, setTemplate, toggleSection, updatePlanSheet } from '../app/document-actions.ts';
 import { printScales, scaleText } from '../model/units.ts';
@@ -112,7 +112,7 @@ export function DocumentView({ show }: { show: Show }) {
           {ALL_SECTIONS.map((s) => (
             <label key={s}>
               <input type="checkbox" checked={sections.includes(s)} onChange={(e) => toggleSection(s, (e.currentTarget as HTMLInputElement).checked)} />
-              {t(`sec.${s}` as Key)}
+              {s === 'setlist' ? t(`list.${show.setlistKind}` as Key) : t(`sec.${s}` as Key)}
             </label>
           ))}
         </fieldset>
@@ -312,6 +312,10 @@ function DocData({ show }: { show: Show }) {
             <input class="input mono" type="number" min="1" step="1" value={show.revision} onChange={(e) => setRevisionNumber(Number((e.currentTarget as HTMLInputElement).value) || 1)} />
           </label>
         </div>
+        <label class="field">
+          {t('data.notes')}
+          <textarea class="input" rows={4} maxLength={5000} placeholder={t('data.notes.ph')} value={show.notes} onChange={(e) => setShowNotes((e.currentTarget as HTMLTextAreaElement).value)} />
+        </label>
         <h3>{t('data.contacts')}</h3>
         {show.contacts.map((c, i) => {
           const n = i + 1;

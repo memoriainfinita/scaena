@@ -1,6 +1,6 @@
 // The one-event production data: setlist, day schedule and build calls. Pure operations like the rest of the model.
 import { nextId } from './ids.ts';
-import type { SetlistItem, Show } from './schema.ts';
+import type { SetlistItem, SetlistKind, Show } from './schema.ts';
 
 type Slot = Show['schedule'][number];
 
@@ -30,6 +30,12 @@ export function formatDuration(seconds: number): string {
 export const setlistTotal = (show: Show): number => show.setlist.reduce((a, x) => a + x.seconds, 0);
 
 // ---- setlist ----
+
+/** What a package's list of items is called: a play or an audiovisual show has a run of show, a conference a programme, the rest a setlist. */
+export function defaultSetlistKind(packageId: string): SetlistKind {
+  if (packageId === 'theatre' || packageId === 'av') return 'runOrder';
+  return packageId === 'conference' ? 'programme' : 'setlist';
+}
 
 export function addSong(show: Show, title = ''): [Show, SetlistItem] {
   const [id, s] = nextId(show, 'so');

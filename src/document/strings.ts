@@ -163,9 +163,8 @@ const en: DocStrings = {
 export const docStrings = (lang: Lang): DocStrings => (lang === 'en' ? en : es);
 
 export interface ProdStrings {
-  setlist: string;
+  lists: Record<'setlist' | 'runOrder' | 'programme', { name: string; title: string }>;
   song: string;
-  songTitle: string;
   comment: string;
   duration: string;
   total: string;
@@ -203,7 +202,7 @@ export interface ProdStrings {
 }
 
 const prodEs: ProdStrings = {
-  setlist: 'Setlist', song: 'N.º', songTitle: 'Título', comment: 'Comentario', duration: 'Duración', total: 'Total', build: 'Programación de montaje', daySheet: 'Hoja de ruta', hospitality: 'Hospitalidad', contract: 'Contrato', event: 'El evento',
+  lists: { setlist: { name: 'Setlist', title: 'Título' }, runOrder: { name: 'Escaleta', title: 'Punto' }, programme: { name: 'Programa', title: 'Intervención' } }, song: 'N.º', comment: 'Comentario', duration: 'Duración', total: 'Total', build: 'Programación de montaje', daySheet: 'Hoja de ruta', hospitality: 'Hospitalidad', contract: 'Contrato', event: 'El evento',
   venueAddress: 'Dirección de la sala', parking: 'Aparcamiento', dressingRooms: 'Camerinos', dressingNotes: 'Camerino: condiciones', meals: 'Comidas', dietary: 'Restricciones dietéticas', cateringNotes: 'Catering: notas', afterShowMeal: 'Comida tras el show', busStock: 'Bus stock',
   supplies: 'Suministros de camerino', transport: 'Transporte', lodging: 'Alojamiento', localTransport: 'Transporte local', cashInstead: 'Compensación en efectivo en lugar de suministros', cashAmount: 'Importe',
   fee: 'Caché', deposit: 'Anticipo', payment: 'Forma y plazo de pago', cancellation: 'Cancelación', insurance: 'Seguros', setLength: 'Duración del show', crew: 'Personal', other: 'Otras condiciones', minutes: 'min', yes: 'Sí',
@@ -211,7 +210,7 @@ const prodEs: ProdStrings = {
 };
 
 const prodEn: ProdStrings = {
-  setlist: 'Setlist', song: 'No.', songTitle: 'Title', comment: 'Comment', duration: 'Length', total: 'Total', build: 'Build schedule', daySheet: 'Day sheet', hospitality: 'Hospitality', contract: 'Contract', event: 'The event',
+  lists: { setlist: { name: 'Setlist', title: 'Title' }, runOrder: { name: 'Run of show', title: 'Item' }, programme: { name: 'Programme', title: 'Session' } }, song: 'No.', comment: 'Comment', duration: 'Length', total: 'Total', build: 'Build schedule', daySheet: 'Day sheet', hospitality: 'Hospitality', contract: 'Contract', event: 'The event',
   venueAddress: 'Venue address', parking: 'Parking', dressingRooms: 'Dressing rooms', dressingNotes: 'Dressing room: conditions', meals: 'Meals', dietary: 'Dietary restrictions', cateringNotes: 'Catering: notes', afterShowMeal: 'Meal after the show', busStock: 'Bus stock',
   supplies: 'Dressing room supplies', transport: 'Transport', lodging: 'Lodging', localTransport: 'Local transport', cashInstead: 'Cash in place of supplies', cashAmount: 'Amount',
   fee: 'Fee', deposit: 'Deposit', payment: 'Payment terms', cancellation: 'Cancellation', insurance: 'Insurance', setLength: 'Show length', crew: 'Crew', other: 'Other terms', minutes: 'min', yes: 'Yes',

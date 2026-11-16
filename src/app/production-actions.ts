@@ -1,7 +1,7 @@
 // Edits of the production data: setlist, schedules, hospitality, contract and event facts. Each is one undo step.
 import { signal } from '@preact/signals';
 import { applyBackwards, addSlot, addSong, type BackwardRow, type Milestone, moveSong, parseDuration, removeSlot, removeSong, updateSlot, updateSong } from '../model/production.ts';
-import type { Contract, EventInfo, Hospitality, SetlistItem, Show } from '../model/schema.ts';
+import type { Contract, EventInfo, Hospitality, SetlistItem, SetlistKind, Show } from '../model/schema.ts';
 import { session } from './state.ts';
 
 export type ProdTab = 'setlist' | 'schedule' | 'build' | 'hospitality' | 'contract' | 'event';
@@ -10,6 +10,7 @@ export const prodTab = signal<ProdTab>('setlist');
 type Slot = Show['schedule'][number];
 const commit = (fn: (show: Show) => Show): void => session.value?.commit(fn);
 
+export const setSetlistKind = (kind: SetlistKind): void => commit((show) => ({ ...show, setlistKind: kind }));
 export const addSongRow = (): void => commit((show) => addSong(show)[0]);
 export const setSong = (id: string, patch: Partial<Omit<SetlistItem, 'id'>>): void => commit((show) => updateSong(show, id, patch));
 /** Sets the length from what the user typed ("4:30", "4.5", "270s"); returns false and changes nothing when it is not a length. */
