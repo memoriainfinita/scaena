@@ -199,3 +199,13 @@ describe('typical power', () => {
     for (const id of ['mic.dynamic', 'amp.cab-4x10', 'keys.baby-grand', 'video.screen']) expect(itemById(id)?.powerW).toBeNull();
   });
 });
+
+describe('loose tripods, webcam and selfie stick', () => {
+  test('they are found by their names in both languages and draw their own symbols', () => {
+    for (const [q, id] of [['webcam', 'video.webcam'], ['trípode para móvil', 'video.tripod-phone'], ['tripod', 'video.tripod-camera'], ['monópode', 'video.monopod'], ['selfie', 'video.selfie-stick'], ['aro de luz', 'light.ring-tripod']] as const) {
+      expect(searchItems(q).map((i) => i.id), q).toContain(id);
+    }
+    expect(itemById('video.selfie-stick')?.symbol).toBe('selfieStick');
+    expect(itemById('light.ring-tripod')?.powerW).toBe(50);
+  });
+});

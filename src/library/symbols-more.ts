@@ -100,6 +100,20 @@ export const MORE_SYMBOLS: Record<string, Draw> = {
   ledWall: (w, d) => rect(0, 0, w, d) + Array.from({ length: Math.max(0, Math.floor(w / 500) - 1) }, (_, i) => line(500 * (i + 1), 0, 500 * (i + 1), d, 1)).join('') + front(w, d),
   tv: (w, d) => rect(0, 0, w, d * 0.4) + path(`M${w * 0.35} ${d * 0.4}L${w * 0.3} ${d}L${w * 0.7} ${d}L${w * 0.65} ${d * 0.4}`, '#fff', 1.5) + front(w, d * 0.4),
   camera: (w, d) => rect(w * 0.3, d * 0.2, w * 0.4, d * 0.35) + path(`M${w * 0.4} ${d * 0.55}L${w * 0.5} ${d * 0.85}L${w * 0.6} ${d * 0.55}`, '#fff', 1.5) + line(w * 0.5, d * 0.38, w * 0.15, d * 0.92, 1) + line(w * 0.5, d * 0.38, w * 0.85, d * 0.92, 1) + line(w * 0.5, d * 0.38, w * 0.5, 0, 1) + circle(w * 0.5, d * 0.38, d * 0.05, '#000'),
+  // Loose tripods and what sits on them, seen from above: the legs spread out from the head, which is a dot.
+  tripod: (w, d) => {
+    const r = Math.min(w, d) * 0.46;
+    return [0, 120, 240].map((a) => line(w / 2, d / 2, w / 2 + r * Math.sin((a * Math.PI) / 180), d / 2 + r * Math.cos((a * Math.PI) / 180), 2)).join('') + circle(w / 2, d / 2, r * 0.18, '#fff');
+  },
+  tripodWheels: (w, d) => {
+    const r = Math.min(w, d) * 0.4;
+    return [0, 120, 240].map((a) => line(w / 2, d / 2, w / 2 + r * Math.sin((a * Math.PI) / 180), d / 2 + r * Math.cos((a * Math.PI) / 180), 2) + circle(w / 2 + r * Math.sin((a * Math.PI) / 180), d / 2 + r * Math.cos((a * Math.PI) / 180), Math.min(w, d) * 0.07)).join('') + circle(w / 2, d / 2, r * 0.2, '#fff');
+  },
+  tripodRing: (w, d) => circle(w / 2, d / 2, Math.min(w, d) * 0.45, 'none') + circle(w / 2, d / 2, Math.min(w, d) * 0.33, 'none') + [0, 120, 240].map((a) => line(w / 2, d / 2, w / 2 + Math.min(w, d) * 0.45 * Math.sin((a * Math.PI) / 180), d / 2 + Math.min(w, d) * 0.45 * Math.cos((a * Math.PI) / 180), 1)).join('') + circle(w / 2, d / 2, Math.min(w, d) * 0.06, '#000'),
+  monopod: (w, d) => circle(w / 2, d / 2, Math.min(w, d) * 0.4) + circle(w / 2, d / 2, Math.min(w, d) * 0.14, '#000') + line(w / 2, d / 2, w / 2, 0, 2),
+  webcam: (w, d) => rect(0, d * 0.15, w, d * 0.55) + circle(w / 2, d * 0.42, Math.min(w, d) * 0.2) + path(`M${w * 0.3} ${d * 0.7}L${w * 0.3} ${d}L${w * 0.7} ${d}L${w * 0.7} ${d * 0.7}`, 'none', 1.5),
+  selfieStick: (w, d) => circle(w / 2, d * 0.82, Math.min(w, d) * 0.14, '#000') + line(w / 2, d * 0.82, w / 2, d * 0.22, 2) + rect(w * 0.2, 0, w * 0.6, d * 0.24),
+  copyStand: (w, d) => rect(0, d * 0.3, w * 0.7, d * 0.7) + line(w * 0.35, d * 0.65, w * 0.85, d * 0.35, 3) + circle(w * 0.85, d * 0.35, Math.min(w, d) * 0.14) + front(w, d),
   tablet: (w, d) => rect(0, 0, w, d) + rect(w * 0.08, d * 0.1, w * 0.84, d * 0.8) + circle(w * 0.5, d * 0.95, d * 0.02),
   server: (w, d) => rect(0, 0, w, d) + line(0, d * 0.25, w, d * 0.25, 1) + line(0, d * 0.5, w, d * 0.5, 1) + circle(w * 0.85, d * 0.14, d * 0.04, '#000') + circle(w * 0.85, d * 0.38, d * 0.04, '#000') + circle(w * 0.85, d * 0.62, d * 0.04, '#000') + front(w, d),
 };

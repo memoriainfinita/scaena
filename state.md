@@ -141,7 +141,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 - [ ] Panel global Elementos y Conexiones: tabla editable de todo lo del plano; el vídeo con su tabla propia
 - [x] Notas del montaje (campo general)
 - [x] Setlist genérico por paquete (escaleta, programa) (tipo de lista: setlist, escaleta, programa; por defecto según paquete)
-- [ ] Biblioteca: webcam, trípodes sueltos de todo tipo, palos selfie; iconos de soportes que dibujan el instrumento
+- [x] (hecho 2026-11-16) Biblioteca: webcam, 8 trípodes (cámara, ruedas, sobremesa, móvil, flexible, monópode, brazo cenital, aro de luz), palo selfie, con símbolo a mano hasta que lleguen sus iconos. Iconos de soportes que dibujan el instrumento: pendientes de GPT, hojas 82 (13 soportes vacíos, sustituyen) y 83 (10 nuevos) en `docs/design/symbols-gpt-batches-2026-11-16.md`
 - [ ] Mostrar mesas y puertos en el ejemplo de muestra completa (ya tiene una mesa de monitores como elemento)
 
 ### Fuera de los grupos
