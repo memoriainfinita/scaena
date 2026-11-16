@@ -1,7 +1,7 @@
 // Reports: the lists a technician reads or hands over, as plain tables. The same rows feed the screen, the CSV files and the copy-as-text.
 import type { Lang } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
-import { audioLabel, fixtureById } from '../library/models.ts';
+import { audioLabel, channelKind, fixtureById } from '../library/models.ts';
 import { mixText, outputList } from '../model/audio.ts';
 import { channelOn, channelsOnDesk, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { cableLength, connectionsOf, type SignalType } from '../model/connections.ts';
@@ -10,7 +10,7 @@ import { effectivePatch } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { rackLayout, racks, rackUsed } from '../model/racks.ts';
 import { circuitLoads, dimmerLoads, luminaires, powered, riggingPlan } from '../model/lights.ts';
-import type { PlanElement, Show } from '../model/schema.ts';
+import type { InputChannel, PlanElement, Show } from '../model/schema.ts';
 import { docStrings } from '../document/strings.ts';
 import { inUnits, lengthValue, lengthWithUnit, numberText, weightValue } from '../model/units.ts';
 
@@ -212,7 +212,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
         const pair = c.stereoPairWith ? show.channels[c.stereoPairWith] : undefined;
         const pairAt = pair ? channelOn(show, pair, d.id)?.number : undefined;
         const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
-        const row = [String(number), c.shortName, audioLabel(c.mic), c.stand, d.id === mainId ? effectivePatch(show, c) : patch, c.phantom ? D.yes : D.no, pairAt !== undefined ? String(pairAt) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
+        const row = [String(number), c.shortName, deviceText(c, D), c.stand, d.id === mainId ? effectivePatch(show, c) : patch, c.phantom ? D.yes : D.no, pairAt !== undefined ? String(pairAt) : '', name(src, lang), src ? stagePosition(show, src) : '', c.notes, src ? cableText(show, src.id, ['audio'], lang) : ''];
         return several ? [deskName(d), ...row] : row;
       }),
     );
@@ -247,6 +247,14 @@ export function toTsv(t: Pick<ReportTable, 'header' | 'rows'>): string {
 }
 
 /** The input list as plain text lines, for a message or an email. */
+/** What the device column of a channel says: the device itself for a mic or a DI box, and the kind of source first for anything else ("Ordenador: MacBook"). */
+export function deviceText(c: Pick<InputChannel, 'kind' | 'mic'>, D: Pick<ReturnType<typeof docStrings>, 'sourceKinds'>): string {
+  const kind = channelKind(c);
+  const device = audioLabel(c.mic);
+  if (kind === 'mic' || kind === 'di') return device;
+  return device ? `${D.sourceKinds[kind]}: ${device}` : D.sourceKinds[kind];
+}
+
 export function inputsAsText(show: Show, lang: Lang = show.lang): string {
   const report = buildReport(show, 'inputs', lang);
   const skip = report.header.length - 11; // a leading column names the desk when there are several

@@ -59,7 +59,7 @@ test('add and remove channels keep the numbers whole', async ({ page }) => {
 
 test('a condenser sets phantom power, and moving a row swaps the numbers', async ({ page }) => {
   await inputs(page);
-  const mic = L(page, 'Micro o DI · Canal 1');
+  const mic = L(page, 'Equipo · Canal 1');
   await mic.fill('AKG C414 XLII');
   await mic.press('Tab');
   await expect(L(page, 'Fantasma · Canal 1')).toBeChecked();
@@ -210,4 +210,22 @@ test('a rider with two desks compiles to a PDF with a list of inputs for each', 
   await expect(page.getByRole('img', { name: 'Página 1', exact: true })).toBeVisible({ timeout: 90_000 });
   await expect(page.getByRole('status').filter({ hasText: /\d+ páginas/ })).toBeVisible({ timeout: 90_000 });
   await expect(page.getByRole('alert')).toHaveCount(0);
+});
+
+test('a channel can be fed by something that is not a mic: the type changes the device and the phantom power @a11y', async ({ page }) => {
+  await inputs(page);
+  const kind = L(page, 'Tipo · Canal 1');
+  await expect(kind).toHaveValue('mic');
+  await expect(L(page, 'Equipo · Canal 1')).toHaveAttribute('list', 'mic-models');
+  await kind.selectOption('computer');
+  await expect(L(page, 'Equipo · Canal 1')).not.toHaveAttribute('list', /.+/);
+  await expect(L(page, 'Equipo · Canal 1')).toHaveValue('');
+  await expect(L(page, 'Fantasma · Canal 1')).toBeDisabled();
+  await L(page, 'Equipo · Canal 1').fill('MacBook de Ana');
+  await L(page, 'Equipo · Canal 1').press('Tab');
+  await expect(L(page, 'Equipo · Canal 1')).toHaveValue('MacBook de Ana');
+  expect((await axe(page)).violations).toEqual([]);
+  await kind.selectOption('di');
+  await expect(L(page, 'Equipo · Canal 1')).toHaveAttribute('list', 'di-models');
+  await expect(L(page, 'Fantasma · Canal 1')).toBeEnabled();
 });

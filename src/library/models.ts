@@ -1,6 +1,7 @@
 // Datasheet values read on 2026-11-02 (docs/research/luminarias-teatro.md and audio-modelos.md).
 // Every number has its source URL; what had no datasheet is empty or marked as an estimate.
 import oflData from './ofl-data.json';
+import type { SourceKind } from '../model/schema.ts';
 import type { AudioModel, FixtureModel } from './types.ts';
 
 const ETC_WEIGHTS = 'https://support.etcconnect.com/ETC/Fixtures/Source_Four/Source_Four_ERS_and_HID/Fixture_and_Shipping_Weights_of_Source_Four';
@@ -90,6 +91,9 @@ export function audioFromLabel(text: string): string {
   const m = AUDIO.find((a) => a.id === q || `${a.brand} ${a.model}`.toLowerCase() === q);
   return m ? m.id : text;
 }
+
+/** The kind of source of a channel: the one the user chose, or what its device says it is. */
+export const channelKind = (ch: { kind?: SourceKind | null; mic: string }): SourceKind => ch.kind ?? (audioById(ch.mic)?.kind === 'di' ? 'di' : 'mic');
 
 /** Phantom power follows the microphone type; a DI follows its own model; unknown models say nothing. */
 export function needsPhantom(modelId: string): boolean | null {

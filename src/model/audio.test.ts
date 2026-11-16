@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { setChannel, setChannelMic, sortByInstrument } from '../app/audio-actions.ts';
+import { setChannel, setChannelKind, setChannelMic, sortByInstrument } from '../app/audio-actions.ts';
 import { selection, session, setLibrary, startEmpty, startFromPackage } from '../app/state.ts';
 import { itemById } from '../library/items.ts';
-import { audioFromLabel, audioLabel } from '../library/models.ts';
+import { audioFromLabel, audioLabel, channelKind } from '../library/models.ts';
 import { showFromPackage } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { addChannel, addOutput, channelList, mixOutputs, mixText, moveChannel, moveOutput, outputList, removeChannel, removeOutput, setMixLevel, setStereoPair, sortChannels } from './audio.ts';
@@ -115,6 +115,26 @@ describe('actions on the open show', () => {
     expect(s.show.value.channels[id]!.mic).toBe('shure.sm57');
     setChannel(id, { notes: 'x' });
     expect(s.show.value.channels[id]!.notes).toBe('x');
+  });
+
+  test('the kind of source follows the device until the user chooses one, and a computer takes no phantom power', () => {
+    startEmpty('x');
+    const s = session.value!;
+    s.commit((show) => addChannel(show, { shortName: 'PC' })[0]);
+    const id = channelList(s.show.value)[0]!.id;
+    expect(channelKind(s.show.value.channels[id]!)).toBe('mic');
+    setChannelMic(id, 'Radial JDI');
+    expect(channelKind(s.show.value.channels[id]!)).toBe('di');
+    // Another kind drops a model that does not fit it and keeps what was typed freely afterwards.
+    setChannelKind(id, 'computer');
+    expect(s.show.value.channels[id]).toMatchObject({ kind: 'computer', mic: '', phantom: false });
+    setChannelMic(id, 'MacBook de Ana');
+    expect(s.show.value.channels[id]).toMatchObject({ kind: 'computer', mic: 'MacBook de Ana' });
+    // A known model chosen later sets the kind again, and the phantom power with it.
+    setChannelMic(id, 'AKG C414 XLII');
+    expect(s.show.value.channels[id]).toMatchObject({ kind: 'mic', phantom: true });
+    setChannelKind(id, 'line');
+    expect(s.show.value.channels[id]).toMatchObject({ kind: 'line', mic: '', phantom: false });
   });
 
   test('sort by instrument puts the drums first and keeps the numbers whole', () => {

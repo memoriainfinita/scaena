@@ -45,7 +45,7 @@ export function numberWedges(show: Show): Show {
 
 export function addChannel(show: Show, init: Partial<Omit<InputChannel, 'id' | 'number'>> = {}): [Show, InputChannel] {
   const [id, s] = nextId(show, 'ch');
-  const ch: InputChannel = { shortName: '', mic: '', stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: null, notes: '', assign: {}, ...init, id, number: Object.keys(show.channels).length + 1 };
+  const ch: InputChannel = { shortName: '', mic: '', kind: null, stand: '', phantom: false, insert: '', patch: '', stereoPairWith: null, sourceElementId: null, notes: '', assign: {}, ...init, id, number: Object.keys(show.channels).length + 1 };
   return [{ ...s, channels: { ...s.channels, [id]: ch } }, ch];
 }
 

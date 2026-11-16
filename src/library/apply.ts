@@ -54,7 +54,7 @@ export function showFromPackage(pkg: ShowPackage, name: string, lang: 'es' | 'en
     let id: string;
     [id, show] = nextId(show, 'ch');
     channelIds.push(id);
-    channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', patch: c.patch ?? '', assign: {}, stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
+    channels[id] = { id, number: i + 1, shortName: translatePackageText(c.name, lang).slice(0, 16), mic: translatePackageText(c.mic, lang), kind: null, stand: translatePackageText(c.stand, lang), phantom: c.phantom, insert: '', patch: c.patch ?? '', assign: {}, stereoPairWith: null, sourceElementId: c.element === undefined ? null : placed[c.element]!.id, notes: '' };
   });
   const outputs: Record<string, Output> = {};
   pkg.outputs.forEach((o, i) => {

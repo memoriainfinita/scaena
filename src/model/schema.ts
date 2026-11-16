@@ -138,11 +138,17 @@ export const PlanElement = v.object({
   labelAt: v.optional(v.nullable(v.object({ x: mm, y: mm })), null),
 });
 
+/** What feeds a channel: a microphone, a DI box, a line-level source, a computer or player, or something else. */
+export const SourceKind = v.picklist(['mic', 'di', 'line', 'computer', 'other']);
+
 export const InputChannel = v.object({
   id,
   number: v.pipe(v.number(), v.integer(), v.minValue(1)),
   shortName: v.optional(v.pipe(v.string(), v.maxLength(16)), ''),
+  /** What the user typed or picked for the device: a known mic or DI model id, or free text. */
   mic: text(80),
+  /** The kind of source; null leaves it to the device (a known DI is a DI, anything else a microphone). */
+  kind: v.optional(v.nullable(SourceKind), null),
   stand: text(80),
   phantom: v.optional(v.boolean(), false),
   insert: text(80),
@@ -360,6 +366,7 @@ export type Contract = v.InferOutput<typeof Contract>;
 export type EventInfo = v.InferOutput<typeof EventInfo>;
 export type PlanElement = v.InferOutput<typeof PlanElement>;
 export type CustomItem = v.InferOutput<typeof CustomItem>;
+export type SourceKind = v.InferOutput<typeof SourceKind>;
 export type Port = v.InferOutput<typeof Port>;
 export type Desk = v.InferOutput<typeof Desk>;
 export type Layer = v.InferOutput<typeof Layer>;

@@ -2,7 +2,6 @@
 // user types can be read as markup or code.
 import { withCustomItems } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
-import { audioLabel } from '../library/models.ts';
 import { channelList, mixOutputs, mixText, outputList } from '../model/audio.ts';
 import { channelOn, channelsOnDesk, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { universeInfo, universesInUse, universeSaysSomething } from '../model/dmx.ts';
@@ -15,7 +14,7 @@ import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
 import { planSvg, type PlanSvgOptions } from './plan-svg.ts';
 import { LIGHT_PLAN, PLAN, planReports, reportLayerIds, reportTags, sheetTitle } from './plan-reports.ts';
-import { buildReport, cableText } from '../reports/reports.ts';
+import { buildReport, cableText, deviceText } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
 import { docStrings, prodStrings, type DocStrings } from './strings.ts';
@@ -282,7 +281,7 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
           const pair = ch.stereoPairWith ? show.channels[ch.stereoPairWith] : undefined;
           const pairAt = pair ? (desk ? channelOn(show, pair, desk.id)?.number : pair.number) : undefined;
           const src = ch.sourceElementId ? show.elements[ch.sourceElementId] : undefined;
-          return [String(number), ch.shortName, audioLabel(ch.mic), ch.stand, desk && desk.id !== mainId ? patch : desk ? effectivePatch(show, ch) : patch, yn(D, ch.phantom), pairAt !== undefined ? String(pairAt) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
+          return [String(number), ch.shortName, deviceText(ch, D), ch.stand, desk && desk.id !== mainId ? patch : desk ? effectivePatch(show, ch) : patch, yn(D, ch.phantom), pairAt !== undefined ? String(pairAt) : '', elName(src, show.lang), src ? stagePosition(show, src) : '', src ? cableText(show, src.id, ['audio'], show.lang) : ''];
         });
         const model = desk ? desk.model : show.desk.model;
         const showFile = desk ? desk.showFile : show.desk.showFile;

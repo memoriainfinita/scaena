@@ -1,9 +1,9 @@
 // Edits of the input and output lists: each one is a single undo step.
 import { itemById } from '../library/items.ts';
-import { audioFromLabel, needsPhantom } from '../library/models.ts';
+import { audioById, audioFromLabel, needsPhantom } from '../library/models.ts';
 import { addDesk, mainDeskId, removeDesk, sendToDesk, setDeskPatch, setOutputDesk, updateDesk } from '../model/desks.ts';
 import { addChannel, addOutput, moveChannel, numberWedges, moveOutput, removeChannel, removeOutput, setMixLevel, setStereoPair, sortChannels, updateChannel, updateOutput } from '../model/audio.ts';
-import type { Desk, InputChannel, MixLevel, Output, Show } from '../model/schema.ts';
+import type { Desk, InputChannel, MixLevel, Output, Show, SourceKind } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
 type ChannelPatch = Partial<Omit<InputChannel, 'id' | 'number'>>;
@@ -25,12 +25,23 @@ export function addChannelRow(deskId?: string): string | null {
 
 export const setChannel = (id: string, patch: ChannelPatch): void => commit((show) => (show.channels[id] ? updateChannel(show, id, patch) : show));
 
-/** Sets the microphone from what the user typed or picked; a known model also sets the phantom power. */
+/** Sets the device from what the user typed or picked; a known model also sets the kind of source and the phantom power. */
 export function setChannelMic(id: string, text: string): void {
   const mic = audioFromLabel(text);
   const phantom = needsPhantom(mic);
-  setChannel(id, phantom === null ? { mic } : { mic, phantom });
+  const model = audioById(mic);
+  const kind = model && (model.kind === 'mic' || model.kind === 'di') ? { kind: model.kind } : {};
+  setChannel(id, { mic, ...kind, ...(phantom === null ? {} : { phantom }) });
 }
+
+/** Sets the kind of source. A known mic or DI that does not fit the new kind is cleared, and only mics and DI boxes can take phantom power. */
+export const setChannelKind = (id: string, kind: SourceKind): void =>
+  commit((show) => {
+    const ch = show.channels[id];
+    if (!ch) return show;
+    const model = audioById(ch.mic);
+    return updateChannel(show, id, { kind, ...(model && model.kind !== kind ? { mic: '' } : {}), ...(kind === 'mic' || kind === 'di' ? {} : { phantom: false }) });
+  });
 
 export const removeChannelRow = (id: string): void => commit((show) => removeChannel(show, id));
 export const moveChannelRow = (id: string, delta: -1 | 1): void => commit((show) => moveChannel(show, id, delta));

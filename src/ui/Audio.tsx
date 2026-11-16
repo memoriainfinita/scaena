@@ -1,17 +1,19 @@
 // The audio lists: inputs and outputs are edited in place, and the signal flow draws the whole chain.
-import { addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, moveOutputToDesk, sendChannelToDesk, setChannelDeskPatch, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setMix, setOutput, sortByInstrument } from '../app/audio-actions.ts';
+import { setChannelKind, addChannelRow, addOutputRow, moveChannelRow, moveOutputRow, moveOutputToDesk, sendChannelToDesk, setChannelDeskPatch, numberWedgeOutputs, pairChannel, removeChannelRow, removeOutputRow, selectSource, setChannel, setChannelMic, setDeskModel, setDeskShowFile, setMix, setOutput, sortByInstrument } from '../app/audio-actions.ts';
 import { selection } from '../app/state.ts';
 import { IssueMark } from './IssueMark.tsx';
 import { currentDesk, DeskBar, deskLabel } from './Desks.tsx';
 import { lang, t, type Key } from '../i18n/index.ts';
 import { itemById } from '../library/items.ts';
-import { AUDIO, audioLabel } from '../library/models.ts';
+import { AUDIO, audioLabel, channelKind } from '../library/models.ts';
 import { channelList, mixOutputs, outputList, wedgesInOrder } from '../model/audio.ts';
 import { channelOn, desksOf, mainDeskId, outputsOnDesk } from '../model/desks.ts';
 import { patchAnalysis } from '../model/patch.ts';
 import { stagePosition } from '../model/position.ts';
 import { cableText } from '../reports/reports.ts';
-import type { InputChannel, MixLevel, Output, PlanElement, Show } from '../model/schema.ts';
+import type { InputChannel, MixLevel, Output, PlanElement, Show, SourceKind } from '../model/schema.ts';
+
+const SOURCE_KINDS: SourceKind[] = ['mic', 'di', 'line', 'computer', 'other'];
 
 const elementName = (el: PlanElement): string => el.label || itemById(el.type.id)?.name[lang.value] || el.type.id;
 
@@ -64,11 +66,13 @@ export function InputsView({ show }: { show: Show }) {
           {t('inputs.sort')}
         </button>
       </div>
-      <datalist id="mic-models">
-        {AUDIO.filter((a) => a.kind === 'mic' || a.kind === 'di').map((a) => (
-          <option key={a.id} value={`${a.brand} ${a.model}`} />
-        ))}
-      </datalist>
+      {(['mic', 'di'] as const).map((k) => (
+        <datalist key={k} id={`${k}-models`}>
+          {AUDIO.filter((a) => a.kind === k).map((a) => (
+            <option key={a.id} value={`${a.brand} ${a.model}`} />
+          ))}
+        </datalist>
+      ))}
       {rows.length === 0 ? (
         <p class="muted pad">{t('inputs.empty')}</p>
       ) : (
@@ -78,6 +82,7 @@ export function InputsView({ show }: { show: Show }) {
               <th>{t('table.number')}</th>
               {multi && <th title={t('table.onDesk.tip')}>{t('table.onDesk')}</th>}
               <th>{t('table.name')}</th>
+              <th title={t('table.srcKind.tip')}>{t('table.srcKind')}</th>
               <th title={t('table.mic.tip')}>{t('table.mic')}</th>
               <th title={t('table.stand.tip')}>{t('table.stand')}</th>
               <th>{t('table.patch')}</th>
@@ -105,6 +110,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { sh
   const row = t('inputs.row', { n: c.number });
   const tag = (k: Key) => `${t(k)} · ${row}`;
   const src = c.sourceElementId ? show.elements[c.sourceElementId] : undefined;
+  const kind = channelKind(c);
   // On a desk of several: the number and patch the source has there, or nothing when it is not sent.
   const at = deskId ? channelOn(show, c, deskId) : { number: c.number, patch: c.patch };
   const onMain = deskId === null || deskId === mainDeskId(show);
@@ -141,7 +147,16 @@ function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { sh
         <Cell value={c.shortName} label={tag('table.name')} max={16} onCommit={(v) => setChannel(c.id, { shortName: v })} />
       </td>
       <td>
-        <Cell value={audioLabel(c.mic)} label={tag('table.mic')} list="mic-models" max={80} onCommit={(v) => setChannelMic(c.id, v)} />
+        <select class="input cell" aria-label={tag('table.srcKind')} value={kind} onChange={(e) => setChannelKind(c.id, (e.currentTarget as HTMLSelectElement).value as SourceKind)}>
+          {SOURCE_KINDS.map((k) => (
+            <option key={k} value={k}>
+              {t(`srckind.${k}` as Key)}
+            </option>
+          ))}
+        </select>
+      </td>
+      <td>
+        <Cell value={audioLabel(c.mic)} label={tag('table.mic')} list={kind === 'mic' || kind === 'di' ? `${kind}-models` : undefined} max={80} onCommit={(v) => setChannelMic(c.id, v)} />
       </td>
       <td>
         <Cell value={c.stand} label={tag('table.stand')} max={80} onCommit={(v) => setChannel(c.id, { stand: v })} />
@@ -158,7 +173,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { sh
         />
       </td>
       <td class="center">
-        <input type="checkbox" aria-label={tag('table.phantom')} checked={c.phantom} onChange={(e) => setChannel(c.id, { phantom: (e.currentTarget as HTMLInputElement).checked })} />
+        <input type="checkbox" aria-label={tag('table.phantom')} disabled={kind !== 'mic' && kind !== 'di'} checked={c.phantom} onChange={(e) => setChannel(c.id, { phantom: (e.currentTarget as HTMLInputElement).checked })} />
       </td>
       <td>
         <select class="input cell" aria-label={tag('table.pair')} value={c.stereoPairWith ?? ''} onChange={(e) => pairChannel(c.id, (e.currentTarget as HTMLSelectElement).value || null)}>
