@@ -17,8 +17,8 @@ import { setCustomSource } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow } from './storage.ts';
 
-export type ViewId = 'plan' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
-export const VIEWS: readonly ViewId[] = ['plan', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
+export type ViewId = 'plan' | 'equipment' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
+export const VIEWS: readonly ViewId[] = ['plan', 'equipment', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
 export type Dialog = 'customItem' | 'settings' | 'export' | 'app' | 'help' | 'issues' | 'background' | 'revisions' | 'menu' | null;
 export type Theme = 'auto' | 'light' | 'dark';
 
@@ -367,6 +367,9 @@ function snapPoint(show: Show, p: { x: number; y: number }): { x: number; y: num
   const step = show.view.grid ? show.view.gridMm : 10;
   return { x: Math.round(p.x / step) * step, y: Math.round(p.y / step) * step };
 }
+
+/** The layers every show starts with; their names are translated, any other layer has the name its author gave it. */
+export const DEFAULT_LAYER_IDS = new Set(['l-stage', 'l-audio', 'l-lights', 'l-electrical', 'l-control', 'l-notes', 'l-background']);
 
 export function setElementField(id: string, patch: Partial<Omit<PlanElement, 'id'>>): void {
   session.value?.commit((show) => updateElement(show, id, patch));

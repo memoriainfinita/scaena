@@ -10,10 +10,10 @@ import type { Computer, PlanElement, Show } from '../model/schema.ts';
 
 const FUNCTIONS = ['sound', 'video', 'lights', 'network'] as const;
 const OSES = ['windows', 'macos', 'linux', 'other'] as const;
-const CONNECTORS = ['hdmi', 'displayport', 'usbAudio', 'dante', 'dmx', 'midi', 'other'] as const;
+export const CONNECTORS = ['hdmi', 'displayport', 'usbAudio', 'dante', 'dmx', 'midi', 'other'] as const;
 
 /** The connectors offered for each kind of cable; the field still takes anything. */
-const CABLES: Record<SignalType, string[]> = {
+export const CABLES: Record<SignalType, string[]> = {
   audio: ['XLR', 'Jack', 'TRS', 'Speakon', 'Cat6', 'Dante', 'AES50', 'USB', 'MIDI'],
   video: ['HDMI', 'SDI', 'DisplayPort', 'USB-C', 'NDI'],
   lightControl: ['DMX', 'DMX 5 pin', 'Art-Net', 'sACN'],

@@ -1,9 +1,10 @@
+import { EquipmentView } from './Equipment.tsx';
 import { startStageEdit, stageEdit, stopStageEdit } from '../app/stage-actions.ts';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { issues } from '../app/issues.ts';
 import { setElementNumber, setElementPhase } from '../app/lights-actions.ts';
 import { createLayer, moveCustomLayer, moveCustomLayerTo, moveToLayer, removeCustomLayer, renameCustomLayer, setLayerDim, tool, type ToolId } from '../app/plan-actions.ts';
-import { activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
+import { DEFAULT_LAYER_IDS, activeLayer, dragLayer, inspectorPane, libraryPane, type Pane, addFromLibrary, dialog, goHome, sheet, renameShow, selection, session, setElementField, setElementType, setLayerFlag, view, VIEWS, type ViewId } from '../app/state.ts';
 import { formatNumber, lang, t, type Key } from '../i18n/index.ts';
 import { inUnits, lengthScale, lengthUnit } from '../model/units.ts';
 import { CATEGORY_ORDER, ITEMS, isCustomItem, itemById, searchItems } from '../library/items.ts';
@@ -221,6 +222,7 @@ function Library() {
 function MainView({ show }: { show: Show }) {
   const v = view.value;
   if (v === 'plan') return <PlanView key={session.value!.id} show={show} />;
+  if (v === 'equipment') return <EquipmentView show={show} />;
   if (v === 'inputs') return <InputsView show={show} />;
   if (v === 'outputs') return <OutputsView show={show} />;
   if (v === 'lights') return <LightsView show={show} />;
@@ -228,8 +230,6 @@ function MainView({ show }: { show: Show }) {
   if (v === 'reports') return <ReportsView show={show} />;
   return <ProductionView show={show} />;
 }
-
-const DEFAULT_LAYER_IDS = new Set(['l-stage', 'l-audio', 'l-lights', 'l-electrical', 'l-control', 'l-notes', 'l-background']);
 
 /** The edge of a side panel: drag it, or focus it and use the arrow keys (Shift for bigger steps). */
 function PaneSplit({ pane, side }: { pane: Pane; side: 'left' | 'right' }) {

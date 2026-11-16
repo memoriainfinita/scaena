@@ -205,6 +205,8 @@ export const Connection = v.object({
   toPortId: v.optional(v.nullable(id), null),
   /** How many channels travel (2 is a stereo pair, 8 a drum loom); null means `lines`. */
   channels: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(512))), null),
+  /** What a video link carries, as text: "1920x1080 50p". */
+  format: text(40),
   /** The channels are left and right pairs. */
   stereo: v.optional(v.boolean(), false),
   /** Lines the cable carries from that port on: a drum loom is one cable with 8 lines. */
