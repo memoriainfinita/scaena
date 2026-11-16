@@ -25,6 +25,10 @@ describe('the full example', () => {
     expect(set(availableReports(show))).toEqual(set([...REPORT_IDS]));
     expect(set(show.document.sections)).toEqual(set([...ALL_SECTIONS]));
     expect(buildDocument(show).source).toContain('Rack de escenario');
+    const doc = buildDocument(show);
+    expect(doc.sections).toContain('video');
+    expect(doc.source).toContain('1920x1080 60p');
+    expect(doc.source).toContain('DisplayPort');
   });
 
   test('every kind of cable, output, mount, control protocol and computer', () => {

@@ -32,6 +32,19 @@ const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemByI
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
 /** The cables of the given signal types that touch an element, as a line: "XLR 10 m → Stagebox". Estimated lengths carry a "≈". */
+/** The video links for the document: where from and to, connector, resolution and length, in the order of the Equipment tab. */
+export function videoTable(show: Show, lang: Lang = show.lang): { header: string[]; rows: string[][] } {
+  const D = docStrings(lang);
+  const links = Object.values(show.connections)
+    .filter((c) => c.signal === 'video' && show.elements[c.from] && show.elements[c.to])
+    .sort((a, b) => name(show.elements[a.from], lang).localeCompare(name(show.elements[b.from], lang), lang, { numeric: true }) || name(show.elements[a.to], lang).localeCompare(name(show.elements[b.to], lang), lang, { numeric: true }) || a.connector.localeCompare(b.connector, 'en') || a.id.localeCompare(b.id, 'en', { numeric: true }));
+  const rows = links.map((c) => {
+    const len = cableLength(show, c);
+    return [name(show.elements[c.from], lang), name(show.elements[c.to], lang), c.connector, c.format, c.wireless ? D.wireless : len ? `${len.estimated ? '≈ ' : ''}${lengthValue(len.mm, show.units, lang)}` : ''];
+  });
+  return { header: [D.cableFrom, D.cableTo, D.cableConnector, D.resolution, inUnits(D.cableLength, show.units)], rows };
+}
+
 export function cableText(show: Show, elementId: string, signals: readonly SignalType[], lang: Lang = show.lang): string {
   return connectionsOf(show, elementId)
     .filter((c) => signals.includes(c.signal))

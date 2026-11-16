@@ -298,6 +298,7 @@ export const es = {
   'sec.lights': 'Instrumentos de luz',
   'sec.rigging': 'Plan de varas',
   'sec.racks': 'Racks',
+  'sec.video': 'Vídeo',
   'sec.cables': 'Cables',
   'sec.magic': 'Magic sheet',
   'sec.electrical': 'Eléctrica',

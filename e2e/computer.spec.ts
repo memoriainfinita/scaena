@@ -128,8 +128,8 @@ test('equipment brings its typical power, it can be changed, and the Power repor
 test('a cable names the ports it uses, carries several channels and warns when the port is too small @a11y', async ({ page }) => {
   await start(page);
   await addLaptop(page);
-  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');
-  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('inyección');
+  await page.getByRole('button', { name: /^Añadir Caja de inyección al plano/ }).click();
   await page.getByRole('button', { name: 'Cable o conexión' }).click();
   await page.getByRole('button', { name: 'Audio', exact: true }).click();
   const els = page.locator('g.el[data-id] .hit');
@@ -139,7 +139,7 @@ test('a cable names the ports it uses, carries several channels and warns when t
   await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
   await expect(page.getByRole('heading', { name: 'Conexiones' })).toBeVisible();
-  // The projector, selected now, gets an input port of two channels.
+  // The injection box, selected now, gets an input port of two channels.
   await page.getByRole('button', { name: 'Añadir puerto de entrada' }).click();
   await page.getByLabel('Canales · Entrada 1', { exact: true }).fill('2');
   await page.getByLabel('Canales · Entrada 1', { exact: true }).press('Tab');

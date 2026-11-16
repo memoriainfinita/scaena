@@ -294,6 +294,7 @@ export const en: Messages = {
   'sec.lights': 'Lighting instruments',
   'sec.rigging': 'Hanging plot',
   'sec.racks': 'Racks',
+  'sec.video': 'Video',
   'sec.cables': 'Cables',
   'sec.magic': 'Magic sheet',
   'sec.electrical': 'Electrical',

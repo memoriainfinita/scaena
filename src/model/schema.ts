@@ -304,7 +304,7 @@ export const Contract = v.object({
 export const EventInfo = v.object({ venueAddress: text(300), parking: text(300), notes: text() });
 
 export const SetlistKind = v.picklist(['setlist', 'runOrder', 'programme']);
-export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'lightPlan', 'inputs', 'outputs', 'computers', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
+export const DocSection = v.picklist(['cover', 'contacts', 'schedule', 'build', 'plan', 'lightPlan', 'inputs', 'outputs', 'computers', 'video', 'lights', 'rigging', 'magic', 'racks', 'cables', 'dmx', 'electrical', 'setlist', 'hospitality', 'contract', 'notes', 'revisions']);
 export const DocumentConfig = v.object({
   template: v.optional(v.picklist(['concert', 'theatre', 'av', 'custom']), 'concert'),
   /** The sections of a custom document; the other templates have their own list. */

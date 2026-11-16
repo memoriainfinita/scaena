@@ -17,18 +17,47 @@ export const TYPICAL_PORTS: Record<string, [number, number]> = {
   'rack.stagebox-fibre': [32, 16],
 };
 
+type Spec = { es: string; en: string; dir: Port['dir']; signal: Port['signal']; format: string; channels: number };
+const spec = (es: string, en: string, dir: Port['dir'], signal: Port['signal'], format: string, channels = 1): Spec => ({ es, en, dir, signal, format, channels });
+
+/** The usual connectors of other equipment: interfaces and preamps, network gear, video sources and screens. */
+const OTHER_PORTS: Record<string, Spec[]> = {
+  'rack.interface': [spec('Entradas', 'Inputs', 'in', 'audio', 'Analogue', 8), spec('Salidas', 'Outputs', 'out', 'audio', 'Analogue', 8), spec('USB', 'USB', 'io', 'usb', 'USB audio', 2)],
+  'rack.preamp': [spec('Entradas', 'Inputs', 'in', 'audio', 'Analogue', 8), spec('Salidas', 'Outputs', 'out', 'audio', 'Analogue', 8)],
+  'rack.network': [spec('Red', 'Network', 'io', 'network', 'Ethernet', 8)],
+  'net.router': [spec('Red', 'Network', 'io', 'network', 'Ethernet', 4)],
+  'net.poe': [spec('Red', 'Network', 'io', 'network', 'Ethernet PoE', 8)],
+  'net.wifi-ap': [spec('Red', 'Network', 'io', 'network', 'Ethernet PoE')],
+  'net.artnet': [spec('Red', 'Network', 'in', 'network', 'Ethernet'), spec('DMX', 'DMX', 'out', 'lightControl', 'DMX 5', 2)],
+  'video.projector': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI')],
+  'video.proj-ceiling': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI')],
+  'video.proj-stand': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI')],
+  'video.proj-large': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'SDI')],
+  'video.proj-short': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI')],
+  'video.tv': [spec('Entradas de vídeo', 'Video inputs', 'in', 'video', 'HDMI', 2)],
+  'video.led-proc': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI'), spec('Salida a pantalla', 'Wall output', 'out', 'video', 'Ethernet')],
+  'video.camera': [spec('Salida de vídeo', 'Video output', 'out', 'video', 'SDI')],
+  'video.ptz': [spec('Salida de vídeo', 'Video output', 'out', 'video', 'SDI'), spec('Control', 'Control', 'in', 'network', 'Ethernet')],
+  'video.capture': [spec('Entrada de vídeo', 'Video input', 'in', 'video', 'HDMI'), spec('USB', 'USB', 'out', 'usb', 'USB')],
+};
+
 const WORDS = {
   es: { in: 'Entradas', out: 'Salidas', note: 'Valor típico del tipo; ajústalo al equipo real' },
   en: { in: 'Inputs', out: 'Outputs', note: 'Typical value for the type; adjust it to the real equipment' },
 } as const;
 
-export const hasLibraryPorts = (itemId: string): boolean => itemId in TYPICAL_PORTS;
+/** The ids that have ports from the library, for the tests. */
+export const LIBRARY_PORT_IDS = (): string[] => [...Object.keys(TYPICAL_PORTS), ...Object.keys(OTHER_PORTS)];
+
+export const hasLibraryPorts = (itemId: string): boolean => itemId in TYPICAL_PORTS || itemId in OTHER_PORTS;
 
 /** The ports the library gives an item, ready to add (without an id); empty when it has none. */
 export function libraryPorts(itemId: string, lang: Show['lang']): Omit<Port, 'id'>[] {
+  const w = WORDS[lang];
+  const other = OTHER_PORTS[itemId];
+  if (other) return other.map((x) => ({ name: x[lang], dir: x.dir, signal: x.signal, format: x.format, channels: x.channels, note: w.note }));
   const typical = TYPICAL_PORTS[itemId];
   if (!typical) return [];
-  const w = WORDS[lang];
   const [inputs, outputs] = typical;
   return [
     { name: w.in, dir: 'in', signal: 'audio', format: 'Analogue', channels: inputs, note: w.note },

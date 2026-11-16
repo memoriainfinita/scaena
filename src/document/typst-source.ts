@@ -14,7 +14,7 @@ import { logoKind } from './logo.ts';
 import { magicSheet } from './magic-svg.ts';
 import { planSvg, type PlanSvgOptions } from './plan-svg.ts';
 import { LIGHT_PLAN, PLAN, planReports, reportLayerIds, reportTags, sheetTitle } from './plan-reports.ts';
-import { buildReport, cableText, deviceText } from '../reports/reports.ts';
+import { buildReport, cableText, deviceText, videoTable } from '../reports/reports.ts';
 import { effectiveSections, type SectionId } from './sections.ts';
 import { formatDuration, setlistTotal, sortedSlots } from '../model/production.ts';
 import { docStrings, prodStrings, type DocStrings } from './strings.ts';
@@ -368,6 +368,9 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
       }
       const named = blocks.filter((b) => b.length > 0).map((b) => `== ${txt(b[0]![0]!)}\n\n` + c.table(D.racks, [{ mm: 16 }, { fr: 2 }, { mm: 20 }], ['U', D.model, D.count], b.map((r) => r.slice(1))));
       parts.push(heading(D.racks) + named.join('\n\n') + '\n');
+    } else if (s === 'video') {
+      const v = videoTable(show);
+      parts.push(heading(D.video) + c.table(D.video, [{ fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1.2 }, { mm: 20 }], v.header, v.rows) + '\n');
     } else if (s === 'cables') {
       const rows = buildReport(show, 'cables').rows;
       parts.push(heading(D.cables) + c.table(D.cables, [{ mm: 9 }, { fr: 1.6 }, { fr: 1.6 }, { fr: 1 }, { fr: 1 }, { mm: 20 }], ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, inUnits(D.cableLength, show.units)], rows) + '\n');

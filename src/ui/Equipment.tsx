@@ -104,7 +104,7 @@ function Elements({ show }: { show: Show }) {
           {t('equip.noMatch')}
         </p>
       ) : (
-        <table class="list editable wide">
+        <table class="list editable wide equip-el">
           <thead>
             <tr>
               <th>{t('equip.col.name')}</th>

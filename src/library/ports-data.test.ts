@@ -4,7 +4,7 @@ import { showFromPackage } from './apply.ts';
 import { addElement } from '../model/ops.ts';
 import { itemById } from './items.ts';
 import { packageById } from './packages.ts';
-import { fillPortsFromLibrary, hasLibraryPorts, libraryPorts, TYPICAL_PORTS } from './ports-data.ts';
+import { fillPortsFromLibrary, hasLibraryPorts, libraryPorts, LIBRARY_PORT_IDS } from './ports-data.ts';
 import type { Show } from '../model/schema.ts';
 
 const base = (): Show => bare(showFromPackage(packageById('rock')!, 'x', 'es'));
@@ -16,7 +16,7 @@ const place = (show: Show, itemId: string): [Show, string] => {
 
 describe('ports from the library', () => {
   test('every id in the table is a library item', () => {
-    for (const id of Object.keys(TYPICAL_PORTS)) expect(itemById(id), id).toBeDefined();
+    for (const id of LIBRARY_PORT_IDS()) expect(itemById(id), id).toBeDefined();
   });
 
   test('a desk gets its inputs and outputs, each saying they are typical, in the language of the show', () => {
@@ -36,5 +36,13 @@ describe('ports from the library', () => {
     expect(fillPortsFromLibrary(other, oid)).toBe(other);
     expect(hasLibraryPorts('person.standing')).toBe(false);
     expect(hasLibraryPorts('rack.stagebox-48')).toBe(true);
+  });
+  test('other equipment gets the connectors of its kind: video in on a projector, network on a switch', () => {
+    const [show, id] = place(base(), 'video.projector');
+    expect(fillPortsFromLibrary(show, id).elements[id]!.ports.map((p) => [p.dir, p.signal, p.format])).toEqual([['in', 'video', 'HDMI']]);
+    const [sw, sid] = place(base(), 'rack.network');
+    const ports = fillPortsFromLibrary(sw, sid).elements[sid]!.ports;
+    expect(ports.map((p) => [p.name, p.signal, p.channels])).toEqual([['Red', 'network', 8]]);
+    expect(libraryPorts('video.camera', 'en')[0]!.name).toBe('Video output');
   });
 });
