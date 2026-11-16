@@ -88,6 +88,7 @@ test('keyboard shortcuts: ? opens help, Ctrl+Z undoes', async ({ page }) => {
   await expect(page.getByText('36 elementos')).toBeVisible();
   await page.keyboard.press('Control+z');
   await expect(page.getByText('35 elementos')).toBeVisible();
+  await page.locator('g.el').first().focus(); // single-character shortcuts need focus on the canvas (WCAG 2.1.4)
   await page.keyboard.press('?');
   await expect(page.getByRole('dialog', { name: 'Atajos de teclado' })).toBeVisible();
 });

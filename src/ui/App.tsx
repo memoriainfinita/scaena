@@ -30,7 +30,8 @@ export function App() {
       } else if (mod && !isTyping(e.target) && s && e.key.toLowerCase() === 'y') {
         e.preventDefault();
         s.redo();
-      } else if (e.key === '?' && !isTyping(e.target) && !dialog.value) {
+      } else if (e.key === '?' && !isTyping(e.target) && !dialog.value && !(e.target instanceof Element && e.target.closest('button, a[href], summary, [role="tab"], [role="checkbox"], [role="switch"], [role="menuitem"], [role="slider"], [role="radio"], [role="option"], [role="listbox"]'))) {
+        // WCAG 2.1.4: a single-character shortcut is not active while a control has focus (the menu has a button for the same help).
         dialog.value = 'help';
       }
     };

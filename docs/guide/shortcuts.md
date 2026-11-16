@@ -22,4 +22,4 @@ Also shown in the app with **?**.
 | Wheel | Zoom (**Shift**: horizontal pan) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 
-Inside a text field the keys type: single-letter shortcuts do not act.
+Single-character shortcuts (**R**, **F**, **0**, **+**, **−**, **Space**, **?**) act only with focus on the plot, or on the page after a click on empty space. With focus on a button, a checkbox, a panel edge or any other control, that control keeps its keys: **Space** and **Enter** activate it, and the arrows work on it (on a panel edge they resize it). Inside a text field the keys type. The shortcuts with **Ctrl** work everywhere in the plot view; the menu has a button for the shortcut list.

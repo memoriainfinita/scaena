@@ -575,6 +575,13 @@ const capture = (el: Element, id: number) => {
 
 const isTyping = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName));
 
+const OWNS_KEYS = 'button, a[href], summary, [role="button"], [role="tab"], [role="checkbox"], [role="switch"], [role="menuitem"], [role="slider"], [role="separator"], [role="radio"], [role="option"], [role="listbox"]';
+/** An interactive control that uses Space, Enter and the arrows for itself. */
+const ownsKey = (el: EventTarget | null) => el instanceof Element && el.closest(OWNS_KEYS) !== null;
+/** Focus is on the plan canvas, or on the page itself (after a click on empty space). */
+const focusInCanvas = (el: EventTarget | null, svg: SVGSVGElement | null) =>
+  el === document.body || el === document.documentElement || (el instanceof Node && !!svg && svg.contains(el));
+
 export function PlanView({ show }: { show: Show }) {
   const wrap = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -705,13 +712,19 @@ export function PlanView({ show }: { show: Show }) {
       if (isTyping(e.target) || dialog.value) return;
       if ((e.target as Element | null)?.closest?.('[data-vtx], [data-mid]') && e.key !== 'Escape') return;
       const mod = e.ctrlKey || e.metaKey;
+      const inCanvas = focusInCanvas(e.target, svgRef.current);
+      // A control outside the canvas keeps its own keys (Space on a button, arrows on a tab or a slider).
+      if (!mod && e.key !== 'Escape' && !inCanvas && ownsKey(e.target)) return;
       const key = e.key.toLowerCase();
       const v = showRef.current.view;
       const step = e.shiftKey ? 10 : v.grid ? v.gridMm : 100;
       const has = targets(showRef.current).length > 0;
       let handled = true;
+      // Single-character shortcuts (WCAG 2.1.4) act only with focus on the canvas or on the page itself.
+      const single = !mod && !e.altKey && inCanvas;
       if (e.key === ' ') {
-        space.current = true;
+        if (inCanvas) space.current = true;
+        else handled = false;
       } else if (e.key.startsWith('Arrow')) {
         const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
         const dy = e.key === 'ArrowUp' ? -step : e.key === 'ArrowDown' ? step : 0;
@@ -730,12 +743,12 @@ export function PlanView({ show }: { show: Show }) {
         else groupSelection();
       }
       else if (mod && key === 'a') selectAll();
-      else if (!mod && !e.altKey && key === 'r') rotateSelection(e.shiftKey ? -15 : 15);
-      else if (!mod && !e.altKey && key === 'f') flipSelection(e.shiftKey ? 'y' : 'x');
+      else if (single && key === 'r') rotateSelection(e.shiftKey ? -15 : 15);
+      else if (single && key === 'f') flipSelection(e.shiftKey ? 'y' : 'x');
       else if (!mod && (e.key === 'Delete' || e.key === 'Backspace')) deleteSelection();
-      else if (!mod && e.key === '0') fit();
-      else if (!mod && (e.key === '+' || e.key === '=')) zoomBy(1.25);
-      else if (!mod && (e.key === '-' || e.key === '_')) zoomBy(0.8);
+      else if (!mod && inCanvas && e.key === '0') fit();
+      else if (!mod && inCanvas && (e.key === '+' || e.key === '=')) zoomBy(1.25);
+      else if (!mod && inCanvas && (e.key === '-' || e.key === '_')) zoomBy(0.8);
       else if (e.key === 'Escape') {
         selection.value = [];
         tool.value = 'select';

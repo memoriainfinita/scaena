@@ -15,7 +15,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 
 ## Status
 
-- **Retomar por:** comprobar que la CI de `5812c43` (subido el 2026-11-16) pasó y desplegó; después, el siguiente hallazgo de la auditoría del 2026-11-16 en el TODO, con diseño antes de código
+- **Retomar por:** la CI de `5812c43` pasó y desplegó (web del 2026-11-16 15:46 GMT). Lo de teclado (Espacio y atajos) está hecho y sin commitear; siguiente hallazgo de la auditoría del 2026-11-16 en el TODO, con diseño antes de código
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 843 símbolos (775 hasta el 2026-11-10), uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
@@ -155,7 +155,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 Pruebas que reproducen cada fallo en `.work/audit-1116/` (fuera de git).
 
 - [ ] Comprobar que la CI de `5812c43` pasó y que la web publicada cambió de build; después, probar el guardado al ocultar la pestaña en un móvil real
-- [ ] Espacio no activa botones en la vista Plano: el manejador global de `PlanView.tsx` hace `preventDefault` (WCAG 2.1.1). Atajos de una tecla globales (WCAG 2.1.4)
+- [x] (hecho 2026-11-16, sin commitear) Espacio no activaba botones en la vista Plano y los atajos de una tecla eran globales (WCAG 2.1.1 y 2.1.4). `PlanView.tsx`: `ownsKey` deja a un control fuera del lienzo sus teclas; `focusInCanvas` limita R, F, 0, + , − y Espacio al lienzo o al body; `?` en `App.tsx` no actúa con el foco en un control. Las flechas movían además la selección con el foco en el separador de panel: arreglado. Pruebas en `e2e/keyboard.spec.ts`; la guía de atajos lo explica
 - [ ] Borrar un elemento con canales no renumera, y deja pares estéreo y mezclas colgando (`removeElements`)
 - [ ] Avisos con el nombre del elemento en español en la interfaz en inglés (`elName` en `rules.ts`)
 - [ ] Las notas de texto giradas salen sin girar en el PDF (`plan-svg.ts`)
