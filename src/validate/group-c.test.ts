@@ -247,6 +247,20 @@ describe('signal flow', () => {
     expect(RULES.networkLoop(tree)).toEqual([]);
     expect(RULES.networkLoop(cable(tree, c, a, 'network'))).toHaveLength(1);
   });
+
+  test('two identical cables between a pair are flagged, unless something tells them apart', () => {
+    let [show, a] = put(base(), 'control.laptop', 0, 0);
+    let b: string;
+    [show, b] = put(show, 'control.laptop', 1000, 0);
+    const one = cable(show, a, b, 'audio');
+    expect(RULES.cableTwin(one)).toEqual([]);
+    const two = cable(one, b, a, 'audio');
+    expect(RULES.cableTwin(two)).toHaveLength(1);
+    expect(RULES.cableTwin(cable(one, a, b, 'audio', 'TRS'))).toEqual([]);
+    expect(RULES.cableTwin(cable(one, a, b, 'network'))).toEqual([]);
+    const id = Object.keys(two.connections).sort().pop()!;
+    expect(RULES.cableTwin({ ...two, connections: { ...two.connections, [id]: { ...two.connections[id]!, label: 'B' } } })).toEqual([]);
+  });
 });
 
 describe('racks in the document', () => {

@@ -431,6 +431,7 @@ export const en: Messages = {
   'issue.channelNotCabled': 'Channel {n} comes from “{name}”, which has no audio cable.',
   'issue.outputNotCabled': 'Output {n} goes to “{name}”, which has no audio cable.',
   'issue.dmxChainLong': 'The DMX line of “{name}” chains {n} fixtures; without a splitter it takes {max}.',
+  'issue.cableTwin': 'There are two identical cables between “{name}” and “{other}”: is one a duplicate? If both are real, give one cable more channels or tell them apart with a port or a label.',
   'issue.networkLoop': 'The network cable between “{name}” and “{other}” closes a loop: unless the switches handle it, the network goes down.',
   'issue.dmxBeyond': '“{name}” starts at {address} with {slots} channels and runs past 512.',
   'lights.empty': 'No lighting instruments yet. Add them from the library.',

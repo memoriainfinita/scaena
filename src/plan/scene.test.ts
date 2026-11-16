@@ -2,10 +2,13 @@ import { describe, expect, test } from 'vitest';
 import { showFromPackage } from '../library/apply.ts';
 import { itemById } from '../library/items.ts';
 import { PACKAGES } from '../library/packages.ts';
+import { addConnection } from '../model/connections.ts';
+import { newShow } from '../model/new.ts';
+import { addElement } from '../model/ops.ts';
 import type { Show } from '../model/schema.ts';
 import { boxContains, elementBox, planBox, type Box } from './geometry.ts';
 import { paperText, SCREEN_TEXT } from './labels.ts';
-import { buildScene } from './scene.ts';
+import { buildScene, PARALLEL_GAP_MM, parallelRoutes } from './scene.ts';
 
 const withStyle = (show: Show, linkStyle: 'routed' | 'straight'): Show => ({ ...show, view: { ...show.view, linkStyle } });
 const hits = (a: Box, b: Box) => Math.min(a.x1, b.x1) > Math.max(a.x0, b.x0) && Math.min(a.y1, b.y1) > Math.max(a.y0, b.y0);
@@ -52,5 +55,25 @@ describe('the scene of the examples', () => {
     const scene = buildScene(show, { sizes: paperText(1 / 65), bounds: planBox(show, 700), lang: 'es' });
     expect(scene.links.length).toBeGreaterThan(0);
     for (const l of scene.links) expect(l.route).toEqual([{ x: l.from.x, y: l.from.y }, { x: l.to.x, y: l.to.y }]);
+  });
+});
+
+describe('cables between the same pair', () => {
+  test('are drawn side by side, and a lone cable keeps its own line', () => {
+    let show = newShow('t');
+    const [s1, a] = addElement(show, { type: { id: 'control.laptop', version: 1 }, x: 0, y: 0, layerId: 'l-control' });
+    const [s2, b] = addElement(s1, { type: { id: 'control.laptop', version: 1 }, x: 4000, y: 0, layerId: 'l-control' });
+    const [s3, c1] = addConnection(s2, a.id, b.id, 'video');
+    const lone = parallelRoutes(s3, Object.values(s3.connections), new Map());
+    expect(lone.size).toBe(0);
+    const [s4, c2] = addConnection(s3, b.id, a.id, 'video');
+    show = s4;
+    const routes = parallelRoutes(show, Object.values(show.connections), new Map());
+    const r1 = routes.get(c1!.id)!;
+    const r2 = routes.get(c2!.id)!;
+    expect(Math.abs(r1[0]!.y - r2[1]!.y)).toBeCloseTo(PARALLEL_GAP_MM);
+    expect(r1[0]!.x).toBe(0);
+    expect(r2[0]!.x).toBe(4000);
+    expect(routes.size).toBe(2);
   });
 });

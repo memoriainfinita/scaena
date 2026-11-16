@@ -9,7 +9,7 @@ import { handlesSignal, maxCableM } from '../model/compat.ts';
 import { channelsOnDesk, desksOf } from '../model/desks.ts';
 import { effectivePatch, patchAnalysis } from '../model/patch.ts';
 import { isClock } from '../model/production.ts';
-import type { PlanElement, Show, SignalType } from '../model/schema.ts';
+import type { Connection, PlanElement, Show, SignalType } from '../model/schema.ts';
 
 export type Severity = 'error' | 'warning' | 'tip';
 export const SEVERITIES: readonly Severity[] = ['error', 'warning', 'tip'];
@@ -49,6 +49,7 @@ export type RuleId =
   | 'outputNotCabled'
   | 'dmxChainLong'
   | 'networkLoop'
+  | 'cableTwin'
   | 'portChannels'
   | 'portShared'
   | 'portSignal'
@@ -111,6 +112,7 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   outputNotCabled: 'tip',
   dmxChainLong: 'warning',
   networkLoop: 'warning',
+  cableTwin: 'tip',
   portChannels: 'warning',
   portShared: 'warning',
   portSignal: 'warning',
@@ -564,7 +566,21 @@ const networkLoop: Rule = (show) => {
   return out;
 };
 
-export const RULES: Record<RuleId, Rule> = { portChannels, portShared, portSignal, portDirection, stereoChannelsOdd, deskNumberRepeated, channelNotCabled, outputNotCabled, dmxChainLong, networkLoop, universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
+/** Two cables alike between the same two elements, with nothing to tell them apart: most likely one was added twice. */
+const cableTwin: Rule = (show) => {
+  const seen = new Map<string, Connection>();
+  const out: Issue[] = [];
+  for (const c of Object.values(show.connections).sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }))) {
+    const [a, b] = [show.elements[c.from], show.elements[c.to]];
+    if (!a || !b || c.wireless || c.fromPortId || c.toPortId || c.toPort || c.label) continue;
+    const key = [[c.from, c.to].sort().join('|'), c.signal, c.connector].join('#');
+    if (seen.has(key)) out.push(issue('cableTwin', { kind: 'element', id: a.id }, { name: elName(a), other: elName(b) }, undefined, c.id));
+    else seen.set(key, c);
+  }
+  return out;
+};
+
+export const RULES: Record<RuleId, Rule> = { cableTwin, portChannels, portShared, portSignal, portDirection, stereoChannelsOdd, deskNumberRepeated, channelNotCabled, outputNotCabled, dmxChainLong, networkLoop, universeRepeated, dmxBeyond, portTaken, portRange, patchMismatch, cableLinesShort, stageCrossing, duplicatePatch, connectionMismatch, cableTooLong, ipDuplicate, timeFormat, stereoPairOdd, channelUnnamed, channelGaps, danglingSource, sourceWithoutChannel, monitorOrder, wedgeMismatch, unmarkedSupplier, outletUnmarked, dmxOverlap, dimmerOverload, unitsDuplicated, phaseBreaker, mountOverload, luminaireMissing, noContact, noDate, programOs };
 
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 

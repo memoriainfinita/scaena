@@ -435,6 +435,7 @@ export const es = {
   'issue.channelNotCabled': 'El canal {n} viene de «{name}», que no tiene cable de audio.',
   'issue.outputNotCabled': 'La salida {n} va a «{name}», que no tiene cable de audio.',
   'issue.dmxChainLong': 'La línea DMX de «{name}» encadena {n} luminarias; sin splitter caben {max}.',
+  'issue.cableTwin': 'Hay dos cables iguales entre «{name}» y «{other}»: ¿es un duplicado? Si lo son de verdad, usa un cable con más canales.',
   'issue.networkLoop': 'El cable de red entre «{name}» y «{other}» cierra un bucle: si los switches no lo gestionan, la red se cae.',
   'issue.dmxBeyond': '«{name}» empieza en la {address} con {slots} canales y se pasa del 512.',
   'lights.empty': 'Aún no hay instrumentos de luz. Añádelos desde la biblioteca.',

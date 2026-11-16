@@ -237,7 +237,8 @@ function ConnectorList() {
 function ConnectionRow({ show, c, full }: { show: Show; c: Connection; full: boolean }) {
   const from = show.elements[c.from];
   const to = show.elements[c.to];
-  const n = `${elementName(from)} → ${elementName(to)}`;
+  const twins = Object.values(show.connections).filter((o) => o.from === c.from && o.to === c.to).sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
+  const n = `${elementName(from)} → ${elementName(to)}` + (twins.length > 1 ? ` · ${twins.findIndex((o) => o.id === c.id) + 1}` : '');
   const tag = (k: Key) => `${t(k)} · ${n}`;
   const sel = new Set(selection.value);
   return (

@@ -77,6 +77,35 @@ test('the connect tool joins two elements and the connection can be edited and u
   await expect(connector).toHaveValue('SDI');
 });
 
+test('two cables can join the same pair, each editable and numbered @a11y', async ({ page }) => {
+  await start(page);
+  await addLaptop(page);
+  await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');
+  await page.getByRole('button', { name: 'Añadir Proyector al plano' }).click();
+  const els = page.locator('g.el[data-id] .hit');
+  const n = await els.count();
+  for (let i = 0; i < 2; i++) {
+    await page.getByRole('button', { name: 'Cable o conexión' }).click();
+    await page.getByRole('button', { name: 'Vídeo', exact: true }).click();
+    const a = (await els.nth(n - 2).boundingBox())!;
+    const b = (await els.nth(n - 1).boundingBox())!;
+    await page.mouse.click(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
+    await expect(page.getByLabel(/^Conector · /)).toHaveCount(i + 1);
+  }
+  const connectors = page.getByLabel(/^Conector · /);
+  await expect(connectors.nth(0)).toHaveAttribute('aria-label', /· 1$/);
+  await expect(connectors.nth(1)).toHaveAttribute('aria-label', /· 2$/);
+  await connectors.nth(1).fill('DisplayPort');
+  await connectors.nth(1).press('Tab');
+  await expect(connectors.nth(0)).toHaveValue('HDMI');
+  await expect(connectors.nth(1)).toHaveValue('DisplayPort');
+  expect((await axe(page)).violations).toEqual([]);
+  await page.getByRole('button', { name: /^Quitar la conexión con .* · 2$/ }).click();
+  await expect(page.getByLabel(/^Conector · /)).toHaveCount(1);
+  await expect(page.getByLabel(/^Conector · /)).not.toHaveAttribute('aria-label', / · \d$/);
+});
+
 test('equipment brings its typical power, it can be changed, and the Power report adds it up @a11y', async ({ page }) => {
   await start(page);
   await page.getByRole('searchbox', { name: 'Buscar en la biblioteca' }).fill('proyector');

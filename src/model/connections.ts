@@ -8,11 +8,9 @@ export const SIGNALS: readonly SignalType[] = ['audio', 'video', 'lightControl',
 /** The connector a new connection of each type starts with; the user edits it. */
 export const DEFAULT_CONNECTOR: Record<SignalType, string> = { audio: 'XLR', video: 'HDMI', lightControl: 'DMX', network: 'Ethernet', usb: 'USB-B' };
 
-/** Adds a connection; null when it would link an element to itself, point at a missing one, or repeat an existing pair and signal. */
+/** Adds a connection; null when it would link an element to itself or point at a missing one. Several cables between the same pair are allowed (the `cableTwin` rule flags the identical ones). */
 export function addConnection(show: Show, from: string, to: string, signal: SignalType, connector = DEFAULT_CONNECTOR[signal]): [Show, Connection | null] {
   if (from === to || !show.elements[from] || !show.elements[to]) return [show, null];
-  const same = Object.values(show.connections).some((c) => c.signal === signal && ((c.from === from && c.to === to) || (c.from === to && c.to === from)));
-  if (same) return [show, null];
   const [id, s] = nextId(show, 'cn');
   const c: Connection = { id, from, to, signal, connector, lengthMm: null, label: '', format: '', toPort: null, fromPortId: null, toPortId: null, channels: null, stereo: false, lines: 1 };
   return [{ ...s, connections: { ...s.connections, [id]: c } }, c];
@@ -21,8 +19,6 @@ export function addConnection(show: Show, from: string, to: string, signal: Sign
 export function updateConnection(show: Show, id: string, patch: Partial<Omit<Connection, 'id' | 'from' | 'to'>>): Show {
   const c = show.connections[id];
   if (!c) return show;
-  // A second cable of the same kind between the same two elements is refused, as when adding one.
-  if (patch.signal && patch.signal !== c.signal && Object.values(show.connections).some((o) => o.id !== id && o.signal === patch.signal && ((o.from === c.from && o.to === c.to) || (o.from === c.to && o.to === c.from)))) return show;
   return { ...show, connections: { ...show.connections, [id]: { ...c, ...patch } } };
 }
 

@@ -21,14 +21,15 @@ describe('connections', () => {
     expect(next.connections[c!.id]).toBe(c);
   });
 
-  test('self links, missing elements and repeats are refused', () => {
+  test('self links and missing elements are refused, repeated pairs are not', () => {
     const [show, a, b] = two();
     expect(addConnection(show, a, a, 'video')[1]).toBeNull();
     expect(addConnection(show, a, 'e99', 'video')[1]).toBeNull();
     const [s1] = addConnection(show, a, b, 'video');
-    expect(addConnection(s1, a, b, 'video')[1]).toBeNull();
-    expect(addConnection(s1, b, a, 'video')[1]).toBeNull();
-    expect(addConnection(s1, a, b, 'network')[1]).not.toBeNull();
+    const [s2, second] = addConnection(s1, a, b, 'video');
+    expect(second).not.toBeNull();
+    expect(addConnection(s2, b, a, 'video')[1]).not.toBeNull();
+    expect(Object.keys(s2.connections)).toHaveLength(2);
   });
 
   test('update, list and remove', () => {
@@ -87,11 +88,11 @@ describe('program catalog', () => {
     expect(suggestPrograms(['lights']).some((p) => p.name === 'QLC+')).toBe(true);
   });
 
-  test('a signal change that would duplicate another cable between the pair is refused', () => {
+  test('a signal change may leave two cables of the same kind between the pair', () => {
     const [show, a, b] = two();
     const [s1, c1] = addConnection(show, a, b, 'video');
     const [s2] = addConnection(s1, a, b, 'network');
     const next = updateConnection(s2, c1!.id, { signal: 'network' });
-    expect(next.connections[c1!.id]!.signal).toBe('video');
+    expect(next.connections[c1!.id]!.signal).toBe('network');
   });
 });

@@ -67,6 +67,7 @@ export function buildScene(show: Show, opts: SceneOptions): Scene {
   const live = (id: string) => !!show.elements[id] && layerOn.has(show.elements[id]!.layerId);
   const wanted = (show.view.links ? Object.values(show.connections) : []).filter((c) => live(c.from) && live(c.to));
   const routes = show.view.linkStyle === 'routed' && wanted.length > 0 ? routeAll(show, wanted, layerOn, opts.bounds) : new Map<string, Pt[]>();
+  for (const [id, path] of parallelRoutes(show, wanted, routes)) routes.set(id, path);
   const texts = plotTexts(show, { sizes: opts.sizes, bounds: opts.bounds, lang: opts.lang, mounts: withMounts, layerIds: layerOn, fixtureTags: opts.fixtureTags, routes });
   const elements = elementsDrawn(show, layerOn).map((el) => ({ el, layer: layers.get(el.layerId)!, label: texts.get(elementKey(el.id)), tag: el.luminaire ? texts.get(tagKey(el.id)) : undefined }));
   const mounts = withMounts ? Object.values(show.mounts).map((mount) => ({ mount, text: texts.get(mountKey(mount.id)) })) : [];
@@ -76,6 +77,36 @@ export function buildScene(show: Show, opts: SceneOptions): Scene {
     return { link, from, to, route: routes.get(link.id) ?? [{ x: from.x, y: from.y }, { x: to.x, y: to.y }], text: texts.get(linkKey(link.id)) };
   });
   return { layerOn, elements, mounts, links, texts };
+}
+
+/** How far apart, in millimetres, cables between the same two elements are drawn. */
+export const PARALLEL_GAP_MM = 150;
+
+/** Straight paths, side by side, for the cables that share a pair of elements; a lone cable keeps its own line and a routed one its route. */
+export function parallelRoutes(show: Show, links: Connection[], routed: ReadonlyMap<string, Pt[]>): Map<string, Pt[]> {
+  const groups = new Map<string, Connection[]>();
+  for (const c of links) {
+    if (routed.has(c.id)) continue;
+    const key = c.from < c.to ? `${c.from}|${c.to}` : `${c.to}|${c.from}`;
+    groups.set(key, [...(groups.get(key) ?? []), c]);
+  }
+  const out = new Map<string, Pt[]>();
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    group.sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
+    const [lo, hi] = group[0]!.from < group[0]!.to ? [group[0]!.from, group[0]!.to] : [group[0]!.to, group[0]!.from];
+    const a = show.elements[lo]!;
+    const b = show.elements[hi]!;
+    const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const nx = -(b.y - a.y) / len;
+    const ny = (b.x - a.x) / len;
+    group.forEach((c, i) => {
+      const d = (i - (group.length - 1) / 2) * PARALLEL_GAP_MM;
+      const [p, q] = c.from === lo ? [a, b] : [b, a];
+      out.set(c.id, [{ x: p.x + nx * d, y: p.y + ny * d }, { x: q.x + nx * d, y: q.y + ny * d }]);
+    });
+  }
+  return out;
 }
 
 /** The paths of the cables, around every element that is drawn (dimension lines are not in the way of a cable). */

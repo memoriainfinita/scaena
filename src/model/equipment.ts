@@ -64,7 +64,7 @@ export function connectionRows(show: Show, f: ConnectionFilter, nameOf: (el: Pla
     .filter((c) => show.elements[c.from] && show.elements[c.to])
     .filter((c) => !f.signal || c.signal === f.signal)
     .filter((c) => !q || [nameOf(show.elements[c.from]), nameOf(show.elements[c.to]), c.label, c.connector, c.format].some((s) => norm(s).includes(q)))
-    .sort((a, b) => collate(nameOf(show.elements[a.from]), nameOf(show.elements[b.from]), lang) || collate(nameOf(show.elements[a.to]), nameOf(show.elements[b.to]), lang));
+    .sort((a, b) => collate(nameOf(show.elements[a.from]), nameOf(show.elements[b.from]), lang) || collate(nameOf(show.elements[a.to]), nameOf(show.elements[b.to]), lang) || collate(a.connector, b.connector, lang) || a.id.localeCompare(b.id, 'en', { numeric: true }));
 }
 
 export interface ComputerVideoOutput {

@@ -149,7 +149,9 @@ export function ConnectionsPanel({ show, el }: { show: Show; el: PlanElement }) 
       {list.length === 0 && <span class="muted">{t('connections.none')}</span>}
       {list.map((c) => {
         const otherId = c.from === el.id ? c.to : c.from;
-        const name = elementName(show.elements[otherId]);
+        const sameEnd = list.filter((o) => (o.from === el.id ? o.to : o.from) === otherId);
+        // Several cables to the same element are told apart by number, in the title and in every label.
+        const name = elementName(show.elements[otherId]) + (sameEnd.length > 1 ? ` · ${sameEnd.indexOf(c) + 1}` : '');
         const est = estimateCableMm(show, c);
         return (
           <div class="conn" key={c.id}>

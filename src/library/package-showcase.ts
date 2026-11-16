@@ -135,6 +135,7 @@ export function showcase(): ShowPackage {
 
   // Video.
   link(videoPc, mixer, 'video', 'HDMI');
+  link(videoPc, mixer, 'video', 'DisplayPort');
   link(camera, mixer, 'video', 'SDI');
   link(mixer, wall, 'video', 'SDI');
   link(server, projector, 'video', 'HDMI');
@@ -350,10 +351,13 @@ export function showcase(): ShowPackage {
 
       // Video: what each link carries, and the outputs the computers declare.
       show = updateConnection(show, cable(videoPc, mixer).id, { format: '1920x1080 60p' });
+      // A second cable between the same two: the backup feed, on another connector.
+      const backup = Object.values(show.connections).find((x) => x.from === id(videoPc) && x.to === id(mixer) && x.connector === 'DisplayPort')!;
+      show = updateConnection(show, backup.id, { format: '1920x1080 60p', label: tx(bi('Respaldo', 'Backup')) });
       show = updateConnection(show, cable(camera, mixer).id, { format: '1920x1080 50p' });
       show = updateConnection(show, cable(mixer, wall).id, { format: '1920x1080 50p' });
       show = updateConnection(show, cable(server, projector).id, { format: '1920x1200 60p' });
-      show = updateElement(show, id(videoPc), { computer: { ...show.elements[id(videoPc)]!.computer!, outputs: [{ signal: 'video', connector: 'hdmi', note: tx(bi('A la mesa de vídeo', 'To the video mixer')) }, { signal: 'video', connector: 'displayport', note: tx(bi('Monitor de control', 'Control monitor')) }] } });
+      show = updateElement(show, id(videoPc), { computer: { ...show.elements[id(videoPc)]!.computer!, outputs: [{ signal: 'video', connector: 'hdmi', note: tx(bi('A la mesa de vídeo', 'To the video mixer')) }, { signal: 'video', connector: 'displayport', note: tx(bi('Respaldo a la mesa de vídeo', 'Backup to the video mixer')) }] } });
       show = updateElement(show, id(server), { computer: { ...show.elements[id(server)]!.computer!, outputs: [{ signal: 'video', connector: 'hdmi', note: tx(bi('Al proyector', 'To the projector')) }] } });
 
       // A layer of the user's own with an element they drew.
