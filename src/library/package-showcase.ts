@@ -3,12 +3,15 @@
 import { removeChannel, updateChannel, updateOutput } from '../model/audio.ts';
 import { updateConnection } from '../model/connections.ts';
 import { addCustomItem } from '../model/custom-items.ts';
+import { addDesk, sendToDesk, setDeskPatch, setOutputDesk, updateDesk } from '../model/desks.ts';
 import { setUniverseInfo } from '../model/dmx.ts';
 import { addLayer } from '../model/layers.ts';
 import { setMagicPosition, updateLuminaire } from '../model/lights.ts';
 import { addElement, groupElements, updateElement } from '../model/ops.ts';
+import { addPort } from '../model/ports.ts';
 import type { Show } from '../model/schema.ts';
 import { validate } from '../validate/rules.ts';
+import { fillPortsFromLibrary } from './ports-data.ts';
 import { addContacts, addNotes, addSchedule, addSetlist, BAND, bi, build, mount, PERSON, setElectrical, VENUE } from './packages-data.ts';
 import { SHOWCASE_LOGO_PNG, SHOWCASE_PLAN_PNG } from './showcase-assets.ts';
 import { cleanSvg } from './svg-clean.ts';
@@ -315,6 +318,43 @@ export function showcase(): ShowPackage {
       const output = (n: number) => Object.values(show.outputs).find((o) => o.number === n)!;
       show = updateOutput(show, output(5).id, { stereo: true, aux: 'Aux 5-6', notes: tx(bi('Con click', 'With click')) });
       show = updateOutput(show, output(7).id, { stereo: true });
+
+      // Two desks: the house desk in front and the monitor desk at the side, each with its own numbers, patch and outputs.
+      show = updateDesk(show, 'main', { name: tx(bi('Mesa FOH', 'FOH desk')), elementId: id(desk) });
+      const [withMonitors, monitors] = addDesk(show, { name: tx(bi('Monitores', 'Monitors')), role: 'monitors', model: 'Behringer X32', showFile: 'monitores-gira.scn', elementId: id(monDesk) });
+      show = withMonitors;
+      for (const c of Object.values(show.channels).filter((x) => x.number !== 32)) {
+        show = sendToDesk(show, c.id, monitors.id, c.number);
+        show = setDeskPatch(show, c.id, monitors.id, `MON ${c.number}`);
+      }
+      for (const o of Object.values(show.outputs).filter((x) => x.kind === 'wedge' || x.kind === 'iem')) show = setOutputDesk(show, o.id, monitors.id);
+
+      // Ports: what the stagebox and the desks take in and put out, and the cables that name the port they use.
+      show = fillPortsFromLibrary(show, id(sb));
+      show = fillPortsFromLibrary(show, id(desk));
+      const [with_aesFoh, aesFoh] = addPort(show, id(desk), { name: tx(bi('Enlace AES50', 'AES50 link')), dir: 'io', format: 'AES50', channels: 48 });
+      show = with_aesFoh;
+      const [with_usbPort, usbPort] = addPort(show, id(desk), { name: 'USB', dir: 'io', signal: 'usb', format: 'USB audio', channels: 2 });
+      show = with_usbPort;
+      const [with_aesMon, aesMon] = addPort(show, id(monDesk), { name: tx(bi('Enlace AES50', 'AES50 link')), dir: 'io', format: 'AES50', channels: 48 });
+      show = with_aesMon;
+      show = addPort(show, id(monDesk), { name: tx(bi('Salidas', 'Outputs')), dir: 'out', format: 'Analogue', channels: 12 })[0];
+      const [with_rackFoh, rackFoh] = addPort(show, id(rack), { name: tx(bi('AES50 a FOH', 'AES50 to FOH')), dir: 'out', format: 'AES50', channels: 16 });
+      show = with_rackFoh;
+      const [with_rackMon, rackMon] = addPort(show, id(rack), { name: tx(bi('AES50 a monitores', 'AES50 to monitors')), dir: 'out', format: 'AES50', channels: 16 });
+      show = with_rackMon;
+      show = updateConnection(show, cable(rack, desk).id, { fromPortId: rackFoh!.id, toPortId: aesFoh!.id, channels: 16, lines: 16 });
+      show = updateConnection(show, cable(rack, monDesk).id, { fromPortId: rackMon!.id, toPortId: aesMon!.id, channels: 16, lines: 16 });
+      const usbLink = Object.values(show.connections).find((c) => c.signal === 'usb' && c.from === id(soundPc) && c.to === id(desk))!;
+      show = updateConnection(show, usbLink.id, { toPortId: usbPort!.id, channels: 2, stereo: true });
+
+      // Video: what each link carries, and the outputs the computers declare.
+      show = updateConnection(show, cable(videoPc, mixer).id, { format: '1920x1080 60p' });
+      show = updateConnection(show, cable(camera, mixer).id, { format: '1920x1080 50p' });
+      show = updateConnection(show, cable(mixer, wall).id, { format: '1920x1080 50p' });
+      show = updateConnection(show, cable(server, projector).id, { format: '1920x1200 60p' });
+      show = updateElement(show, id(videoPc), { computer: { ...show.elements[id(videoPc)]!.computer!, outputs: [{ signal: 'video', connector: 'hdmi', note: tx(bi('A la mesa de vídeo', 'To the video mixer')) }, { signal: 'video', connector: 'displayport', note: tx(bi('Monitor de control', 'Control monitor')) }] } });
+      show = updateElement(show, id(server), { computer: { ...show.elements[id(server)]!.computer!, outputs: [{ signal: 'video', connector: 'hdmi', note: tx(bi('Al proyector', 'To the projector')) }] } });
 
       // A layer of the user's own with an element they drew.
       const [layered, layer] = addLayer(show, tx(bi('Mobiliario de gira', 'Tour furniture')));

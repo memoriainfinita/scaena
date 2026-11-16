@@ -142,7 +142,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 - [x] Notas del montaje (campo general)
 - [x] Setlist genérico por paquete (escaleta, programa) (tipo de lista: setlist, escaleta, programa; por defecto según paquete)
 - [x] (hecho 2026-11-16) Biblioteca: webcam, 8 trípodes (cámara, ruedas, sobremesa, móvil, flexible, monópode, brazo cenital, aro de luz), palo selfie, con icono (hojas 82 y 83 de GPT, entradas el 2026-11-16: 13 soportes vacíos que sustituyen a los que dibujaban el instrumento y 10 elementos nuevos; `docs/design/symbols-gpt-batches-2026-11-16.md`). Los símbolos a mano quedan para cuando falte el icono
-- [ ] Mostrar mesas y puertos en el ejemplo de muestra completa (ya tiene una mesa de monitores como elemento)
+- [x] (hecho 2026-11-16) Ejemplo de muestra completa con dos mesas (FOH y monitores, con sus números, patch y salidas), puertos (stagebox y mesa desde la biblioteca, enlaces AES50 y USB declarados), cables por puerto con canales y estéreo, y vídeo con resolución y salidas de ordenador
 
 ### Fuera de los grupos
 

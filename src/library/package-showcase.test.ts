@@ -46,6 +46,23 @@ describe('the full example', () => {
     every(lights, [(l) => l.luminaire!.focus, (l) => l.luminaire!.accessories.length, (l) => l.luminaire!.notes, (l) => l.luminaire!.color, (l) => l.luminaire!.dmxMode, (l) => l.luminaire!.dmxSlots, (l) => l.luminaire!.dimmer, (l) => l.luminaire!.address]);
   });
 
+  test('two desks, ports, cables by port, and video with its resolution and outputs', () => {
+    expect(show.desks.map((d) => d.role)).toEqual(['foh', 'monitors']);
+    expect(show.desks.every((d) => d.name && d.model && d.elementId && show.elements[d.elementId])).toBe(true);
+    const monitors = show.desks[1]!.id;
+    expect(channels.filter((c) => c.assign[monitors]?.number).length).toBeGreaterThan(15);
+    expect(channels.some((c) => c.assign[monitors] === undefined)).toBe(true);
+    expect(outputs.filter((o) => o.deskId === monitors).map((o) => o.kind).sort()).toEqual(['iem', 'iem', 'wedge', 'wedge', 'wedge', 'wedge']);
+    expect(outputs.filter((o) => o.kind === 'main').every((o) => !o.deskId)).toBe(true);
+    expect(elements.filter((e) => e.ports.length > 0).length).toBeGreaterThanOrEqual(4);
+    expect(cables.filter((c) => c.fromPortId && c.toPortId).length).toBeGreaterThanOrEqual(2);
+    expect(cables.some((c) => c.stereo && c.signal === 'usb' && c.toPortId)).toBe(true);
+    const video = cables.filter((c) => c.signal === 'video');
+    expect(video.length).toBeGreaterThan(0);
+    expect(video.every((c) => c.format)).toBe(true);
+    expect(elements.flatMap((e) => e.computer?.outputs ?? []).filter((o) => o.signal === 'video').length).toBeGreaterThanOrEqual(2);
+  });
+
   test('the whole of the show around the plan', () => {
     expect(show.stage.shape.kind).toBe('polygon');
     expect(show.stage.background?.file).toBeDefined();
