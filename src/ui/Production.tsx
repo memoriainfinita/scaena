@@ -62,7 +62,7 @@ function Setlist({ show }: { show: Show }) {
         <table class="list editable">
           <thead>
             <tr>
-              <th>{t('table.number')}</th>
+              <th>{t('list.number')}</th>
               <th>{t(`list.title.${kind}` as Key)}</th>
               <th>{t('prod.comment')}</th>
               <th>{t('prod.duration')}</th>

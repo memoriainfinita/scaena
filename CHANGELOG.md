@@ -23,6 +23,7 @@ Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 fi
 - Deleting an element that owns channels renumbers the rest, frees their stereo partner and removes them from the monitor mixes.
 - A turned text note is turned in the PDF too.
 - Warnings name library elements in the interface language (they were always Spanish).
+- The setlist table is headed «N.º», not «Canal»; the circuit and dimmer tables of the PDF say how many instruments and which units, instead of a mislabelled count.
 - A focus point sitting over the selected element's own handles can be grabbed; the DXF keeps hidden layers frozen instead of switched on.
 - The revision comparison names changes to contacts, schedule, setlist, hospitality, contract, notes, title block and the rest of the document.
 - Dragging a luminaire's aim point is one undo step.

@@ -112,6 +112,7 @@ export const en: Messages = {
   'list.add.setlist': 'Add song',
   'list.add.runOrder': 'Add item',
   'list.add.programme': 'Add session',
+  'list.number': 'No.',
   'list.title.setlist': 'Title',
   'list.title.runOrder': 'Item',
   'list.title.programme': 'Session',

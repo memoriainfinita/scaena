@@ -116,6 +116,7 @@ export const es = {
   'list.add.setlist': 'Añadir tema',
   'list.add.runOrder': 'Añadir punto',
   'list.add.programme': 'Añadir intervención',
+  'list.number': 'N.º',
   'list.title.setlist': 'Título',
   'list.title.runOrder': 'Punto',
   'list.title.programme': 'Intervención',
