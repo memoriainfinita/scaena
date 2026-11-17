@@ -225,7 +225,7 @@ export const Mount = v.object({
 });
 
 export const Electrical = v.object({
-  circuits: v.optional(v.array(v.object({ id, number: v.number(), dimmerId: v.optional(v.nullable(id), null), phase: v.optional(v.nullable(v.number()), null) })), []),
+  circuits: v.optional(v.array(v.object({ id, number: v.number(), phase: v.optional(v.nullable(v.number()), null) })), []),
   dimmers: v.optional(v.array(v.object({ id, number: v.number(), maxW: v.optional(v.nullable(v.number()), null) })), []),
   phases: v.optional(v.array(v.object({ id, name: v.pipe(v.string(), v.maxLength(20)), breakerA: v.optional(v.nullable(v.number()), null) })), []),
 });
@@ -268,7 +268,7 @@ export const ReportConfig = v.object({
   tags: v.optional(v.boolean()),
 });
 export const RevisionMeta = v.object({ number: v.pipe(v.number(), v.integer(), v.minValue(1)), date: v.string(), note: text(), changes: v.optional(v.array(v.pipe(v.string(), v.maxLength(300))), []) });
-export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), greyscale: v.optional(v.boolean(), false), links: v.optional(v.boolean(), true), linkStyle: v.optional(v.picklist(['routed', 'straight']), 'routed'), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true), rp2Lights: v.optional(v.boolean(), false) });
+export const ViewSettings = v.object({ grid: v.optional(v.boolean(), true), gridMm: v.optional(v.pipe(v.number(), v.minValue(1)), 500), links: v.optional(v.boolean(), true), linkStyle: v.optional(v.picklist(['routed', 'straight']), 'routed'), labels: v.optional(v.boolean(), true), outlines: v.optional(v.boolean(), true), rp2Lights: v.optional(v.boolean(), false) });
 
 export const SetlistItem = v.object({ id, title: v.pipe(v.string(), v.maxLength(160)), comment: text(200), seconds: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0), v.maxValue(LIMITS.listSeconds)), 0) });
 

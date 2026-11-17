@@ -24,6 +24,8 @@ Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 fi
 - The revision comparison names changes to contacts, schedule, setlist, hospitality, contract, notes, title block and the rest of the document.
 - Dragging a luminaire's aim point is one undo step.
 - Exported file names follow the language of the show.
+- On a free-form stage, the first free spot, the default aim point and a new bar use the real bounds of the stage instead of a stand-in rectangle.
+- The unused `view.greyscale` and circuit `dimmerId` fields are gone from the format; files that still carry them open.
 
 ## 0.1.0 (2026-11-12)
 

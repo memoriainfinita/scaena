@@ -13,6 +13,7 @@ import { newShow } from '../model/new.ts';
 import { addElement, emptyComputer, freeSpot, updateElement } from '../model/ops.ts';
 import { safeParseShow, type Module, type PlanElement, type Show } from '../model/schema.ts';
 import { repairShow } from '../model/repair.ts';
+import { stageCentre } from '../model/stage.ts';
 import { LIMITS } from '../model/limits.ts';
 import { packShow, unpackShow } from '../model/archive.ts';
 import { setCustomSource } from '../library/custom.ts';
@@ -491,7 +492,7 @@ export function addFromLibrary(itemId: string, at?: { x: number; y: number }): s
     if (!layer) return show;
     const [next, el] = addElement(show, {
       type: { id: item.id, version: item.version },
-      ...(at ? snapPoint(show, at) : freeSpot(show, show.stage.shape.kind === 'rect' ? show.stage.shape.width / 2 : 0, show.stage.shape.kind === 'rect' ? show.stage.shape.depth / 2 : 0)),
+      ...(at ? snapPoint(show, at) : freeSpot(show, stageCentre(show).x, stageCentre(show).y)),
       layerId: layer.id,
       ...(item.id === 'power.outlet' ? { label: [show.region.voltage ? `${show.region.voltage} V` : '', show.region.plug].filter(Boolean).join(' · ') } : {}),
       computer: item.symbol === 'laptop' ? emptyComputer() : null,

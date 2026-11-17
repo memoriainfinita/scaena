@@ -1,6 +1,7 @@
 // Light plot data: luminaires, mounting positions, numbering and the electrical load derived from them.
 import { fixtureById } from '../library/models.ts';
 import { nextId } from './ids.ts';
+import { stageCentre } from './stage.ts';
 import type { Luminaire, Mount, PlanElement, Show, WorkNote } from './schema.ts';
 
 export const emptyLuminaire = (): Luminaire => ({ mountId: null, unit: null, channel: null, dimmer: null, circuit: null, universe: null, address: null, dmxMode: '', dmxSlots: null, color: '', modelId: null, accessories: [], focus: null, notes: '' });
@@ -160,7 +161,7 @@ export function setCircuitPhase(show: Show, circuit: number, phase: number | nul
   const existing = show.electrical.circuits.find((c) => c.number === circuit);
   if (existing) return { ...show, electrical: { ...show.electrical, circuits: show.electrical.circuits.map((c) => (c === existing ? { ...c, phase } : c)) } };
   const [id, s] = nextId(show, 'ci');
-  return { ...s, electrical: { ...s.electrical, circuits: [...s.electrical.circuits, { id, number: circuit, dimmerId: null, phase }] } };
+  return { ...s, electrical: { ...s.electrical, circuits: [...s.electrical.circuits, { id, number: circuit, phase }] } };
 }
 
 export function setDimmerMax(show: Show, number: number, maxW: number | null): Show {
@@ -188,8 +189,8 @@ export function beamDegrees(el: PlanElement): number | null {
 
 /** Where a luminaire points by default when the user asks for a focus point: the middle of the stage. */
 export function defaultFocus(show: Show): { x: number; y: number } {
-  const sh = show.stage.shape;
-  return sh.kind === 'rect' ? { x: Math.round(sh.width / 2), y: Math.round(sh.depth / 2) } : { x: 0, y: 0 };
+  const c = stageCentre(show);
+  return { x: Math.round(c.x), y: Math.round(c.y) };
 }
 
 /** Work notes: the to-do list of the light plot (refocus this, swap that colour), optionally tied to an element. */

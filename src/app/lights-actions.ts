@@ -4,6 +4,7 @@ import { signal } from '@preact/signals';
 import { fixtureById } from '../library/models.ts';
 import { addMount, addWorkNote, resetMagicLayout, setMagicPosition, removeWorkNote, updateWorkNote, autoNumber, removeMount, setCircuitPhase, setDimmerMax, setFixtureModel, setPhaseBreaker, updateLuminaire, updateMount } from '../model/lights.ts';
 import { updateElement } from '../model/ops.ts';
+import { stageFrame } from '../model/stage.ts';
 import type { Luminaire, Mount, Show, UniverseInfo } from '../model/schema.ts';
 import { selection, session } from './state.ts';
 
@@ -30,11 +31,9 @@ export const setUniverse = (universe: number, patch: Partial<UniverseInfo>): voi
 export function addMountRow(name: string, kind: Mount['kind'] = 'bar'): string | null {
   let id: string | null = null;
   commit((show) => {
-    const sh = show.stage.shape;
-    const w = sh.kind === 'rect' ? sh.width : 8000;
-    const d = sh.kind === 'rect' ? sh.depth : 5000;
-    const y = Math.round(d / 3 + Object.keys(show.mounts).length * 600);
-    const [next, m] = addMount(show, { kind, name, from: { x: 500, y }, to: { x: w - 500, y } });
+    const f = stageFrame(show);
+    const y = Math.round(f.upstage + (f.downstage - f.upstage) / 3 + Object.keys(show.mounts).length * 600);
+    const [next, m] = addMount(show, { kind, name, from: { x: f.x0 + 500, y }, to: { x: f.x1 - 500, y } });
     id = m.id;
     return next;
   });

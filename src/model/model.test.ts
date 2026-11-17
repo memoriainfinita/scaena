@@ -259,3 +259,15 @@ describe('archive and revisions', () => {
     expect(r1.data.length).toBeLessThan(JSON.stringify(r1.show).length);
   });
 });
+
+describe('fields removed from the format', () => {
+  test('a file that still carries them opens, and they are not kept', () => {
+    const s = newShow('Viejo');
+    const old = JSON.parse(JSON.stringify(s));
+    old.view.greyscale = true;
+    old.electrical.circuits = [{ id: 'c1', number: 1, dimmerId: 'd1', phase: 2 }];
+    const back = loadShow(old);
+    expect('greyscale' in back.view).toBe(false);
+    expect(back.electrical.circuits).toEqual([{ id: 'c1', number: 1, phase: 2 }]);
+  });
+});

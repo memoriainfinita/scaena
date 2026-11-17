@@ -74,6 +74,12 @@ export interface StageFrame {
   opening: number | null;
 }
 
+/** The middle of the stage's bounds, whatever its shape. */
+export function stageCentre(show: Show): Pt {
+  const f = stageFrame(show);
+  return { x: (f.x0 + f.x1) / 2, y: (f.upstage + f.downstage) / 2 };
+}
+
 export function stageFrame(show: Show): StageFrame {
   const sh = show.stage.shape;
   const b = bounds(stagePoints(show));

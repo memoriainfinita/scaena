@@ -3,7 +3,8 @@ import { planSvg } from '../document/plan-svg.ts';
 import { newShow } from './new.ts';
 import { loadShow } from './migrate.ts';
 import { safeParseShow } from './schema.ts';
-import { insertStagePoint, moveStagePoint, removeStagePoint, setStagePoints, stageFrame, stagePoints, toFreeForm } from './stage.ts';
+import { defaultFocus } from './lights.ts';
+import { insertStagePoint, moveStagePoint, removeStagePoint, setStagePoints, stageCentre, stageFrame, stagePoints, toFreeForm } from './stage.ts';
 
 const opts = { availWidthMm: 267, availHeightMm: 170, planScale: null, lang: 'en' as const };
 const L = [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 3000 }, { x: 9000, y: 3000 }, { x: 9000, y: 6000 }, { x: 0, y: 6000 }];
@@ -116,5 +117,18 @@ describe('opening height and old files', () => {
     const show = newShow('t');
     expect(safeParseShow({ ...show, stage: { ...show.stage, prosceniumHeight: -1 } }).success).toBe(false);
     expect(safeParseShow({ ...show, stage: { ...show.stage, prosceniumHeight: 6000 } }).success).toBe(true);
+  });
+});
+
+describe('a free-form stage is not a stand-in rectangle', () => {
+  const off = (): ReturnType<typeof newShow> => setStagePoints(newShow('Libre'), [{ x: 2000, y: 1000 }, { x: 12000, y: 1000 }, { x: 12000, y: 7000 }, { x: 2000, y: 7000 }]);
+
+  test('its centre is the middle of its bounds', () => {
+    expect(stageCentre(off())).toEqual({ x: 7000, y: 4000 });
+    expect(stageCentre(newShow('Rect'))).toEqual({ x: stageFrame(newShow('Rect')).width / 2, y: stageFrame(newShow('Rect')).downstage / 2 });
+  });
+
+  test('the default focus point is that centre', () => {
+    expect(defaultFocus(off())).toEqual({ x: 7000, y: 4000 });
   });
 });
