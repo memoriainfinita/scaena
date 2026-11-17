@@ -50,6 +50,13 @@ describe('audio rules', () => {
     expect(only(show, 'danglingSource')[0]).toMatchObject({ severity: 'error', ref: { kind: 'channel' } });
   });
 
+  test('the name of an element in a warning follows the language asked for', () => {
+    const [show] = el(base(), 'amp.guitar', 1000, 1000);
+    const name = (lang: 'es' | 'en') => validate(show, lang).find((i) => i.rule === 'sourceWithoutChannel')!.vars.name;
+    expect(name('es')).not.toBe(name('en'));
+    expect(name('en')).toMatch(/guitar/i);
+  });
+
   test('an element that suggests channels and has none', () => {
     const [show, id] = el(base(), 'amp.guitar', 1000, 1000);
     expect(only(show, 'sourceWithoutChannel')[0]).toMatchObject({ ref: { kind: 'element', id } });

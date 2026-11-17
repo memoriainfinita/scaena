@@ -8,7 +8,7 @@ import { prodTab } from './production-actions.ts';
 import { dialog, selection, session, view } from './state.ts';
 
 /** Recomputed whenever the show changes: every rule is a pure pass over the model. Includes the silenced ones. */
-export const allIssues = computed<Issue[]>(() => (session.value ? validate(session.value.show.value) : []));
+export const allIssues = computed<Issue[]>(() => (session.value ? validate(session.value.show.value, lang.value) : []));
 
 /** What counts: the findings the user has not silenced. */
 export const issues = computed<Issue[]>(() => allIssues.value.filter((i) => !i.muted));

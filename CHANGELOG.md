@@ -22,6 +22,7 @@ Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 fi
 - Space and the arrow keys on a focused button, checkbox or panel edge are no longer taken by the plot; single-character shortcuts act only with focus on the plot (WCAG 2.1.1 and 2.1.4).
 - Deleting an element that owns channels renumbers the rest, frees their stereo partner and removes them from the monitor mixes.
 - A turned text note is turned in the PDF too.
+- Warnings name library elements in the interface language (they were always Spanish).
 - A focus point sitting over the selected element's own handles can be grabbed; the DXF keeps hidden layers frozen instead of switched on.
 - The revision comparison names changes to contacts, schedule, setlist, hospitality, contract, notes, title block and the rest of the document.
 - Dragging a luminaire's aim point is one undo step.

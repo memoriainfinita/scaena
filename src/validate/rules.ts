@@ -121,7 +121,9 @@ export const SEVERITY_OF: Record<RuleId, Severity> = {
   deskNumberRepeated: 'error',
 };
 
-const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name.es || e.type.id;
+/** The language the names of library items are written in for the pass in course; `validate` sets it. */
+let nameLang: 'es' | 'en' = 'es';
+const elName = (e: PlanElement): string => e.label || itemById(e.type.id)?.name[nameLang] || e.type.id;
 
 type Rule = (show: Show) => Issue[];
 const issue = (rule: RuleId, ref: Ref, vars: Issue['vars'] = {}, list?: string[], part?: string): Issue => ({ key: `${rule}:${ref.kind}:${ref.id}${part ? `:${part}` : ''}`, rule, severity: SEVERITY_OF[rule], ref, vars, ...(list ? { list } : {}) });
@@ -585,7 +587,8 @@ export const RULES: Record<RuleId, Rule> = { cableTwin, portChannels, portShared
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 
 /** All findings, errors first, with keys that are unique within the list. The ones the user silenced carry `muted`. */
-export function validate(show: Show): Issue[] {
+export function validate(show: Show, language: 'es' | 'en' = 'es'): Issue[] {
+  nameLang = language;
   const muted = new Set(show.muted);
   const all = Object.values(RULES).flatMap((r) => r(show));
   const count = new Map<string, number>();
