@@ -1,5 +1,7 @@
 # Equipos
 
+![Tablas de equipos](img/equipos.png)
+
 La vista **Equipos** lista todo lo que hay en el montaje en tablas que se editan en el sitio; al elegir una fila se selecciona el elemento en el plano, y al revés. Tiene tres secciones.
 
 - **Elementos:** una fila por elemento, con su nombre, tipo, capa, quién lo aporta, potencia, peso, dirección IP y puertos. Filtra por texto, capa, categoría y quién lo aporta, y ordena por nombre, tipo, capa, aportante, potencia o peso. La tabla se desplaza dentro de sí misma, así que la página no desborda en el móvil.

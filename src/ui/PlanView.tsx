@@ -1071,9 +1071,10 @@ export function PlanView({ show }: { show: Show }) {
           <g class="moving" transform={dragT}>
             {moving}
           </g>
-          <FocusOverlay show={show} ids={selection.value} world={world} />
           <StageHandles show={show} cam={cam} />
           <TransformHandles show={show} cam={cam} />
+          {/* Last, so a focus point that lands on the element's own handles is the one that is grabbed. */}
+          <FocusOverlay show={show} ids={selection.value} world={world} />
         </g>
         <Overlays cam={cam} marquee={marquee} measure={measure} units={show.units} link={linkEl ? { x: linkEl.x, y: linkEl.y } : null} cursor={cursor} />
       </svg>

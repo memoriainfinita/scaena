@@ -60,6 +60,13 @@ describe('DXF export', () => {
     const circle = d.entities.find((e) => e.type === 'CIRCLE') as unknown as { radius: number };
     expect(circle.radius).toBeCloseTo(400, 3);
   });
+  test('a hidden plan layer travels frozen and the visible ones do not', () => {
+    const base = newShow('t');
+    const show = { ...base, layers: base.layers.map((l, i) => (i === 0 ? { ...l, visible: false } : l)) };
+    const layers = parse(planDxf(show).text).tables.layer!.layers as Record<string, { frozen: boolean }>;
+    const frozen = Object.values(layers).filter((l) => l.frozen).length;
+    expect(frozen).toBe(1);
+  });
   test('layer names are valid, unique and at most 31 characters', () => {
     const taken = new Set<string>();
     expect(layerName('Vestuario y atrezo', taken)).toBe('VESTUARIO_Y_ATREZO');

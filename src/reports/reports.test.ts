@@ -84,6 +84,13 @@ describe('reports', () => {
     expect(rows.find((r) => r[0] === 'L201')).toEqual(['L201', '1', '3']);
   });
 
+  test('the focus chart carries the accessories and the note of each instrument', () => {
+    let show = theatre();
+    const e = Object.values(show.elements).find((x) => x.luminaire)!;
+    show = updateLuminaire(show, e.id, { unit: 1, accessories: ['visera', 'iris'], notes: 'cerrar a la cara' });
+    expect(buildReport(show, 'focus').rows.find((r) => r[0] === '1')!.at(-1)).toBe('visera, iris. cerrar a la cara');
+  });
+
   test('the labels read unit, channel, dimmer, circuit and colour', () => {
     let show = theatre();
     const e = Object.values(show.elements).find((x) => x.luminaire)!;

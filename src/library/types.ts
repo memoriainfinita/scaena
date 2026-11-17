@@ -103,7 +103,6 @@ export interface PackageElement {
   rotation?: number;
   label?: string;
   suppliedBy?: 'band' | 'venue' | 'rental' | 'unset';
-  /** Computers: what they do and run. */
   /** Lights: fixture model, the numbers that identify it and where it hangs (index into the package's mounts). */
   light?: { modelId: string; channel: number; circuit?: number; dimmer?: number; mount?: number; color?: string; universe?: number; address?: number; dmxMode?: string; dmxSlots?: number };
   /** Risers, platforms and the like: size and height when they differ from the library's. */
@@ -113,6 +112,7 @@ export interface PackageElement {
   notes?: Bilingual;
   /** Network address of a computer, switch or desk. */
   ip?: string;
+  /** Computers: what they do and run. */
   computer?: { functions: ('sound' | 'video' | 'lights' | 'network')[]; os: 'windows' | 'macos' | 'linux' | 'other'; programs: { name: string; use: string }[] };
 }
 

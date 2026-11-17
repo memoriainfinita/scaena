@@ -31,7 +31,6 @@ const fmt = (n: number | null, lang: Lang, digits = 0) => (n === null ? '' : num
 const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemById(e.type.id)?.name[lang] || e.type.id : '');
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
-/** The cables of the given signal types that touch an element, as a line: "XLR 10 m → Stagebox". Estimated lengths carry a "≈". */
 /** The video links for the document: where from and to, connector, resolution and length, in the order of the Equipment tab. */
 export function videoTable(show: Show, lang: Lang = show.lang): { header: string[]; rows: string[][] } {
   const D = docStrings(lang);
@@ -45,6 +44,7 @@ export function videoTable(show: Show, lang: Lang = show.lang): { header: string
   return { header: [D.cableFrom, D.cableTo, D.cableConnector, D.resolution, inUnits(D.cableLength, show.units)], rows };
 }
 
+/** The cables of the given signal types that touch an element, as a line: "XLR 10 m → Stagebox". Estimated lengths carry a "≈". */
 export function cableText(show: Show, elementId: string, signals: readonly SignalType[], lang: Lang = show.lang): string {
   return connectionsOf(show, elementId)
     .filter((c) => signals.includes(c.signal))
@@ -107,7 +107,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     return { id, header: [D.color, D.count, D.unit], rows };
   }
   if (id === 'focus') {
-    const rows = [...lum].sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit)).map((e) => [num(e.luminaire!.unit), name(e, lang), mount(e), e.luminaire!.focus ? lengthValue(e.luminaire!.focus.x, show.units, lang, 2) : '', e.luminaire!.focus ? lengthValue(e.luminaire!.focus.y, show.units, lang, 2) : '', e.luminaire!.notes]);
+    const rows = [...lum].sort((a, b) => byNumber(a.luminaire!.unit, b.luminaire!.unit)).map((e) => [num(e.luminaire!.unit), name(e, lang), mount(e), e.luminaire!.focus ? lengthValue(e.luminaire!.focus.x, show.units, lang, 2) : '', e.luminaire!.focus ? lengthValue(e.luminaire!.focus.y, show.units, lang, 2) : '', [e.luminaire!.accessories.join(', '), e.luminaire!.notes].filter(Boolean).join('. ')]);
     return { id, header: [D.unit, D.element, D.mount, inUnits('X (m)', show.units), inUnits('Y (m)', show.units), D.note], rows };
   }
   if (id === 'labels') {
@@ -259,7 +259,6 @@ export function toTsv(t: Pick<ReportTable, 'header' | 'rows'>): string {
   return [t.header, ...t.rows].map((r) => r.map((c) => c.replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n');
 }
 
-/** The input list as plain text lines, for a message or an email. */
 /** What the device column of a channel says: the device itself for a mic or a DI box, and the kind of source first for anything else ("Ordenador: MacBook"). */
 export function deviceText(c: Pick<InputChannel, 'kind' | 'mic'>, D: Pick<ReturnType<typeof docStrings>, 'sourceKinds'>): string {
   const kind = channelKind(c);
@@ -268,6 +267,7 @@ export function deviceText(c: Pick<InputChannel, 'kind' | 'mic'>, D: Pick<Return
   return device ? `${D.sourceKinds[kind]}: ${device}` : D.sourceKinds[kind];
 }
 
+/** The input list as plain text lines, for a message or an email. */
 export function inputsAsText(show: Show, lang: Lang = show.lang): string {
   const report = buildReport(show, 'inputs', lang);
   const skip = report.header.length - 11; // a leading column names the desk when there are several

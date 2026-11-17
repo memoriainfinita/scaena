@@ -35,7 +35,6 @@ export const issuesByRef = computed(() => {
 const RANK: Record<Severity, number> = { error: 0, warning: 1, tip: 2 };
 export const worst = (list: Issue[]): Severity | null => (list.length === 0 ? null : list.reduce((a, i) => (RANK[i.severity] < RANK[a] ? i.severity : a), list[0]!.severity));
 
-/** The finding in words, in the interface language. */
 /** The weights and lengths of a finding, written in the units of the show: the rules count in kilograms and metres. */
 function measures(i: Issue): Record<string, string> {
   const units = session.value?.show.value.units ?? 'metric';
@@ -45,6 +44,7 @@ function measures(i: Issue): Record<string, string> {
   return {};
 }
 
+/** The finding in words, in the interface language. */
 export function issueText(i: Issue): string {
   const key = `issue.${i.rule}${i.rule === 'wedgeMismatch' ? `.${i.vars.side}` : ''}` as Key;
   const items = (i.list ?? []).map((x) => (i.rule === 'programOs' ? t(`os.${x}` as Key) : t(`issue.field.${x}` as Key)));

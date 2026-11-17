@@ -773,6 +773,19 @@ export function LuminairePanel({ el, show }: { el: PlanElement; show: Show }) {
         {t('table.color')}
         <input class="input" value={l.color} maxLength={40} onChange={(e) => setLuminaire(el.id, { color: (e.currentTarget as HTMLInputElement).value })} />
       </label>
+      <label class="field" title={t('lum.accessories.tip')}>
+        {t('lum.accessories')}
+        <input
+          class="input"
+          value={l.accessories.join(', ')}
+          maxLength={300}
+          onChange={(e) => setLuminaire(el.id, { accessories: (e.currentTarget as HTMLInputElement).value.split(',').map((x) => x.trim().slice(0, 80)).filter(Boolean) })}
+        />
+      </label>
+      <label class="field" title={t('lum.focusNote.tip')}>
+        {t('lum.focusNote')}
+        <input class="input" value={l.notes} maxLength={200} onChange={(e) => setLuminaire(el.id, { notes: (e.currentTarget as HTMLInputElement).value })} />
+      </label>
     </div>
   );
 }

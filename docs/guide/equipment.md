@@ -1,5 +1,7 @@
 # Equipment
 
+![Equipment tables](img/equipos.png)
+
 The **Equipment** view lists everything in the show as tables you edit in place; selecting a row selects the element on the plot, and the other way round. It has three sections.
 
 - **Elements:** one row per element with its name, type, layer, who supplies it, power, weight, IP address and ports. Filter by text, layer, category and who supplies it, and sort by name, type, layer, supplier, power or weight. The table scrolls inside itself, so the page never overflows on a phone.

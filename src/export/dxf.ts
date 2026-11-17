@@ -278,9 +278,10 @@ export function planDxf(show: Show): DxfFile {
   return withCustomItems(show.customItems, () => {
     const taken = new Set<string>();
     const stageLayer = layerName('STAGE-OUTLINE', taken);
-    const planLayers = show.layers.map((l) => ({ id: l.id, name: layerName(l.name || l.subject, taken) }));
+    const planLayers = show.layers.map((l) => ({ id: l.id, name: layerName(l.name || l.subject, taken), visible: l.visible }));
     const byId = new Map(planLayers.map((l) => [l.id, l.name]));
-    const allNames = [stageLayer, ...planLayers.map((l) => l.name)];
+    // A hidden plan layer travels frozen: the CAD program has it, switched off, as the plan has it.
+    const allLayers = [{ name: stageLayer, visible: true }, ...planLayers];
     const out: string[] = [];
     let entities = 0;
     const g = (code: number, value: string | number) => out.push(String(code).padStart(3), String(value));
@@ -365,11 +366,11 @@ export function planDxf(show: Show): DxfFile {
     hg(0, 'ENDTAB');
     hg(0, 'TABLE');
     hg(2, 'LAYER');
-    hg(70, allNames.length);
-    allNames.forEach((name, i) => {
+    hg(70, allLayers.length);
+    allLayers.forEach(({ name, visible }, i) => {
       hg(0, 'LAYER');
       hg(2, name);
-      hg(70, 0);
+      hg(70, visible ? 0 : 1);
       hg(62, COLORS[i % COLORS.length]!);
       hg(6, 'CONTINUOUS');
     });

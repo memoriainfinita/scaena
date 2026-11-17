@@ -1,4 +1,5 @@
 // Takes the screenshots of the user guide: `pnpm build` first, then `node scripts/screenshots.mjs [en|es]` (default en). English goes to docs/guide/img, Spanish to docs/guide/es/img.
+// An optional third argument takes only the screenshot of that name (`node scripts/screenshots.mjs en equipos`).
 // Firefox, silent, light theme. It starts its own preview server on port 4185 and stops it at the end.
 import { firefox } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
@@ -12,8 +13,10 @@ const base = 'http://127.0.0.1:4185/';
 const browser = await firefox.launch({ firefoxUserPrefs: { 'media.volume_scale': '0.0', 'layout.css.prefers-color-scheme.content-override': 1 } });
 
 const L = (es, en) => (LANG === 'en' ? en : es);
+const ONLY = process.argv[3];
 
 const shot = async (page, name) => {
+  if (ONLY && ONLY !== name) return;
   await page.mouse.move(5, 5);
   await page.screenshot({ path: `${OUT}/${name}.png` });
   console.log('wrote', name);
@@ -118,6 +121,14 @@ try {
   await page.locator('svg.plansvg image').waitFor({ timeout: 30000 });
   await page.getByRole('button', { name: L('Fondo PDF o DXF', 'PDF or DXF background') }).click();
   await shot(page, 'fondo');
+  await page.close();
+
+  // Equipment
+  page = await fresh();
+  await pick(page, new RegExp(L('Muestra completa', 'Full showcase')));
+  await page.getByRole('button', { name: L('Equipos', 'Equipment'), exact: true }).click();
+  await page.getByRole('table').first().waitFor();
+  await shot(page, 'equipos');
   await page.close();
 
   // Phone

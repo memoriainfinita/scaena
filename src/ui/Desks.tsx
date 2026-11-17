@@ -68,6 +68,19 @@ export function DeskBar({ show }: { show: Show }) {
             {t('desk.showFile')}
             <input class="input" value={cur.showFile} maxLength={120} onChange={(e) => setDesk(cur.id, { showFile: (e.currentTarget as HTMLInputElement).value })} />
           </label>
+          <label class="field">
+            {t('desk.element')}
+            <select class="input" title={t('desk.element.tip')} value={cur.elementId ?? ''} onChange={(e) => setDesk(cur.id, { elementId: (e.currentTarget as HTMLSelectElement).value || null })}>
+              <option value="">{t('desk.element.none')}</option>
+              {Object.values(show.elements)
+                .filter((x) => x.type.id.startsWith('desk.'))
+                .map((x) => (
+                  <option key={x.id} value={x.id}>
+                    {x.label || x.id}
+                  </option>
+                ))}
+            </select>
+          </label>
           {cur.id !== main.id && (
             <button
               type="button"

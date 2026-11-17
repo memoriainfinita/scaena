@@ -49,10 +49,10 @@ export const pairChannel = (id: string, other: string | null): void => commit((s
 
 const ORDER = ['drums', 'amp', 'guitar', 'keys', 'strings', 'winds', 'vocals', 'dj', 'person', 'video', 'control', 'pa', 'monitor', 'desk', 'rack', 'furniture'];
 
-/** Groups the channels by the category of the element they come from; channels with no source go last. */
 /** Numbers the drawn wedges left to right and front to back, as one undo step. */
 export const numberWedgeOutputs = (): void => commit((show) => numberWedges(show));
 
+/** Groups the channels by the category of the element they come from; channels with no source go last. */
 export function sortByInstrument(): void {
   commit((show) =>
     sortChannels(show, (c) => {
