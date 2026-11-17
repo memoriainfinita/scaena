@@ -55,12 +55,16 @@ export function updateChannel(show: Show, id: string, patch: Partial<Omit<InputC
   return { ...show, channels: { ...show.channels, [id]: { ...ch, ...patch } } };
 }
 
-export function removeChannel(show: Show, id: string): Show {
-  if (!show.channels[id]) return show;
+export const removeChannel = (show: Show, id: string): Show => removeChannels(show, [id]);
+
+/** Removes channels in one go: the rest are numbered 1..n, their stereo partners are freed and the mixes forget them. */
+export function removeChannels(show: Show, ids: string[]): Show {
+  const gone = new Set(ids.filter((id) => show.channels[id]));
+  if (gone.size === 0) return show;
   const rest = channelList(show)
-    .filter((c) => c.id !== id)
-    .map((c) => (c.stereoPairWith === id ? { ...c, stereoPairWith: null } : c));
-  const outputs = Object.fromEntries(Object.values(show.outputs).map((o) => [o.id, o.mix[id] ? { ...o, mix: Object.fromEntries(Object.entries(o.mix).filter(([k]) => k !== id)) } : o]));
+    .filter((c) => !gone.has(c.id))
+    .map((c) => (c.stereoPairWith && gone.has(c.stereoPairWith) ? { ...c, stereoPairWith: null } : c));
+  const outputs = Object.fromEntries(Object.values(show.outputs).map((o) => [o.id, Object.keys(o.mix).some((k) => gone.has(k)) ? { ...o, mix: Object.fromEntries(Object.entries(o.mix).filter(([k]) => !gone.has(k))) } : o]));
   return { ...show, channels: renumber(rest), outputs };
 }
 
@@ -141,9 +145,13 @@ export function mixText(show: Show, o: Output, words: Record<'low' | 'high', str
     .join(', ');
 }
 
-export function removeOutput(show: Show, id: string): Show {
-  if (!show.outputs[id]) return show;
-  return { ...show, outputs: renumber(outputList(show).filter((o) => o.id !== id)) };
+export const removeOutput = (show: Show, id: string): Show => removeOutputs(show, [id]);
+
+/** Removes outputs in one go; the rest are numbered 1..n. */
+export function removeOutputs(show: Show, ids: string[]): Show {
+  const gone = new Set(ids.filter((id) => show.outputs[id]));
+  if (gone.size === 0) return show;
+  return { ...show, outputs: renumber(outputList(show).filter((o) => !gone.has(o.id))) };
 }
 
 export function moveOutput(show: Show, id: string, delta: -1 | 1): Show {

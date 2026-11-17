@@ -1,6 +1,7 @@
 import { effect, signal } from '@preact/signals';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useErrorBoundary } from 'preact/hooks';
 import { dialog, session, settings } from '../app/state.ts';
+import { baseName, saveFile } from '../export/exports.ts';
 import { t } from '../i18n/index.ts';
 import { Dialogs } from './Dialogs.tsx';
 import { Editor } from './Editor.tsx';
@@ -18,7 +19,43 @@ effect(() => {
 
 const isTyping = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName));
 
+/** What the person sees when the interface throws: the show is in the local library, and a copy can be taken out. */
+function Crashed({ error }: { error: unknown }) {
+  const s = session.value;
+  const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  const copy = () => {
+    try {
+      if (s) saveFile({ name: `${baseName(s.show.value.name)}.scaena`, bytes: s.toFile(), mime: 'application/zip' });
+    } catch {
+      // The copy kept in this browser is untouched; the reload below opens it.
+    }
+  };
+  return (
+    <main id="main" class="pad" tabindex={-1}>
+      <div role="alert">
+        <h1>{t('error.title')}</h1>
+        <p>{t('error.body')}</p>
+      </div>
+      <div class="row">
+        {s && (
+          <button type="button" class="btn" onClick={copy}>
+            {t('error.download')}
+          </button>
+        )}
+        <button type="button" class="btn primary" onClick={() => location.reload()}>
+          {t('error.reload')}
+        </button>
+      </div>
+      <details>
+        <summary>{t('error.detail')}</summary>
+        <pre>{detail}</pre>
+      </details>
+    </main>
+  );
+}
+
 export function App() {
+  const [error] = useErrorBoundary();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const s = session.value;
@@ -40,6 +77,7 @@ export function App() {
   }, []);
 
   const apply = updateReady.value;
+  if (error) return <Crashed error={error} />;
   return (
     <>
       {session.value ? <Editor /> : <Start />}

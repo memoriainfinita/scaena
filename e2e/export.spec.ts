@@ -148,3 +148,17 @@ test('the plan is exported as a DXF that CAD programs can read', async ({ page }
   expect(text.split(String.fromCharCode(10) + 'LINE' + String.fromCharCode(13)).length - 1).toBeGreaterThan(100);
   expect(text.trimEnd().endsWith('EOF')).toBe(true);
 });
+
+test('the .scaena file carries the copy of each saved revision', async ({ page }) => {
+  await start(page, /Banda de rock/);
+  await page.getByRole('button', { name: 'Revisiones' }).click();
+  const dlg = page.getByRole('dialog', { name: 'Revisiones' });
+  await dlg.getByLabel('Nota de la revisión').fill('Primera');
+  await dlg.getByRole('button', { name: 'Guardar revisión' }).click();
+  await expect(dlg.getByText('Revisión 1 guardada.')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Exportar' }).click();
+  const file = await downloaded(page, () => page.getByRole('button', { name: /Archivo del montaje/ }).click());
+  expect(file.name).toBe('Banda-de-rock.scaena');
+  expect(file.bytes.includes(Buffer.from('revisions/1.gz'))).toBe(true);
+});

@@ -9,3 +9,11 @@ Each row is a channel, edited in the table (each change is one undo step). Type 
 **Number wedges** renumbers the wedges drawn on the plan left to right and front to back, using the numbers they already hold; other outputs keep theirs. Wedges, in-ears, main and sends, with their aux and the element that carries them. **For** says who listens to each output, and **Monitor mixes**, under the table, is a grid with one column per mix and one row per channel: choose how much of each channel it asks for (a little, yes, more). A stereo pair changes together. The PDF lists each mix with its channels. Below, the **signal flow**: sources grouped by element, the desk (type its model) and the outputs. Every line has a written label and its own stroke pattern, so colour is never the only cue.
 
 **Racks:** add a **Rack** from the library and press **Build the rack** in its panel: set its units (U), add devices with their height, and move them up and down. It warns when the gear does not fit ("too much gear"), and the rack appears in the reports and as a section of the document.
+
+## Source kind
+
+Each channel says what feeds it: **microphone**, **DI box**, **line level**, **computer or player** or **other**. Left empty, it is deduced from the device (a known DI is a DI, anything else a microphone). The column is called **Equipment**; the PDF and the reports put the kind in front of the name when it is not a microphone or a DI box. Phantom power is suggested only for sources that can take it.
+
+## Several desks
+
+**Add desk** (above the input list) adds another mixing desk, for example the monitor desk beside the stage, with a **name**, a **role** (FOH, monitors, broadcast, other), its **model** and its **show file**. Each desk has its own channel numbers, its own patch and its own outputs: pick the desk in the selector at the top of Inputs and Outputs, and a channel can be sent to a desk or left out of it. The PDF and the reports print one table per desk. **Remove desk** sends its outputs to the main desk and drops its channel numbers; the sources stay.

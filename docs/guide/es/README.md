@@ -15,6 +15,7 @@ Las capturas se generan solas con `node scripts/screenshots.mjs`; si algo no coi
 | Decir qué ordenadores hay, qué programas llevan y cómo se conectan | [Ordenadores, vídeo y red](ordenadores.md) |
 | Poner setlist, horarios, hospitalidad y contrato, y sacar la hoja de ruta | [Producción de un evento](produccion.md) |
 | Generar el PDF del rider, elegir secciones y escala | [El PDF del rider](pdf.md) |
+| Ver y editar en tablas cada elemento, cable y enlace de vídeo | [Equipos](equipos.md) |
 | Sacar CSV, SVG, PNG, guardar revisiones y mandar una hoja de actualización | [Entregar y llevar el control de cambios](entregar.md) |
 | Entender un aviso | [Los avisos](avisos.md) |
 | Usarlo en el móvil o instalarlo como aplicación | [Móvil y sin conexión](movil.md) |

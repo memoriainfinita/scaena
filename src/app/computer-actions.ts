@@ -1,7 +1,7 @@
 // Edits of a computer element and of the connections between elements: each one is a single undo step.
 import { signal } from '@preact/signals';
 import { addConnection, removeConnection, updateConnection, type SignalType } from '../model/connections.ts';
-import { emptyComputer, updateElement } from '../model/ops.ts';
+import { updateElement } from '../model/ops.ts';
 import { fillPortsFromLibrary } from '../library/ports-data.ts';
 import { addPort, removePort, updatePort } from '../model/ports.ts';
 import type { Computer, Connection, Port, Show } from '../model/schema.ts';
@@ -18,7 +18,6 @@ export function changeComputer(id: string, fn: (c: Computer) => Computer): void 
   });
 }
 
-export const makeComputer = (id: string): void => commit((show) => (show.elements[id] && !show.elements[id]!.computer ? updateElement(show, id, { computer: emptyComputer() }) : show));
 
 export const setFunction = (id: string, fn: Computer['functions'][number], on: boolean): void =>
   changeComputer(id, (c) => {

@@ -30,4 +30,4 @@ Una **revisión** es una copia del montaje en un momento dado, guardada en este 
 - **Restaurar** devuelve su contenido como un paso que se puede deshacer; la lista de revisiones se conserva.
 - **Hoja de actualización** es un PDF de una página con el número, la fecha, la nota y los cambios, para quien ya tiene la versión anterior.
 
-Si tu navegador no guarda datos locales (modo privado), no puede guardar revisiones y el diálogo lo dice.
+Si tu navegador no guarda datos locales (modo privado), no puede guardar revisiones y el diálogo lo dice. El archivo **.scaena** lleva la copia de cada revisión, así que abrirlo en otro navegador, o duplicar el montaje, conserva el historial; un archivo que mandes incluye también las versiones anteriores (usa el PDF para compartir solo la actual).

@@ -78,6 +78,7 @@ export interface DocStrings {
   power: string;
   height: string;
   maxLoad: string;
+  maxLoadW: string;
   count: string;
   phase: string;
   amps: string;
@@ -130,7 +131,7 @@ const es: DocStrings = {
   os: 'Sistema', functions: 'Funciones', programs: 'Programas', license: 'Licencia', dongle: 'Llave física', outputsOf: 'Salidas',
   dmx: 'Direcciones DMX', network: 'Direcciones IP', dmxEnd: 'Hasta', universes: 'Universos', protocol: 'Protocolo', netNumber: 'Nº en red', stageOutput: 'Salida en escenario', dmxMode: 'Modo DMX',
   unit: 'Unidad', universe: 'Univ.', address: 'Dir.', element: 'Instrumento', model: 'Modelo', mount: 'Montaje', dimmer: 'Dimmer', circuit: 'Circuito', color: 'Color', weight: 'Peso (kg)', power: 'Potencia (W)',
-  height: 'Altura sobre la tarima (m)', maxLoad: 'Carga máx. (kg)', count: 'Recuento', phase: 'Fase', amps: 'Amperios', voltage: 'Tensión', plug: 'Enchufe', total: 'Total', note: 'Nota',
+  height: 'Altura sobre la tarima (m)', maxLoad: 'Carga máx. (kg)', maxLoadW: 'Carga máx. (W)', count: 'Recuento', phase: 'Fase', amps: 'Amperios', voltage: 'Tensión', plug: 'Enchufe', total: 'Total', note: 'Nota',
   legend: 'Leyenda', patch: 'Patch', logo: 'Logotipo', position: 'Pos.', positionLegend: 'US fondo · DS proscenio (hacia el público) · C centro · SL izquierda del artista · SR derecha del artista · CS centro del escenario · se combinan: USL fondo izquierda, DSR proscenio derecha', none: '—', magic: 'Magic sheet', audience: 'Público', rigging: 'Plan de varas', desk: 'Mesa', deskRoles: { foh: 'Sala (FOH)', monitors: 'Monitores', broadcast: 'Difusión', other: 'Otra' }, showFile: 'Show file', racks: 'Racks', task: 'Tarea', done: 'Hecha', ref: 'Elemento', changes: 'Cambios',
   video: 'Vídeo', resolution: 'Resolución', cables: 'Cables', cableFrom: 'Origen', cableTo: 'Destino', cableSignal: 'Señal', cableConnector: 'Conector', cableLength: 'Longitud (m)', wireless: 'Inalámbrico',
   kinds: { wedge: 'Cuña', iem: 'In-ear', main: 'Principal', send: 'Envío' },
@@ -151,7 +152,7 @@ const en: DocStrings = {
   os: 'System', functions: 'Functions', programs: 'Programs', license: 'License', dongle: 'Physical key', outputsOf: 'Outputs',
   dmx: 'DMX addresses', network: 'IP addresses', dmxEnd: 'To', universes: 'Universes', protocol: 'Protocol', netNumber: 'Network no.', stageOutput: 'Stage output', dmxMode: 'DMX mode',
   unit: 'Unit', universe: 'Univ.', address: 'Addr.', element: 'Instrument', model: 'Model', mount: 'Mount', dimmer: 'Dimmer', circuit: 'Circuit', color: 'Color', weight: 'Weight (kg)', power: 'Power (W)',
-  height: 'Height above the stage (m)', maxLoad: 'Max load (kg)', count: 'Count', phase: 'Phase', amps: 'Amps', voltage: 'Voltage', plug: 'Plug', total: 'Total', note: 'Note',
+  height: 'Height above the stage (m)', maxLoad: 'Max load (kg)', maxLoadW: 'Max load (W)', count: 'Count', phase: 'Phase', amps: 'Amps', voltage: 'Voltage', plug: 'Plug', total: 'Total', note: 'Note',
   legend: 'Legend', patch: 'Patch', logo: 'Logo', position: 'Pos.', positionLegend: 'US upstage · DS downstage (towards the audience) · C centre · SL stage left · SR stage right · CS centre stage · they combine: USL upstage left, DSR downstage right', none: '—', magic: 'Magic sheet', audience: 'Audience', rigging: 'Hanging plot', desk: 'Desk', deskRoles: { foh: 'FOH', monitors: 'Monitors', broadcast: 'Broadcast', other: 'Other' }, showFile: 'Show file', racks: 'Racks', task: 'Task', done: 'Done', ref: 'Element', changes: 'Changes',
   video: 'Video', resolution: 'Resolution', cables: 'Cables', cableFrom: 'From', cableTo: 'To', cableSignal: 'Signal', cableConnector: 'Connector', cableLength: 'Length (m)', wireless: 'Wireless',
   kinds: { wedge: 'Wedge', iem: 'In-ear', main: 'Main', send: 'Send' },

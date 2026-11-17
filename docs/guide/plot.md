@@ -35,3 +35,7 @@ Below the layer list, type a name and press **Add layer** to make a layer of you
 ## Your own elements
 
 **Create own element** (top of the library) takes an SVG drawing up to 200 KB and asks for a name, the real size, height, weight, power and layer. The drawing is rebuilt from shapes, paths, groups and flat colours only: text, images, gradients, links, styles and scripts are left out (the dialog says how many), and strokes are redrawn 1.5 px wide. The element lives in the show and travels in the `.scaena` file; it appears first in library searches, and it can only be deleted once it is no longer on the plan.
+
+## Resize and turn with handles
+
+A selected element shows eight **handles** to resize it (hold **Shift** to keep the proportion, **Ctrl** to grow from the centre, **Alt** to skip the 50 mm snap) and a round **turn** handle beyond the top-right corner (hold **Shift** to turn in steps of 15 degrees). Each gesture is one undo step. A label stuck to the middle of a side is easier to grab by one end.

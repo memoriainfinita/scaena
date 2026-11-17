@@ -71,3 +71,22 @@ test('a show stored with a text over the limit opens cut, and says so @a11y', as
   await page.getByRole('button', { name: 'Entendido' }).click();
   await expect(page.getByText(/Se ha recortado/)).toHaveCount(0);
 });
+
+test('a second tab with the same show: the one that saves later is told and does not erase the other', async ({ page, context }) => {
+  await emptyShow(page);
+  const other = await context.newPage();
+  await other.goto('/'); // reopens the last show: the same one
+  const otherName = other.getByRole('textbox', { name: 'Nombre del montaje' });
+  await expect(otherName).toBeVisible();
+  await otherName.fill('Desde la otra');
+  await otherName.press('Tab');
+  await expect(status(other)).toHaveText('Guardado');
+
+  const name = page.getByRole('textbox', { name: 'Nombre del montaje' });
+  await name.fill('Desde la primera');
+  await name.press('Tab');
+  await expect(page.locator('.topbar [data-save="error"]')).toContainText('otra pestaña');
+  // Nothing was written over it: a reload brings back what the other tab saved.
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Nombre del montaje' })).toHaveValue('Desde la otra');
+});

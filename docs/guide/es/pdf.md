@@ -27,3 +27,7 @@ El panel avisa de las palabras demasiado largas para su columna (por ejemplo, un
 ![Informes de luces y sonido](img/informes.png)
 
 La vista **Informes** muestra cada lista como tabla: hookup de canales, instrumentos, circuitos, dimmers, recuento de color, focos, etiquetas, entradas y salidas. Cada una se descarga en CSV o se copia como texto para pegarla donde quieras.
+
+## Hojas de plano
+
+El plano no es una página fija: en **Documento** usa **Añadir una hoja** tantas veces como necesites, para el plano de escenario o el de luces, cada una con su **título de la hoja**, las **capas que se dibujan**, su **escala** y, en el plano de luces, los **rótulos de luminaria** (unidad en un círculo, canal y color debajo). Cada hoja lleva un cajetín debajo y su propia leyenda, con solo las capas que muestra. Un montaje sin hojas configuradas imprime el plano único de siempre.

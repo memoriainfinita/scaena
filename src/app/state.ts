@@ -1,6 +1,6 @@
 // Application state: signals over the show's history. The model itself stays plain data (src/model).
 import { signal } from '@preact/signals';
-import { lang, resolveLang, type Lang } from '../i18n/index.ts';
+import { lang, resolveLang, t, type Lang } from '../i18n/index.ts';
 import { showFromPackage, withHistory } from '../library/apply.ts';
 import { packageById } from '../library/packages.ts';
 import { regionByCode } from '../library/regions.ts';
@@ -18,7 +18,7 @@ import { packShow, unpackShow } from '../model/archive.ts';
 import { setCustomSource } from '../library/custom.ts';
 import { itemById } from '../library/items.ts';
 import { fillPortsFromLibrary } from '../library/ports-data.ts';
-import { autosave, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow, writeShowNow } from './storage.ts';
+import { autosave, ConflictError, getLastShow, listShows, openLibrary, readRevisionData, readShow, saveRevisionData, saveShow, setLastShow, writeShowNow } from './storage.ts';
 
 export type ViewId = 'plan' | 'equipment' | 'inputs' | 'outputs' | 'lights' | 'production' | 'reports' | 'document';
 export const VIEWS: readonly ViewId[] = ['plan', 'equipment', 'inputs', 'outputs', 'lights', 'production', 'reports', 'document'];
@@ -80,6 +80,22 @@ export class Session {
   readonly trimmed;
   private readonly history: History<Show>;
   private readonly saver;
+  private channel: BroadcastChannel | null = null;
+  /** Another tab saved this show after this one read it: this tab does not write over it. */
+  private conflict = false;
+  /** Stops listening to the other tabs; the session is being replaced. */
+  dispose(): void {
+    this.channel?.close();
+    this.channel = null;
+  }
+  private announce(updated: number): void {
+    this.stamp = updated;
+    try {
+      this.channel?.postMessage({ id: this.id, updated });
+    } catch {
+      // A closed channel: nothing to tell.
+    }
+  }
   /** The library once it is open, to write without waiting when the page is being left. */
   private dbNow: IDBDatabase | null = null;
 
@@ -89,7 +105,16 @@ export class Session {
     private readonly db: Promise<IDBDatabase> | null,
     private readonly images: Record<string, Uint8Array> = {},
     repaired = 0,
+    /** The `updated` of the stored copy this tab last read or wrote; null for a show not stored yet. */
+    private stamp: number | null = null,
   ) {
+    // Other tabs say when they save this show, so that leaving (which cannot wait to read) does not erase their work.
+    if (typeof BroadcastChannel !== 'undefined') {
+      this.channel = new BroadcastChannel('scaena-saves');
+      this.channel.onmessage = (e: MessageEvent) => {
+        if (e.data?.id === this.id && e.data.updated !== this.stamp) this.conflict = true;
+      };
+    }
     this.history = new History(initial);
     this.show = signal(initial);
     this.trimmed = signal(repaired);
@@ -105,19 +130,30 @@ export class Session {
         try {
           const show = this.savable();
           const db = await this.db;
-          await saveShow(db, this.id, show, this.images);
+          this.announce(await saveShow(db, this.id, show, this.storedImages(show), 'show', this.stamp));
           await setLastShow(db, this.id);
           this.saveError.value = null;
           // A change made while this one was being written is still waiting for its own save.
           this.saveState.value = this.history.state === show ? 'saved' : 'pending';
         } catch (e) {
-          this.saveError.value = e instanceof Error ? e.message : String(e);
+          if (e instanceof ConflictError) this.conflict = true;
+          this.saveError.value = e instanceof ConflictError ? t('save.conflict') : e instanceof Error ? e.message : String(e);
           this.saveState.value = 'error';
           throw e;
         }
       },
       () => !this.db,
     );
+  }
+
+  /**
+   * The images the library keeps with the show: those it still uses. A show with saved revisions keeps them all, because a
+   * restored revision may name an image the present show no longer does. The session itself keeps every one, for undo.
+   */
+  private storedImages(show: Show): Record<string, Uint8Array> {
+    if (show.revisions.length > 0) return this.images;
+    const used = new Set([show.stage.background?.file, show.titleBlock.logo].filter((f): f is string => !!f));
+    return Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name)));
   }
 
   private sync(): void {
@@ -155,6 +191,18 @@ export class Session {
     this.sync();
   }
 
+  private gesture: (() => void) | null = null;
+  /** A drag that commits on every move is one undo step: begin it on pointer down and end it on pointer up. */
+  beginGesture(): void {
+    this.gesture ??= this.history.hold();
+  }
+  endGesture(): void {
+    const release = this.gesture;
+    this.gesture = null;
+    release?.();
+    this.sync();
+  }
+
   group<R>(fn: () => R): R {
     const r = this.history.group(fn);
     this.sync();
@@ -176,9 +224,10 @@ export class Session {
    * run anything that waits. The ordinary save follows if the page lives on, and keeps the state in step.
    */
   leave(): void {
-    if (this.dbNow && this.saveState.value === 'pending') {
+    if (this.dbNow && this.saveState.value === 'pending' && !this.conflict) {
       try {
-        writeShowNow(this.dbNow, this.id, this.savable(), this.images);
+        const show = this.savable();
+        this.announce(writeShowNow(this.dbNow, this.id, show, this.storedImages(show)));
       } catch {
         // The ordinary save below reports what went wrong.
       }
@@ -190,11 +239,20 @@ export class Session {
     this.saver.retry();
     return this.saver.flush();
   }
-  /** The `.scaena` bytes of the current state: only the images the show still uses. */
-  toFile(): Uint8Array {
+  /** The `.scaena` bytes of the current state: only the images the show still uses, and the given copies of revisions. */
+  toFile(revisions: Record<number, Uint8Array> = {}): Uint8Array {
     const show = this.savable();
     const used = new Set([show.stage.background?.file, show.titleBlock.logo].filter((f): f is string => !!f));
-    return packShow(show, Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name))));
+    return packShow(show, Object.fromEntries(Object.entries(this.images).filter(([name]) => used.has(name))), revisions);
+  }
+  /** The `.scaena` bytes with the stored copy of every revision the show lists; those this browser does not have are left out. */
+  async toFileWithRevisions(): Promise<Uint8Array> {
+    const revisions: Record<number, Uint8Array> = {};
+    for (const r of this.savable().revisions) {
+      const data = await this.loadRevision(r.number).catch(() => undefined);
+      if (data) revisions[r.number] = data;
+    }
+    return this.toFile(revisions);
   }
 
   /** True when this browser keeps a local library, which revisions need. */
@@ -263,8 +321,9 @@ export function setLibrary(p: Promise<IDBDatabase> | null): void {
 
 const newId = () => `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {}, repaired = 0): Session {
-  const s = new Session(show, id, library(), images, repaired);
+function open(show: Show, id = newId(), images: Record<string, Uint8Array> = {}, repaired = 0, stamp: number | null = null): Session {
+  const s = new Session(show, id, library(), images, repaired, stamp);
+  session.value?.dispose();
   session.value = s;
   selection.value = [];
   view.value = 'plan';
@@ -301,8 +360,9 @@ export function startEmpty(name: string, modules: Module[] = ['audio', 'document
 
 export function openFileBytes(bytes: Uint8Array): void {
   try {
-    const { show, images, repaired } = unpackShow(bytes);
-    open(show, undefined, images, repaired);
+    const { show, images, repaired, revisions } = unpackShow(bytes);
+    const s = open(show, undefined, images, repaired);
+    for (const [n, data] of Object.entries(revisions)) void s.storeRevision(Number(n), data).catch(() => undefined);
   } catch (e) {
     startError.value = e instanceof UnsupportedFormat && e.newer ? 'newer' : { stored: false, reason: e instanceof Error ? e.message : String(e) };
   }
@@ -317,7 +377,7 @@ export async function openStored(id: string): Promise<void> {
     startError.value = r.newer ? 'newer' : { stored: true, reason: r.error };
     return;
   }
-  open(r.show, id, r.images, r.repaired);
+  open(r.show, id, r.images, r.repaired, r.updated);
 }
 
 export async function refreshRecents(): Promise<void> {
@@ -345,7 +405,7 @@ export async function reopenLast(): Promise<boolean> {
       startError.value = r.newer ? 'newer' : { stored: true, reason: r.error };
       return false;
     }
-    open(r.show, id, r.images, r.repaired);
+    open(r.show, id, r.images, r.repaired, r.updated);
     return true;
   } catch {
     return false;

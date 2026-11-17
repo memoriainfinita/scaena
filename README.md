@@ -9,13 +9,13 @@ Technical riders for live shows, in the browser: stage plot, input and output li
 | ![Input list](docs/scaena-inputs.png) | ![Light plot lists](docs/scaena-lights.png) |
 | ![The rider PDF, previewed](docs/scaena-document.png) | ![Start screen with the show packages](docs/scaena-start.png) |
 
-- **Plot:** a 2D plan with a library of 775 line-art symbols (one SVG per item, filtered by category), luminaires as icons or as RP-2 top-view outlines, your own items and layers, alignment, groups, measuring, permanent dimensions, a rectangular or free-form stage with reference lines, a PDF or DXF venue plan as a calibrated background, cables between elements with an estimated length, and export to DXF.
-- **Sound:** input and output lists edited in place, the patch taken from the cables and their numbered ports, stereo pairs, phantom power from the microphone's type, signal flow.
+- **Plot:** a 2D plan with a library of 853 line-art symbols (one SVG per item, filtered by category), luminaires as icons or as RP-2 top-view outlines, your own items and layers, alignment, groups, measuring, permanent dimensions, a rectangular or free-form stage with reference lines, a PDF or DXF venue plan as a calibrated background, cables between elements with an estimated length, and export to DXF.
+- **Sound:** input and output lists edited in place, several desks each with its own numbers and patch, the kind of source of each channel, the patch taken from the cables and their numbered ports, stereo pairs, phantom power from the microphone's type, signal flow.
 - **Lights:** instruments with a model catalogue (weights and power from datasheets, estimates marked) plus 653 fixtures from the Open Fixture Library with their DMX modes, aim by dragging, mounts with height and load, DMX addressing by universe, circuits, dimmers and phases, side section, bar plan, magic sheet.
-- **Computers, video and network:** a computer element with its programs (a catalogue of 62) and compatibility notes.
+- **Computers, video and network:** a computer element with its programs (a catalogue of 62) and compatibility notes; ports on desks, stageboxes and other gear, several cables between the same two elements, video links with their format, and an Equipment view that lists elements, connections and video in tables.
 - **Production of one event:** setlist, day and build schedules, hospitality and contract, day sheet.
-- **Rider PDF:** compiled in the browser with Typst, tagged, with the plot at a print scale. Plus CSV, SVG, PNG, revisions with comparison and an update sheet.
-- **Warnings** (34 rules, each one can be muted) that never block exporting; works on a phone; installable; works offline.
+- **Rider PDF:** compiled in the browser with Typst, tagged, with the plot at a print scale. Plus CSV, SVG, PNG, revisions with comparison and an update sheet (the `.scaena` file carries them).
+- **Warnings** (41 rules, each one can be muted) that never block exporting; works on a phone; installable; works offline.
 
 [User guide](docs/guide/README.md) · [Guía en español](docs/guide/es/README.md) · [Documentation](docs/README.md) · [Changelog](CHANGELOG.md) · [Third-party notices](THIRD-PARTY-NOTICES.md)
 

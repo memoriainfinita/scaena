@@ -45,6 +45,21 @@ export class History<T> {
     }
   }
 
+  /** Starts a gesture that spans several events (a drag): everything set until the returned function is called is one step. */
+  hold(): () => void {
+    this.grouping++;
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.grouping--;
+      if (this.grouping === 0 && this.pending !== null) {
+        this.push(this.pending);
+        this.pending = null;
+      }
+    };
+  }
+
   undo(): boolean {
     const prev = this.past.pop();
     if (prev === undefined) return false;

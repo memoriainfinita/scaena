@@ -19,6 +19,13 @@ export interface OutFile {
 /** A file name from a show name: letters, digits and dashes only. */
 export const baseName = (name: string): string => name.trim().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'rider';
 
+/** The word that tells one file of a show from another, in the language of the show. */
+export const fileWord = (show: { lang: string }, word: 'plot' | 'lists' | 'daysheet'): string => {
+  const es = { plot: 'plano', lists: 'listas', daysheet: 'hoja-de-ruta' };
+  const en = { plot: 'plot', lists: 'lists', daysheet: 'day-sheet' };
+  return (show.lang === 'es' ? es : en)[word];
+};
+
 export function saveFile(f: OutFile): void {
   const url = URL.createObjectURL(new Blob([f.bytes as BlobPart], { type: f.mime }));
   const a = document.createElement('a');
@@ -35,12 +42,12 @@ export function planSvgFile(show: Show, images: Record<string, Uint8Array>): Out
   const paper = PAPERS[show.paper];
   const plan = planSvg(show, images, { availWidthMm: paper.h - 30, availHeightMm: paper.w - 30, planScale: show.document.planScale, lang: show.lang });
   const svg = plan.svg.replace(/ width="[\d.]+" height="[\d.]+">/, ` width="${plan.widthMm.toFixed(2)}mm" height="${plan.heightMm.toFixed(2)}mm">`);
-  return { name: `${baseName(show.name)}-plano.svg`, bytes: enc.encode(svg), mime: 'image/svg+xml' };
+  return { name: `${baseName(show.name)}-${fileWord(show, 'plot')}.svg`, bytes: enc.encode(svg), mime: 'image/svg+xml' };
 }
 
 /** The plan as a DXF drawing in millimetres for CAD programs. */
 export function planDxfFile(show: Show): OutFile {
-  return { name: `${baseName(show.name)}-plano.dxf`, bytes: enc.encode(planDxf(show).text), mime: 'application/dxf' };
+  return { name: `${baseName(show.name)}-${fileWord(show, 'plot')}.dxf`, bytes: enc.encode(planDxf(show).text), mime: 'application/dxf' };
 }
 
 /** The plan as a PNG, drawn through the browser's own SVG renderer (the loaded fonts are not available there). */
@@ -63,7 +70,7 @@ export async function planPngFile(show: Show, images: Record<string, Uint8Array>
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
     if (!blob) throw new Error('canvas.toBlob returned nothing');
-    return { name: `${baseName(show.name)}-plano.png`, bytes: new Uint8Array(await blob.arrayBuffer()), mime: 'image/png' };
+    return { name: `${baseName(show.name)}-${fileWord(show, 'plot')}.png`, bytes: new Uint8Array(await blob.arrayBuffer()), mime: 'image/png' };
   } finally {
     URL.revokeObjectURL(url);
   }
@@ -82,14 +89,14 @@ export async function riderPdfFile(show: Show, images: Record<string, Uint8Array
 /** A PDF of the plan alone, whichever sections the rider has. */
 export async function planPdfFile(show: Show, images: Record<string, Uint8Array>): Promise<OutFile> {
   const only: Show = { ...show, document: { ...show.document, template: 'custom', sections: ['plan'] } };
-  return { name: `${baseName(show.name)}-plano.pdf`, bytes: await pdfOf(only, images), mime: 'application/pdf' };
+  return { name: `${baseName(show.name)}-${fileWord(show, 'plot')}.pdf`, bytes: await pdfOf(only, images), mime: 'application/pdf' };
 }
 
 /** Every report available for the show as a CSV, in one zip. */
 export function csvZipFile(show: Show): OutFile {
   const files: Record<string, Uint8Array> = {};
   for (const id of availableReports(show)) files[`${id}.csv`] = enc.encode(toCsv(buildReport(show, id)));
-  return { name: `${baseName(show.name)}-listas.zip`, bytes: zipSync(files), mime: 'application/zip' };
+  return { name: `${baseName(show.name)}-${fileWord(show, 'lists')}.zip`, bytes: zipSync(files), mime: 'application/zip' };
 }
 
 /** A one-page PDF that says what changed in a revision, to send to whoever has the previous one. */
@@ -111,5 +118,5 @@ ${rev.changes.length ? `== ${q(D.changes)}\n${rev.changes.map((c) => `- ${q(c)}`
 /** The day sheet of the event: schedules, contacts and where to be. */
 export async function daySheetFile(show: Show): Promise<OutFile> {
   const sheet = buildDaySheet(show);
-  return { name: `${baseName(show.name)}-hoja-de-ruta.pdf`, bytes: await fixPdf(await compilePdf(sheet.source)), mime: 'application/pdf' };
+  return { name: `${baseName(show.name)}-${fileWord(show, 'daysheet')}.pdf`, bytes: await fixPdf(await compilePdf(sheet.source)), mime: 'application/pdf' };
 }

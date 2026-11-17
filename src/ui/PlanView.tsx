@@ -384,7 +384,11 @@ function FocusOverlay({ show, ids, world }: { show: Show; ids: string[]; world: 
               onPointerDown={(ev) => {
                 ev.stopPropagation();
                 (ev.currentTarget as Element).setPointerCapture?.(ev.pointerId);
+                session.value?.beginGesture(); // the whole drag is one undo step
               }}
+              onPointerUp={() => session.value?.endGesture()}
+              onPointerCancel={() => session.value?.endGesture()}
+              onLostPointerCapture={() => session.value?.endGesture()}
               onPointerMove={(ev) => {
                 if (!(ev.buttons & 1)) return;
                 ev.stopPropagation();

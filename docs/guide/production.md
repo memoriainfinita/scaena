@@ -17,3 +17,7 @@ Turn on the **Production** module. It is for **one event**: for several dates, d
 **Hospitality and contract** are structured forms (dressing rooms, catering, dietary needs, after-show meal, bus stock, supplies, transport, lodging, cash in place of supplies; fee, deposit, payment, cancellation, insurance, show length, crew). scaena stores and prints them; it gives no legal advice.
 
 **Event and day sheet:** venue address, parking, notes and **Download the day sheet (PDF)**.
+
+## Notes and the kind of list
+
+**Show notes** is a general field for the whole show, printed at the start of the Notes section. The list that used to be only a setlist has a **List type**: a **setlist** for a band or a DJ, a **run of show** for a play or an event, a **programme** for a conference. The type renames the list in the editor and in the PDF, and each package starts with the one that fits it.

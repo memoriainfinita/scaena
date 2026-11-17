@@ -285,6 +285,6 @@ function elementSvg(e: PlanElement, f: number, k: number, dim: number, units: Sh
   const icon = key && iconData(key) ? key : undefined;
   s += `<g transform="rotate(${e.rotation}) scale(${e.flipX ? -1 : 1} ${e.flipY ? -1 : 1}) translate(${-w / 2} ${-d / 2})">${icon && !outlines ? '' : printStrokes(icon ? footprintBody(w, d) : symbolBody(drawnSymbolOf(it, rp2), w, d), f)}${icon ? iconUse(icon, w, d) : ''}</g>`;
   if (it.symbol === 'dimension') s += `<g transform="rotate(${e.rotation})"><text x="0" y="${r(-d / 2 - 0.8 / k)}" text-anchor="middle" font-size="${r(2.3 / k)}" fill="#000" font-family="Inter">${esc(e.label || formatLength(w, units, lang))}</text></g>`;
-  else if (isText) s += `<text x="${-w / 2 + 60}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text>`;
+  else if (isText) s += `<g transform="rotate(${e.rotation})"><text x="${-w / 2 + 80}" y="${r(d * 0.28)}" font-size="${r(d * 0.62)}" fill="#000" font-family="Inter">${esc(e.label)}</text></g>`;
   return s + '</g>';
 }

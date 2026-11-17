@@ -11,3 +11,7 @@ Choose a **template** (concert, theatre, audiovisual, custom) or tick sections y
 ![Reports](img/informes.png)
 
 **Reports** shows each list as a table (channel hookup, instruments, circuits, dimmers, colour count, focus, labels, inputs, outputs) with CSV download and copy-as-text.
+
+## Plan sheets
+
+The plan is not one fixed page: in **Document** use **Add a sheet** as many times as you need, for the stage plan or the light plot, each with its own **sheet title**, the **layers drawn**, the **scale** and, for the light plot, the **luminaire tags** (unit in a circle, channel and colour below). Every sheet gets a title block under it and its own legend, listing only the layers it shows. A show with no sheet set up prints the single plan it always did.

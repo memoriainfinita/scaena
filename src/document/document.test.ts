@@ -168,4 +168,10 @@ describe('plan SVG', () => {
     const hidden = { ...withText, layers: withText.layers.map((l) => (l.id === 'l-audio' ? { ...l, visible: false } : l)) };
     expect(planSvg(hidden, {}, opts).svg).not.toContain('Guitarra 1');
   });
+
+  test('a turned text note is turned on paper too, as in the editor', () => {
+    const [turned] = addElement(rock(), { type: { id: 'note.text', version: 1 }, x: 2000, y: 2000, rotation: 90, layerId: 'l-notes', label: 'GIRADO' });
+    const svg = planSvg(turned, {}, opts).svg;
+    expect(svg).toMatch(/<g transform="rotate\(90\)"><text [^>]*>GIRADO<\/text><\/g>/);
+  });
 });

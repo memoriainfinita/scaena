@@ -1,5 +1,30 @@
 # Changelog
 
+## Unreleased
+
+Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 files open and are migrated.
+
+### Added
+
+- **Several desks:** each with its own channel numbers, patch and outputs, a selector in Inputs and Outputs, and one table per desk in the PDF and the reports.
+- **Ports:** inputs and outputs of desks, stageboxes, interfaces, network gear, projectors, screens and cameras, filled from the library with typical values (marked as such); cables name the port at each end and carry several channels, stereo pairs, and USB signals; six new warnings. Several cables between the same two elements, drawn side by side, with a tip for identical ones.
+- **Equipment view:** elements, connections and video in tables that edit in place, with filters and sorting; a Video section in the PDF; video links carry a format.
+- **Inputs:** kind of source (microphone, DI, line, computer or player, other); show notes; a list type (setlist, run of show, programme) by package.
+- **Plot:** handles to resize and to turn the selected element; webcam, tripods and selfie stick, and cleaner empty stands (853 symbols).
+- **Revisions travel:** the `.scaena` file and a duplicate carry the copy of every revision.
+- **Saving:** the top bar says what the save is doing (unsaved, saving, saved, error with its reason and a retry, or no local library); the show is saved when the tab is left; a show with a value over a limit of the format is cut when saved and says so; a second tab with the same show is told instead of overwriting the first one; images the show no longer uses are not kept.
+- **Error screen:** an interface error shows a page with a copy of the show to download and a reload button, instead of a blank page.
+- **Warnings:** 41 rules.
+
+### Fixed
+
+- Space and the arrow keys on a focused button, checkbox or panel edge are no longer taken by the plot; single-character shortcuts act only with focus on the plot (WCAG 2.1.1 and 2.1.4).
+- Deleting an element that owns channels renumbers the rest, frees their stereo partner and removes them from the monitor mixes.
+- A turned text note is turned in the PDF too.
+- The revision comparison names changes to contacts, schedule, setlist, hospitality, contract, notes, title block and the rest of the document.
+- Dragging a luminaire's aim point is one undo step.
+- Exported file names follow the language of the show.
+
 ## 0.1.0 (2026-11-12)
 
 First public version: the first complete version of 2026-11-05 and everything added since.

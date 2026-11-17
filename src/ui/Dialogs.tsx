@@ -274,7 +274,7 @@ function ExportDialog({ onClose }: { onClose: () => void }) {
   };
 
   const items: { key: string; label: Key; tip?: Key; job: () => Promise<OutFile | null> | OutFile | null }[] = [
-    { key: 'scaena', label: 'export.scaena', tip: 'export.scaena.tip', job: () => ({ name: `${baseName(show().name)}.scaena`, bytes: s.toFile(), mime: 'application/zip' }) },
+    { key: 'scaena', label: 'export.scaena', tip: 'export.scaena.tip', job: async () => ({ name: `${baseName(show().name)}.scaena`, bytes: await s.toFileWithRevisions(), mime: 'application/zip' }) },
     { key: 'pdf', label: 'export.pdf', tip: 'export.pdf.tip', job: () => riderPdfFile(show(), s.allImages()) },
     { key: 'daysheet', label: 'export.daysheet', tip: 'export.daysheet.tip', job: () => daySheetFile(show()) },
     { key: 'planpdf', label: 'export.planpdf', job: () => planPdfFile(show(), s.allImages()) },

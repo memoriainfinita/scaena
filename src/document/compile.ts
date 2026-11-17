@@ -60,9 +60,6 @@ function recycle(): void {
   ready = null;
 }
 
-/** Closes the worker, e.g. when leaving the document view for a long time. */
-export const stopCompiler = recycle;
-
 /** Compiles a Typst project to PDF bytes. Calls are queued; a failed one does not stop the next. */
 export function compilePdf(source: string, files: Record<string, Uint8Array> = {}): Promise<Uint8Array> {
   const run = async () => {

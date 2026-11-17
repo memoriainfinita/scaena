@@ -1,6 +1,6 @@
 # Publishing scaena
 
-As of 2026-11-05: **published** at https://memoriainfinita.github.io/scaena/ (public repository https://github.com/memoriainfinita/scaena, Pages from GitHub Actions).
+As of 2026-11-17: **published** at https://memoriainfinita.github.io/scaena/ (public repository https://github.com/memoriainfinita/scaena, Pages from GitHub Actions).
 
 ## How it is set up
 
@@ -25,5 +25,7 @@ As of 2026-11-05: **published** at https://memoriainfinita.github.io/scaena/ (pu
 
 - Every change on `main` redeploys. Users see a notice with "Update"; the page never reloads by itself.
 - Version: change `version` in `package.json`, note the change in `CHANGELOG.md` and regenerate `THIRD-PARTY-NOTICES.md` if the dependencies change.
-- Not yet checked: Chrome keeping the `.wasm` between visits on the real site, a real phone and Safari.
-- Open before saying "1.0": PDF/UA with veraPDF once the compiler publishes `ua-1`, Cyrillic and Greek in the PDF, and whatever is left in the TODO of `state.md`.
+- Checked since the first deployment: Chrome keeps the `.wasm` between visits on the real site (service worker, 2026-11-08), and a real phone with Chrome and Firefox (2026-11-07). Not yet checked: Safari on iOS.
+- The CI also runs the tests marked `@slow` (the sweep of every view and dialog in `e2e/a11y-all.spec.ts`), which are skipped on a developer's machine unless `E2E_ALL=1` is set: after changing a text of the interface, run that file with it before pushing (the CI failed on 2026-11-16 for a title the sweep looked for).
+- Check that a deployment really happened: the CI run of the commit must end with the `deploy` job in green, and the `Last-Modified` header of the site then carries the time of that run.
+- Open before saying "1.0": PDF/UA with veraPDF once the compiler publishes `ua-1`, and whatever is left in the TODO of `state.md`. Cyrillic and Greek are in the PDF (fonts fetched only when the document uses them).

@@ -18,7 +18,7 @@ export interface StoredShow {
 
 export type Kind = 'show' | 'template';
 /** A show read from the library. `repaired` counts the values cut or clamped to fit the format; `newer` tells a show of a later scaena from a damaged one. */
-export type Loaded = { ok: true; show: Show; images: Record<string, Uint8Array>; repaired: number } | { ok: false; error: string; newer: boolean };
+export type Loaded = { ok: true; show: Show; images: Record<string, Uint8Array>; repaired: number; updated: number } | { ok: false; error: string; newer: boolean };
 
 const wrap = <T>(req: IDBRequest<T>): Promise<T> =>
   new Promise((resolve, reject) => {
@@ -40,20 +40,56 @@ export function openLibrary(): Promise<IDBDatabase> {
   });
 }
 
-export async function saveShow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}, kind: Kind = 'show'): Promise<void> {
+/** Another tab (or window) saved the show after this one read it: writing now would erase that work. */
+export class ConflictError extends Error {
+  constructor() {
+    super('the show was changed elsewhere');
+    this.name = 'ConflictError';
+  }
+}
+
+/**
+ * Writes a show. With `expected` (the `updated` this tab last read or wrote), it writes only if the stored copy still has
+ * that stamp, in one transaction, and otherwise throws `ConflictError` and leaves the stored copy alone. Returns the new stamp.
+ */
+export async function saveShow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}, kind: Kind = 'show', expected?: number | null): Promise<number> {
   const record: StoredShow = { id, name: show.name, updated: Date.now(), data: show, images, kind };
-  await wrap(db.transaction('shows', 'readwrite').objectStore('shows').put(record));
+  const tx = db.transaction('shows', 'readwrite');
+  const store = tx.objectStore('shows');
+  let failure: unknown = null;
+  const read = store.get(id);
+  read.onsuccess = () => {
+    const stored = read.result as StoredShow | undefined;
+    if (expected != null && stored && stored.updated !== expected) {
+      failure = new ConflictError();
+      tx.abort();
+      return;
+    }
+    try {
+      store.put(record);
+    } catch (e) {
+      failure = e;
+      tx.abort();
+    }
+  };
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(failure ?? tx.error);
+    tx.onabort = () => reject(failure ?? tx.error);
+  });
+  return record.updated;
 }
 
 /**
  * Starts writing a show, and that it is the last one open, before returning: for the moment the page is being left, when
  * nothing that waits for a promise is sure to run (see `saveOnLeave` for which moments keep the write).
  */
-export function writeShowNow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}): void {
+export function writeShowNow(db: IDBDatabase, id: string, show: Show, images: Record<string, Uint8Array> = {}): number {
   const tx = db.transaction(['shows', 'meta'], 'readwrite');
   const record: StoredShow = { id, name: show.name, updated: Date.now(), data: show, images, kind: 'show' };
   tx.objectStore('shows').put(record);
   tx.objectStore('meta').put(id, 'last');
+  return record.updated;
 }
 
 export async function listShows(db: IDBDatabase, kind: Kind = 'show'): Promise<{ id: string; name: string; updated: number }[]> {
@@ -69,7 +105,7 @@ export async function readShow(db: IDBDatabase, id: string): Promise<Loaded | nu
   const rec = (await wrap(db.transaction('shows').objectStore('shows').get(id))) as StoredShow | undefined;
   if (!rec) return null;
   try {
-    return { ok: true, ...openShow(rec.data), images: rec.images };
+    return { ok: true, ...openShow(rec.data), images: rec.images, updated: rec.updated };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e), newer: e instanceof UnsupportedFormat && e.newer };
   }
@@ -80,6 +116,22 @@ export async function deleteShow(db: IDBDatabase, id: string): Promise<void> {
   tx.objectStore('shows').delete(id);
   const keys = (await wrap(tx.objectStore('revisions').getAllKeys())) as string[];
   for (const k of keys) if (k.startsWith(`${id}:`)) tx.objectStore('revisions').delete(k);
+  await new Promise<void>((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** Copies the stored revisions of one show to another (a duplicate keeps its history). */
+export async function copyRevisionData(db: IDBDatabase, fromId: string, toId: string): Promise<void> {
+  const tx = db.transaction('revisions', 'readwrite');
+  const store = tx.objectStore('revisions');
+  const keys = (await wrap(store.getAllKeys())) as string[];
+  for (const k of keys) {
+    if (!k.startsWith(`${fromId}:`)) continue;
+    const data = await wrap(store.get(k));
+    store.put(data, `${toId}:${k.slice(fromId.length + 1)}`);
+  }
   await new Promise<void>((resolve, reject) => {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);

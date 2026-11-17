@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-15
+last_updated: 2026-11-17
 ---
 
 # scaena — state
@@ -15,7 +15,7 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 
 ## Status
 
-- **Retomar por:** la CI de `5812c43` pasó y desplegó (web del 2026-11-16 15:46 GMT). Lo de teclado (Espacio y atajos) está hecho y sin commitear; siguiente hallazgo de la auditoría del 2026-11-16 en el TODO, con diseño antes de código
+- **Retomar por:** la CI de `5812c43` pasó y desplegó (web del 2026-11-16 15:46 GMT). Lo del 2026-11-17 (borrado con canales, notas giradas, comparador, revisiones en el archivo, deshacer del punto de mira, pantalla de error, dos pestañas, restos y documentación) está hecho; está commiteado en dos commits locales (el de teclado `1a9f4d5` y el de la tanda), sin subir. Queda la lista del TODO de la auditoría: guardado al ocultar en móvil real, decidir los campos del formato sin uso, y leer a fondo lo no revisado
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 843 símbolos (775 hasta el 2026-11-10), uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
@@ -156,16 +156,16 @@ Pruebas que reproducen cada fallo en `.work/audit-1116/` (fuera de git).
 
 - [ ] Comprobar que la CI de `5812c43` pasó y que la web publicada cambió de build; después, probar el guardado al ocultar la pestaña en un móvil real
 - [x] (hecho 2026-11-16, sin commitear) Espacio no activaba botones en la vista Plano y los atajos de una tecla eran globales (WCAG 2.1.1 y 2.1.4). `PlanView.tsx`: `ownsKey` deja a un control fuera del lienzo sus teclas; `focusInCanvas` limita R, F, 0, + , − y Espacio al lienzo o al body; `?` en `App.tsx` no actúa con el foco en un control. Las flechas movían además la selección con el foco en el separador de panel: arreglado. Pruebas en `e2e/keyboard.spec.ts`; la guía de atajos lo explica
-- [ ] Borrar un elemento con canales no renumera, y deja pares estéreo y mezclas colgando (`removeElements`)
+- [x] (hecho 2026-11-17, sin commitear) Borrar un elemento con canales no renumeraba y dejaba pares estéreo y mezclas colgando. `removeElements` delega en `removeChannels` y `removeOutputs` (`src/model/audio.ts`), que renumeran, liberan el estéreo y limpian las mezclas; pruebas en `src/model/model.test.ts`. Sin resolver: los números por mesa de `assign` no se renumeran al borrar un canal, ni por el plano ni por la tabla
 - [ ] Avisos con el nombre del elemento en español en la interfaz en inglés (`elName` en `rules.ts`)
-- [ ] Las notas de texto giradas salen sin girar en el PDF (`plan-svg.ts`)
-- [ ] El comparador de revisiones ignora horario, contactos, setlist, hospitalidad, contrato, notas y cajetín
-- [ ] Las instantáneas de revisión no viajan con el `.scaena` ni con un duplicado
-- [ ] Arrastrar el punto de mira deja un paso de deshacer por movimiento (leído en el código, sin reproducir)
-- [ ] Sin pantalla de error (no hay error boundary; `error.title` sin usar)
-- [ ] Dos pestañas con el mismo montaje se pisan; las imágenes importadas no se limpian de la biblioteca local
-- [ ] Restos: campos del formato sin uso (`view.greyscale`, `Luminaire.accessories`, `circuits[].dimmerId`, `Desk.elementId`), `makeComputer`, `stopCompiler`, `SizeOf`, `void baseName`, 8 claves de traducción, `D.maxLoad.replace`, comentarios huérfanos, valores de relleno en escenario libre, nombres de archivo exportados solo en español
-- [ ] Documentación: README (853 símbolos, 41 reglas), CHANGELOG sin lo del 15 y 16 de noviembre (formato 2), guía sin Equipos, mesas, puertos, asas ni hojas de plano, `docs/publishing.md`
+- [x] (hecho 2026-11-17, sin commitear) Las notas de texto giradas salían sin girar en el PDF: el texto va ahora en un grupo girado (`plan-svg.ts`) y a 80 de desplazamiento, como el editor (antes 60); prueba en `src/document/document.test.ts`
+- [x] (hecho 2026-11-17, sin commitear) El comparador de revisiones ignoraba horario, contactos, setlist, hospitalidad, contrato, notas y cajetín. `diffShows` añade la línea «Contenido del documento» con las áreas cambiadas (`AREAS` en `src/model/diff.ts`; las listas dicen +n/−n); `view`, `magicLayout`, `muted`, `counters` y `revision` quedan fuera a propósito. Pruebas en `src/model/diff.test.ts`
+- [x] (hecho 2026-11-17, sin commitear) Las instantáneas de revisión no viajaban con el `.scaena` ni con un duplicado. El zip lleva `revisions/<n>.gz` (solo las que la lista del montaje nombra; aditivo, sin subir `formatVersion`), `Session.toFileWithRevisions` las lee al exportar, `openFileBytes` las guarda al abrir y `copyRevisionData` las copia al duplicar. Decidido con el usuario: se incluyen siempre, sin casilla. Pruebas en `model.test.ts`, `save.test.ts` y `e2e/export.spec.ts`
+- [x] (hecho 2026-11-17, sin commitear) Arrastrar el punto de mira dejaba un paso de deshacer por movimiento: `History.hold` y `Session.beginGesture`/`endGesture` agrupan el gesto en un paso (probado en `model.test.ts` y `save.test.ts`; sin e2e del arrastre). La hoja magic y los demás arrastres ya confirmaban al soltar
+- [x] (hecho 2026-11-17, sin commitear) Sin pantalla de error: `App.tsx` usa `useErrorBoundary` y muestra `Crashed` (copia `.scaena` para descargar, recargar, detalle técnico); e2e en `e2e/crash.spec.ts`. No cubre errores de manejadores de eventos ni promesas
+- [x] (hecho 2026-11-17, sin commitear) Dos pestañas con el mismo montaje se pisaban, y las imágenes importadas no se limpiaban de la biblioteca local. Guardado: cada sesión recuerda el `updated` que leyó o escribió (`stamp`); `saveShow` solo escribe si el guardado almacenado lo conserva (una transacción) y si no lanza `ConflictError` («este montaje se ha cambiado en otra pestaña», con reintento); un `BroadcastChannel` avisa a las demás pestañas y `leave()` no escribe encima si ya hay conflicto. Al conflicto no se ofrece sobrescribir: se descarga una copia y se recarga. Imágenes: la biblioteca guarda solo las que el montaje usa, salvo con revisiones guardadas (una revisión restaurada puede nombrar otra); la sesión las conserva todas para deshacer. Pruebas en `save.test.ts` y `e2e/save.spec.ts`
+- [ ] Restos, hecho el 2026-11-17 (sin commitear): quitados `makeComputer`, `stopCompiler`, `SizeOf`, `void baseName`, 5 claves de traducción sin uso (`app.loading`, `table.yes`, `data.schedule`, `data.addSlot`, `plan.moved`; eran 5, no 8) y el comentario huérfano de `compile.ts`; `D.maxLoad.replace` sustituido por `D.maxLoadW`; nombres de archivo exportados según el idioma del montaje (`fileWord`). Pendiente de decidir: campos del formato sin uso (`view.greyscale`, `Luminaire.accessories` que solo usa el paquete de muestra, `circuits[].dimmerId`, `Desk.elementId` que solo usa el paquete de muestra), valores de relleno en escenario libre y otros comentarios huérfanos (no localizados)
+- [x] (hecho 2026-11-17, sin commitear) Documentación: README (853 símbolos, 41 reglas, mesas, puertos, Equipos), CHANGELOG con una sección «Unreleased» (formato 2 y lo del 15 al 17 de noviembre), guía en inglés y en español con Equipos (página nueva), mesas, tipo de fuente, puertos, varios cables, asas, hojas de plano y notas y tipo de lista, y `docs/publishing.md`. Sin captura propia para la página Equipos (la prueba de la guía exige que toda captura se use, no que toda página tenga una)
 - [ ] Sin leer a fondo en la auditoría: importación y exportación DXF, colocación de etiquetas y enrutado, vistas Luces, Audio, Producción y Equipos; sin probar móvil, Safari ni rendimiento
 
 ### Fuera de los grupos

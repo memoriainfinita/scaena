@@ -1,4 +1,5 @@
 // Pure operations on a show: each returns a new show and never mutates the old one.
+import { removeChannels, removeOutputs } from './audio.ts';
 import { nextId } from './ids.ts';
 import type { Computer, PlanElement, Show } from './schema.ts';
 
@@ -35,19 +36,19 @@ export function moveElements(show: Show, ids: string[], dx: number, dy: number):
 
 const filterRecord = <T>(rec: Record<string, T>, drop: (x: T) => boolean): Record<string, T> => Object.fromEntries(Object.entries(rec).filter(([, x]) => !drop(x)));
 
-/** Removes the elements and everything that points at them: channels, outputs and connections. */
+/** Removes the elements and everything that points at them: connections, and the channels and outputs they own (the rest are renumbered, see `removeChannels`). */
 export function removeElements(show: Show, ids: string[]): Show {
   const gone = new Set(ids);
-  return {
+  const owned = (x: { sourceElementId?: string | null }) => x.sourceElementId != null && gone.has(x.sourceElementId);
+  const dropped: Show = {
     ...show,
     elements: filterRecord(show.elements, (e) => gone.has(e.id)),
-    channels: filterRecord(show.channels, (c) => c.sourceElementId !== null && gone.has(c.sourceElementId)),
-    outputs: filterRecord(show.outputs, (o) => o.sourceElementId !== null && gone.has(o.sourceElementId)),
     connections: filterRecord(show.connections, (c) => gone.has(c.from) || gone.has(c.to)),
   };
+  const withoutChannels = removeChannels(dropped, Object.values(show.channels).filter(owned).map((c) => c.id));
+  return removeOutputs(withoutChannels, Object.values(show.outputs).filter(owned).map((o) => o.id));
 }
 
-export type SizeOf = (el: PlanElement) => { w: number; d: number };
 export type AlignMode = 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom';
 
 const norm = (deg: number) => ((deg % 360) + 360) % 360;

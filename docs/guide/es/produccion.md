@@ -27,3 +27,7 @@ Formularios con lo habitual de un rider: camerinos y sus condiciones, comidas y 
 ## Evento y hoja de ruta
 
 Dirección de la sala, aparcamiento y notas, y el botón **Descargar la hoja de ruta (PDF)**: una hoja con el horario del día, el de montaje, los contactos (sin lo que hayas ocultado) y los datos del evento.
+
+## Notas y tipo de lista
+
+Las **Notas del montaje** son un campo general para todo el montaje, impreso al principio de la sección de Notas. La lista que antes era solo un setlist tiene un **Tipo de lista**: un **setlist** para una banda o un DJ, una **escaleta** para una obra o un evento, un **programa** para una conferencia. El tipo cambia el nombre de la lista en el editor y en el PDF, y cada paquete empieza con el que le corresponde.

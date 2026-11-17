@@ -1,7 +1,7 @@
 // The local library: every show kept in this browser, and the user's own templates.
 import { signal } from '@preact/signals';
 import type { Show } from '../model/schema.ts';
-import { deleteShow, listShows, readShow, saveShow, type Kind } from './storage.ts';
+import { copyRevisionData, deleteShow, listShows, readShow, saveShow, type Kind } from './storage.ts';
 import { library, session, openStored, refreshRecents } from './state.ts';
 
 export interface Entry {
@@ -36,6 +36,7 @@ async function copyStored(id: string, kind: Kind, name: (old: string) => string)
   const copy: Show = { ...r.show, name: name(r.show.name).slice(0, 120), revisions: kind === 'template' ? [] : r.show.revisions };
   const nid = newId();
   await saveShow(d, nid, copy, r.images, kind);
+  if (kind === 'show') await copyRevisionData(d, id, nid);
   return nid;
 }
 

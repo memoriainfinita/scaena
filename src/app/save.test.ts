@@ -3,8 +3,9 @@ import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { unpackShow } from '../model/archive.ts';
 import { LIMITS } from '../model/limits.ts';
-import { openFileBytes, openStored, renameShow, reopenLast, session, setElementField, setLibrary, startEmpty, startError, addFromLibrary } from './state.ts';
-import { openLibrary, readShow, saveShow } from './storage.ts';
+import { duplicateStored, shows } from './library-actions.ts';
+import { openFileBytes, openStored, renameShow, reopenLast, session, setElementField, setLibrary, startEmpty, startError, startFromPackage, addFromLibrary } from './state.ts';
+import { openLibrary, readRevisionData, readShow, saveShow } from './storage.ts';
 import { newShow } from '../model/new.ts';
 
 let db: IDBDatabase;
@@ -170,5 +171,119 @@ describe('opening a stored show', () => {
   test('a file that is not a show is an error of the file, not "newer"', () => {
     openFileBytes(new Uint8Array([1, 2, 3, 4]));
     expect(startError.value).toMatchObject({ stored: false });
+  });
+});
+
+describe('revisions travel with the show', () => {
+  const stored = async (id: string) => (await readShow(db, id)) as Extract<Awaited<ReturnType<typeof readShow>>, { ok: true }>;
+
+  test('a .scaena file carries the copy of each revision and opens with them', async () => {
+    startFromPackage('showcase', 'Muestra');
+    const s = session.value!;
+    await s.flush();
+    await new Promise((r) => setTimeout(r, 50)); // the package stores its copies without waiting
+    const numbers = s.show.value.revisions.map((r) => r.number);
+    expect(numbers.length).toBeGreaterThan(0);
+    const bytes = await s.toFileWithRevisions();
+    expect(Object.keys(unpackShow(bytes).revisions).map(Number).sort()).toEqual([...numbers].sort());
+
+    // In a library that has none of them, they are there after opening the file.
+    session.value = null;
+    await new Promise<void>((resolve) => {
+      db.close();
+      const req = indexedDB.deleteDatabase('scaena');
+      req.onsuccess = req.onerror = req.onblocked = () => resolve();
+    });
+    db = await openLibrary();
+    setLibrary(Promise.resolve(db));
+    openFileBytes(bytes);
+    const opened = session.value!;
+    await new Promise((r) => setTimeout(r, 50));
+    for (const n of numbers) expect(await opened.loadRevision(n)).toBeInstanceOf(Uint8Array);
+  });
+
+  test('a duplicate keeps the copies of the revisions', async () => {
+    startFromPackage('showcase', 'Muestra');
+    const s = session.value!;
+    await s.flush();
+    await new Promise((r) => setTimeout(r, 50));
+    const numbers = s.show.value.revisions.map((r) => r.number);
+    await duplicateStored(s.id, '(copia)');
+    const copy = shows.value.find((x) => x.name === 'Muestra (copia)')!;
+    expect(copy).toBeTruthy();
+    const open = await stored(copy.id);
+    expect(open.show.revisions.map((r) => r.number)).toEqual(numbers);
+    for (const n of numbers) expect(await readRevisionData(db, copy.id, n)).toBeInstanceOf(Uint8Array);
+  });
+});
+
+describe('a drag that commits on every move', () => {
+  test('is one undo step between beginGesture and endGesture', () => {
+    startEmpty('Uno');
+    const s = session.value!;
+    const id = addFromLibrary('mic.boom-tall')!;
+    const before = s.show.value.elements[id]!.x;
+    s.beginGesture();
+    for (let i = 1; i <= 5; i++) setElementField(id, { x: before + i * 10 });
+    s.beginGesture(); // a second begin does not nest
+    s.endGesture();
+    expect(s.show.value.elements[id]!.x).toBe(before + 50);
+    s.undo();
+    expect(s.show.value.elements[id]!.x).toBe(before);
+    s.endGesture(); // ending with no gesture open is harmless
+  });
+});
+
+describe('two tabs with the same show', () => {
+  test('the tab that saves second is told, and the first one is not overwritten', async () => {
+    startEmpty('Uno');
+    const a = session.value!;
+    await a.flush();
+    // The second tab opens the stored copy.
+    await openStored(a.id);
+    const b = session.value!;
+    expect(b).not.toBe(a);
+    renameShow('Desde B');
+    await b.flush();
+    // The first tab still has the old stamp.
+    session.value = a;
+    renameShow('Desde A');
+    await expect(a.flush()).rejects.toThrow();
+    expect(a.saveState.value).toBe('error');
+    expect(a.saveError.value).toMatch(/otra pestaña|another tab/);
+    const stored = await readShow(db, a.id);
+    expect(stored?.ok && stored.show.name).toBe('Desde B');
+  });
+
+  test('one tab saving again and again is never in conflict with itself', async () => {
+    startEmpty('Uno');
+    const s = session.value!;
+    for (const n of ['a', 'b', 'c']) {
+      renameShow(n);
+      await s.flush();
+    }
+    expect(s.saveState.value).toBe('saved');
+    // Leaving the page writes at once and the ordinary save after it still goes through.
+    renameShow('d');
+    s.leave();
+    renameShow('e');
+    await s.flush();
+    expect(s.saveState.value).toBe('saved');
+    const stored = await readShow(db, s.id);
+    expect(stored?.ok && stored.show.name).toBe('e');
+  });
+});
+
+describe('images in the local library', () => {
+  test('an image the show no longer uses is not kept, and one it uses is', async () => {
+    startEmpty('Uno');
+    const s = session.value!;
+    s.addImage('viejo.png', new Uint8Array([1]));
+    s.addImage('logo.png', new Uint8Array([2]));
+    s.commit((show) => ({ ...show, titleBlock: { ...show.titleBlock, logo: 'logo.png' } }));
+    await s.flush();
+    const stored = await readShow(db, s.id);
+    expect(stored?.ok && Object.keys(stored.images)).toEqual(['logo.png']);
+    expect(Object.keys(s.allImages()).sort()).toEqual(['logo.png', 'viejo.png']); // the session keeps both, for undo
   });
 });

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { unpackShow, packShow } from './archive.ts';
+import { addChannel, addOutput, channelList, outputList, setMixLevel, setStereoPair } from './audio.ts';
 import { History } from './history.ts';
 import { nextId } from './ids.ts';
 import { loadShow, UnsupportedFormat } from './migrate.ts';
@@ -76,6 +77,77 @@ describe('operations', () => {
   });
 });
 
+describe('removing an element that owns channels and outputs', () => {
+  const withThree = () => {
+    let show = newShow('x');
+    const made: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const [s, el] = addElement(show, { type: drum, x: 1000 * (i + 1), y: 0, layerId: 'l-audio' });
+      const [s2] = addChannel(s, { shortName: `c${i + 1}`, sourceElementId: el.id });
+      show = s2;
+      made.push(el.id);
+    }
+    return { show, made };
+  };
+
+  test('leaves the channel numbers 1..n without gaps, and the next one added is new', () => {
+    const { show, made } = withThree();
+    const after = removeElements(show, [made[1]!]);
+    expect(channelList(after).map((c) => [c.shortName, c.number])).toEqual([['c1', 1], ['c3', 2]]);
+    const [next] = addChannel(after);
+    const nums = channelList(next).map((c) => c.number);
+    expect(new Set(nums).size).toBe(nums.length);
+  });
+
+  test('frees the stereo partner and removes the channel from the monitor mixes', () => {
+    const { show, made } = withThree();
+    const [a, b] = channelList(show);
+    let s = setStereoPair(show, a!.id, b!.id);
+    const [s2, out] = addOutput(s);
+    s = setMixLevel(s2, out.id, b!.id, 'normal');
+    const after = removeElements(s, [made[1]!]);
+    expect(after.channels[a!.id]!.stereoPairWith).toBeNull();
+    expect(Object.keys(after.outputs[out.id]!.mix)).toEqual([a!.id]); // the pair was in the mix; only the removed side leaves it
+  });
+
+  test('several elements at once, and both channels of a stereo pair', () => {
+    const { show, made } = withThree();
+    const [a, b] = channelList(show);
+    const after = removeElements(setStereoPair(show, a!.id, b!.id), [made[0]!, made[1]!]);
+    expect(channelList(after).map((c) => [c.shortName, c.number, c.stereoPairWith])).toEqual([['c3', 1, null]]);
+  });
+
+  test('the outputs an element owns go and the others are renumbered', () => {
+    const { show, made } = withThree();
+    let s = show;
+    const ids: string[] = [];
+    for (const owner of [made[0]!, made[1]!, null]) {
+      const [n, o] = addOutput(s, { sourceElementId: owner });
+      s = n;
+      ids.push(o.id);
+    }
+    const after = removeElements(s, [made[0]!]);
+    expect(outputList(after).map((o) => [o.id, o.number])).toEqual([[ids[1], 1], [ids[2], 2]]);
+  });
+});
+
+describe('history gestures', () => {
+  test('hold makes every set until its release one step, and releasing twice does nothing', () => {
+    const h = new History(0);
+    const release = h.hold();
+    h.set(1);
+    h.set(2);
+    h.set(3);
+    expect(h.canUndo).toBe(false);
+    release();
+    release();
+    expect(h.canUndo).toBe(true);
+    expect(h.undo()).toBe(true);
+    expect(h.state).toBe(0);
+    expect(h.undo()).toBe(false);
+  });
+});
+
 describe('history', () => {
   test('undo and redo, and a new change clears redo', () => {
     const h = new History(0);
@@ -146,6 +218,23 @@ describe('archive and revisions', () => {
     const back = unpackShow(bytes);
     expect(back.show).toEqual(s);
     expect([...back.images['fondo.png']!]).toEqual([1, 2, 3]);
+  });
+
+  test('the copies of the listed revisions travel in the file, and nothing else under revisions/', async () => {
+    const { zipSync, strToU8 } = await import('fflate');
+    const { saveRevision } = await import('./revisions.ts');
+    const { show, data } = saveRevision(newShow('Con historial'), '2026-11-17', 'primera');
+    const bytes = zipSync({
+      'show.json': strToU8(JSON.stringify(show)),
+      'revisions/1.gz': data,
+      'revisions/2.gz': new Uint8Array([9]), // not listed by the show
+      'revisions/x.gz': new Uint8Array([9]), // not a number
+      'revisions/1/../3.gz': new Uint8Array([9]),
+    });
+    const back = unpackShow(bytes);
+    expect(Object.keys(back.revisions)).toEqual(['1']);
+    expect([...back.revisions[1]!]).toEqual([...data]);
+    expect(Object.keys(unpackShow(packShow(show, {}, { 1: data })).revisions)).toEqual(['1']);
   });
 
   test('refuses an archive without show.json', async () => {

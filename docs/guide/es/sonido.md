@@ -28,3 +28,11 @@ Añade un **Rack** desde la biblioteca y pulsa **Montar el rack** en su panel: f
 ## Cosas que avisan
 
 Canales sin nombre o sin micro, pares mal empezados, cuñas dibujadas que nadie pide (o al revés), monitores desordenados. Ver [Los avisos](avisos.md).
+
+## Tipo de fuente
+
+Cada canal indica qué lo alimenta: **micrófono**, **caja de inyección (DI)**, **nivel de línea**, **ordenador o reproductor** u **otro**. Si se deja vacío, se deduce del equipo (una DI conocida es una DI, cualquier otra cosa un micrófono). La columna se llama **Equipo**; el PDF y los informes anteponen el tipo al nombre cuando no es micrófono ni DI. La alimentación fantasma solo se sugiere para fuentes que la admiten.
+
+## Varias mesas
+
+**Añadir mesa** (encima de la lista de entradas) añade otra mesa de mezclas, por ejemplo la de monitores junto al escenario, con su **nombre**, su **función** (FOH, monitores, retransmisión, otra), su **modelo** y su **archivo de show**. Cada mesa tiene sus propios números de canal, su propio patch y sus propias salidas: elige la mesa en el selector de Entradas y Salidas, y un canal se puede enviar a una mesa o dejar fuera. El PDF y los informes imprimen una tabla por mesa. **Quitar mesa** pasa sus salidas a la mesa principal y descarta sus números de canal; las fuentes se quedan.

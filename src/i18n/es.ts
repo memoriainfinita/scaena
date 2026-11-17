@@ -6,7 +6,6 @@ export interface Plural {
 
 export const es = {
   'app.name': 'scaena',
-  'app.loading': 'Cargando…',
   'view.equipment': 'Equipos',
   'equip.tabs': 'Secciones de equipos',
   'equip.tab.elements': 'Elementos',
@@ -63,7 +62,6 @@ export const es = {
   'table.stand.tip': 'El pie o soporte sobre el que va el micro',
   'table.stand': 'Pie',
   'table.phantom': 'Fantasma',
-  'table.yes': 'Sí',
   'table.no': 'No',
   'desk.title': 'Mesas',
   'desk.add': 'Añadir mesa',
@@ -231,8 +229,6 @@ export const es = {
   'data.contacts': 'Contactos',
   'data.contact': 'Contacto {n}',
   'data.addContact': 'Añadir contacto',
-  'data.schedule': 'Horario',
-  'data.addSlot': 'Añadir hora',
   'contact.role': 'Función',
   'contact.role.ph': 'Regidor, técnico de sala…',
   'contact.name.ph': 'Nombre completo',
@@ -654,6 +650,7 @@ export const es = {
   'top.saved': 'Guardado',
   'top.unsaved': 'Sin guardar',
   'top.nosave': 'Este navegador no guarda datos locales',
+  'save.conflict': 'este montaje se ha cambiado en otra pestaña o ventana. Descarga una copia y recarga para ver la otra versión',
   'top.saveError': 'No se pudo guardar: {reason}',
   'top.saveRetry': 'Reintentar',
   'notice.trimmed': { one: 'Se ha recortado {n} valor que superaba el límite del archivo. Revisa los textos largos.', other: 'Se han recortado {n} valores que superaban el límite del archivo. Revisa los textos largos.' } as Plural,
@@ -755,7 +752,6 @@ export const es = {
   'plan.measureBar': 'Medición',
   'plan.dimension.fix': 'Fijar como cota',
   'plan.text': 'Texto',
-  'plan.moved': 'Movido',
   'align.label': 'Alinear y distribuir',
   'align.left': 'Alinear a la izquierda',
   'align.center': 'Centrar en horizontal',
@@ -867,6 +863,10 @@ export const es = {
   'update.available': 'Hay una versión nueva de scaena.',
   'update.apply': 'Actualizar',
   'error.title': 'Algo ha fallado',
+  'error.body': 'scaena se ha detenido por un error. Tu montaje se guardó como lo dejaste; no se ha enviado nada a ningún sitio.',
+  'error.download': 'Descargar una copia (.scaena)',
+  'error.reload': 'Recargar scaena',
+  'error.detail': 'Detalle técnico',
 } as const;
 
 export type Key = keyof typeof es;

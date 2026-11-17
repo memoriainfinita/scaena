@@ -405,7 +405,7 @@ ${heading(D.magic)}#align(center)[#image("/magic.svg", width: ${width.toFixed(2)
       const circuits = circuitLoads(show);
       if (circuits.length > 0) md += c.table(D.circuit, [{ mm: 20 }, { fr: 1 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.circuit, D.element, D.power, D.amps, D.phase], circuits.map((x) => [String(x.circuit), String(x.count), num(x.powerW), num(x.amps, 2), x.phase === null ? D.none : `L${x.phase}`])) + '\n';
       const dimmers = dimmerLoads(show);
-      if (dimmers.length > 0) md += c.table(D.dimmer, [{ mm: 20 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.dimmer, D.element, D.power, D.maxLoad.replace(/ \(kg\)/, ' (W)')], dimmers.map((x) => [String(x.dimmer), String(x.count), num(x.powerW), num(x.maxW)])) + '\n';
+      if (dimmers.length > 0) md += c.table(D.dimmer, [{ mm: 20 }, { fr: 1 }, { fr: 1 }, { fr: 1 }], [D.dimmer, D.element, D.power, D.maxLoadW], dimmers.map((x) => [String(x.dimmer), String(x.count), num(x.powerW), num(x.maxW)])) + '\n';
       const phases = phaseLoads(show);
       if (phases.length > 0) md += c.table(D.phase, [{ mm: 24 }, { fr: 1 }, { fr: 1 }], [D.phase, D.power, D.amps], phases.map((x) => [x.phase === null ? D.none : `L${x.phase}`, num(x.powerW), num(x.amps, 2)]));
       parts.push(md + '\n');

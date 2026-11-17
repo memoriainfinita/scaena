@@ -65,6 +65,7 @@ test('every dialog has no violations @a11y @slow', async ({ page }) => {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   }
+  await page.locator('g.el').first().focus(); // "?" acts only with focus on the plot, not on a button (WCAG 2.1.4)
   await page.keyboard.press('?');
   await expect(page.getByRole('dialog', { name: 'Atajos de teclado' })).toBeVisible();
   await clean(page);

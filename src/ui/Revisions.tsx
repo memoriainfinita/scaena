@@ -2,7 +2,7 @@
 import { useState } from 'preact/hooks';
 import { compareRevisions, compareWithCurrent, restoreRevision, saveCurrentRevision } from '../app/revisions-actions.ts';
 import { session } from '../app/state.ts';
-import { baseName, saveFile, updateSheetFile } from '../export/exports.ts';
+import { saveFile, updateSheetFile } from '../export/exports.ts';
 import { t } from '../i18n/index.ts';
 import { noChangesText } from '../model/diff.ts';
 import { lang } from '../i18n/index.ts';
@@ -66,7 +66,6 @@ export function RevisionsDialog({ onClose }: { onClose: () => void }) {
       saveFile(f);
       setInfo(f.name);
     });
-  void baseName;
 
   return (
     <Modal title={t('rev.title')} onClose={onClose}>

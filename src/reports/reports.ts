@@ -93,7 +93,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
   }
   if (id === 'dimmers') {
     const rows = dimmerLoads(show).map((d) => [String(d.dimmer), String(d.count), unitList(lum.filter((e) => e.luminaire!.dimmer === d.dimmer)), num(d.powerW), num(d.maxW)]);
-    return { id, header: [D.dimmer, D.count, D.unit, D.power, `${D.maxLoad.replace(/ \(kg\)/, '')} (W)`], rows };
+    return { id, header: [D.dimmer, D.count, D.unit, D.power, D.maxLoadW], rows };
   }
   if (id === 'colors') {
     const groups = new Map<string, PlanElement[]>();

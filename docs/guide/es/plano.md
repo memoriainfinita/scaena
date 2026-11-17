@@ -54,3 +54,7 @@ Bajo la lista de capas, escribe un nombre y pulsa **Añadir capa** para crear un
 ## Elementos propios
 
 **Crear elemento propio** (arriba de la biblioteca) toma un dibujo SVG de hasta 200 KB y pide nombre, tamaño real, altura, peso, potencia y capa. El dibujo se reconstruye solo con formas, trazados, grupos y colores lisos: el texto, las imágenes, los degradados, los enlaces, los estilos y los scripts se omiten (el diálogo dice cuántas partes), y los trazos se redibujan a 1,5 px. El elemento vive en el montaje y viaja en el archivo `.scaena`; sale el primero en las búsquedas de la biblioteca y solo se puede borrar cuando ya no está en el plano.
+
+## Redimensionar y girar con asas
+
+Un elemento seleccionado muestra ocho **asas** para redimensionarlo (con **Mayús** mantiene la proporción, con **Ctrl** crece desde el centro y con **Alt** salta el ajuste de 50 mm) y un asa redonda de **giro** pasada la esquina superior derecha (con **Mayús** gira de 15 en 15 grados). Cada gesto es un paso de deshacer. Una etiqueta pegada al medio de un lado se agarra mejor por un extremo.
