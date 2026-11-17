@@ -24,6 +24,7 @@ Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 fi
 - A turned text note is turned in the PDF too.
 - Warnings name library elements in the interface language (they were always Spanish).
 - The setlist table is headed «N.º», not «Canal»; the circuit and dimmer tables of the PDF say how many instruments and which units, instead of a mislabelled count.
+- The PDF outputs list says who listens to each output; a rigging total with no known weights is blank instead of 0; cables between unnamed lights name the unit; the Yamaha CL1 is in the console library (weight to be confirmed).
 - A focus point sitting over the selected element's own handles can be grabbed; the DXF keeps hidden layers frozen instead of switched on.
 - The revision comparison names changes to contacts, schedule, setlist, hospitality, contract, notes, title block and the rest of the document.
 - Dragging a luminaire's aim point is one undo step.

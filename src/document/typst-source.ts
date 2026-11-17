@@ -312,9 +312,9 @@ ${meta.length ? `#align(center)[#table(columns: (auto, auto), inset: 5pt, stroke
     } else if (s === 'outputs') {
       const outDesks = desksOf(show);
       for (const desk of outDesks.length > 1 ? outDesks : [null]) {
-        const rows = (desk ? outputsOnDesk(show, desk.id) : outputList(show)).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.notes]);
+        const rows = (desk ? outputsOnDesk(show, desk.id) : outputList(show)).map((o) => [String(o.number), D.kinds[o.kind], yn(D, o.stereo), o.aux, elName(o.sourceElementId ? show.elements[o.sourceElementId] : undefined, show.lang), o.who, o.notes]);
         if (desk && rows.length === 0) continue;
-        parts.push(heading(desk ? `${D.outputs} · ${desk.name || D.deskRoles[desk.role]}` : D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.6 }], ['#', D.kind, D.stereo, D.aux, D.source, D.note], rows) + '\n');
+        parts.push(heading(desk ? `${D.outputs} · ${desk.name || D.deskRoles[desk.role]}` : D.outputs) + c.table(D.outputs, [{ mm: 11 }, { fr: 1 }, { mm: 16 }, { mm: 16 }, { fr: 1.2 }, { fr: 1.2 }, { fr: 1.4 }], ['#', D.kind, D.stereo, D.aux, D.source, D.who, D.note], rows) + '\n');
       }
       const mixes = mixOutputs(show).map((o) => [String(o.number), o.who, mixText(show, o, D.mixWords)]).filter(([, who, mix]) => who || mix);
       if (mixes.length > 0) parts.push(heading(D.mixes) + c.table(D.mixes, [{ mm: 11 }, { fr: 1 }, { fr: 4 }], ['#', D.who, D.mix], mixes) + '\n');

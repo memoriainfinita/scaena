@@ -13,6 +13,8 @@ import { availableReports, buildReport, inputsAsText, REPORT_IDS, toCsv, toTsv }
 import type { Show } from '../model/schema.ts';
 import { cableLength } from '../model/connections.ts';
 import { addDesk, sendToDesk } from '../model/desks.ts';
+import { addConnection } from '../model/connections.ts';
+import { updateElement } from '../model/ops.ts';
 import { validate } from '../validate/rules.ts';
 
 /** The package's lights come with a model and a channel; these tests start from bare ones. */
@@ -283,6 +285,23 @@ describe('numbers and units in the documents', () => {
     expect(imperial.header).toContain('Peso (lb)');
     const cables = buildReport({ ...rock(), units: 'imperial' }, 'cables');
     expect(cables.header[5]).toBe('Longitud (ft)');
+  });
+
+  test('a rigging total with no weights known is blank, not zero', () => {
+    const show = theatre();
+    const rows = buildReport(show, 'rigging').rows.filter((r) => r[3] === 'Total');
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) if (!Object.values(show.elements).some((e) => e.luminaire && e.weightKg !== null)) expect(r[7]).toBe('');
+  });
+
+  test('a light with no name of its own is told apart in the cable list by its unit', () => {
+    let show = theatre();
+    const [a, b] = Object.values(show.elements).filter((e) => e.luminaire);
+    show = updateElement(updateElement(show, a!.id, { label: '' }), b!.id, { label: '' });
+    show = updateLuminaire(updateLuminaire(show, a!.id, { unit: 7 }), b!.id, { unit: 8 });
+    const [withCable] = [addConnection(show, a!.id, b!.id, 'lightControl', 'DMX')[0]];
+    const row = buildReport(withCable, 'cables').rows.find((r) => r[4] === 'DMX' && r[1].endsWith(' 7') && r[2].endsWith(' 8'));
+    expect(row).toBeTruthy();
   });
 
   test('a wireless link is not a cable: no length, not in the cable list, and not too long', () => {

@@ -130,7 +130,7 @@ function ChannelRow({ show, c, i, count, rows, sources, selected, deskId }: { sh
             value={at.number}
             onChange={(e) => {
               const n = Math.floor(Number((e.currentTarget as HTMLInputElement).value));
-              if (n >= 1) sendChannelToDesk(c.id, deskId, n);
+              if (n >= 1 && n <= 9999) sendChannelToDesk(c.id, deskId, n);
             }}
           />
         ) : at ? (

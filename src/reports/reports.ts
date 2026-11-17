@@ -29,6 +29,8 @@ export interface ReportTable {
 /** A number the way the language writes it, at most `digits` decimals; empty when there is none. */
 const fmt = (n: number | null, lang: Lang, digits = 0) => (n === null ? '' : numberText(n, lang, digits, false));
 const name = (e: PlanElement | undefined, lang: Lang) => (e ? e.label || itemById(e.type.id)?.name[lang] || e.type.id : '');
+/** The end of a cable: its name, and the unit number when it is a light with no name of its own, so that two of them can be told apart. */
+const endName = (e: PlanElement | undefined, lang: Lang): string => (e && !e.label && e.luminaire?.unit != null ? `${name(e, lang)} ${e.luminaire.unit}` : name(e, lang));
 const byNumber = (a: number | null, b: number | null) => (a ?? Infinity) - (b ?? Infinity);
 
 /** The video links for the document: where from and to, connector, resolution and length, in the order of the Equipment tab. */
@@ -51,7 +53,7 @@ export function cableText(show: Show, elementId: string, signals: readonly Signa
     .map((c) => {
       const len = cableLength(show, c);
       const other = show.elements[c.from === elementId ? c.to : c.from];
-      return [c.connector || (c.wireless ? docStrings(lang).wireless : ''), len ? `${len.estimated ? '≈ ' : ''}${lengthWithUnit(len.mm, show.units, lang)}` : '', other ? `→ ${name(other, lang)}` : ''].filter(Boolean).join(' ');
+      return [c.connector || (c.wireless ? docStrings(lang).wireless : ''), len ? `${len.estimated ? '≈ ' : ''}${lengthWithUnit(len.mm, show.units, lang)}` : '', other ? `→ ${endName(other, lang)}` : ''].filter(Boolean).join(' ');
     })
     .join('; ');
 }
@@ -149,7 +151,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
     for (const g of riggingPlan(show)) {
       const mname = g.mount?.name ?? D.none;
       g.lights.forEach((e, i) => rows.push([mname, String(i + 1), num(e.luminaire!.unit), name(e, lang), model(e), num(e.luminaire!.channel), e.luminaire!.color, kgv(e.weightKg), num(e.powerW)]));
-      rows.push([mname, '', '', D.total, '', '', '', kgv(g.weightKg), num(g.powerW)]);
+      rows.push([mname, '', '', D.total, '', '', '', g.lights.some((e) => e.weightKg !== null) ? kgv(g.weightKg) : '', num(g.powerW)]);
     }
     return { id, header: [D.mount, '#', D.unit, D.element, D.model, D.channel, D.color, inUnits(D.weight, show.units), D.power], rows };
   }
@@ -193,7 +195,7 @@ export function buildReport(show: Show, id: ReportId, lang: Lang = show.lang): R
       .sort((a, b) => order.indexOf(a.signal) - order.indexOf(b.signal) || a.connector.localeCompare(b.connector, 'en') || a.id.localeCompare(b.id, 'en', { numeric: true }))
       .map((c, i) => {
         const len = cableLength(show, c);
-        return [String(i + 1), name(show.elements[c.from], lang), name(show.elements[c.to], lang), D.signals[c.signal], c.connector, len === null ? '' : `${len.estimated ? '≈ ' : ''}${lengthValue(len.mm, show.units, lang)}`];
+        return [String(i + 1), endName(show.elements[c.from], lang), endName(show.elements[c.to], lang), D.signals[c.signal], c.connector, len === null ? '' : `${len.estimated ? '≈ ' : ''}${lengthValue(len.mm, show.units, lang)}`];
       });
     return { id, header: ['#', D.cableFrom, D.cableTo, D.cableSignal, D.cableConnector, inUnits(D.cableLength, show.units)], rows };
   }
