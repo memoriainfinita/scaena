@@ -68,3 +68,6 @@ RP-2 es de USITT (no de ESTA), con copyright de 2006 y sin licencia de reproducc
 
 ### 2026-10-29 — SVG y Typst medidos con la máquina libre
 SVG: con señales, `<use>`, zoom en grupo con `transform`, capa aparte para lo arrastrado y detalle dinámico, 1000 elementos van sin reservas y 3000 son aceptables. Typst: reciclar el worker cada 50 compilaciones contiene la fuga (222 MB frente a 1321); service worker obligatorio por el `.wasm` de 11,1 MB en gzip. Una primera tanda salió contaminada por CPU compartida y se descartó.
+
+### 2026-11-19 — Cierre: la 0.1.0 ya estaba publicada
+El TODO decía que faltaba el tag `v0.1.0`; ya estaba subido desde el 2026-11-12. Lo hecho desde entonces (formato 2, mesas, puertos, Equipos, auditoría del 2026-11-16) salió como 0.2.0 el 2026-11-19. La nota «Quién escucha» del PDF, el total de peso en blanco, la unidad en los cables y la CL1 ya estaban resueltos en `af8ad32`; la nota de Status seguía como pendiente.

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-11-19)
 
 Changes after 0.1.0 (2026-11-12). The file format is now version 2; version 1 files open and are migrated.
 

@@ -1,6 +1,6 @@
 ---
 created: 2026-10-29
-last_updated: 2026-11-17
+last_updated: 2026-11-19
 ---
 
 # scaena — state
@@ -15,7 +15,8 @@ Motivo: no hay alternativa totalmente gratuita y profesional. Ridermaker limita 
 
 ## Status
 
-- **Retomar por:** todo lo de la auditoría del 2026-11-16 y lo anotado con el rider de prueba de Zamora está hecho y subido hasta `af8ad32`, con la CI de `bbb43b7` en verde (la de `af8ad32` estaba en curso al cerrar; comprobarla primero). Queda: el rider real de un bolo del usuario, decidir en qué commit va el tag `v0.1.0` y publicarlo cuando el usuario lo diga, un PDF escaneado real, PDF/UA con veraPDF y, si un plano real pasa de 1000 elementos, rasterizar la capa quieta. Sin biblioteca: Rio3224-D y Tannoy (faltan fichas verificadas; la página de Yamaha dio 403)
+- **Fase:** terminada (decisión del usuario, 2026-11-19). Publicada; se espera la opinión de los usuarios antes de seguir
+- **Retomar por:** esperar el feedback de los usuarios; no hay trabajo abierto. Versión 0.2.0 (2026-11-19). Lo que quedó fuera está en «Aparcado», al final
 - Publicada en https://memoriainfinita.github.io/scaena/ desde el 2026-11-05. Repositorio público https://github.com/memoriainfinita/scaena, con `state.md` y el historial incluidos (decisión del usuario: «somos transparentes»). La CI hace lint, pruebas, build, e2e y comprobación del PDF, y despliega en Pages al hacer push a `main`. Un push solo de `.md` o `docs/` no lanza la CI ni redespliega. Detalle en `docs/publishing.md`
 - Construido: los 16 pasos del plan (`docs/design/plan-2026-11-05.md`) y los grupos A a F de la revisión del usuario del 2026-11-05 (`docs/design/grupo-*.md`, `cierre-grupo-b-2026-11-05.md`, `stage-freeform-2026-11-07.md`)
 - Biblioteca: 843 símbolos (775 hasta el 2026-11-10), uno por archivo en `symbols/<categoría>/<id>.svg` (`docs/design/symbols.md`; `pnpm symbols` genera los trozos); 652 luminarias de la Open Fixture Library (`scripts/import-ofl.mjs`); 8 paquetes con datos completos y la prueba `packages-clean`; `showcase` (Muestra completa) usa todas las funciones y `package-showcase.test.ts` falla si deja de hacerlo
@@ -130,7 +131,7 @@ Hallazgos de la auditoría del 2026-11-09, por orden de trabajo. Un grupo por se
 - [x] Textos residuales `view.soon` y `export.soon`; comentarios huérfanos en `src/app/state.ts`
 - [x] La zona principal se anuncia como «Plano del escenario» en todas las vistas
 - [x] `scripts/live-check.mjs` y `scripts/live-look.mjs` fallan con PDF de 10 páginas o más: buscan «Página 1» sin `exact`
-- [ ] Publicar 0.1.0: el CHANGELOG ya lo recoge como `0.1.0 (2026-11-11)`; falta el tag `v0.1.0` (local tras el commit), subirlo y crear la release en GitHub, cuando el usuario lo diga
+- [x] (hecho 2026-11-12) Publicar 0.1.0: tag `v0.1.0` subido. Desde entonces, 0.2.0 (2026-11-19) con el formato 2 y lo del 15 al 19 de noviembre
 - [x] `docs/design/plan-2026-11-05.md` habla de 15 reglas de validación; hay 34
 
 ### Ampliación del grupo 1: hojas de plano por capas (hecha 2026-11-11, `docs/design/plan-sheets-2026-11-11.md`)
@@ -170,9 +171,24 @@ Pruebas que reproducen cada fallo en `.work/audit-1116/` (fuera de git).
 
 ### Fuera de los grupos
 
-- [ ] Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
+- [ ] (pasado a Aparcado 2026-11-19) Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
 - [x] (hecho 2026-11-12) Medidas de ficha técnica: 120 de 847 con fuente; el resto son estimaciones por tipo de objeto, también las alturas (`docs/research/icon-item-sizes-2026-11-08.md`, pasadas 4 a 11)
 - [x] (hecho 2026-11-17, ok del usuario) Probar en Safari y en un móvil real
-- [ ] Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
-- [ ] Sin comprobar todavía: un PDF real escaneado (el plano LX del Teatro Ramos Carrión, vectorial de 122 KB, A3 a 1:100, se importa como fondo en 1,3 s en Firefox el 2026-11-17; no es un escaneo) (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
-- [ ] Idea anotada y no hecha: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos
+- [ ] (pasado a Aparcado 2026-11-19) Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
+- [ ] (pasado a Aparcado 2026-11-19) Sin comprobar todavía: un PDF real escaneado (el plano LX del Teatro Ramos Carrión, vectorial de 122 KB, A3 a 1:100, se importa como fondo en 1,3 s en Firefox el 2026-11-17; no es un escaneo) (con archivos generados pasa: PDF de 23 MB con fotos y uno escaneado en 1,4 s, Firefox, 2026-11-08), `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
+- [ ] (pasado a Aparcado 2026-11-19) Idea anotada y no hecha: rasterizar la capa quieta al arrastrar planos de más de 1000 elementos
+
+## Aparcado
+
+Ideas y pendientes sin compromiso, al dar la app por terminada el 2026-11-19. Se decide con el feedback de los usuarios.
+
+- Que el usuario haga un rider real de un bolo suyo de principio a fin: los ejemplos los escribieron los mismos modelos que la app
+- Validación PDF/UA con veraPDF cuando el compilador exponga `ua-1`; mientras, `scripts/check_pdf.py` en CI comprueba lo básico
+- Un PDF real escaneado como fondo (con archivos generados pasa) y `main` de typst.ts (reevaluar cuando salga una versión con `evictCache`)
+- Rasterizar la capa quieta al arrastrar planos de más de 1000 elementos
+- Biblioteca: Rio3224-D y Tannoy sin fichas verificadas (la página de Yamaha dio 403)
+- Los números por mesa de `assign` no se renumeran al borrar un canal
+- «Horario» sale antes que «Programación de montaje» en el PDF
+- El selector de número de la mesa y los campos de tiempo del calculador hacia atrás aceptan valores sin tope
+- Si A* agota 40 000 expansiones, el cable queda recto sin avisar
+- Un push solo de `.md` o `docs/` no redespliega la web
